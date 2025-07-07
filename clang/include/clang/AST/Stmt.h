@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_STMT_H
 #define LLVM_CLANG_AST_STMT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/APValue.h"
 #include "clang/AST/DeclGroup.h"
 #include "clang/AST/DependenceFlags.h"
@@ -1401,7 +1402,7 @@ protected:
 public:
   // Only allow allocation of Stmts using the allocator in ASTContext
   // or by doing a placement new.
-  void* operator new(size_t bytes, const ASTContext& C,
+  CLANG_ABI void* operator new(size_t bytes, const ASTContext& C,
                      unsigned alignment = 8);
 
   void* operator new(size_t bytes, const ASTContext* C,
@@ -1458,7 +1459,7 @@ protected:
 
 private:
   /// Whether statistic collection is enabled.
-  static bool StatisticsEnabled;
+  CLANG_ABI static bool StatisticsEnabled;
 
 protected:
   /// Construct an empty statement.
@@ -1484,80 +1485,80 @@ public:
     return static_cast<StmtClass>(StmtBits.sClass);
   }
 
-  const char *getStmtClassName() const;
+  CLANG_ABI const char *getStmtClassName() const;
 
   /// SourceLocation tokens are not useful in isolation - they are low level
   /// value objects created/interpreted by SourceManager. We assume AST
   /// clients will have a pointer to the respective SourceManager.
-  SourceRange getSourceRange() const LLVM_READONLY;
-  SourceLocation getBeginLoc() const LLVM_READONLY;
-  SourceLocation getEndLoc() const LLVM_READONLY;
+  CLANG_ABI SourceRange getSourceRange() const LLVM_READONLY;
+  CLANG_ABI SourceLocation getBeginLoc() const LLVM_READONLY;
+  CLANG_ABI SourceLocation getEndLoc() const LLVM_READONLY;
 
   // global temp stats (until we have a per-module visitor)
-  static void addStmtClass(const StmtClass s);
-  static void EnableStatistics();
-  static void PrintStats();
+  CLANG_ABI static void addStmtClass(const StmtClass s);
+  CLANG_ABI static void EnableStatistics();
+  CLANG_ABI static void PrintStats();
 
   /// \returns the likelihood of a set of attributes.
-  static Likelihood getLikelihood(ArrayRef<const Attr *> Attrs);
+  CLANG_ABI static Likelihood getLikelihood(ArrayRef<const Attr *> Attrs);
 
   /// \returns the likelihood of a statement.
-  static Likelihood getLikelihood(const Stmt *S);
+  CLANG_ABI static Likelihood getLikelihood(const Stmt *S);
 
   /// \returns the likelihood attribute of a statement.
-  static const Attr *getLikelihoodAttr(const Stmt *S);
+  CLANG_ABI static const Attr *getLikelihoodAttr(const Stmt *S);
 
   /// \returns the likelihood of the 'then' branch of an 'if' statement. The
   /// 'else' branch is required to determine whether both branches specify the
   /// same likelihood, which affects the result.
-  static Likelihood getLikelihood(const Stmt *Then, const Stmt *Else);
+  CLANG_ABI static Likelihood getLikelihood(const Stmt *Then, const Stmt *Else);
 
   /// \returns whether the likelihood of the branches of an if statement are
   /// conflicting. When the first element is \c true there's a conflict and
   /// the Attr's are the conflicting attributes of the Then and Else Stmt.
-  static std::tuple<bool, const Attr *, const Attr *>
+  CLANG_ABI static std::tuple<bool, const Attr *, const Attr *>
   determineLikelihoodConflict(const Stmt *Then, const Stmt *Else);
 
   /// Dumps the specified AST fragment and all subtrees to
   /// \c llvm::errs().
-  void dump() const;
-  void dump(raw_ostream &OS, const ASTContext &Context) const;
+  CLANG_ABI void dump() const;
+  CLANG_ABI void dump(raw_ostream &OS, const ASTContext &Context) const;
 
   /// \return Unique reproducible object identifier
-  int64_t getID(const ASTContext &Context) const;
+  CLANG_ABI int64_t getID(const ASTContext &Context) const;
 
   /// dumpColor - same as dump(), but forces color highlighting.
-  void dumpColor() const;
+  CLANG_ABI void dumpColor() const;
 
   /// dumpPretty/printPretty - These two methods do a "pretty print" of the AST
   /// back to its original source language syntax.
-  void dumpPretty(const ASTContext &Context) const;
-  void printPretty(raw_ostream &OS, PrinterHelper *Helper,
+  CLANG_ABI void dumpPretty(const ASTContext &Context) const;
+  CLANG_ABI void printPretty(raw_ostream &OS, PrinterHelper *Helper,
                    const PrintingPolicy &Policy, unsigned Indentation = 0,
                    StringRef NewlineSymbol = "\n",
                    const ASTContext *Context = nullptr) const;
-  void printPrettyControlled(raw_ostream &OS, PrinterHelper *Helper,
+  CLANG_ABI void printPrettyControlled(raw_ostream &OS, PrinterHelper *Helper,
                              const PrintingPolicy &Policy,
                              unsigned Indentation = 0,
                              StringRef NewlineSymbol = "\n",
                              const ASTContext *Context = nullptr) const;
 
   /// Pretty-prints in JSON format.
-  void printJson(raw_ostream &Out, PrinterHelper *Helper,
+  CLANG_ABI void printJson(raw_ostream &Out, PrinterHelper *Helper,
                  const PrintingPolicy &Policy, bool AddQuotes) const;
 
   /// viewAST - Visualize an AST rooted at this Stmt* using GraphViz.  Only
   ///   works on systems with GraphViz (Mac OS X) or dot+gv installed.
-  void viewAST() const;
+  CLANG_ABI void viewAST() const;
 
   /// Skip no-op (attributed, compound) container stmts and skip captured
   /// stmt at the top, if \a IgnoreCaptured is true.
-  Stmt *IgnoreContainers(bool IgnoreCaptured = false);
+  CLANG_ABI Stmt *IgnoreContainers(bool IgnoreCaptured = false);
   const Stmt *IgnoreContainers(bool IgnoreCaptured = false) const {
     return const_cast<Stmt *>(this)->IgnoreContainers(IgnoreCaptured);
   }
 
-  const Stmt *stripLabelLikeStatements() const;
+  CLANG_ABI const Stmt *stripLabelLikeStatements() const;
   Stmt *stripLabelLikeStatements() {
     return const_cast<Stmt*>(
       const_cast<const Stmt*>(this)->stripLabelLikeStatements());
@@ -1572,7 +1573,7 @@ public:
   using child_range = llvm::iterator_range<child_iterator>;
   using const_child_range = llvm::iterator_range<const_child_iterator>;
 
-  child_range children();
+  CLANG_ABI child_range children();
 
   const_child_range children() const {
     auto Children = const_cast<Stmt *>(this)->children();
@@ -1602,7 +1603,7 @@ public:
   /// other lambda expressions. When true, the lambda expressions with the same
   /// implementation will be considered to be the same. ProfileLambdaExpr should
   /// only be true when we try to merge two declarations within modules.
-  void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
+  CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
                bool Canonical, bool ProfileLambdaExpr = false) const;
 
   /// Calculate a unique representation for a statement that is
@@ -1612,7 +1613,7 @@ public:
   ///
   /// \param Hash an ODRHash object which will be called where pointers would
   /// have been used in the Profile function.
-  void ProcessODRHash(llvm::FoldingSetNodeID &ID, ODRHash& Hash) const;
+  CLANG_ABI void ProcessODRHash(llvm::FoldingSetNodeID &ID, ODRHash& Hash) const;
 };
 
 /// DeclStmt - Adaptor class for mixing declarations with statements and
@@ -1755,7 +1756,7 @@ class CompoundStmt final
   }
 
 public:
-  static CompoundStmt *Create(const ASTContext &C, ArrayRef<Stmt *> Stmts,
+  CLANG_ABI static CompoundStmt *Create(const ASTContext &C, ArrayRef<Stmt *> Stmts,
                               FPOptionsOverride FPFeatures, SourceLocation LB,
                               SourceLocation RB);
 
@@ -1769,7 +1770,7 @@ public:
   }
 
   // Build an empty compound statement.
-  static CompoundStmt *CreateEmpty(const ASTContext &C, unsigned NumStmts,
+  CLANG_ABI static CompoundStmt *CreateEmpty(const ASTContext &C, unsigned NumStmts,
                                    bool HasFPFeatures);
 
   bool body_empty() const { return CompoundStmtBits.NumStmts == 0; }
@@ -1981,12 +1982,12 @@ class CaseStmt final
 
 public:
   /// Build a case statement.
-  static CaseStmt *Create(const ASTContext &Ctx, Expr *lhs, Expr *rhs,
+  CLANG_ABI static CaseStmt *Create(const ASTContext &Ctx, Expr *lhs, Expr *rhs,
                           SourceLocation caseLoc, SourceLocation ellipsisLoc,
                           SourceLocation colonLoc);
 
   /// Build an empty case statement.
-  static CaseStmt *CreateEmpty(const ASTContext &Ctx, bool CaseStmtIsGNURange);
+  CLANG_ABI static CaseStmt *CreateEmpty(const ASTContext &Ctx, bool CaseStmtIsGNURange);
 
   /// True if this case statement is of the form case LHS ... RHS, which
   /// is a GNU extension. In this case the RHS can be obtained with getRHS()
@@ -2140,7 +2141,7 @@ protected:
   using Stmt::Stmt;
 
 public:
-  const Expr *getExprStmt() const;
+  CLANG_ABI const Expr *getExprStmt() const;
   Expr *getExprStmt() {
     const ValueStmt *ConstThis = this;
     return const_cast<Expr*>(ConstThis->getExprStmt());
@@ -2175,7 +2176,7 @@ public:
   LabelDecl *getDecl() const { return TheDecl; }
   void setDecl(LabelDecl *D) { TheDecl = D; }
 
-  const char *getName() const;
+  CLANG_ABI const char *getName() const;
   Stmt *getSubStmt() { return SubStmt; }
 
   const Stmt *getSubStmt() const { return SubStmt; }
@@ -2228,11 +2229,11 @@ class AttributedStmt final
   const Attr **getAttrArrayPtr() { return getTrailingObjects(); }
 
 public:
-  static AttributedStmt *Create(const ASTContext &C, SourceLocation Loc,
+  CLANG_ABI static AttributedStmt *Create(const ASTContext &C, SourceLocation Loc,
                                 ArrayRef<const Attr *> Attrs, Stmt *SubStmt);
 
   // Build an empty attributed statement.
-  static AttributedStmt *CreateEmpty(const ASTContext &C, unsigned NumAttrs);
+  CLANG_ABI static AttributedStmt *CreateEmpty(const ASTContext &C, unsigned NumAttrs);
 
   SourceLocation getAttrLoc() const { return AttributedStmtBits.AttrLoc; }
   ArrayRef<const Attr *> getAttrs() const {
@@ -2316,7 +2317,7 @@ class IfStmt final
 
 public:
   /// Create an IfStmt.
-  static IfStmt *Create(const ASTContext &Ctx, SourceLocation IL,
+  CLANG_ABI static IfStmt *Create(const ASTContext &Ctx, SourceLocation IL,
                         IfStatementKind Kind, Stmt *Init, VarDecl *Var,
                         Expr *Cond, SourceLocation LPL, SourceLocation RPL,
                         Stmt *Then, SourceLocation EL = SourceLocation(),
@@ -2324,7 +2325,7 @@ public:
 
   /// Create an empty IfStmt optionally with storage for an else statement,
   /// condition variable and init expression.
-  static IfStmt *CreateEmpty(const ASTContext &Ctx, bool HasElse, bool HasVar,
+  CLANG_ABI static IfStmt *CreateEmpty(const ASTContext &Ctx, bool HasElse, bool HasVar,
                              bool HasInit);
 
   /// True if this IfStmt has the storage for an init statement.
@@ -2381,14 +2382,14 @@ public:
   ///   printf("x is %d", x);
   /// }
   /// \endcode
-  VarDecl *getConditionVariable();
+  CLANG_ABI VarDecl *getConditionVariable();
   const VarDecl *getConditionVariable() const {
     return const_cast<IfStmt *>(this)->getConditionVariable();
   }
 
   /// Set the condition variable for this if statement.
   /// The if statement must have storage for the condition variable.
-  void setConditionVariable(const ASTContext &Ctx, VarDecl *V);
+  CLANG_ABI void setConditionVariable(const ASTContext &Ctx, VarDecl *V);
 
   /// If this IfStmt has a condition variable, return the faux DeclStmt
   /// associated with the creation of that condition variable.
@@ -2466,10 +2467,10 @@ public:
 
   /// If this is an 'if constexpr', determine which substatement will be taken.
   /// Otherwise, or if the condition is value-dependent, returns std::nullopt.
-  std::optional<const Stmt *> getNondiscardedCase(const ASTContext &Ctx) const;
-  std::optional<Stmt *> getNondiscardedCase(const ASTContext &Ctx);
+  CLANG_ABI std::optional<const Stmt *> getNondiscardedCase(const ASTContext &Ctx) const;
+  CLANG_ABI std::optional<Stmt *> getNondiscardedCase(const ASTContext &Ctx);
 
-  bool isObjCAvailabilityCheck() const;
+  CLANG_ABI bool isObjCAvailabilityCheck() const;
 
   SourceLocation getBeginLoc() const { return getIfLoc(); }
   SourceLocation getEndLoc() const LLVM_READONLY {
@@ -2557,13 +2558,13 @@ class SwitchStmt final : public Stmt,
 
 public:
   /// Create a switch statement.
-  static SwitchStmt *Create(const ASTContext &Ctx, Stmt *Init, VarDecl *Var,
+  CLANG_ABI static SwitchStmt *Create(const ASTContext &Ctx, Stmt *Init, VarDecl *Var,
                             Expr *Cond, SourceLocation LParenLoc,
                             SourceLocation RParenLoc);
 
   /// Create an empty switch statement optionally with storage for
   /// an init expression and a condition variable.
-  static SwitchStmt *CreateEmpty(const ASTContext &Ctx, bool HasInit,
+  CLANG_ABI static SwitchStmt *CreateEmpty(const ASTContext &Ctx, bool HasInit,
                                  bool HasVar);
 
   /// True if this SwitchStmt has storage for an init statement.
@@ -2612,14 +2613,14 @@ public:
   ///   // ...
   /// }
   /// \endcode
-  VarDecl *getConditionVariable();
+  CLANG_ABI VarDecl *getConditionVariable();
   const VarDecl *getConditionVariable() const {
     return const_cast<SwitchStmt *>(this)->getConditionVariable();
   }
 
   /// Set the condition variable in this switch statement.
   /// The switch statement must have storage for it.
-  void setConditionVariable(const ASTContext &Ctx, VarDecl *VD);
+  CLANG_ABI void setConditionVariable(const ASTContext &Ctx, VarDecl *VD);
 
   /// If this SwitchStmt has a condition variable, return the faux DeclStmt
   /// associated with the creation of that condition variable.
@@ -2738,13 +2739,13 @@ class WhileStmt final : public Stmt,
 
 public:
   /// Create a while statement.
-  static WhileStmt *Create(const ASTContext &Ctx, VarDecl *Var, Expr *Cond,
+  CLANG_ABI static WhileStmt *Create(const ASTContext &Ctx, VarDecl *Var, Expr *Cond,
                            Stmt *Body, SourceLocation WL,
                            SourceLocation LParenLoc, SourceLocation RParenLoc);
 
   /// Create an empty while statement optionally with storage for
   /// a condition variable.
-  static WhileStmt *CreateEmpty(const ASTContext &Ctx, bool HasVar);
+  CLANG_ABI static WhileStmt *CreateEmpty(const ASTContext &Ctx, bool HasVar);
 
   /// True if this WhileStmt has storage for a condition variable.
   bool hasVarStorage() const { return WhileStmtBits.HasVar; }
@@ -2774,14 +2775,14 @@ public:
   ///   // ...
   /// }
   /// \endcode
-  VarDecl *getConditionVariable();
+  CLANG_ABI VarDecl *getConditionVariable();
   const VarDecl *getConditionVariable() const {
     return const_cast<WhileStmt *>(this)->getConditionVariable();
   }
 
   /// Set the condition variable of this while statement.
   /// The while statement must have storage for it.
-  void setConditionVariable(const ASTContext &Ctx, VarDecl *V);
+  CLANG_ABI void setConditionVariable(const ASTContext &Ctx, VarDecl *V);
 
   /// If this WhileStmt has a condition variable, return the faux DeclStmt
   /// associated with the creation of that condition variable.
@@ -2896,7 +2897,7 @@ class ForStmt : public Stmt {
   SourceLocation LParenLoc, RParenLoc;
 
 public:
-  ForStmt(const ASTContext &C, Stmt *Init, Expr *Cond, VarDecl *condVar,
+  CLANG_ABI ForStmt(const ASTContext &C, Stmt *Init, Expr *Cond, VarDecl *condVar,
           Expr *Inc, Stmt *Body, SourceLocation FL, SourceLocation LP,
           SourceLocation RP);
 
@@ -2913,8 +2914,8 @@ public:
   ///   // ...
   /// }
   /// \endcode
-  VarDecl *getConditionVariable() const;
-  void setConditionVariable(const ASTContext &C, VarDecl *V);
+  CLANG_ABI VarDecl *getConditionVariable() const;
+  CLANG_ABI void setConditionVariable(const ASTContext &C, VarDecl *V);
 
   /// If this ForStmt has a condition variable, return the faux DeclStmt
   /// associated with the creation of that condition variable.
@@ -3036,7 +3037,7 @@ public:
 
   /// getConstantTarget - Returns the fixed target of this indirect
   /// goto, if one exists.
-  LabelDecl *getConstantTarget();
+  CLANG_ABI LabelDecl *getConstantTarget();
   const LabelDecl *getConstantTarget() const {
     return const_cast<IndirectGotoStmt *>(this)->getConstantTarget();
   }
@@ -3146,12 +3147,12 @@ class ReturnStmt final
 
 public:
   /// Create a return statement.
-  static ReturnStmt *Create(const ASTContext &Ctx, SourceLocation RL, Expr *E,
+  CLANG_ABI static ReturnStmt *Create(const ASTContext &Ctx, SourceLocation RL, Expr *E,
                             const VarDecl *NRVOCandidate);
 
   /// Create an empty return statement, optionally with
   /// storage for an NRVO candidate.
-  static ReturnStmt *CreateEmpty(const ASTContext &Ctx, bool HasNRVOCandidate);
+  CLANG_ABI static ReturnStmt *CreateEmpty(const ASTContext &Ctx, bool HasNRVOCandidate);
 
   Expr *getRetValue() { return reinterpret_cast<Expr *>(RetExpr); }
   const Expr *getRetValue() const { return reinterpret_cast<Expr *>(RetExpr); }
@@ -3247,7 +3248,7 @@ public:
   //===--- Asm String Analysis ---===//
 
   /// Assemble final IR asm string.
-  std::string generateAsmString(const ASTContext &C) const;
+  CLANG_ABI std::string generateAsmString(const ASTContext &C) const;
 
   //===--- Output operands ---===//
 
@@ -3256,7 +3257,7 @@ public:
   /// getOutputConstraint - Return the constraint string for the specified
   /// output operand.  All output constraints are known to be non-empty (either
   /// '=' or '+').
-  std::string getOutputConstraint(unsigned i) const;
+  CLANG_ABI std::string getOutputConstraint(unsigned i) const;
 
   /// isOutputPlusConstraint - Return true if the specified output constraint
   /// is a "+" constraint (which is both an input and an output) or false if it
@@ -3265,11 +3266,11 @@ public:
     return getOutputConstraint(i)[0] == '+';
   }
 
-  const Expr *getOutputExpr(unsigned i) const;
+  CLANG_ABI const Expr *getOutputExpr(unsigned i) const;
 
   /// getNumPlusOperands - Return the number of output operands that have a "+"
   /// constraint.
-  unsigned getNumPlusOperands() const;
+  CLANG_ABI unsigned getNumPlusOperands() const;
 
   //===--- Input operands ---===//
 
@@ -3277,14 +3278,14 @@ public:
 
   /// getInputConstraint - Return the specified input constraint.  Unlike output
   /// constraints, these can be empty.
-  std::string getInputConstraint(unsigned i) const;
+  CLANG_ABI std::string getInputConstraint(unsigned i) const;
 
-  const Expr *getInputExpr(unsigned i) const;
+  CLANG_ABI const Expr *getInputExpr(unsigned i) const;
 
   //===--- Other ---===//
 
   unsigned getNumClobbers() const { return NumClobbers; }
-  std::string getClobber(unsigned i) const;
+  CLANG_ABI std::string getClobber(unsigned i) const;
 
   static bool classof(const Stmt *T) {
     return T->getStmtClass() == GCCAsmStmtClass ||
@@ -3374,7 +3375,7 @@ class GCCAsmStmt : public AsmStmt {
   unsigned NumLabels = 0;
 
 public:
-  GCCAsmStmt(const ASTContext &C, SourceLocation asmloc, bool issimple,
+  CLANG_ABI GCCAsmStmt(const ASTContext &C, SourceLocation asmloc, bool issimple,
              bool isvolatile, unsigned numoutputs, unsigned numinputs,
              IdentifierInfo **names, Expr **constraints, Expr **exprs,
              Expr *asmstr, unsigned numclobbers, Expr **clobbers,
@@ -3392,7 +3393,7 @@ public:
   Expr *getAsmStringExpr() { return AsmStr; }
   void setAsmStringExpr(Expr *E) { AsmStr = E; }
 
-  std::string getAsmString() const;
+  CLANG_ABI std::string getAsmString() const;
 
   /// AsmStringPiece - this is part of a decomposed asm string specification
   /// (for use with the AnalyzeAsmString function below).  An asm string is
@@ -3436,7 +3437,7 @@ public:
 
     /// getModifier - Get the modifier for this operand, if present.  This
     /// returns '\0' if there was no modifier.
-    char getModifier() const;
+    CLANG_ABI char getModifier() const;
   };
 
   /// AnalyzeAsmString - Analyze the asm string of the current asm, decomposing
@@ -3444,11 +3445,11 @@ public:
   /// true, otherwise return false.  This handles canonicalization and
   /// translation of strings from GCC syntax to LLVM IR syntax, and handles
   //// flattening of named references like %[foo] to Operand AsmStringPiece's.
-  unsigned AnalyzeAsmString(SmallVectorImpl<AsmStringPiece> &Pieces,
+  CLANG_ABI unsigned AnalyzeAsmString(SmallVectorImpl<AsmStringPiece> &Pieces,
                             const ASTContext &C, unsigned &DiagOffs) const;
 
   /// Assemble final IR asm string.
-  std::string generateAsmString(const ASTContext &C) const;
+  CLANG_ABI std::string generateAsmString(const ASTContext &C) const;
 
   //===--- Output operands ---===//
 
@@ -3461,14 +3462,14 @@ public:
     return {};
   }
 
-  std::string getOutputConstraint(unsigned i) const;
+  CLANG_ABI std::string getOutputConstraint(unsigned i) const;
 
   const Expr *getOutputConstraintExpr(unsigned i) const {
     return Constraints[i];
   }
   Expr *getOutputConstraintExpr(unsigned i) { return Constraints[i]; }
 
-  Expr *getOutputExpr(unsigned i);
+  CLANG_ABI Expr *getOutputExpr(unsigned i);
 
   const Expr *getOutputExpr(unsigned i) const {
     return const_cast<GCCAsmStmt*>(this)->getOutputExpr(i);
@@ -3487,7 +3488,7 @@ public:
     return {};
   }
 
-  std::string getInputConstraint(unsigned i) const;
+  CLANG_ABI std::string getInputConstraint(unsigned i) const;
 
   const Expr *getInputConstraintExpr(unsigned i) const {
     return Constraints[i + NumOutputs];
@@ -3496,14 +3497,14 @@ public:
     return Constraints[i + NumOutputs];
   }
 
-  Expr *getInputExpr(unsigned i);
-  void setInputExpr(unsigned i, Expr *E);
+  CLANG_ABI Expr *getInputExpr(unsigned i);
+  CLANG_ABI void setInputExpr(unsigned i, Expr *E);
 
   const Expr *getInputExpr(unsigned i) const {
     return const_cast<GCCAsmStmt*>(this)->getInputExpr(i);
   }
 
-  static std::string ExtractStringFromGCCAsmStmtComponent(const Expr *E);
+  CLANG_ABI static std::string ExtractStringFromGCCAsmStmtComponent(const Expr *E);
 
   //===--- Labels ---===//
 
@@ -3519,8 +3520,8 @@ public:
     return Names[i + NumOutputs + NumInputs];
   }
 
-  AddrLabelExpr *getLabelExpr(unsigned i) const;
-  StringRef getLabelName(unsigned i) const;
+  CLANG_ABI AddrLabelExpr *getLabelExpr(unsigned i) const;
+  CLANG_ABI StringRef getLabelName(unsigned i) const;
   using labels_iterator = CastIterator<AddrLabelExpr>;
   using const_labels_iterator = ConstCastIterator<AddrLabelExpr>;
   using labels_range = llvm::iterator_range<labels_iterator>;
@@ -3564,9 +3565,9 @@ public:
   /// getNamedOperand - Given a symbolic operand reference like %[foo],
   /// translate this into a numeric value needed to reference the same operand.
   /// This returns -1 if the operand name is invalid.
-  int getNamedOperand(StringRef SymbolicName) const;
+  CLANG_ABI int getNamedOperand(StringRef SymbolicName) const;
 
-  std::string getClobber(unsigned i) const;
+  CLANG_ABI std::string getClobber(unsigned i) const;
 
   Expr *getClobberExpr(unsigned i) { return Clobbers[i]; }
   const Expr *getClobberExpr(unsigned i) const { return Clobbers[i]; }
@@ -3593,7 +3594,7 @@ class MSAsmStmt : public AsmStmt {
   StringRef *Clobbers = nullptr;
 
 public:
-  MSAsmStmt(const ASTContext &C, SourceLocation asmloc,
+  CLANG_ABI MSAsmStmt(const ASTContext &C, SourceLocation asmloc,
             SourceLocation lbraceloc, bool issimple, bool isvolatile,
             ArrayRef<Token> asmtoks, unsigned numoutputs, unsigned numinputs,
             ArrayRef<StringRef> constraints,
@@ -3617,7 +3618,7 @@ public:
   StringRef getAsmString() const { return AsmStr; }
 
   /// Assemble final IR asm string.
-  std::string generateAsmString(const ASTContext &C) const;
+  CLANG_ABI std::string generateAsmString(const ASTContext &C) const;
 
   //===--- Output operands ---===//
 
@@ -3626,7 +3627,7 @@ public:
     return Constraints[i];
   }
 
-  Expr *getOutputExpr(unsigned i);
+  CLANG_ABI Expr *getOutputExpr(unsigned i);
 
   const Expr *getOutputExpr(unsigned i) const {
     return const_cast<MSAsmStmt*>(this)->getOutputExpr(i);
@@ -3639,8 +3640,8 @@ public:
     return Constraints[i + NumOutputs];
   }
 
-  Expr *getInputExpr(unsigned i);
-  void setInputExpr(unsigned i, Expr *E);
+  CLANG_ABI Expr *getInputExpr(unsigned i);
+  CLANG_ABI void setInputExpr(unsigned i, Expr *E);
 
   const Expr *getInputExpr(unsigned i) const {
     return const_cast<MSAsmStmt*>(this)->getInputExpr(i);
@@ -3694,7 +3695,7 @@ class SEHExceptStmt : public Stmt {
   explicit SEHExceptStmt(EmptyShell E) : Stmt(SEHExceptStmtClass, E) {}
 
 public:
-  static SEHExceptStmt* Create(const ASTContext &C,
+  CLANG_ABI static SEHExceptStmt* Create(const ASTContext &C,
                                SourceLocation ExceptLoc,
                                Expr *FilterExpr,
                                Stmt *Block);
@@ -3736,7 +3737,7 @@ class SEHFinallyStmt : public Stmt {
   explicit SEHFinallyStmt(EmptyShell E) : Stmt(SEHFinallyStmtClass, E) {}
 
 public:
-  static SEHFinallyStmt* Create(const ASTContext &C,
+  CLANG_ABI static SEHFinallyStmt* Create(const ASTContext &C,
                                 SourceLocation FinallyLoc,
                                 Stmt *Block);
 
@@ -3778,7 +3779,7 @@ class SEHTryStmt : public Stmt {
   explicit SEHTryStmt(EmptyShell E) : Stmt(SEHTryStmtClass, E) {}
 
 public:
-  static SEHTryStmt* Create(const ASTContext &C, bool isCXXTry,
+  CLANG_ABI static SEHTryStmt* Create(const ASTContext &C, bool isCXXTry,
                             SourceLocation TryLoc, Stmt *TryBlock,
                             Stmt *Handler);
 
@@ -3796,8 +3797,8 @@ public:
   Stmt *getHandler() const { return Children[HANDLER]; }
 
   /// Returns 0 if not defined
-  SEHExceptStmt  *getExceptHandler() const;
-  SEHFinallyStmt *getFinallyHandler() const;
+  CLANG_ABI SEHExceptStmt  *getExceptHandler() const;
+  CLANG_ABI SEHFinallyStmt *getFinallyHandler() const;
 
   child_range children() {
     return child_range(Children, Children+2);
@@ -3882,11 +3883,11 @@ public:
     /// \param Kind The kind of capture (this, ByRef, ...).
     ///
     /// \param Var The variable being captured, or null if capturing this.
-    Capture(SourceLocation Loc, VariableCaptureKind Kind,
+    CLANG_ABI Capture(SourceLocation Loc, VariableCaptureKind Kind,
             VarDecl *Var = nullptr);
 
     /// Determine the kind of capture.
-    VariableCaptureKind getCaptureKind() const;
+    CLANG_ABI VariableCaptureKind getCaptureKind() const;
 
     /// Retrieve the source location at which the variable or 'this' was
     /// first used.
@@ -3912,7 +3913,7 @@ public:
     /// Retrieve the declaration of the variable being captured.
     ///
     /// This operation is only valid if this capture captures a variable.
-    VarDecl *getCapturedVar() const;
+    CLANG_ABI VarDecl *getCapturedVar() const;
   };
 
 private:
@@ -3939,20 +3940,20 @@ private:
     return reinterpret_cast<Stmt *const *>(this + 1);
   }
 
-  Capture *getStoredCaptures() const;
+  CLANG_ABI Capture *getStoredCaptures() const;
 
   void setCapturedStmt(Stmt *S) { getStoredStmts()[NumCaptures] = S; }
 
 public:
   friend class ASTStmtReader;
 
-  static CapturedStmt *Create(const ASTContext &Context, Stmt *S,
+  CLANG_ABI static CapturedStmt *Create(const ASTContext &Context, Stmt *S,
                               CapturedRegionKind Kind,
                               ArrayRef<Capture> Captures,
                               ArrayRef<Expr *> CaptureInits,
                               CapturedDecl *CD, RecordDecl *RD);
 
-  static CapturedStmt *CreateDeserialized(const ASTContext &Context,
+  CLANG_ABI static CapturedStmt *CreateDeserialized(const ASTContext &Context,
                                           unsigned NumCaptures);
 
   /// Retrieve the statement being captured.
@@ -3960,17 +3961,17 @@ public:
   const Stmt *getCapturedStmt() const { return getStoredStmts()[NumCaptures]; }
 
   /// Retrieve the outlined function declaration.
-  CapturedDecl *getCapturedDecl();
-  const CapturedDecl *getCapturedDecl() const;
+  CLANG_ABI CapturedDecl *getCapturedDecl();
+  CLANG_ABI const CapturedDecl *getCapturedDecl() const;
 
   /// Set the outlined function declaration.
-  void setCapturedDecl(CapturedDecl *D);
+  CLANG_ABI void setCapturedDecl(CapturedDecl *D);
 
   /// Retrieve the captured region kind.
-  CapturedRegionKind getCapturedRegionKind() const;
+  CLANG_ABI CapturedRegionKind getCapturedRegionKind() const;
 
   /// Set the captured region kind.
-  void setCapturedRegionKind(CapturedRegionKind Kind);
+  CLANG_ABI void setCapturedRegionKind(CapturedRegionKind Kind);
 
   /// Retrieve the record declaration for captured variables.
   const RecordDecl *getCapturedRecordDecl() const { return TheRecordDecl; }
@@ -3982,7 +3983,7 @@ public:
   }
 
   /// True if this variable has been captured.
-  bool capturesVariable(const VarDecl *Var) const;
+  CLANG_ABI bool capturesVariable(const VarDecl *Var) const;
 
   /// An iterator that walks over the captures.
   using capture_iterator = Capture *;
@@ -4063,9 +4064,9 @@ public:
     return T->getStmtClass() == CapturedStmtClass;
   }
 
-  child_range children();
+  CLANG_ABI child_range children();
 
-  const_child_range children() const;
+  CLANG_ABI const_child_range children() const;
 };
 
 } // namespace clang

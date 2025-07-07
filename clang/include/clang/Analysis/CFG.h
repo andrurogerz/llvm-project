@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_CFG_H
 #define LLVM_CLANG_ANALYSIS_CFG_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Attr.h"
 #include "clang/AST/ExprCXX.h"
 #include "clang/AST/ExprObjC.h"
@@ -122,7 +123,7 @@ public:
     return (Kind) x;
   }
 
-  void dumpToStream(llvm::raw_ostream &OS,
+  CLANG_ABI void dumpToStream(llvm::raw_ostream &OS,
                     bool TerminateWithNewLine = true) const;
 
   void dump() const {
@@ -374,8 +375,8 @@ protected:
   }
 
 public:
-  const CXXDestructorDecl *getDestructorDecl(ASTContext &astContext) const;
-  bool isNoReturn(ASTContext &astContext) const;
+  CLANG_ABI const CXXDestructorDecl *getDestructorDecl(ASTContext &astContext) const;
+  CLANG_ABI bool isNoReturn(ASTContext &astContext) const;
 
 private:
   friend class CFGElement;
@@ -834,11 +835,11 @@ public:
 
   public:
     /// Construct an AdjacentBlock with a possibly unreachable block.
-    AdjacentBlock(CFGBlock *B, bool IsReachable);
+    CLANG_ABI AdjacentBlock(CFGBlock *B, bool IsReachable);
 
     /// Construct an AdjacentBlock with a reachable block and an alternate
     /// unreachable block.
-    AdjacentBlock(CFGBlock *B, CFGBlock *AlternateBlock);
+    CLANG_ABI AdjacentBlock(CFGBlock *B, CFGBlock *AlternateBlock);
 
     /// Get the reachable block, if one exists.
     CFGBlock *getReachableBlock() const {
@@ -902,7 +903,7 @@ public:
   using reverse_iterator = ElementList::reverse_iterator;
   using const_reverse_iterator = ElementList::const_reverse_iterator;
 
-  size_t getIndexInCFG() const;
+  CLANG_ABI size_t getIndexInCFG() const;
 
   CFGElement                 front()       const { return Elements.front();   }
   CFGElement                 back()        const { return Elements.back();    }
@@ -1023,7 +1024,7 @@ public:
         : IgnoreNullPredecessors(1), IgnoreDefaultsWithCoveredEnums(0) {}
   };
 
-  static bool FilterEdge(const FilterOptions &F, const CFGBlock *Src,
+  CLANG_ABI static bool FilterEdge(const FilterOptions &F, const CFGBlock *Src,
        const CFGBlock *Dst);
 
   template <typename IMPL, bool IsPred>
@@ -1080,7 +1081,7 @@ public:
 
   /// Returns true if the block would eventually end with a sink (a noreturn
   /// node).
-  bool isInevitablySinking() const;
+  CLANG_ABI bool isInevitablySinking() const;
 
   CFGTerminator getTerminator() const { return Terminator; }
 
@@ -1093,9 +1094,9 @@ public:
   /// A block would be created for \c A, \c B, and \c C. For the latter,
   /// \c getTerminatorStmt() would retrieve the entire condition, rather than
   /// C itself, while this method would only return C.
-  const Expr *getLastCondition() const;
+  CLANG_ABI const Expr *getLastCondition() const;
 
-  Stmt *getTerminatorCondition(bool StripParens = true);
+  CLANG_ABI Stmt *getTerminatorCondition(bool StripParens = true);
 
   const Stmt *getTerminatorCondition(bool StripParens = true) const {
     return const_cast<CFGBlock*>(this)->getTerminatorCondition(StripParens);
@@ -1112,14 +1113,14 @@ public:
 
   CFG *getParent() const { return Parent; }
 
-  void dump() const;
+  CLANG_ABI void dump() const;
 
-  void dump(const CFG *cfg, const LangOptions &LO, bool ShowColors = false) const;
-  void print(raw_ostream &OS, const CFG* cfg, const LangOptions &LO,
+  CLANG_ABI void dump(const CFG *cfg, const LangOptions &LO, bool ShowColors = false) const;
+  CLANG_ABI void print(raw_ostream &OS, const CFG* cfg, const LangOptions &LO,
              bool ShowColors) const;
 
-  void printTerminator(raw_ostream &OS, const LangOptions &LO) const;
-  void printTerminatorJson(raw_ostream &Out, const LangOptions &LO,
+  CLANG_ABI void printTerminator(raw_ostream &OS, const LangOptions &LO) const;
+  CLANG_ABI void printTerminatorJson(raw_ostream &Out, const LangOptions &LO,
                            bool AddQuotes) const;
 
   void printAsOperand(raw_ostream &OS, bool /*PrintType*/) {
@@ -1127,7 +1128,7 @@ public:
   }
 
   /// Adds a (potentially unreachable) successor block to the current block.
-  void addSuccessor(AdjacentBlock Succ, BumpVectorContext &C);
+  CLANG_ABI void addSuccessor(AdjacentBlock Succ, BumpVectorContext &C);
 
   void appendStmt(Stmt *statement, BumpVectorContext &C) {
     Elements.push_back(CFGStmt(statement), C);
@@ -1270,12 +1271,12 @@ public:
   };
 
   /// Builds a CFG from an AST.
-  static std::unique_ptr<CFG> buildCFG(const Decl *D, Stmt *AST, ASTContext *C,
+  CLANG_ABI static std::unique_ptr<CFG> buildCFG(const Decl *D, Stmt *AST, ASTContext *C,
                                        const BuildOptions &BO);
 
   /// Create a new block in the CFG. The CFG owns the block; the caller should
   /// not directly free it.
-  CFGBlock *createBlock();
+  CLANG_ABI CFGBlock *createBlock();
 
   /// Set the entry block of the CFG. This is typically used only during CFG
   /// construction. Most CFG clients expect that the entry block has no
@@ -1417,15 +1418,15 @@ public:
   /// having exactly three blocks (entry, the actual code, exit), but sometimes
   /// more blocks appear due to having control flow that can be fully
   /// resolved in compile time.
-  bool isLinear() const;
+  CLANG_ABI bool isLinear() const;
 
   //===--------------------------------------------------------------------===//
   // CFG Debugging: Pretty-Printing and Visualization.
   //===--------------------------------------------------------------------===//
 
-  void viewCFG(const LangOptions &LO) const;
-  void print(raw_ostream &OS, const LangOptions &LO, bool ShowColors) const;
-  void dump(const LangOptions &LO, bool ShowColors) const;
+  CLANG_ABI void viewCFG(const LangOptions &LO) const;
+  CLANG_ABI void print(raw_ostream &OS, const LangOptions &LO, bool ShowColors) const;
+  CLANG_ABI void dump(const LangOptions &LO, bool ShowColors) const;
 
   //===--------------------------------------------------------------------===//
   // Internal: constructors and data.
@@ -1463,7 +1464,7 @@ private:
   llvm::DenseMap<const DeclStmt *, const DeclStmt *> SyntheticDeclStmts;
 };
 
-Expr *extractElementInitializerFromNestedAILE(const ArrayInitLoopExpr *AILE);
+CLANG_ABI Expr *extractElementInitializerFromNestedAILE(const ArrayInitLoopExpr *AILE);
 
 } // namespace clang
 

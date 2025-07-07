@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_BODYFARM_H
 #define LLVM_CLANG_ANALYSIS_BODYFARM_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/DeclBase.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/DenseMap.h"
@@ -32,10 +33,10 @@ public:
   BodyFarm(ASTContext &C, CodeInjector *injector) : C(C), Injector(injector) {}
 
   /// Factory method for creating bodies for ordinary functions.
-  Stmt *getBody(const FunctionDecl *D);
+  CLANG_ABI Stmt *getBody(const FunctionDecl *D);
 
   /// Factory method for creating bodies for Objective-C properties.
-  Stmt *getBody(const ObjCMethodDecl *D);
+  CLANG_ABI Stmt *getBody(const ObjCMethodDecl *D);
 
   /// Remove copy constructor to avoid accidental copying.
   BodyFarm(const BodyFarm &other) = delete;

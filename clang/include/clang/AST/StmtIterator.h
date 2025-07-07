@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_STMTITERATOR_H
 #define LLVM_CLANG_AST_STMTITERATOR_H
 
+#include "clang/Support/Compiler.h"
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
@@ -41,8 +42,8 @@ protected:
   Decl **DGE;
 
   StmtIteratorBase(Stmt **s) : stmt(s) {}
-  StmtIteratorBase(const VariableArrayType *t);
-  StmtIteratorBase(Decl **dgi, Decl **dge);
+  CLANG_ABI StmtIteratorBase(const VariableArrayType *t);
+  CLANG_ABI StmtIteratorBase(Decl **dgi, Decl **dge);
   StmtIteratorBase() : stmt(nullptr) {}
 
   bool inDeclGroup() const {
@@ -66,11 +67,11 @@ protected:
     RawVAPtr = reinterpret_cast<uintptr_t>(P) | (RawVAPtr & Flags);
   }
 
-  void NextDecl(bool ImmediateAdvance = true);
-  bool HandleDecl(Decl* D);
-  void NextVA();
+  CLANG_ABI void NextDecl(bool ImmediateAdvance = true);
+  CLANG_ABI bool HandleDecl(Decl* D);
+  CLANG_ABI void NextVA();
 
-  Stmt*& GetDeclExpr() const;
+  CLANG_ABI Stmt*& GetDeclExpr() const;
 };
 
 template <typename DERIVED, typename REFERENCE>

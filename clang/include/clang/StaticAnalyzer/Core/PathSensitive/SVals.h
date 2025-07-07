@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_SVALS_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_SVALS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Expr.h"
 #include "clang/AST/Type.h"
 #include "clang/Basic/LLVM.h"
@@ -90,7 +91,7 @@ public:
 
   SValKind getKind() const { return Kind; }
 
-  StringRef getKindStr() const;
+  CLANG_ABI StringRef getKindStr() const;
 
   // This method is required for using SVal in a FoldingSetNode.  It
   // extracts a unique signature for this SVal object.
@@ -110,16 +111,16 @@ public:
 
   bool isValid() const { return !isUnknownOrUndef(); }
 
-  bool isConstant() const;
+  CLANG_ABI bool isConstant() const;
 
-  bool isConstant(int I) const;
+  CLANG_ABI bool isConstant(int I) const;
 
-  bool isZeroConstant() const;
+  CLANG_ABI bool isZeroConstant() const;
 
   /// getAsFunctionDecl - If this SVal is a MemRegionVal and wraps a
   /// CodeTextRegion wrapping a FunctionDecl, return that FunctionDecl.
   /// Otherwise return 0.
-  const FunctionDecl *getAsFunctionDecl() const;
+  CLANG_ABI const FunctionDecl *getAsFunctionDecl() const;
 
   /// If this SVal is a location and wraps a symbol, return that
   ///  SymbolRef. Otherwise return 0.
@@ -127,10 +128,10 @@ public:
   /// Casts are ignored during lookup.
   /// \param IncludeBaseRegions The boolean that controls whether the search
   /// should continue to the base regions if the region is not symbolic.
-  SymbolRef getAsLocSymbol(bool IncludeBaseRegions = false) const;
+  CLANG_ABI SymbolRef getAsLocSymbol(bool IncludeBaseRegions = false) const;
 
   /// Get the symbol in the SVal or its base region.
-  SymbolRef getLocSymbolInBase() const;
+  CLANG_ABI SymbolRef getLocSymbolInBase() const;
 
   /// If this SVal wraps a symbol return that SymbolRef.
   /// Otherwise, return 0.
@@ -138,20 +139,20 @@ public:
   /// Casts are ignored during lookup.
   /// \param IncludeBaseRegions The boolean that controls whether the search
   /// should continue to the base regions if the region is not symbolic.
-  SymbolRef getAsSymbol(bool IncludeBaseRegions = false) const;
+  CLANG_ABI SymbolRef getAsSymbol(bool IncludeBaseRegions = false) const;
 
   /// If this SVal is loc::ConcreteInt or nonloc::ConcreteInt,
   /// return a pointer to APSInt which is held in it.
   /// Otherwise, return nullptr.
-  const llvm::APSInt *getAsInteger() const;
+  CLANG_ABI const llvm::APSInt *getAsInteger() const;
 
-  const MemRegion *getAsRegion() const;
+  CLANG_ABI const MemRegion *getAsRegion() const;
 
   /// printJson - Pretty-prints in JSON format.
-  void printJson(raw_ostream &Out, bool AddQuotes) const;
+  CLANG_ABI void printJson(raw_ostream &Out, bool AddQuotes) const;
 
-  void dumpToStream(raw_ostream &OS) const;
-  void dump() const;
+  CLANG_ABI void dumpToStream(raw_ostream &OS) const;
+  CLANG_ABI void dump() const;
 
   llvm::iterator_range<SymExpr::symbol_iterator> symbols() const {
     if (const SymExpr *SE = getAsSymbol(/*IncludeBaseRegions=*/true))
@@ -171,7 +172,7 @@ public:
   ///
   /// \note Loc values are interpreted as pointer rvalues for the purposes of
   /// this method.
-  QualType getType(const ASTContext &) const;
+  CLANG_ABI QualType getType(const ASTContext &) const;
 };
 
 inline raw_ostream &operator<<(raw_ostream &os, clang::ento::SVal V) {
@@ -240,7 +241,7 @@ protected:
   NonLoc(SValKind Kind, const void *Data) : DefinedSVal(Kind, Data) {}
 
 public:
-  void dumpToStream(raw_ostream &Out) const;
+  CLANG_ABI void dumpToStream(raw_ostream &Out) const;
 
   static bool isCompoundType(QualType T) {
     return T->isArrayType() || T->isRecordType() ||
@@ -257,7 +258,7 @@ protected:
   Loc(SValKind Kind, const void *Data) : DefinedSVal(Kind, Data) {}
 
 public:
-  void dumpToStream(raw_ostream &Out) const;
+  CLANG_ABI void dumpToStream(raw_ostream &Out) const;
 
   static bool isLocType(QualType T) {
     return T->isAnyPointerType() || T->isBlockPointerType() ||
@@ -350,8 +351,8 @@ public:
   }
 
   using iterator = llvm::ImmutableList<SVal>::iterator;
-  iterator begin() const;
-  iterator end() const;
+  CLANG_ABI iterator begin() const;
+  CLANG_ABI iterator end() const;
 
   static bool classof(SVal V) { return V.getKind() == CompoundValKind; }
 };
@@ -401,7 +402,7 @@ public:
   }
 
   /// It might return null.
-  const void *getStore() const;
+  CLANG_ABI const void *getStore() const;
 
   /// This function itself is immaterial. It is only an implementation detail.
   /// LazyCompoundVal represents only the rvalue, the data (known or unknown)
@@ -415,7 +416,7 @@ public:
   /// not a valid way to "materialize" the prvalue into a glvalue in C++,
   /// because the region represents the *old* storage (sometimes very old), not
   /// the *future* storage.
-  LLVM_ATTRIBUTE_RETURNS_NONNULL
+  CLANG_ABI LLVM_ATTRIBUTE_RETURNS_NONNULL
   const TypedValueRegion *getRegion() const;
 
   static bool classof(SVal V) { return V.getKind() == LazyCompoundValKind; }
@@ -442,9 +443,9 @@ public:
     return PTMDataType::getFromOpaqueValue(const_cast<void *>(Data));
   }
 
-  bool isNullMemberPointer() const;
+  CLANG_ABI bool isNullMemberPointer() const;
 
-  const NamedDecl *getDecl() const;
+  CLANG_ABI const NamedDecl *getDecl() const;
 
   template<typename AdjustedDecl>
   const AdjustedDecl *getDeclAs() const {
@@ -453,8 +454,8 @@ public:
 
   using iterator = llvm::ImmutableList<const CXXBaseSpecifier *>::iterator;
 
-  iterator begin() const;
-  iterator end() const;
+  CLANG_ABI iterator begin() const;
+  CLANG_ABI iterator end() const;
 
   static bool classof(SVal V) { return V.getKind() == PointerToMemberKind; }
 
@@ -493,7 +494,7 @@ public:
   const MemRegion *getRegion() const { return castDataAs<MemRegion>(); }
 
   /// Get the underlining region and strip casts.
-  LLVM_ATTRIBUTE_RETURNS_NONNULL
+  CLANG_ABI LLVM_ATTRIBUTE_RETURNS_NONNULL
   const MemRegion* stripCasts(bool StripBaseCasts = true) const;
 
   template <typename REGION>

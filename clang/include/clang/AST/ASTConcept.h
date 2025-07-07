@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_ASTCONCEPT_H
 #define LLVM_CLANG_AST_ASTCONCEPT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/DeclarationName.h"
 #include "clang/AST/NestedNameSpecifier.h"
 #include "clang/AST/TemplateBase.h"
@@ -62,7 +63,7 @@ public:
     Profile(ID, C, ConstraintOwner, TemplateArgs);
   }
 
-  static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &C,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &C,
                       const NamedDecl *ConstraintOwner,
                       ArrayRef<TemplateArgument> TemplateArgs);
 
@@ -100,14 +101,14 @@ struct ASTConstraintSatisfaction final :
     return getTrailingObjects() + NumRecords;
   }
 
-  ASTConstraintSatisfaction(const ASTContext &C,
+  CLANG_ABI ASTConstraintSatisfaction(const ASTContext &C,
                             const ConstraintSatisfaction &Satisfaction);
-  ASTConstraintSatisfaction(const ASTContext &C,
+  CLANG_ABI ASTConstraintSatisfaction(const ASTContext &C,
                             const ASTConstraintSatisfaction &Satisfaction);
 
-  static ASTConstraintSatisfaction *
+  CLANG_ABI static ASTConstraintSatisfaction *
   Create(const ASTContext &C, const ConstraintSatisfaction &Satisfaction);
-  static ASTConstraintSatisfaction *
+  CLANG_ABI static ASTConstraintSatisfaction *
   Rebuild(const ASTContext &C, const ASTConstraintSatisfaction &Satisfaction);
 };
 
@@ -155,7 +156,7 @@ class ConceptReference {
         NamedConcept(NamedConcept), ArgsAsWritten(ArgsAsWritten) {}
 
 public:
-  static ConceptReference *
+  CLANG_ABI static ConceptReference *
   Create(const ASTContext &C, NestedNameSpecifierLoc NNS,
          SourceLocation TemplateKWLoc, DeclarationNameInfo ConceptNameInfo,
          NamedDecl *FoundDecl, ConceptDecl *NamedConcept,
@@ -211,9 +212,9 @@ public:
     return ArgsAsWritten != nullptr;
   }
 
-  void print(llvm::raw_ostream &OS, const PrintingPolicy &Policy) const;
-  void dump() const;
-  void dump(llvm::raw_ostream &) const;
+  CLANG_ABI void print(llvm::raw_ostream &OS, const PrintingPolicy &Policy) const;
+  CLANG_ABI void dump() const;
+  CLANG_ABI void dump(llvm::raw_ostream &) const;
 };
 
 /// Models the abbreviated syntax to constrain a template type parameter:

@@ -16,6 +16,7 @@
 #ifndef LLVM_CLANG_AST_DECLID_H
 #define LLVM_CLANG_AST_DECLID_H
 
+#include "clang/Support/Compiler.h"
 #include "llvm/ADT/DenseMapInfo.h"
 #include "llvm/ADT/Hashing.h"
 #include "llvm/ADT/iterator.h"
@@ -121,7 +122,7 @@ public:
 
   unsigned getModuleFileIndex() const { return ID >> 32; }
 
-  unsigned getLocalDeclIndex() const;
+  CLANG_ABI unsigned getLocalDeclIndex() const;
 
   // The DeclID may be compared with predefined decl ID.
   friend bool operator==(const DeclIDBase &LHS, const DeclID &RHS) {
@@ -188,9 +189,9 @@ class LocalDeclID : public DeclIDBase {
 public:
   LocalDeclID() : Base() {}
 
-  static LocalDeclID get(ASTReader &Reader, serialization::ModuleFile &MF,
+  CLANG_ABI static LocalDeclID get(ASTReader &Reader, serialization::ModuleFile &MF,
                          DeclID ID);
-  static LocalDeclID get(ASTReader &Reader, serialization::ModuleFile &MF,
+  CLANG_ABI static LocalDeclID get(ASTReader &Reader, serialization::ModuleFile &MF,
                          unsigned ModuleFileIndex, unsigned LocalDeclID);
 
   LocalDeclID &operator++() {

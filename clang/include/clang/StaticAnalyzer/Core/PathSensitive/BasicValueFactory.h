@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_BASICVALUEFACTORY_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_BASICVALUEFACTORY_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/Expr.h"
 #include "clang/AST/Type.h"
@@ -54,7 +55,7 @@ public:
 
   QualType getType() const { return T; }
 
-  static void Profile(llvm::FoldingSetNodeID& ID, QualType T,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID& ID, QualType T,
                       llvm::ImmutableList<SVal> L);
 
   void Profile(llvm::FoldingSetNodeID& ID) { Profile(ID, T, L); }
@@ -77,7 +78,7 @@ public:
   LLVM_ATTRIBUTE_RETURNS_NONNULL
   const TypedValueRegion *getRegion() const { return region; }
 
-  static void Profile(llvm::FoldingSetNodeID& ID,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID& ID,
                       const StoreRef &store,
                       const TypedValueRegion *region);
 
@@ -98,7 +99,7 @@ public:
   iterator begin() const { return L.begin(); }
   iterator end() const { return L.end(); }
 
-  static void Profile(llvm::FoldingSetNodeID &ID, const NamedDecl *D,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, const NamedDecl *D,
                       llvm::ImmutableList<const CXXBaseSpecifier *> L);
 
   void Profile(llvm::FoldingSetNodeID &ID) { Profile(ID, D, L); }
@@ -130,20 +131,20 @@ class BasicValueFactory {
 
   // This is private because external clients should use the factory
   // method that takes a QualType.
-  APSIntPtr getValue(uint64_t X, unsigned BitWidth, bool isUnsigned);
+  CLANG_ABI APSIntPtr getValue(uint64_t X, unsigned BitWidth, bool isUnsigned);
 
 public:
   BasicValueFactory(ASTContext &ctx, llvm::BumpPtrAllocator &Alloc)
       : Ctx(ctx), BPAlloc(Alloc), SValListFactory(Alloc),
         CXXBaseListFactory(Alloc) {}
 
-  ~BasicValueFactory();
+  CLANG_ABI ~BasicValueFactory();
 
   ASTContext &getContext() const { return Ctx; }
 
-  APSIntPtr getValue(const llvm::APSInt &X);
-  APSIntPtr getValue(const llvm::APInt &X, bool isUnsigned);
-  APSIntPtr getValue(uint64_t X, QualType T);
+  CLANG_ABI APSIntPtr getValue(const llvm::APSInt &X);
+  CLANG_ABI APSIntPtr getValue(const llvm::APInt &X, bool isUnsigned);
+  CLANG_ABI APSIntPtr getValue(uint64_t X, QualType T);
 
   /// Returns the type of the APSInt used to store values of the given QualType.
   APSIntType getAPSIntType(QualType T) const {
@@ -233,13 +234,13 @@ public:
     return getTruthValue(b, Ctx.getLogicalOperationType());
   }
 
-  const CompoundValData *getCompoundValData(QualType T,
+  CLANG_ABI const CompoundValData *getCompoundValData(QualType T,
                                             llvm::ImmutableList<SVal> Vals);
 
-  const LazyCompoundValData *getLazyCompoundValData(const StoreRef &store,
+  CLANG_ABI const LazyCompoundValData *getLazyCompoundValData(const StoreRef &store,
                                             const TypedValueRegion *region);
 
-  const PointerToMemberData *
+  CLANG_ABI const PointerToMemberData *
   getPointerToMemberData(const NamedDecl *ND,
                          llvm::ImmutableList<const CXXBaseSpecifier *> L);
 
@@ -261,21 +262,21 @@ public:
     return CXXBaseListFactory.add(CBS, L);
   }
 
-  const PointerToMemberData *
+  CLANG_ABI const PointerToMemberData *
   accumCXXBase(llvm::iterator_range<CastExpr::path_const_iterator> PathRange,
                const nonloc::PointerToMember &PTM, const clang::CastKind &kind);
 
-  std::optional<APSIntPtr> evalAPSInt(BinaryOperator::Opcode Op,
+  CLANG_ABI std::optional<APSIntPtr> evalAPSInt(BinaryOperator::Opcode Op,
                                       const llvm::APSInt &V1,
                                       const llvm::APSInt &V2);
 
-  const std::pair<SVal, uintptr_t>&
+  CLANG_ABI const std::pair<SVal, uintptr_t>&
   getPersistentSValWithData(const SVal& V, uintptr_t Data);
 
-  const std::pair<SVal, SVal>&
+  CLANG_ABI const std::pair<SVal, SVal>&
   getPersistentSValPair(const SVal& V1, const SVal& V2);
 
-  const SVal* getPersistentSVal(SVal X);
+  CLANG_ABI const SVal* getPersistentSVal(SVal X);
 };
 
 } // namespace ento

@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_AST_DECLCXX_H
 #define LLVM_CLANG_AST_DECLCXX_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTUnresolvedSet.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/DeclBase.h"
@@ -83,7 +84,7 @@ class UsingDecl;
 /// such as those occurring in a list of base specifiers.
 /// Also note that this class has nothing to do with so-called
 /// "access declarations" (C++98 11.3 [class.access.dcl]).
-class AccessSpecDecl : public Decl {
+class CLANG_ABI AccessSpecDecl : public Decl {
   /// The location of the ':'.
   SourceLocation ColonLoc;
 
@@ -255,7 +256,7 @@ public:
 };
 
 /// Represents a C++ struct/union/class.
-class CXXRecordDecl : public RecordDecl {
+class CLANG_ABI CXXRecordDecl : public RecordDecl {
   friend class ASTDeclMerger;
   friend class ASTDeclReader;
   friend class ASTDeclWriter;
@@ -349,7 +350,7 @@ private:
     /// This is actually currently stored in reverse order.
     LazyDeclPtr FirstFriend;
 
-    DefinitionData(CXXRecordDecl *D);
+    CLANG_ABI DefinitionData(CXXRecordDecl *D);
 
     /// Retrieve the set of direct base classes.
     CXXBaseSpecifier *getBases() const {
@@ -372,8 +373,8 @@ private:
     }
 
   private:
-    CXXBaseSpecifier *getBasesSlowCase() const;
-    CXXBaseSpecifier *getVBasesSlowCase() const;
+    CLANG_ABI CXXBaseSpecifier *getBasesSlowCase() const;
+    CLANG_ABI CXXBaseSpecifier *getVBasesSlowCase() const;
   };
 
   struct DefinitionData *DefinitionData;
@@ -449,7 +450,7 @@ private:
     }
 
     // Add a list of captures.
-    void AddCaptureList(ASTContext &Ctx, Capture *CaptureList);
+    CLANG_ABI void AddCaptureList(ASTContext &Ctx, Capture *CaptureList);
   };
 
   struct DefinitionData *dataPtr() const {
@@ -1936,7 +1937,7 @@ public:
 
   /// Check for equivalence of explicit specifiers.
   /// \return true if the explicit specifier are equivalent, false otherwise.
-  bool isEquivalent(const ExplicitSpecifier Other) const;
+  CLANG_ABI bool isEquivalent(const ExplicitSpecifier Other) const;
   /// Determine whether this specifier is known to correspond to an explicit
   /// declaration. Returns false if the specifier is absent or has an
   /// expression that is value-dependent or evaluates to false.
@@ -1952,7 +1953,7 @@ public:
   void setKind(ExplicitSpecKind Kind) { ExplicitSpec.setInt(Kind); }
   void setExpr(Expr *E) { ExplicitSpec.setPointer(E); }
   // Retrieve the explicit specifier in the given declaration, if any.
-  static ExplicitSpecifier getFromDecl(FunctionDecl *Function);
+  CLANG_ABI static ExplicitSpecifier getFromDecl(FunctionDecl *Function);
   static const ExplicitSpecifier getFromDecl(const FunctionDecl *Function) {
     return getFromDecl(const_cast<FunctionDecl *>(Function));
   }
@@ -1971,7 +1972,7 @@ public:
 /// In this example, there will be an explicit deduction guide from the
 /// second line, and implicit deduction guide templates synthesized from
 /// the constructors of \c A.
-class CXXDeductionGuideDecl : public FunctionDecl {
+class CLANG_ABI CXXDeductionGuideDecl : public FunctionDecl {
   void anchor() override;
 
 public:
@@ -2098,10 +2099,10 @@ public:
   friend class ASTDeclReader;
   friend class ASTDeclWriter;
 
-  static RequiresExprBodyDecl *Create(ASTContext &C, DeclContext *DC,
+  CLANG_ABI static RequiresExprBodyDecl *Create(ASTContext &C, DeclContext *DC,
                                       SourceLocation StartLoc);
 
-  static RequiresExprBodyDecl *CreateDeserialized(ASTContext &C,
+  CLANG_ABI static RequiresExprBodyDecl *CreateDeserialized(ASTContext &C,
                                                   GlobalDeclID ID);
 
   // Implement isa/cast/dyncast/etc.
@@ -2121,7 +2122,7 @@ public:
 ///
 /// In the terminology of the C++ Standard, these are the (static and
 /// non-static) member functions, whether virtual or not.
-class CXXMethodDecl : public FunctionDecl {
+class CLANG_ABI CXXMethodDecl : public FunctionDecl {
   void anchor() override;
 
 protected:
@@ -2407,30 +2408,30 @@ class CXXCtorInitializer final {
 
 public:
   /// Creates a new base-class initializer.
-  explicit
+  CLANG_ABI explicit
   CXXCtorInitializer(ASTContext &Context, TypeSourceInfo *TInfo, bool IsVirtual,
                      SourceLocation L, Expr *Init, SourceLocation R,
                      SourceLocation EllipsisLoc);
 
   /// Creates a new member initializer.
-  explicit
+  CLANG_ABI explicit
   CXXCtorInitializer(ASTContext &Context, FieldDecl *Member,
                      SourceLocation MemberLoc, SourceLocation L, Expr *Init,
                      SourceLocation R);
 
   /// Creates a new anonymous field initializer.
-  explicit
+  CLANG_ABI explicit
   CXXCtorInitializer(ASTContext &Context, IndirectFieldDecl *Member,
                      SourceLocation MemberLoc, SourceLocation L, Expr *Init,
                      SourceLocation R);
 
   /// Creates a new delegating initializer.
-  explicit
+  CLANG_ABI explicit
   CXXCtorInitializer(ASTContext &Context, TypeSourceInfo *TInfo,
                      SourceLocation L, Expr *Init, SourceLocation R);
 
   /// \return Unique reproducible object identifier.
-  int64_t getID(const ASTContext &Context) const;
+  CLANG_ABI int64_t getID(const ASTContext &Context) const;
 
   /// Determine whether this initializer is initializing a base class.
   bool isBaseInitializer() const {
@@ -2480,11 +2481,11 @@ public:
   /// If this is a base class initializer, returns the type of the
   /// base class with location information. Otherwise, returns an NULL
   /// type location.
-  TypeLoc getBaseClassLoc() const;
+  CLANG_ABI TypeLoc getBaseClassLoc() const;
 
   /// If this is a base class initializer, returns the type of the base class.
   /// Otherwise, returns null.
-  const Type *getBaseClass() const;
+  CLANG_ABI const Type *getBaseClass() const;
 
   /// Returns whether the base is virtual or not.
   bool isBaseVirtual() const {
@@ -2526,10 +2527,10 @@ public:
   }
 
   /// Determine the source location of the initializer.
-  SourceLocation getSourceLocation() const;
+  CLANG_ABI SourceLocation getSourceLocation() const;
 
   /// Determine the source range covering the entire initializer.
-  SourceRange getSourceRange() const LLVM_READONLY;
+  CLANG_ABI SourceRange getSourceRange() const LLVM_READONLY;
 
   /// Determine whether this initializer is explicitly written
   /// in the source code.
@@ -2593,7 +2594,7 @@ public:
 ///   explicit X(int); // represented by a CXXConstructorDecl.
 /// };
 /// \endcode
-class CXXConstructorDecl final
+class CLANG_ABI CXXConstructorDecl final
     : public CXXMethodDecl,
       private llvm::TrailingObjects<CXXConstructorDecl, InheritedConstructor,
                                     ExplicitSpecifier> {
@@ -2861,7 +2862,7 @@ public:
 ///   ~X(); // represented by a CXXDestructorDecl.
 /// };
 /// \endcode
-class CXXDestructorDecl : public CXXMethodDecl {
+class CLANG_ABI CXXDestructorDecl : public CXXMethodDecl {
   friend class ASTDeclReader;
   friend class ASTDeclWriter;
 
@@ -2929,7 +2930,7 @@ public:
 ///   operator bool();
 /// };
 /// \endcode
-class CXXConversionDecl : public CXXMethodDecl {
+class CLANG_ABI CXXConversionDecl : public CXXMethodDecl {
   CXXConversionDecl(ASTContext &C, CXXRecordDecl *RD, SourceLocation StartLoc,
                     const DeclarationNameInfo &NameInfo, QualType T,
                     TypeSourceInfo *TInfo, bool UsesFPIntrin, bool isInline,
@@ -3001,7 +3002,7 @@ enum class LinkageSpecLanguageIDs { C = 1, CXX = 2 };
 /// \code
 ///   extern "C" void foo();
 /// \endcode
-class LinkageSpecDecl : public Decl, public DeclContext {
+class CLANG_ABI LinkageSpecDecl : public Decl, public DeclContext {
   virtual void anchor();
   // This class stores some data in DeclContext::LinkageSpecDeclBits to save
   // some space. Use the provided accessors to access it.
@@ -3082,7 +3083,7 @@ public:
 /// \note UsingDirectiveDecl should be Decl not NamedDecl, but we provide
 /// artificial names for all using-directives in order to store
 /// them in DeclContext effectively.
-class UsingDirectiveDecl : public NamedDecl {
+class CLANG_ABI UsingDirectiveDecl : public NamedDecl {
   /// The location of the \c using keyword.
   SourceLocation UsingLoc;
 
@@ -3186,7 +3187,7 @@ public:
 /// \code
 /// namespace Foo = Bar;
 /// \endcode
-class NamespaceAliasDecl : public NamespaceBaseDecl,
+class CLANG_ABI NamespaceAliasDecl : public NamespaceBaseDecl,
                            public Redeclarable<NamespaceAliasDecl> {
   friend class ASTDeclReader;
 
@@ -3292,7 +3293,7 @@ public:
 
 /// Implicit declaration of a temporary that was materialized by
 /// a MaterializeTemporaryExpr and lifetime-extended by a declaration
-class LifetimeExtendedTemporaryDecl final
+class CLANG_ABI LifetimeExtendedTemporaryDecl final
     : public Decl,
       public Mergeable<LifetimeExtendedTemporaryDecl> {
   friend class MaterializeTemporaryExpr;
@@ -3385,7 +3386,7 @@ public:
 ///   using enum A::bar;
 /// }
 /// \endcode
-class UsingShadowDecl : public NamedDecl, public Redeclarable<UsingShadowDecl> {
+class CLANG_ABI UsingShadowDecl : public NamedDecl, public Redeclarable<UsingShadowDecl> {
   friend class BaseUsingDecl;
 
   /// The referenced declaration.
@@ -3482,7 +3483,7 @@ public:
 /// Represents a C++ declaration that introduces decls from somewhere else. It
 /// provides a set of the shadow decls so introduced.
 
-class BaseUsingDecl : public NamedDecl {
+class CLANG_ABI BaseUsingDecl : public NamedDecl {
   /// The first shadow declaration of the shadow decl chain associated
   /// with this using declaration.
   ///
@@ -3577,7 +3578,7 @@ public:
 /// \code
 ///    using someNameSpace::someIdentifier;
 /// \endcode
-class UsingDecl : public BaseUsingDecl, public Mergeable<UsingDecl> {
+class CLANG_ABI UsingDecl : public BaseUsingDecl, public Mergeable<UsingDecl> {
   /// The source location of the 'using' keyword itself.
   SourceLocation UsingLocation;
 
@@ -3663,7 +3664,7 @@ public:
 ///    using Base::Base; // creates a UsingDecl and a ConstructorUsingShadowDecl
 /// };
 /// \endcode
-class ConstructorUsingShadowDecl final : public UsingShadowDecl {
+class CLANG_ABI ConstructorUsingShadowDecl final : public UsingShadowDecl {
   /// If this constructor using declaration inherted the constructor
   /// from an indirect base class, this is the ConstructorUsingShadowDecl
   /// in the named direct base class from which the declaration was inherited.
@@ -3778,7 +3779,7 @@ public:
 ///    using enum SomeEnumTag ;
 /// \endcode
 
-class UsingEnumDecl : public BaseUsingDecl, public Mergeable<UsingEnumDecl> {
+class CLANG_ABI UsingEnumDecl : public BaseUsingDecl, public Mergeable<UsingEnumDecl> {
   /// The source location of the 'using' keyword itself.
   SourceLocation UsingLocation;
   /// The source location of the 'enum' keyword.
@@ -3857,7 +3858,7 @@ public:
 /// In the second case above, the UsingPackDecl will have the name
 /// 'operator T' (which contains an unexpanded pack), but the individual
 /// UsingDecls and UsingShadowDecls will have more reasonable names.
-class UsingPackDecl final
+class CLANG_ABI UsingPackDecl final
     : public NamedDecl, public Mergeable<UsingPackDecl>,
       private llvm::TrailingObjects<UsingPackDecl, NamedDecl *> {
   /// The UnresolvedUsingValueDecl or UnresolvedUsingTypenameDecl from
@@ -3925,7 +3926,7 @@ public:
 ///   using Base<T>::foo;
 /// };
 /// \endcode
-class UnresolvedUsingValueDecl : public ValueDecl,
+class CLANG_ABI UnresolvedUsingValueDecl : public ValueDecl,
                                  public Mergeable<UnresolvedUsingValueDecl> {
   /// The source location of the 'using' keyword
   SourceLocation UsingLocation;
@@ -4021,7 +4022,7 @@ public:
 ///
 /// The type associated with an unresolved using typename decl is
 /// currently always a typename type.
-class UnresolvedUsingTypenameDecl
+class CLANG_ABI UnresolvedUsingTypenameDecl
     : public TypeDecl,
       public Mergeable<UnresolvedUsingTypenameDecl> {
   friend class ASTDeclReader;
@@ -4104,7 +4105,7 @@ public:
 /// In that case, Sema builds a UsingShadowDecl whose target is an instance of
 /// this declaration, adding it to the current scope. Referring to this
 /// declaration in any way is an error.
-class UnresolvedUsingIfExistsDecl final : public NamedDecl {
+class CLANG_ABI UnresolvedUsingIfExistsDecl final : public NamedDecl {
   UnresolvedUsingIfExistsDecl(DeclContext *DC, SourceLocation Loc,
                               DeclarationName Name);
 
@@ -4122,7 +4123,7 @@ public:
 };
 
 /// Represents a C++11 static_assert declaration.
-class StaticAssertDecl : public Decl {
+class CLANG_ABI StaticAssertDecl : public Decl {
   llvm::PointerIntPair<Expr *, 1, bool> AssertExprAndFailed;
   Expr *Message;
   SourceLocation RParenLoc;
@@ -4171,7 +4172,7 @@ public:
 /// a, b, and c are BindingDecls, whose bindings are the expressions
 /// x[0], x[1], and x[2] respectively, where x is the implicit
 /// DecompositionDecl of type 'int (&)[3]'.
-class BindingDecl : public ValueDecl {
+class CLANG_ABI BindingDecl : public ValueDecl {
   /// The declaration that this binding binds to part of.
   ValueDecl *Decomp = nullptr;
   /// The binding represented by this declaration. References to this
@@ -4233,7 +4234,7 @@ public:
 /// the second line declares a DecompositionDecl of type 'int (&)[3]', and
 /// three BindingDecls (named a, b, and c). An instance of this class is always
 /// unnamed, but behaves in almost all other respects like a VarDecl.
-class DecompositionDecl final
+class CLANG_ABI DecompositionDecl final
     : public VarDecl,
       private llvm::TrailingObjects<DecompositionDecl, BindingDecl *> {
   /// The number of BindingDecl*s following this object.
@@ -4330,7 +4331,7 @@ public:
 /// A property declared using an incomplete array type may
 /// additionally be subscripted, adding extra parameters to the getter
 /// and putter methods.
-class MSPropertyDecl : public DeclaratorDecl {
+class CLANG_ABI MSPropertyDecl : public DeclaratorDecl {
   IdentifierInfo *GetterId, *SetterId;
 
   MSPropertyDecl(DeclContext *DC, SourceLocation L, DeclarationName N,
@@ -4382,7 +4383,7 @@ struct MSGuidDeclParts {
 ///
 /// X is a CXXRecordDecl that contains a UuidAttr that references the (unique)
 /// MSGuidDecl for the specified UUID.
-class MSGuidDecl : public ValueDecl,
+class CLANG_ABI MSGuidDecl : public ValueDecl,
                    public Mergeable<MSGuidDecl>,
                    public llvm::FoldingSetNode {
 public:
@@ -4439,7 +4440,7 @@ public:
 /// These is currently only used to back the LValue returned by
 /// __builtin_source_location, but could potentially be used for other similar
 /// situations in the future.
-class UnnamedGlobalConstantDecl : public ValueDecl,
+class CLANG_ABI UnnamedGlobalConstantDecl : public ValueDecl,
                                   public Mergeable<UnnamedGlobalConstantDecl>,
                                   public llvm::FoldingSetNode {
 
@@ -4484,7 +4485,7 @@ public:
 
 /// Insertion operator for diagnostics.  This allows sending an AccessSpecifier
 /// into a diagnostic with <<.
-const StreamingDiagnostic &operator<<(const StreamingDiagnostic &DB,
+CLANG_ABI const StreamingDiagnostic &operator<<(const StreamingDiagnostic &DB,
                                       AccessSpecifier AS);
 
 } // namespace clang

@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_APVALUE_H
 #define LLVM_CLANG_AST_APVALUE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/APFixedPoint.h"
 #include "llvm/ADT/APFloat.h"
@@ -46,7 +47,7 @@ class TypeInfoLValue {
 
 public:
   TypeInfoLValue() : T() {}
-  explicit TypeInfoLValue(const Type *T);
+  CLANG_ABI explicit TypeInfoLValue(const Type *T);
 
   const Type *getType() const { return T; }
   explicit operator bool() const { return T; }
@@ -58,7 +59,7 @@ public:
     return V;
   }
 
-  void print(llvm::raw_ostream &Out, const PrintingPolicy &Policy) const;
+  CLANG_ABI void print(llvm::raw_ostream &Out, const PrintingPolicy &Policy) const;
 };
 
 /// Symbolic representation of a dynamic allocation.
@@ -150,12 +151,12 @@ public:
 
   public:
     LValueBase() : Local{} {}
-    LValueBase(const ValueDecl *P, unsigned I = 0, unsigned V = 0);
-    LValueBase(const Expr *P, unsigned I = 0, unsigned V = 0);
-    static LValueBase getDynamicAlloc(DynamicAllocLValue LV, QualType Type);
-    static LValueBase getTypeInfo(TypeInfoLValue LV, QualType TypeInfo);
+    CLANG_ABI LValueBase(const ValueDecl *P, unsigned I = 0, unsigned V = 0);
+    CLANG_ABI LValueBase(const Expr *P, unsigned I = 0, unsigned V = 0);
+    CLANG_ABI static LValueBase getDynamicAlloc(DynamicAllocLValue LV, QualType Type);
+    CLANG_ABI static LValueBase getTypeInfo(TypeInfoLValue LV, QualType TypeInfo);
 
-    void Profile(llvm::FoldingSetNodeID &ID) const;
+    CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID) const;
 
     template <class T> bool is() const { return isa<T>(Ptr); }
 
@@ -165,18 +166,18 @@ public:
       return dyn_cast_if_present<T>(Ptr);
     }
 
-    void *getOpaqueValue() const;
+    CLANG_ABI void *getOpaqueValue() const;
 
-    bool isNull() const;
+    CLANG_ABI bool isNull() const;
 
-    explicit operator bool() const;
+    CLANG_ABI explicit operator bool() const;
 
-    unsigned getCallIndex() const;
-    unsigned getVersion() const;
-    QualType getTypeInfoType() const;
-    QualType getDynamicAllocType() const;
+    CLANG_ABI unsigned getCallIndex() const;
+    CLANG_ABI unsigned getVersion() const;
+    CLANG_ABI QualType getTypeInfoType() const;
+    CLANG_ABI QualType getDynamicAllocType() const;
 
-    QualType getType() const;
+    CLANG_ABI QualType getType() const;
 
     friend bool operator==(const LValueBase &LHS, const LValueBase &RHS);
     friend bool operator!=(const LValueBase &LHS, const LValueBase &RHS) {
@@ -211,7 +212,7 @@ public:
 
   public:
     LValuePathEntry() : Value() {}
-    LValuePathEntry(BaseOrMemberType BaseOrMember);
+    CLANG_ABI LValuePathEntry(BaseOrMemberType BaseOrMember);
     static LValuePathEntry ArrayIndex(uint64_t Index) {
       LValuePathEntry Result;
       Result.Value = Index;
@@ -224,7 +225,7 @@ public:
     }
     uint64_t getAsArrayIndex() const { return Value; }
 
-    void Profile(llvm::FoldingSetNodeID &ID) const;
+    CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID) const;
 
     friend bool operator==(LValuePathEntry A, LValuePathEntry B) {
       return A.Value == B.Value;
@@ -242,8 +243,8 @@ public:
   public:
     ArrayRef<LValuePathEntry> Path;
 
-    LValuePathSerializationHelper(ArrayRef<LValuePathEntry>, QualType);
-    QualType getType();
+    CLANG_ABI LValuePathSerializationHelper(ArrayRef<LValuePathEntry>, QualType);
+    CLANG_ABI QualType getType();
   };
   struct NoLValuePath {};
   struct UninitArray {};
@@ -278,27 +279,27 @@ private:
   struct Arr {
     APValue *Elts;
     unsigned NumElts, ArrSize;
-    Arr(unsigned NumElts, unsigned ArrSize);
+    CLANG_ABI Arr(unsigned NumElts, unsigned ArrSize);
     Arr(const Arr &) = delete;
     Arr &operator=(const Arr &) = delete;
-    ~Arr();
+    CLANG_ABI ~Arr();
   };
   struct StructData {
     APValue *Elts;
     unsigned NumBases;
     unsigned NumFields;
-    StructData(unsigned NumBases, unsigned NumFields);
+    CLANG_ABI StructData(unsigned NumBases, unsigned NumFields);
     StructData(const StructData &) = delete;
     StructData &operator=(const StructData &) = delete;
-    ~StructData();
+    CLANG_ABI ~StructData();
   };
   struct UnionData {
     const FieldDecl *Field;
     APValue *Value;
-    UnionData();
+    CLANG_ABI UnionData();
     UnionData(const UnionData &) = delete;
     UnionData &operator=(const UnionData &) = delete;
-    ~UnionData();
+    CLANG_ABI ~UnionData();
   };
   struct AddrLabelDiffData {
     const AddrLabelExpr* LHSExpr;
@@ -350,8 +351,8 @@ public:
   APValue(APFloat R, APFloat I) : Kind(None), AllowConstexprUnknown(false) {
     MakeComplexFloat(); setComplexFloat(std::move(R), std::move(I));
   }
-  APValue(const APValue &RHS);
-  APValue(APValue &&RHS);
+  CLANG_ABI APValue(const APValue &RHS);
+  CLANG_ABI APValue(APValue &&RHS);
   /// Creates an lvalue APValue without an lvalue path.
   /// \param Base The base of the lvalue.
   /// \param Offset The offset of the lvalue.
@@ -435,8 +436,8 @@ public:
     return Result;
   }
 
-  APValue &operator=(const APValue &RHS);
-  APValue &operator=(APValue &&RHS);
+  CLANG_ABI APValue &operator=(const APValue &RHS);
+  CLANG_ABI APValue &operator=(APValue &&RHS);
 
   ~APValue() {
     if (Kind != None && Kind != Indeterminate)
@@ -448,15 +449,15 @@ public:
   /// If APValues are constructed via placement new, \c needsCleanup()
   /// indicates whether the destructor must be called in order to correctly
   /// free all allocated memory.
-  bool needsCleanup() const;
+  CLANG_ABI bool needsCleanup() const;
 
   /// Swaps the contents of this and the given APValue.
-  void swap(APValue &RHS);
+  CLANG_ABI void swap(APValue &RHS);
 
   /// profile this value. There is no guarantee that values of different
   /// types will not produce the same profiled value, so the type should
   /// typically also be profiled if it's not implied by the context.
-  void Profile(llvm::FoldingSetNodeID &ID) const;
+  CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID) const;
 
   ValueKind getKind() const { return Kind; }
 
@@ -477,14 +478,14 @@ public:
   bool isMemberPointer() const { return Kind == MemberPointer; }
   bool isAddrLabelDiff() const { return Kind == AddrLabelDiff; }
 
-  void dump() const;
-  void dump(raw_ostream &OS, const ASTContext &Context) const;
+  CLANG_ABI void dump() const;
+  CLANG_ABI void dump(raw_ostream &OS, const ASTContext &Context) const;
 
-  void printPretty(raw_ostream &OS, const ASTContext &Ctx, QualType Ty) const;
-  void printPretty(raw_ostream &OS, const PrintingPolicy &Policy, QualType Ty,
+  CLANG_ABI void printPretty(raw_ostream &OS, const ASTContext &Ctx, QualType Ty) const;
+  CLANG_ABI void printPretty(raw_ostream &OS, const PrintingPolicy &Policy, QualType Ty,
                    const ASTContext *Ctx = nullptr) const;
 
-  std::string getAsString(const ASTContext &Ctx, QualType Ty) const;
+  CLANG_ABI std::string getAsString(const ASTContext &Ctx, QualType Ty) const;
 
   APSInt &getInt() {
     assert(isInt() && "Invalid accessor");
@@ -497,7 +498,7 @@ public:
   /// Try to convert this value to an integral constant. This works if it's an
   /// integer, null pointer, or offset from a null pointer. Returns true on
   /// success.
-  bool toIntegralConstant(APSInt &Result, QualType SrcTy,
+  CLANG_ABI bool toIntegralConstant(APSInt &Result, QualType SrcTy,
                           const ASTContext &Ctx) const;
 
   APFloat &getFloat() {
@@ -548,17 +549,17 @@ public:
     return const_cast<APValue*>(this)->getComplexFloatImag();
   }
 
-  const LValueBase getLValueBase() const;
-  CharUnits &getLValueOffset();
+  CLANG_ABI const LValueBase getLValueBase() const;
+  CLANG_ABI CharUnits &getLValueOffset();
   const CharUnits &getLValueOffset() const {
     return const_cast<APValue*>(this)->getLValueOffset();
   }
-  bool isLValueOnePastTheEnd() const;
-  bool hasLValuePath() const;
-  ArrayRef<LValuePathEntry> getLValuePath() const;
-  unsigned getLValueCallIndex() const;
-  unsigned getLValueVersion() const;
-  bool isNullPointer() const;
+  CLANG_ABI bool isLValueOnePastTheEnd() const;
+  CLANG_ABI bool hasLValuePath() const;
+  CLANG_ABI ArrayRef<LValuePathEntry> getLValuePath() const;
+  CLANG_ABI unsigned getLValueCallIndex() const;
+  CLANG_ABI unsigned getLValueVersion() const;
+  CLANG_ABI bool isNullPointer() const;
 
   APValue &getVectorElt(unsigned I) {
     assert(isVector() && "Invalid accessor");
@@ -638,9 +639,9 @@ public:
     return const_cast<APValue*>(this)->getUnionValue();
   }
 
-  const ValueDecl *getMemberPointerDecl() const;
-  bool isMemberPointerToDerivedMember() const;
-  ArrayRef<const CXXRecordDecl*> getMemberPointerPath() const;
+  CLANG_ABI const ValueDecl *getMemberPointerDecl() const;
+  CLANG_ABI bool isMemberPointerToDerivedMember() const;
+  CLANG_ABI ArrayRef<const CXXRecordDecl*> getMemberPointerPath() const;
 
   const AddrLabelExpr* getAddrLabelDiffLHS() const {
     assert(isAddrLabelDiff() && "Invalid accessor");
@@ -682,12 +683,12 @@ public:
     ((ComplexAPFloat *)(char *)&Data)->Real = std::move(R);
     ((ComplexAPFloat *)(char *)&Data)->Imag = std::move(I);
   }
-  void setLValue(LValueBase B, const CharUnits &O, NoLValuePath,
+  CLANG_ABI void setLValue(LValueBase B, const CharUnits &O, NoLValuePath,
                  bool IsNullPtr);
-  void setLValue(LValueBase B, const CharUnits &O,
+  CLANG_ABI void setLValue(LValueBase B, const CharUnits &O,
                  ArrayRef<LValuePathEntry> Path, bool OnePastTheEnd,
                  bool IsNullPtr);
-  void setUnion(const FieldDecl *Field, const APValue &Value);
+  CLANG_ABI void setUnion(const FieldDecl *Field, const APValue &Value);
   void setAddrLabelDiff(const AddrLabelExpr* LHSExpr,
                         const AddrLabelExpr* RHSExpr) {
     ((AddrLabelDiffData *)(char *)&Data)->LHSExpr = LHSExpr;
@@ -695,7 +696,7 @@ public:
   }
 
 private:
-  void DestroyDataAndMakeUninit();
+  CLANG_ABI void DestroyDataAndMakeUninit();
   void MakeInt() {
     assert(isAbsent() && "Bad state change");
     new ((void *)&Data) APSInt(1);
@@ -726,8 +727,8 @@ private:
     new ((void *)(char *)&Data) ComplexAPFloat();
     Kind = ComplexFloat;
   }
-  void MakeLValue();
-  void MakeArray(unsigned InitElts, unsigned Size);
+  CLANG_ABI void MakeLValue();
+  CLANG_ABI void MakeArray(unsigned InitElts, unsigned Size);
   void MakeStruct(unsigned B, unsigned M) {
     assert(isAbsent() && "Bad state change");
     new ((void *)(char *)&Data) StructData(B, M);
@@ -738,7 +739,7 @@ private:
     new ((void *)(char *)&Data) UnionData();
     Kind = Union;
   }
-  void MakeMemberPointer(const ValueDecl *Member, bool IsDerivedMember,
+  CLANG_ABI void MakeMemberPointer(const ValueDecl *Member, bool IsDerivedMember,
                          ArrayRef<const CXXRecordDecl*> Path);
   void MakeAddrLabelDiff() {
     assert(isAbsent() && "Bad state change");
@@ -769,10 +770,10 @@ private:
 
 namespace llvm {
 template<> struct DenseMapInfo<clang::APValue::LValueBase> {
-  static clang::APValue::LValueBase getEmptyKey();
-  static clang::APValue::LValueBase getTombstoneKey();
-  static unsigned getHashValue(const clang::APValue::LValueBase &Base);
-  static bool isEqual(const clang::APValue::LValueBase &LHS,
+  CLANG_ABI static clang::APValue::LValueBase getEmptyKey();
+  CLANG_ABI static clang::APValue::LValueBase getTombstoneKey();
+  CLANG_ABI static unsigned getHashValue(const clang::APValue::LValueBase &Base);
+  CLANG_ABI static bool isEqual(const clang::APValue::LValueBase &LHS,
                       const clang::APValue::LValueBase &RHS);
 };
 }

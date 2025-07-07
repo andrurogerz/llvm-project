@@ -20,6 +20,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_CHECKERREGISTRYDATA_H
 #define LLVM_CLANG_STATICANALYZER_CORE_CHECKERREGISTRYDATA_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/SetVector.h"
 #include "llvm/ADT/StringMap.h"
@@ -76,8 +77,8 @@ struct CmdLineOption {
            "Invalid development status!");
   }
 
-  LLVM_DUMP_METHOD void dump() const;
-  LLVM_DUMP_METHOD void dumpToStream(llvm::raw_ostream &Out) const;
+  CLANG_ABI LLVM_DUMP_METHOD void dump() const;
+  CLANG_ABI LLVM_DUMP_METHOD void dumpToStream(llvm::raw_ostream &Out) const;
 };
 
 using CmdLineOptionList = llvm::SmallVector<CmdLineOption, 0>;
@@ -135,8 +136,8 @@ struct CheckerInfo {
   // Used for lower_bound.
   explicit CheckerInfo(StringRef FullName) : FullName(FullName) {}
 
-  LLVM_DUMP_METHOD void dump() const;
-  LLVM_DUMP_METHOD void dumpToStream(llvm::raw_ostream &Out) const;
+  CLANG_ABI LLVM_DUMP_METHOD void dump() const;
+  CLANG_ABI LLVM_DUMP_METHOD void dumpToStream(llvm::raw_ostream &Out) const;
 };
 
 using StateFromCmdLine = CheckerInfo::StateFromCmdLine;
@@ -155,8 +156,8 @@ struct PackageInfo {
 
   explicit PackageInfo(StringRef FullName) : FullName(FullName) {}
 
-  LLVM_DUMP_METHOD void dump() const;
-  LLVM_DUMP_METHOD void dumpToStream(llvm::raw_ostream &Out) const;
+  CLANG_ABI LLVM_DUMP_METHOD void dump() const;
+  CLANG_ABI LLVM_DUMP_METHOD void dumpToStream(llvm::raw_ostream &Out) const;
 };
 
 using PackageInfoList = llvm::SmallVector<PackageInfo, 0>;
@@ -209,14 +210,14 @@ public:
   llvm::SmallVector<std::pair<StringRef, StringRef>, 0> Dependencies;
   llvm::SmallVector<std::pair<StringRef, StringRef>, 0> WeakDependencies;
 
-  CheckerInfoListRange getMutableCheckersForCmdLineArg(StringRef CmdLineArg);
+  CLANG_ABI CheckerInfoListRange getMutableCheckersForCmdLineArg(StringRef CmdLineArg);
 
   /// Prints the name and description of all checkers in this registry.
   /// This output is not intended to be machine-parseable.
-  void printCheckerWithDescList(const AnalyzerOptions &AnOpts, raw_ostream &Out,
+  CLANG_ABI void printCheckerWithDescList(const AnalyzerOptions &AnOpts, raw_ostream &Out,
                                 size_t MaxNameChars = 30) const;
-  void printEnabledCheckerList(raw_ostream &Out) const;
-  void printCheckerOptionList(const AnalyzerOptions &AnOpts,
+  CLANG_ABI void printEnabledCheckerList(raw_ostream &Out) const;
+  CLANG_ABI void printCheckerOptionList(const AnalyzerOptions &AnOpts,
                               raw_ostream &Out) const;
 };
 

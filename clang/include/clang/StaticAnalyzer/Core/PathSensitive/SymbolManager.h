@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_SYMBOLMANAGER_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_SYMBOLMANAGER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Expr.h"
 #include "clang/AST/Type.h"
 #include "clang/Analysis/AnalysisDeclContext.h"
@@ -41,7 +42,7 @@ class BasicValueFactory;
 class StoreManager;
 
 ///A symbol representing the value stored at a MemRegion.
-class SymbolRegionValue : public SymbolData {
+class CLANG_ABI SymbolRegionValue : public SymbolData {
   const TypedValueRegion *R;
 
   friend class SymExprAllocator;
@@ -79,7 +80,7 @@ public:
 
 /// A symbol representing the result of an expression in the case when we do
 /// not know anything about what the expression is.
-class SymbolConjured : public SymbolData {
+class CLANG_ABI SymbolConjured : public SymbolData {
   ConstCFGElementRef Elem;
   QualType T;
   unsigned Count;
@@ -135,7 +136,7 @@ public:
 
 /// A symbol representing the value of a MemRegion whose parent region has
 /// symbolic value.
-class SymbolDerived : public SymbolData {
+class CLANG_ABI SymbolDerived : public SymbolData {
   SymbolRef parentSymbol;
   const TypedValueRegion *R;
 
@@ -180,7 +181,7 @@ public:
 /// SymbolExtent - Represents the extent (size in bytes) of a bounded region.
 ///  Clients should not ask the SymbolManager for a region's extent. Always use
 ///  SubRegion::getExtent instead -- the value returned may not be a symbol.
-class SymbolExtent : public SymbolData {
+class CLANG_ABI SymbolExtent : public SymbolData {
   const SubRegion *R;
 
   friend class SymExprAllocator;
@@ -218,7 +219,7 @@ public:
 ///  Metadata symbols remain live as long as they are marked as in use before
 ///  dead-symbol sweeping AND their associated regions are still alive.
 ///  Intended for use by checkers.
-class SymbolMetadata : public SymbolData {
+class CLANG_ABI SymbolMetadata : public SymbolData {
   const MemRegion* R;
   const Stmt *S;
   QualType T;
@@ -284,7 +285,7 @@ class SymbolMetadata : public SymbolData {
 };
 
 /// Represents a cast expression.
-class SymbolCast : public SymExpr {
+class CLANG_ABI SymbolCast : public SymExpr {
   const SymExpr *Operand;
 
   /// Type of the operand.
@@ -335,7 +336,7 @@ public:
 };
 
 /// Represents a symbolic expression involving a unary operator.
-class UnarySymExpr : public SymExpr {
+class CLANG_ABI UnarySymExpr : public SymExpr {
   const SymExpr *Operand;
   UnaryOperator::Opcode Op;
   QualType T;
@@ -424,9 +425,9 @@ protected:
   static const llvm::APSInt *getPointer(APSIntPtr Value) { return Value.get(); }
   static const SymExpr *getPointer(const SymExpr *Value) { return Value; }
 
-  static void dumpToStreamImpl(raw_ostream &os, const SymExpr *Value);
-  static void dumpToStreamImpl(raw_ostream &os, const llvm::APSInt &Value);
-  static void dumpToStreamImpl(raw_ostream &os, BinaryOperator::Opcode op);
+  CLANG_ABI static void dumpToStreamImpl(raw_ostream &os, const SymExpr *Value);
+  CLANG_ABI static void dumpToStreamImpl(raw_ostream &os, const llvm::APSInt &Value);
+  CLANG_ABI static void dumpToStreamImpl(raw_ostream &os, BinaryOperator::Opcode op);
 };
 
 /// Template implementation for all binary symbolic expressions
@@ -526,7 +527,7 @@ public:
                 llvm::BumpPtrAllocator &bpalloc)
       : SymbolDependencies(16), Alloc(bpalloc), BV(bv), Ctx(ctx) {}
 
-  static bool canSymbolicate(QualType T);
+  CLANG_ABI static bool canSymbolicate(QualType T);
 
   /// Create or retrieve a SymExpr of type \p SymExprT for the given arguments.
   /// Use the arguments to check for an existing SymExpr and return it,
@@ -549,9 +550,9 @@ public:
   /// Add artificial symbol dependency.
   ///
   /// The dependent symbol should stay alive as long as the primary is alive.
-  void addSymbolDependency(const SymbolRef Primary, const SymbolRef Dependent);
+  CLANG_ABI void addSymbolDependency(const SymbolRef Primary, const SymbolRef Dependent);
 
-  const SymbolRefSmallVectorTy *getDependentSymbols(const SymbolRef Primary);
+  CLANG_ABI const SymbolRefSmallVectorTy *getDependentSymbols(const SymbolRef Primary);
 
   ASTContext &getContext() { return Ctx; }
   BasicValueFactory &getBasicVals() { return BV; }
@@ -599,17 +600,17 @@ public:
   /// It might return null.
   const LocationContext *getLocationContext() const { return LCtx; }
 
-  bool isLive(SymbolRef sym);
-  bool isLiveRegion(const MemRegion *region);
-  bool isLive(const Expr *ExprVal, const LocationContext *LCtx) const;
-  bool isLive(const VarRegion *VR, bool includeStoreBindings = false) const;
+  CLANG_ABI bool isLive(SymbolRef sym);
+  CLANG_ABI bool isLiveRegion(const MemRegion *region);
+  CLANG_ABI bool isLive(const Expr *ExprVal, const LocationContext *LCtx) const;
+  CLANG_ABI bool isLive(const VarRegion *VR, bool includeStoreBindings = false) const;
 
   /// Unconditionally marks a symbol as live.
   ///
   /// This should never be
   /// used by checkers, only by the state infrastructure such as the store and
   /// environment. Checkers should instead use metadata symbols and markInUse.
-  void markLive(SymbolRef sym);
+  CLANG_ABI void markLive(SymbolRef sym);
 
   /// Marks a symbol as important to a checker.
   ///
@@ -618,7 +619,7 @@ public:
   /// live. For other symbols, this has no effect; checkers are not permitted
   /// to influence the life of other symbols. This should be used before any
   /// symbol marking has occurred, i.e. in the MarkLiveSymbols callback.
-  void markInUse(SymbolRef sym);
+  CLANG_ABI void markInUse(SymbolRef sym);
 
   llvm::iterator_range<RegionSetTy::const_iterator> regions() const {
     return LiveRegionRoots;
@@ -632,9 +633,9 @@ public:
     return !isLive(sym);
   }
 
-  void markLive(const MemRegion *region);
-  void markLazilyCopied(const MemRegion *region);
-  void markElementIndicesLive(const MemRegion *region);
+  CLANG_ABI void markLive(const MemRegion *region);
+  CLANG_ABI void markLazilyCopied(const MemRegion *region);
+  CLANG_ABI void markElementIndicesLive(const MemRegion *region);
 
   /// Set to the value of the symbolic store after
   /// StoreManager::removeDeadBindings has been called.

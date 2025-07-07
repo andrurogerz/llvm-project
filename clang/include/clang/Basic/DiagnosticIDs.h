@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_BASIC_DIAGNOSTICIDS_H
 #define LLVM_CLANG_BASIC_DIAGNOSTICIDS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/DiagnosticCategories.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
@@ -269,8 +270,8 @@ private:
   }();
 
 public:
-  DiagnosticIDs();
-  ~DiagnosticIDs();
+  CLANG_ABI DiagnosticIDs();
+  CLANG_ABI ~DiagnosticIDs();
 
   /// Return an ID for a diagnostic with the specified format string and
   /// level.
@@ -281,7 +282,7 @@ public:
   // FIXME: Replace this function with a create-only facilty like
   // createCustomDiagIDFromFormatString() to enforce safe usage. At the time of
   // writing, nearly all callers of this function were invalid.
-  unsigned getCustomDiagID(CustomDiagDesc Diag);
+  CLANG_ABI unsigned getCustomDiagID(CustomDiagDesc Diag);
 
   // FIXME: this API should almost never be used; custom diagnostics do not
   // have an associated diagnostic group and thus cannot be controlled by users
@@ -319,25 +320,25 @@ public:
   //
 
   /// Given a diagnostic ID, return a description of the issue.
-  StringRef getDescription(unsigned DiagID) const;
+  CLANG_ABI StringRef getDescription(unsigned DiagID) const;
 
   /// Return true if the unmapped diagnostic levelof the specified
   /// diagnostic ID is a Warning or Extension.
   ///
   /// This is not legal to call on NOTEs.
-  bool isWarningOrExtension(unsigned DiagID) const;
+  CLANG_ABI bool isWarningOrExtension(unsigned DiagID) const;
 
   /// Return true if the specified diagnostic is mapped to errors by
   /// default.
-  bool isDefaultMappingAsError(unsigned DiagID) const;
+  CLANG_ABI bool isDefaultMappingAsError(unsigned DiagID) const;
 
   /// Get the default mapping for this diagnostic.
-  DiagnosticMapping getDefaultMapping(unsigned DiagID) const;
+  CLANG_ABI DiagnosticMapping getDefaultMapping(unsigned DiagID) const;
 
-  void initCustomDiagMapping(DiagnosticMapping &, unsigned DiagID);
+  CLANG_ABI void initCustomDiagMapping(DiagnosticMapping &, unsigned DiagID);
 
   /// Determine whether the given diagnostic ID is a Note.
-  bool isNote(unsigned DiagID) const;
+  CLANG_ABI bool isNote(unsigned DiagID) const;
 
   /// Determine whether the given diagnostic ID is for an
   /// extension of some sort.
@@ -353,49 +354,49 @@ public:
   /// diagnostic is ignored by default (in which case -pedantic enables it) or
   /// treated as a warning/error by default.
   ///
-  bool isExtensionDiag(unsigned DiagID, bool &EnabledByDefault) const;
+  CLANG_ABI bool isExtensionDiag(unsigned DiagID, bool &EnabledByDefault) const;
 
   /// Given a group ID, returns the flag that toggles the group.
   /// For example, for Group::DeprecatedDeclarations, returns
   /// "deprecated-declarations".
-  static StringRef getWarningOptionForGroup(diag::Group);
+  CLANG_ABI static StringRef getWarningOptionForGroup(diag::Group);
 
   /// Given a diagnostic group ID, return its documentation.
-  static StringRef getWarningOptionDocumentation(diag::Group GroupID);
+  CLANG_ABI static StringRef getWarningOptionDocumentation(diag::Group GroupID);
 
-  void setGroupSeverity(StringRef Group, diag::Severity);
-  void setGroupNoWarningsAsError(StringRef Group, bool);
+  CLANG_ABI void setGroupSeverity(StringRef Group, diag::Severity);
+  CLANG_ABI void setGroupNoWarningsAsError(StringRef Group, bool);
 
   /// Given a group ID, returns the flag that toggles the group.
   /// For example, for "deprecated-declarations", returns
   /// Group::DeprecatedDeclarations.
-  static std::optional<diag::Group> getGroupForWarningOption(StringRef);
+  CLANG_ABI static std::optional<diag::Group> getGroupForWarningOption(StringRef);
 
   /// Return the lowest-level group that contains the specified diagnostic.
-  std::optional<diag::Group> getGroupForDiag(unsigned DiagID) const;
+  CLANG_ABI std::optional<diag::Group> getGroupForDiag(unsigned DiagID) const;
 
   /// Return the lowest-level warning option that enables the specified
   /// diagnostic.
   ///
   /// If there is no -Wfoo flag that controls the diagnostic, this returns null.
-  StringRef getWarningOptionForDiag(unsigned DiagID);
+  CLANG_ABI StringRef getWarningOptionForDiag(unsigned DiagID);
 
   /// Return the category number that a specified \p DiagID belongs to,
   /// or 0 if no category.
-  static unsigned getCategoryNumberForDiag(unsigned DiagID);
+  CLANG_ABI static unsigned getCategoryNumberForDiag(unsigned DiagID);
 
   /// Return the number of diagnostic categories.
-  static unsigned getNumberOfCategories();
+  CLANG_ABI static unsigned getNumberOfCategories();
 
   /// Given a category ID, return the name of the category.
-  static StringRef getCategoryNameFromID(unsigned CategoryID);
+  CLANG_ABI static StringRef getCategoryNameFromID(unsigned CategoryID);
 
   /// Return true if a given diagnostic falls into an ARC diagnostic
   /// category.
-  static bool isARCDiagnostic(unsigned DiagID);
+  CLANG_ABI static bool isARCDiagnostic(unsigned DiagID);
 
   /// Return true if a given diagnostic is a codegen-time ABI check.
-  static bool isCodegenABICheckDiagnostic(unsigned DiagID);
+  CLANG_ABI static bool isCodegenABICheckDiagnostic(unsigned DiagID);
 
   /// Enumeration describing how the emission of a diagnostic should
   /// be treated when it occurs during C++ template argument deduction.
@@ -431,40 +432,40 @@ public:
   /// deduction fails but no diagnostic is emitted. Certain classes of
   /// errors, such as those errors that involve C++ access control,
   /// are not SFINAE errors.
-  static SFINAEResponse getDiagnosticSFINAEResponse(unsigned DiagID);
+  CLANG_ABI static SFINAEResponse getDiagnosticSFINAEResponse(unsigned DiagID);
 
   /// Whether the diagnostic message can be deferred.
   ///
   /// For single source offloading languages, a diagnostic message occurred
   /// in a device host function may be deferred until the function is sure
   /// to be emitted.
-  static bool isDeferrable(unsigned DiagID);
+  CLANG_ABI static bool isDeferrable(unsigned DiagID);
 
   /// Get the string of all diagnostic flags.
   ///
   /// \returns A list of all diagnostics flags as they would be written in a
   /// command line invocation including their `no-` variants. For example:
   /// `{"-Wempty-body", "-Wno-empty-body", ...}`
-  static std::vector<std::string> getDiagnosticFlags();
+  CLANG_ABI static std::vector<std::string> getDiagnosticFlags();
 
   /// Get the set of all diagnostic IDs in the group with the given name.
   ///
   /// \param[out] Diags - On return, the diagnostics in the group.
   /// \returns \c true if the given group is unknown, \c false otherwise.
-  bool getDiagnosticsInGroup(diag::Flavor Flavor, StringRef Group,
+  CLANG_ABI bool getDiagnosticsInGroup(diag::Flavor Flavor, StringRef Group,
                              SmallVectorImpl<diag::kind> &Diags) const;
 
   /// Get the set of all diagnostic IDs.
-  static void getAllDiagnostics(diag::Flavor Flavor,
+  CLANG_ABI static void getAllDiagnostics(diag::Flavor Flavor,
                                 std::vector<diag::kind> &Diags);
 
   /// Get the diagnostic option with the closest edit distance to the
   /// given group name.
-  static StringRef getNearestOption(diag::Flavor Flavor, StringRef Group);
+  CLANG_ABI static StringRef getNearestOption(diag::Flavor Flavor, StringRef Group);
 
   /// Get the appropriate diagnostic Id to use for issuing a compatibility
   /// diagnostic. For use by the various DiagCompat() helpers.
-  static unsigned getCXXCompatDiagId(const LangOptions &LangOpts,
+  CLANG_ABI static unsigned getCXXCompatDiagId(const LangOptions &LangOpts,
                                      unsigned CompatDiagId);
 
 private:
@@ -476,11 +477,11 @@ private:
   ///
   /// \param Loc The source location for which we are interested in finding out
   /// the diagnostic state. Can be null in order to query the latest state.
-  DiagnosticIDs::Level
+  CLANG_ABI DiagnosticIDs::Level
   getDiagnosticLevel(unsigned DiagID, SourceLocation Loc,
                      const DiagnosticsEngine &Diag) const LLVM_READONLY;
 
-  diag::Severity
+  CLANG_ABI diag::Severity
   getDiagnosticSeverity(unsigned DiagID, SourceLocation Loc,
                         const DiagnosticsEngine &Diag) const LLVM_READONLY;
 

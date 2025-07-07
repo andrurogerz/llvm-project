@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_BASIC_LANGOPTIONS_H
 #define LLVM_CLANG_BASIC_LANGOPTIONS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/CFProtectionOptions.h"
 #include "clang/Basic/CommentOptions.h"
 #include "clang/Basic/LLVM.h"
@@ -647,7 +648,7 @@ public:
   bool AtomicFineGrainedMemory = false;
   bool AtomicIgnoreDenormalMode = false;
 
-  LangOptions();
+  CLANG_ABI LangOptions();
 
   /// Set language defaults for the given input language and
   /// language standard in the given LangOptions object.
@@ -658,7 +659,7 @@ public:
   /// \param Includes - If the language requires extra headers to be implicitly
   ///                   included, they will be appended to this list.
   /// \param LangStd - The input language standard.
-  static void
+  CLANG_ABI static void
   setLangDefaults(LangOptions &Opts, Language Lang, const llvm::Triple &T,
                   std::vector<std::string> &Includes,
                   LangStandard::Kind LangStd = LangStandard::lang_unspecified);
@@ -711,11 +712,11 @@ public:
 
   /// Reset all of the options that are not considered when building a
   /// module.
-  void resetNonModularOptions();
+  CLANG_ABI void resetNonModularOptions();
 
   /// Is this a libc/libm function that is no longer recognized as a
   /// builtin because a -fno-builtin-* option has been specified?
-  bool isNoBuiltinFunc(StringRef Name) const;
+  CLANG_ABI bool isNoBuiltinFunc(StringRef Name) const;
 
   /// True if any ObjC types may have non-trivial lifetime qualifiers.
   bool allowsNonTrivialObjCLifetimeQualifiers() const {
@@ -735,14 +736,14 @@ public:
   }
 
   /// Return the OpenCL C or C++ version as a VersionTuple.
-  VersionTuple getOpenCLVersionTuple() const;
+  CLANG_ABI VersionTuple getOpenCLVersionTuple() const;
 
   /// Return the OpenCL version that kernel language is compatible with
-  unsigned getOpenCLCompatibleVersion() const;
+  CLANG_ABI unsigned getOpenCLCompatibleVersion() const;
 
   /// Return the OpenCL C or C++ for OpenCL language name and version
   /// as a string.
-  std::string getOpenCLVersionString() const;
+  CLANG_ABI std::string getOpenCLVersionString() const;
 
   /// Returns true if functions without prototypes or functions with an
   /// identifier list (aka K&R C functions) are not allowed.
@@ -820,7 +821,7 @@ public:
   bool allowArrayReturnTypes() const { return HLSL; }
 
   /// Remap path prefix according to -fmacro-prefix-path option.
-  void remapPathPrefix(SmallVectorImpl<char> &Path) const;
+  CLANG_ABI void remapPathPrefix(SmallVectorImpl<char> &Path) const;
 
   RoundingMode getDefaultRoundingMode() const {
     return RoundingMath ? RoundingMode::Dynamic
@@ -871,7 +872,7 @@ public:
 private:
   storage_type Value;
 
-  FPOptionsOverride getChangesSlow(const FPOptions &Base) const;
+  CLANG_ABI FPOptionsOverride getChangesSlow(const FPOptions &Base) const;
 
 public:
   FPOptions() : Value(0) {
@@ -955,7 +956,7 @@ public:
 
   /// Return the default value of FPOptions that's used when trailing
   /// storage isn't required.
-  static FPOptions defaultWithoutTrailingStorage(const LangOptions &LO);
+  CLANG_ABI static FPOptions defaultWithoutTrailingStorage(const LangOptions &LO);
 
   storage_type getAsOpaqueInt() const { return Value; }
   static FPOptions getFromOpaqueInt(storage_type Value) {
@@ -981,7 +982,7 @@ public:
     Value = (Value & ~NAME##Mask) | (storage_type(value) << NAME##Shift);      \
   }
 #include "clang/Basic/FPOptions.def"
-  LLVM_DUMP_METHOD void dump();
+  CLANG_ABI LLVM_DUMP_METHOD void dump();
 };
 
 /// Represents difference between two FPOptions values.
@@ -1102,7 +1103,7 @@ public:
     OverrideMask |= FPOptions::NAME##Mask;                                     \
   }
 #include "clang/Basic/FPOptions.def"
-  LLVM_DUMP_METHOD void dump();
+  CLANG_ABI LLVM_DUMP_METHOD void dump();
 };
 
 inline FPOptionsOverride FPOptions::getChangesFrom(const FPOptions &Base) const {

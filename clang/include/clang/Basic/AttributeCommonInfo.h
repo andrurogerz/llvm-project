@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_BASIC_ATTRIBUTECOMMONINFO_H
 #define LLVM_CLANG_BASIC_ATTRIBUTECOMMONINFO_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/AttributeScopeInfo.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/SourceLocation.h"
@@ -204,25 +205,25 @@ public:
   /// Gets the normalized full name, which consists of both scope and name and
   /// with surrounding underscores removed as appropriate (e.g.
   /// __gnu__::__attr__ will be normalized to gnu::attr).
-  std::string getNormalizedFullName() const;
-  std::string getNormalizedFullName(StringRef ScopeName,
+  CLANG_ABI std::string getNormalizedFullName() const;
+  CLANG_ABI std::string getNormalizedFullName(StringRef ScopeName,
                                     StringRef AttrName) const;
-  StringRef getNormalizedScopeName() const;
-  StringRef getNormalizedAttrName(StringRef ScopeName) const;
+  CLANG_ABI StringRef getNormalizedScopeName() const;
+  CLANG_ABI StringRef getNormalizedAttrName(StringRef ScopeName) const;
 
-  std::optional<StringRef> tryGetCorrectedScopeName(StringRef ScopeName) const;
-  std::optional<StringRef>
+  CLANG_ABI std::optional<StringRef> tryGetCorrectedScopeName(StringRef ScopeName) const;
+  CLANG_ABI std::optional<StringRef>
   tryGetCorrectedAttrName(StringRef ScopeName, StringRef AttrName,
                           const TargetInfo &Target,
                           const LangOptions &LangOpts) const;
 
-  SourceRange getNormalizedRange() const;
+  CLANG_ABI SourceRange getNormalizedRange() const;
 
   bool isDeclspecAttribute() const { return SyntaxUsed == AS_Declspec; }
   bool isMicrosoftAttribute() const { return SyntaxUsed == AS_Microsoft; }
 
-  bool isGNUScope() const;
-  bool isClangScope() const;
+  CLANG_ABI bool isGNUScope() const;
+  CLANG_ABI bool isClangScope() const;
 
   bool isCXX11Attribute() const { return SyntaxUsed == AS_CXX11 || IsAlignas; }
 
@@ -264,16 +265,16 @@ public:
   }
   void setAttributeSpellingListIndex(unsigned V) { SpellingIndex = V; }
 
-  static Kind getParsedKind(const IdentifierInfo *Name,
+  CLANG_ABI static Kind getParsedKind(const IdentifierInfo *Name,
                             const IdentifierInfo *Scope, Syntax SyntaxUsed);
 
-  static AttrArgsInfo getCXX11AttrArgsInfo(const IdentifierInfo *Name);
+  CLANG_ABI static AttrArgsInfo getCXX11AttrArgsInfo(const IdentifierInfo *Name);
 
 private:
   /// Get an index into the attribute spelling list
   /// defined in Attr.td. This index is used by an attribute
   /// to pretty print itself.
-  unsigned calculateAttributeSpellingListIndex() const;
+  CLANG_ABI unsigned calculateAttributeSpellingListIndex() const;
 
   friend class clang::ASTRecordWriter;
   // Used exclusively by ASTDeclWriter to get the raw spelling list state.

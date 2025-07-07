@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_PROGRAMPOINT_H
 #define LLVM_CLANG_ANALYSIS_PROGRAMPOINT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Analysis/AnalysisDeclContext.h"
 #include "clang/Analysis/CFG.h"
 #include "llvm/ADT/DenseMap.h"
@@ -35,7 +36,7 @@ class LocationContext;
 /// ProgramPoints can be "tagged" as representing points specific to a given
 /// analysis entity.  Tags are abstract annotations, with an associated
 /// description and potentially other information.
-class ProgramPointTag {
+class CLANG_ABI ProgramPointTag {
 public:
   ProgramPointTag(void *tagKind = nullptr) : TagKind(tagKind) {}
   virtual ~ProgramPointTag();
@@ -51,7 +52,7 @@ private:
   const void *const TagKind;
 };
 
-class SimpleProgramPointTag : public ProgramPointTag {
+class CLANG_ABI SimpleProgramPointTag : public ProgramPointTag {
   std::string Desc;
 public:
   SimpleProgramPointTag(StringRef MsgProvider, StringRef Msg);
@@ -88,8 +89,8 @@ public:
               LoopExitKind,
               EpsilonKind};
 
-  static StringRef getProgramPointKindName(Kind K);
-  std::optional<SourceLocation> getSourceLocation() const;
+  CLANG_ABI static StringRef getProgramPointKindName(Kind K);
+  CLANG_ABI std::optional<SourceLocation> getSourceLocation() const;
 
 private:
   const void *Data1;
@@ -213,11 +214,11 @@ public:
     ID.AddInteger(ElemRef.getIndexInBlock());
   }
 
-  void printJson(llvm::raw_ostream &Out, const char *NL = "\n") const;
+  CLANG_ABI void printJson(llvm::raw_ostream &Out, const char *NL = "\n") const;
 
-  LLVM_DUMP_METHOD void dump() const;
+  CLANG_ABI LLVM_DUMP_METHOD void dump() const;
 
-  static ProgramPoint getProgramPoint(const Stmt *S, ProgramPoint::Kind K,
+  CLANG_ABI static ProgramPoint getProgramPoint(const Stmt *S, ProgramPoint::Kind K,
                                       const LocationContext *LC,
                                       const ProgramPointTag *tag);
 };

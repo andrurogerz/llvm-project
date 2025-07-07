@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_ASTCONTEXT_H
 #define LLVM_CLANG_AST_ASTCONTEXT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTFwd.h"
 #include "clang/AST/CanonicalType.h"
 #include "clang/AST/CommentCommandTraits.h"
@@ -365,7 +366,7 @@ class ASTContext : public RefCountedBase<ASTContext> {
       Profile(ID, C, Parm);
     }
 
-    static void Profile(llvm::FoldingSetNodeID &ID,
+    CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID,
                         const ASTContext &C,
                         TemplateTemplateParmDecl *Parm);
   };
@@ -481,7 +482,7 @@ class ASTContext : public RefCountedBase<ASTContext> {
     llvm::SmallVector<Decl*, 4> Initializers;
     llvm::SmallVector<GlobalDeclID, 4> LazyInitializers;
 
-    void resolve(ASTContext &Ctx);
+    CLANG_ABI void resolve(ASTContext &Ctx);
   };
   llvm::DenseMap<Module*, PerModuleInitializers*> ModuleInitializers;
 
@@ -629,9 +630,9 @@ public:
     unsigned IsRelocatable;
     unsigned IsReplaceable;
   };
-  std::optional<CXXRecordDeclRelocationInfo>
+  CLANG_ABI std::optional<CXXRecordDeclRelocationInfo>
   getRelocationInfoForCXXRecord(const CXXRecordDecl *) const;
-  void setRelocationInfoForCXXRecord(const CXXRecordDecl *,
+  CLANG_ABI void setRelocationInfoForCXXRecord(const CXXRecordDecl *,
                                      CXXRecordDeclRelocationInfo);
 
   /// Examines a given type, and returns whether the type itself
@@ -672,7 +673,7 @@ private:
   bool isPointerAuthenticationAvailable() const {
     return LangOpts.PointerAuthCalls || LangOpts.PointerAuthIntrinsics;
   }
-  PointerAuthContent findPointerAuthContent(QualType T);
+  CLANG_ABI PointerAuthContent findPointerAuthContent(QualType T);
   llvm::DenseMap<const RecordDecl *, PointerAuthContent>
       RecordContainsAddressDiscriminatedPointerAuth;
 
@@ -744,7 +745,7 @@ public:
   ASTMutationListener *Listener = nullptr;
 
   /// Returns the clang bytecode interpreter context.
-  interp::Context &getInterpContext();
+  CLANG_ABI interp::Context &getInterpContext();
 
   struct CUDAConstantEvalContext {
     /// Do not allow wrong-sided variables in constant expressions.
@@ -761,7 +762,7 @@ public:
   };
 
   /// Returns the dynamic AST node parent map context.
-  ParentMapContext &getParentMapContext();
+  CLANG_ABI ParentMapContext &getParentMapContext();
 
   // A traversal scope limits the parts of the AST visible to certain analyses.
   // RecursiveASTVisitor only visits specified children of TranslationUnitDecl.
@@ -782,7 +783,7 @@ public:
   //
   // Changing the scope clears the parent cache, which is expensive to rebuild.
   ArrayRef<Decl *> getTraversalScope() const { return TraversalScope; }
-  void setTraversalScope(const std::vector<Decl *> &);
+  CLANG_ABI void setTraversalScope(const std::vector<Decl *> &);
 
   /// Forwards to get node parents from the ParentMapContext. New callers should
   /// use ParentMapContext::getParents() directly.
@@ -803,7 +804,7 @@ public:
   // normally done in the destructor earlier. Renders much of the ASTContext
   // unusable, mostly the actual AST nodes, so should be called when we no
   // longer need access to the AST.
-  void cleanup();
+  CLANG_ABI void cleanup();
 
   llvm::BumpPtrAllocator &getAllocator() const {
     return BumpAlloc;
@@ -848,7 +849,7 @@ public:
   }
 
   /// Return the total memory used for various side tables.
-  size_t getSideTableAllocatedMemory() const;
+  CLANG_ABI size_t getSideTableAllocatedMemory() const;
 
   PartialDiagnostic::DiagStorageAllocator &getDiagAllocator() {
     return DiagAllocator;
@@ -878,16 +879,16 @@ public:
   /// sets integer QualTy according to specified details:
   /// bitwidth, signed/unsigned.
   /// Returns empty type if there is no appropriate target types.
-  QualType getIntTypeForBitwidth(unsigned DestWidth,
+  CLANG_ABI QualType getIntTypeForBitwidth(unsigned DestWidth,
                                  unsigned Signed) const;
 
   /// getRealTypeForBitwidth -
   /// sets floating point QualTy according to specified bitwidth.
   /// Returns empty type if there is no appropriate target types.
-  QualType getRealTypeForBitwidth(unsigned DestWidth,
+  CLANG_ABI QualType getRealTypeForBitwidth(unsigned DestWidth,
                                   FloatModeKind ExplicitType) const;
 
-  bool AtomicUsesUnsupportedLibcall(const AtomicExpr *E) const;
+  CLANG_ABI bool AtomicUsesUnsupportedLibcall(const AtomicExpr *E) const;
 
   const LangOptions& getLangOpts() const { return LangOpts; }
 
@@ -901,7 +902,7 @@ public:
 
   const NoSanitizeList &getNoSanitizeList() const { return *NoSanitizeL; }
 
-  bool isTypeIgnoredBySanitizer(const SanitizerMask &Mask,
+  CLANG_ABI bool isTypeIgnoredBySanitizer(const SanitizerMask &Mask,
                                 const QualType &Ty) const;
 
   const XRayFunctionFilter &getXRayFilter() const {
@@ -910,7 +911,7 @@ public:
 
   const ProfileList &getProfileList() const { return *ProfList; }
 
-  DiagnosticsEngine &getDiagnostics() const;
+  CLANG_ABI DiagnosticsEngine &getDiagnostics() const;
 
   FullSourceLoc getFullLoc(SourceLocation Loc) const {
     return FullSourceLoc(Loc,SourceMgr);
@@ -919,7 +920,7 @@ public:
   /// Return the C++ ABI kind that should be used. The C++ ABI can be overriden
   /// at compile time with `-fc++-abi=`. If this is not provided, we instead use
   /// the default ABI set by the target.
-  TargetCXXABI::Kind getCXXABIKind() const;
+  CLANG_ABI TargetCXXABI::Kind getCXXABIKind() const;
 
   /// All comments in this translation unit.
   RawCommentList Comments;
@@ -958,7 +959,7 @@ public:
   ///
   /// Don't do anything if a comment has already been attached to \p OriginalD
   /// or its redeclaration chain.
-  void cacheRawCommentForDecl(const Decl &OriginalD,
+  CLANG_ABI void cacheRawCommentForDecl(const Decl &OriginalD,
                               const RawComment &Comment) const;
 
   /// \returns searches \p CommentsInFile for doc comment for \p D.
@@ -966,23 +967,23 @@ public:
   /// \p RepresentativeLocForDecl is used as a location for searching doc
   /// comments. \p CommentsInFile is a mapping offset -> comment of files in the
   /// same file where \p RepresentativeLocForDecl is.
-  RawComment *getRawCommentForDeclNoCacheImpl(
+  CLANG_ABI RawComment *getRawCommentForDeclNoCacheImpl(
       const Decl *D, const SourceLocation RepresentativeLocForDecl,
       const std::map<unsigned, RawComment *> &CommentsInFile) const;
 
   /// Return the documentation comment attached to a given declaration,
   /// without looking into cache.
-  RawComment *getRawCommentForDeclNoCache(const Decl *D) const;
+  CLANG_ABI RawComment *getRawCommentForDeclNoCache(const Decl *D) const;
 
 public:
-  void addComment(const RawComment &RC);
+  CLANG_ABI void addComment(const RawComment &RC);
 
   /// Return the documentation comment attached to a given declaration.
   /// Returns nullptr if no comment is attached.
   ///
   /// \param OriginalDecl if not nullptr, is set to declaration AST node that
   /// had the comment, if the comment we found comes from a redeclaration.
-  const RawComment *
+  CLANG_ABI const RawComment *
   getRawCommentForAnyRedecl(const Decl *D,
                             const Decl **OriginalDecl = nullptr) const;
 
@@ -993,7 +994,7 @@ public:
   ///
   /// If the last comment in the file is already attached we assume
   /// there are not comments left to be attached to \p Decls.
-  void attachCommentsToJustParsedDecls(ArrayRef<Decl *> Decls,
+  CLANG_ABI void attachCommentsToJustParsedDecls(ArrayRef<Decl *> Decls,
                                        const Preprocessor *PP);
 
   /// Return parsed documentation comment attached to a given declaration.
@@ -1001,15 +1002,15 @@ public:
   ///
   /// \param PP the Preprocessor used with this TU.  Could be nullptr if
   /// preprocessor is not available.
-  comments::FullComment *getCommentForDecl(const Decl *D,
+  CLANG_ABI comments::FullComment *getCommentForDecl(const Decl *D,
                                            const Preprocessor *PP) const;
 
   /// Return parsed documentation comment attached to a given declaration.
   /// Returns nullptr if no comment is attached. Does not look at any
   /// redeclarations of the declaration.
-  comments::FullComment *getLocalCommentForDeclUncached(const Decl *D) const;
+  CLANG_ABI comments::FullComment *getLocalCommentForDeclUncached(const Decl *D) const;
 
-  comments::FullComment *cloneFullComment(comments::FullComment *FC,
+  CLANG_ABI comments::FullComment *cloneFullComment(comments::FullComment *FC,
                                          const Decl *D) const;
 
 private:
@@ -1058,73 +1059,73 @@ public:
   }
 
   /// Retrieve the attributes for the given declaration.
-  AttrVec& getDeclAttrs(const Decl *D);
+  CLANG_ABI AttrVec& getDeclAttrs(const Decl *D);
 
   /// Erase the attributes corresponding to the given declaration.
-  void eraseDeclAttrs(const Decl *D);
+  CLANG_ABI void eraseDeclAttrs(const Decl *D);
 
   /// If this variable is an instantiated static data member of a
   /// class template specialization, returns the templated static data member
   /// from which it was instantiated.
   // FIXME: Remove ?
-  MemberSpecializationInfo *getInstantiatedFromStaticDataMember(
+  CLANG_ABI MemberSpecializationInfo *getInstantiatedFromStaticDataMember(
                                                            const VarDecl *Var);
 
   /// Note that the static data member \p Inst is an instantiation of
   /// the static data member template \p Tmpl of a class template.
-  void setInstantiatedFromStaticDataMember(VarDecl *Inst, VarDecl *Tmpl,
+  CLANG_ABI void setInstantiatedFromStaticDataMember(VarDecl *Inst, VarDecl *Tmpl,
                                            TemplateSpecializationKind TSK,
                         SourceLocation PointOfInstantiation = SourceLocation());
 
-  TemplateOrSpecializationInfo
+  CLANG_ABI TemplateOrSpecializationInfo
   getTemplateOrSpecializationInfo(const VarDecl *Var);
 
-  void setTemplateOrSpecializationInfo(VarDecl *Inst,
+  CLANG_ABI void setTemplateOrSpecializationInfo(VarDecl *Inst,
                                        TemplateOrSpecializationInfo TSI);
 
   /// If the given using decl \p Inst is an instantiation of
   /// another (possibly unresolved) using decl, return it.
-  NamedDecl *getInstantiatedFromUsingDecl(NamedDecl *Inst);
+  CLANG_ABI NamedDecl *getInstantiatedFromUsingDecl(NamedDecl *Inst);
 
   /// Remember that the using decl \p Inst is an instantiation
   /// of the using decl \p Pattern of a class template.
-  void setInstantiatedFromUsingDecl(NamedDecl *Inst, NamedDecl *Pattern);
+  CLANG_ABI void setInstantiatedFromUsingDecl(NamedDecl *Inst, NamedDecl *Pattern);
 
   /// If the given using-enum decl \p Inst is an instantiation of
   /// another using-enum decl, return it.
-  UsingEnumDecl *getInstantiatedFromUsingEnumDecl(UsingEnumDecl *Inst);
+  CLANG_ABI UsingEnumDecl *getInstantiatedFromUsingEnumDecl(UsingEnumDecl *Inst);
 
   /// Remember that the using enum decl \p Inst is an instantiation
   /// of the using enum decl \p Pattern of a class template.
-  void setInstantiatedFromUsingEnumDecl(UsingEnumDecl *Inst,
+  CLANG_ABI void setInstantiatedFromUsingEnumDecl(UsingEnumDecl *Inst,
                                         UsingEnumDecl *Pattern);
 
-  UsingShadowDecl *getInstantiatedFromUsingShadowDecl(UsingShadowDecl *Inst);
-  void setInstantiatedFromUsingShadowDecl(UsingShadowDecl *Inst,
+  CLANG_ABI UsingShadowDecl *getInstantiatedFromUsingShadowDecl(UsingShadowDecl *Inst);
+  CLANG_ABI void setInstantiatedFromUsingShadowDecl(UsingShadowDecl *Inst,
                                           UsingShadowDecl *Pattern);
 
-  FieldDecl *getInstantiatedFromUnnamedFieldDecl(FieldDecl *Field) const;
+  CLANG_ABI FieldDecl *getInstantiatedFromUnnamedFieldDecl(FieldDecl *Field) const;
 
-  void setInstantiatedFromUnnamedFieldDecl(FieldDecl *Inst, FieldDecl *Tmpl);
+  CLANG_ABI void setInstantiatedFromUnnamedFieldDecl(FieldDecl *Inst, FieldDecl *Tmpl);
 
   // Access to the set of methods overridden by the given C++ method.
   using overridden_cxx_method_iterator = CXXMethodVector::const_iterator;
-  overridden_cxx_method_iterator
+  CLANG_ABI overridden_cxx_method_iterator
   overridden_methods_begin(const CXXMethodDecl *Method) const;
 
-  overridden_cxx_method_iterator
+  CLANG_ABI overridden_cxx_method_iterator
   overridden_methods_end(const CXXMethodDecl *Method) const;
 
-  unsigned overridden_methods_size(const CXXMethodDecl *Method) const;
+  CLANG_ABI unsigned overridden_methods_size(const CXXMethodDecl *Method) const;
 
   using overridden_method_range =
       llvm::iterator_range<overridden_cxx_method_iterator>;
 
-  overridden_method_range overridden_methods(const CXXMethodDecl *Method) const;
+  CLANG_ABI overridden_method_range overridden_methods(const CXXMethodDecl *Method) const;
 
   /// Note that the given C++ \p Method overrides the given \p
   /// Overridden method.
-  void addOverriddenMethod(const CXXMethodDecl *Method,
+  CLANG_ABI void addOverriddenMethod(const CXXMethodDecl *Method,
                            const CXXMethodDecl *Overridden);
 
   /// Return C++ or ObjC overridden methods for the given \p Method.
@@ -1134,13 +1135,13 @@ public:
   /// the same selector and is of the same kind (class or instance).
   /// A method in an implementation is not considered as overriding the same
   /// method in the interface or its categories.
-  void getOverriddenMethods(
+  CLANG_ABI void getOverriddenMethods(
                         const NamedDecl *Method,
                         SmallVectorImpl<const NamedDecl *> &Overridden) const;
 
   /// Notify the AST context that a new import declaration has been
   /// parsed or implicitly created within this translation unit.
-  void addedLocalImportDecl(ImportDecl *Import);
+  CLANG_ABI void addedLocalImportDecl(ImportDecl *Import);
 
   static ImportDecl *getNextLocalImport(ImportDecl *Import) {
     return Import->getNextLocalImport();
@@ -1162,30 +1163,30 @@ public:
 
   /// Note that the definition \p ND has been merged into module \p M,
   /// and should be visible whenever \p M is visible.
-  void mergeDefinitionIntoModule(NamedDecl *ND, Module *M,
+  CLANG_ABI void mergeDefinitionIntoModule(NamedDecl *ND, Module *M,
                                  bool NotifyListeners = true);
 
   /// Clean up the merged definition list. Call this if you might have
   /// added duplicates into the list.
-  void deduplicateMergedDefinitionsFor(NamedDecl *ND);
+  CLANG_ABI void deduplicateMergedDefinitionsFor(NamedDecl *ND);
 
   /// Get the additional modules in which the definition \p Def has
   /// been merged.
-  ArrayRef<Module*> getModulesWithMergedDefinition(const NamedDecl *Def);
+  CLANG_ABI ArrayRef<Module*> getModulesWithMergedDefinition(const NamedDecl *Def);
 
   /// Add a declaration to the list of declarations that are initialized
   /// for a module. This will typically be a global variable (with internal
   /// linkage) that runs module initializers, such as the iostream initializer,
   /// or an ImportDecl nominating another module that has initializers.
-  void addModuleInitializer(Module *M, Decl *Init);
+  CLANG_ABI void addModuleInitializer(Module *M, Decl *Init);
 
-  void addLazyModuleInitializers(Module *M, ArrayRef<GlobalDeclID> IDs);
+  CLANG_ABI void addLazyModuleInitializers(Module *M, ArrayRef<GlobalDeclID> IDs);
 
   /// Get the initializations to perform when importing a module, if any.
-  ArrayRef<Decl*> getModuleInitializers(Module *M);
+  CLANG_ABI ArrayRef<Decl*> getModuleInitializers(Module *M);
 
   /// Set the (C++20) module we are building.
-  void setCurrentNamedModule(Module *M);
+  CLANG_ABI void setCurrentNamedModule(Module *M);
 
   /// Get module under construction, nullptr if this is not a C++20 module.
   Module *getCurrentNamedModule() const { return CurrentCXXNamedModule; }
@@ -1194,7 +1195,7 @@ public:
   ///
   /// FIXME: The signature may be confusing since `clang::Module` means to
   /// a module fragment or a module unit but not a C++20 module.
-  bool isInSameModule(const Module *M1, const Module *M2) const;
+  CLANG_ABI bool isInSameModule(const Module *M1, const Module *M2) const;
 
   TranslationUnitDecl *getTranslationUnitDecl() const {
     assert(TUDecl->getMostRecentDecl() == TUDecl &&
@@ -1211,7 +1212,7 @@ public:
     TUDecl = NewTUDecl;
   }
 
-  ExternCContextDecl *getExternCContextDecl() const;
+  CLANG_ABI ExternCContextDecl *getExternCContextDecl() const;
 
 #define BuiltinTemplate(BTName) BuiltinTemplateDecl *get##BTName##Decl() const;
 #include "clang/Basic/BuiltinTemplates.inc"
@@ -1315,19 +1316,19 @@ public:
   /// are stored here.
   llvm::DenseMap<const CXXMethodDecl *, CXXCastPath> LambdaCastPaths;
 
-  ASTContext(LangOptions &LOpts, SourceManager &SM, IdentifierTable &idents,
+  CLANG_ABI ASTContext(LangOptions &LOpts, SourceManager &SM, IdentifierTable &idents,
              SelectorTable &sels, Builtin::Context &builtins,
              TranslationUnitKind TUKind);
   ASTContext(const ASTContext &) = delete;
   ASTContext &operator=(const ASTContext &) = delete;
-  ~ASTContext();
+  CLANG_ABI ~ASTContext();
 
   /// Attach an external AST source to the AST context.
   ///
   /// The external AST source provides the ability to load parts of
   /// the abstract syntax tree as needed from some external storage,
   /// e.g., a precompiled header.
-  void setExternalSource(IntrusiveRefCntPtr<ExternalASTSource> Source);
+  CLANG_ABI void setExternalSource(IntrusiveRefCntPtr<ExternalASTSource> Source);
 
   /// Retrieve a pointer to the external AST source associated
   /// with this AST context, if any.
@@ -1348,26 +1349,26 @@ public:
   /// with this AST context, if any.
   ASTMutationListener *getASTMutationListener() const { return Listener; }
 
-  void PrintStats() const;
+  CLANG_ABI void PrintStats() const;
   const SmallVectorImpl<Type *>& getTypes() const { return Types; }
 
-  BuiltinTemplateDecl *buildBuiltinTemplateDecl(BuiltinTemplateKind BTK,
+  CLANG_ABI BuiltinTemplateDecl *buildBuiltinTemplateDecl(BuiltinTemplateKind BTK,
                                                 const IdentifierInfo *II) const;
 
   /// Create a new implicit TU-level CXXRecordDecl or RecordDecl
   /// declaration.
-  RecordDecl *buildImplicitRecord(
+  CLANG_ABI RecordDecl *buildImplicitRecord(
       StringRef Name,
       RecordDecl::TagKind TK = RecordDecl::TagKind::Struct) const;
 
   /// Create a new implicit TU-level typedef declaration.
-  TypedefDecl *buildImplicitTypedef(QualType T, StringRef Name) const;
+  CLANG_ABI TypedefDecl *buildImplicitTypedef(QualType T, StringRef Name) const;
 
   /// Retrieve the declaration for the 128-bit signed integer type.
-  TypedefDecl *getInt128Decl() const;
+  CLANG_ABI TypedefDecl *getInt128Decl() const;
 
   /// Retrieve the declaration for the 128-bit unsigned integer type.
-  TypedefDecl *getUInt128Decl() const;
+  CLANG_ABI TypedefDecl *getUInt128Decl() const;
 
   //===--------------------------------------------------------------------===//
   //                           Type Constructors
@@ -1375,9 +1376,9 @@ public:
 
 private:
   /// Return a type with extended qualifiers.
-  QualType getExtQualType(const Type *Base, Qualifiers Quals) const;
+  CLANG_ABI QualType getExtQualType(const Type *Base, Qualifiers Quals) const;
 
-  QualType getTypeDeclTypeSlow(const TypeDecl *Decl) const;
+  CLANG_ABI QualType getTypeDeclTypeSlow(const TypeDecl *Decl) const;
 
   QualType getPipeType(QualType T, bool ReadOnly) const;
 
@@ -1388,28 +1389,28 @@ public:
   /// The resulting type has a union of the qualifiers from T and the address
   /// space. If T already has an address space specifier, it is silently
   /// replaced.
-  QualType getAddrSpaceQualType(QualType T, LangAS AddressSpace) const;
+  CLANG_ABI QualType getAddrSpaceQualType(QualType T, LangAS AddressSpace) const;
 
   /// Remove any existing address space on the type and returns the type
   /// with qualifiers intact (or that's the idea anyway)
   ///
   /// The return type should be T with all prior qualifiers minus the address
   /// space.
-  QualType removeAddrSpaceQualType(QualType T) const;
+  CLANG_ABI QualType removeAddrSpaceQualType(QualType T) const;
 
   /// Return the "other" discriminator used for the pointer auth schema used for
   /// vtable pointers in instances of the requested type.
-  uint16_t
+  CLANG_ABI uint16_t
   getPointerAuthVTablePointerDiscriminator(const CXXRecordDecl *RD);
 
   /// Return the "other" type-specific discriminator for the given type.
-  uint16_t getPointerAuthTypeDiscriminator(QualType T);
+  CLANG_ABI uint16_t getPointerAuthTypeDiscriminator(QualType T);
 
   /// Apply Objective-C protocol qualifiers to the given type.
   /// \param allowOnPointerType specifies if we can apply protocol
   /// qualifiers on ObjCObjectPointerType. It can be set to true when
   /// constructing the canonical type of a Objective-C type parameter.
-  QualType applyObjCProtocolQualifiers(QualType type,
+  CLANG_ABI QualType applyObjCProtocolQualifiers(QualType type,
       ArrayRef<ObjCProtocolDecl *> protocols, bool &hasError,
       bool allowOnPointerType = false) const;
 
@@ -1418,11 +1419,11 @@ public:
   ///
   /// The resulting type has a union of the qualifiers from T and the gc
   /// attribute.
-  QualType getObjCGCQualType(QualType T, Qualifiers::GC gcAttr) const;
+  CLANG_ABI QualType getObjCGCQualType(QualType T, Qualifiers::GC gcAttr) const;
 
   /// Remove the existing address space on the type if it is a pointer size
   /// address space and return the type with qualifiers intact.
-  QualType removePtrSizeAddrSpace(QualType T) const;
+  CLANG_ABI QualType removePtrSizeAddrSpace(QualType T) const;
 
   /// Return the uniqued reference to the type for a \c restrict
   /// qualified type.
@@ -1454,80 +1455,80 @@ public:
   /// Rebuild a type, preserving any existing type sugar. For function types,
   /// you probably want to just use \c adjustFunctionResultType and friends
   /// instead.
-  QualType adjustType(QualType OldType,
+  CLANG_ABI QualType adjustType(QualType OldType,
                       llvm::function_ref<QualType(QualType)> Adjust) const;
 
   /// Change the ExtInfo on a function type.
-  const FunctionType *adjustFunctionType(const FunctionType *Fn,
+  CLANG_ABI const FunctionType *adjustFunctionType(const FunctionType *Fn,
                                          FunctionType::ExtInfo EInfo);
 
   /// Change the result type of a function type, preserving sugar such as
   /// attributed types.
-  QualType adjustFunctionResultType(QualType FunctionType,
+  CLANG_ABI QualType adjustFunctionResultType(QualType FunctionType,
                                     QualType NewResultType);
 
   /// Adjust the given function result type.
-  CanQualType getCanonicalFunctionResultType(QualType ResultType) const;
+  CLANG_ABI CanQualType getCanonicalFunctionResultType(QualType ResultType) const;
 
   /// Change the result type of a function type once it is deduced.
-  void adjustDeducedFunctionResultType(FunctionDecl *FD, QualType ResultType);
+  CLANG_ABI void adjustDeducedFunctionResultType(FunctionDecl *FD, QualType ResultType);
 
   /// Get a function type and produce the equivalent function type with the
   /// specified exception specification. Type sugar that can be present on a
   /// declaration of a function with an exception specification is permitted
   /// and preserved. Other type sugar (for instance, typedefs) is not.
-  QualType getFunctionTypeWithExceptionSpec(
+  CLANG_ABI QualType getFunctionTypeWithExceptionSpec(
       QualType Orig, const FunctionProtoType::ExceptionSpecInfo &ESI) const;
 
   /// Determine whether two function types are the same, ignoring
   /// exception specifications in cases where they're part of the type.
-  bool hasSameFunctionTypeIgnoringExceptionSpec(QualType T, QualType U) const;
+  CLANG_ABI bool hasSameFunctionTypeIgnoringExceptionSpec(QualType T, QualType U) const;
 
   /// Change the exception specification on a function once it is
   /// delay-parsed, instantiated, or computed.
-  void adjustExceptionSpec(FunctionDecl *FD,
+  CLANG_ABI void adjustExceptionSpec(FunctionDecl *FD,
                            const FunctionProtoType::ExceptionSpecInfo &ESI,
                            bool AsWritten = false);
 
   /// Get a function type and produce the equivalent function type where
   /// pointer size address spaces in the return type and parameter types are
   /// replaced with the default address space.
-  QualType getFunctionTypeWithoutPtrSizes(QualType T);
+  CLANG_ABI QualType getFunctionTypeWithoutPtrSizes(QualType T);
 
   /// Determine whether two function types are the same, ignoring pointer sizes
   /// in the return type and parameter types.
-  bool hasSameFunctionTypeIgnoringPtrSizes(QualType T, QualType U);
+  CLANG_ABI bool hasSameFunctionTypeIgnoringPtrSizes(QualType T, QualType U);
 
   /// Get or construct a function type that is equivalent to the input type
   /// except that the parameter ABI annotations are stripped.
-  QualType getFunctionTypeWithoutParamABIs(QualType T) const;
+  CLANG_ABI QualType getFunctionTypeWithoutParamABIs(QualType T) const;
 
   /// Determine if two function types are the same, ignoring parameter ABI
   /// annotations.
-  bool hasSameFunctionTypeIgnoringParamABI(QualType T, QualType U) const;
+  CLANG_ABI bool hasSameFunctionTypeIgnoringParamABI(QualType T, QualType U) const;
 
   /// Return the uniqued reference to the type for a complex
   /// number with the specified element type.
-  QualType getComplexType(QualType T) const;
+  CLANG_ABI QualType getComplexType(QualType T) const;
   CanQualType getComplexType(CanQualType T) const {
     return CanQualType::CreateUnsafe(getComplexType((QualType) T));
   }
 
   /// Return the uniqued reference to the type for a pointer to
   /// the specified type.
-  QualType getPointerType(QualType T) const;
+  CLANG_ABI QualType getPointerType(QualType T) const;
   CanQualType getPointerType(CanQualType T) const {
     return CanQualType::CreateUnsafe(getPointerType((QualType) T));
   }
 
-  QualType
+  CLANG_ABI QualType
   getCountAttributedType(QualType T, Expr *CountExpr, bool CountInBytes,
                          bool OrNull,
                          ArrayRef<TypeCoupledDeclRefInfo> DependentDecls) const;
 
   /// Return the uniqued reference to a type adjusted from the original
   /// type to a new type.
-  QualType getAdjustedType(QualType Orig, QualType New) const;
+  CLANG_ABI QualType getAdjustedType(QualType Orig, QualType New) const;
   CanQualType getAdjustedType(CanQualType Orig, CanQualType New) const {
     return CanQualType::CreateUnsafe(
         getAdjustedType((QualType)Orig, (QualType)New));
@@ -1536,55 +1537,55 @@ public:
   /// Return the uniqued reference to the decayed version of the given
   /// type.  Can only be called on array and function types which decay to
   /// pointer types.
-  QualType getDecayedType(QualType T) const;
+  CLANG_ABI QualType getDecayedType(QualType T) const;
   CanQualType getDecayedType(CanQualType T) const {
     return CanQualType::CreateUnsafe(getDecayedType((QualType) T));
   }
   /// Return the uniqued reference to a specified decay from the original
   /// type to the decayed type.
-  QualType getDecayedType(QualType Orig, QualType Decayed) const;
+  CLANG_ABI QualType getDecayedType(QualType Orig, QualType Decayed) const;
 
   /// Return the uniqued reference to a specified array parameter type from the
   /// original array type.
-  QualType getArrayParameterType(QualType Ty) const;
+  CLANG_ABI QualType getArrayParameterType(QualType Ty) const;
 
   /// Return the uniqued reference to the atomic type for the specified
   /// type.
-  QualType getAtomicType(QualType T) const;
+  CLANG_ABI QualType getAtomicType(QualType T) const;
 
   /// Return the uniqued reference to the type for a block of the
   /// specified type.
-  QualType getBlockPointerType(QualType T) const;
+  CLANG_ABI QualType getBlockPointerType(QualType T) const;
 
   /// Gets the struct used to keep track of the descriptor for pointer to
   /// blocks.
-  QualType getBlockDescriptorType() const;
+  CLANG_ABI QualType getBlockDescriptorType() const;
 
   /// Return a read_only pipe type for the specified type.
-  QualType getReadPipeType(QualType T) const;
+  CLANG_ABI QualType getReadPipeType(QualType T) const;
 
   /// Return a write_only pipe type for the specified type.
-  QualType getWritePipeType(QualType T) const;
+  CLANG_ABI QualType getWritePipeType(QualType T) const;
 
   /// Return a bit-precise integer type with the specified signedness and bit
   /// count.
-  QualType getBitIntType(bool Unsigned, unsigned NumBits) const;
+  CLANG_ABI QualType getBitIntType(bool Unsigned, unsigned NumBits) const;
 
   /// Return a dependent bit-precise integer type with the specified signedness
   /// and bit count.
-  QualType getDependentBitIntType(bool Unsigned, Expr *BitsExpr) const;
+  CLANG_ABI QualType getDependentBitIntType(bool Unsigned, Expr *BitsExpr) const;
 
   QualType getPredefinedSugarType(PredefinedSugarType::Kind KD) const;
 
   /// Gets the struct used to keep track of the extended descriptor for
   /// pointer to blocks.
-  QualType getBlockDescriptorExtendedType() const;
+  CLANG_ABI QualType getBlockDescriptorExtendedType() const;
 
   /// Map an AST Type to an OpenCLTypeKind enum value.
-  OpenCLTypeKind getOpenCLTypeKind(const Type *T) const;
+  CLANG_ABI OpenCLTypeKind getOpenCLTypeKind(const Type *T) const;
 
   /// Get address space for OpenCL type.
-  LangAS getOpenCLTypeAddrSpace(const Type *T) const;
+  CLANG_ABI LangAS getOpenCLTypeAddrSpace(const Type *T) const;
 
   /// Returns default address space based on OpenCL version and enabled features
   inline LangAS getDefaultOpenCLPointeeAddrSpace() {
@@ -1601,32 +1602,32 @@ public:
   }
 
   /// Returns true iff we need copy/dispose helpers for the given type.
-  bool BlockRequiresCopying(QualType Ty, const VarDecl *D);
+  CLANG_ABI bool BlockRequiresCopying(QualType Ty, const VarDecl *D);
 
   /// Returns true, if given type has a known lifetime. HasByrefExtendedLayout
   /// is set to false in this case. If HasByrefExtendedLayout returns true,
   /// byref variable has extended lifetime.
-  bool getByrefLifetime(QualType Ty,
+  CLANG_ABI bool getByrefLifetime(QualType Ty,
                         Qualifiers::ObjCLifetime &Lifetime,
                         bool &HasByrefExtendedLayout) const;
 
   /// Return the uniqued reference to the type for an lvalue reference
   /// to the specified type.
-  QualType getLValueReferenceType(QualType T, bool SpelledAsLValue = true)
+  CLANG_ABI QualType getLValueReferenceType(QualType T, bool SpelledAsLValue = true)
     const;
 
   /// Return the uniqued reference to the type for an rvalue reference
   /// to the specified type.
-  QualType getRValueReferenceType(QualType T) const;
+  CLANG_ABI QualType getRValueReferenceType(QualType T) const;
 
   /// Return the uniqued reference to the type for a member pointer to
   /// the specified type in the specified nested name.
-  QualType getMemberPointerType(QualType T, NestedNameSpecifier *Qualifier,
+  CLANG_ABI QualType getMemberPointerType(QualType T, NestedNameSpecifier *Qualifier,
                                 const CXXRecordDecl *Cls) const;
 
   /// Return a non-unique reference to the type for a variable array of
   /// the specified element type.
-  QualType getVariableArrayType(QualType EltTy, Expr *NumElts,
+  CLANG_ABI QualType getVariableArrayType(QualType EltTy, Expr *NumElts,
                                 ArraySizeModifier ASM,
                                 unsigned IndexTypeQuals) const;
 
@@ -1635,27 +1636,27 @@ public:
   ///
   /// FIXME: We will need these to be uniqued, or at least comparable, at some
   /// point.
-  QualType getDependentSizedArrayType(QualType EltTy, Expr *NumElts,
+  CLANG_ABI QualType getDependentSizedArrayType(QualType EltTy, Expr *NumElts,
                                       ArraySizeModifier ASM,
                                       unsigned IndexTypeQuals) const;
 
   /// Return a unique reference to the type for an incomplete array of
   /// the specified element type.
-  QualType getIncompleteArrayType(QualType EltTy, ArraySizeModifier ASM,
+  CLANG_ABI QualType getIncompleteArrayType(QualType EltTy, ArraySizeModifier ASM,
                                   unsigned IndexTypeQuals) const;
 
   /// Return the unique reference to the type for a constant array of
   /// the specified element type.
-  QualType getConstantArrayType(QualType EltTy, const llvm::APInt &ArySize,
+  CLANG_ABI QualType getConstantArrayType(QualType EltTy, const llvm::APInt &ArySize,
                                 const Expr *SizeExpr, ArraySizeModifier ASM,
                                 unsigned IndexTypeQuals) const;
 
   /// Return a type for a constant array for a string literal of the
   /// specified element type and length.
-  QualType getStringLiteralArrayType(QualType EltTy, unsigned Length) const;
+  CLANG_ABI QualType getStringLiteralArrayType(QualType EltTy, unsigned Length) const;
 
   /// Returns a vla type where known sizes are replaced with [*].
-  QualType getVariableArrayDecayedType(QualType Ty) const;
+  CLANG_ABI QualType getVariableArrayDecayedType(QualType Ty) const;
 
   // Convenience struct to return information about a builtin vector type.
   struct BuiltinVectorTypeInfo {
@@ -1669,7 +1670,7 @@ public:
 
   /// Returns the element type, element count and number of vectors
   /// (in case of tuple) for a builtin vector type.
-  BuiltinVectorTypeInfo
+  CLANG_ABI BuiltinVectorTypeInfo
   getBuiltinVectorTypeInfo(const BuiltinType *VecTy) const;
 
   /// Return the unique reference to a scalable vector type of the specified
@@ -1678,21 +1679,21 @@ public:
   /// tuple type.
   ///
   /// \pre \p EltTy must be a built-in type.
-  QualType getScalableVectorType(QualType EltTy, unsigned NumElts,
+  CLANG_ABI QualType getScalableVectorType(QualType EltTy, unsigned NumElts,
                                  unsigned NumFields = 1) const;
 
   /// Return a WebAssembly externref type.
-  QualType getWebAssemblyExternrefType() const;
+  CLANG_ABI QualType getWebAssemblyExternrefType() const;
 
   /// Return the unique reference to a vector type of the specified
   /// element type and size.
   ///
   /// \pre \p VectorType must be a built-in type.
-  QualType getVectorType(QualType VectorType, unsigned NumElts,
+  CLANG_ABI QualType getVectorType(QualType VectorType, unsigned NumElts,
                          VectorKind VecKind) const;
   /// Return the unique reference to the type for a dependently sized vector of
   /// the specified element type.
-  QualType getDependentVectorType(QualType VectorType, Expr *SizeExpr,
+  CLANG_ABI QualType getDependentVectorType(QualType VectorType, Expr *SizeExpr,
                                   SourceLocation AttrLoc,
                                   VectorKind VecKind) const;
 
@@ -1700,14 +1701,14 @@ public:
   /// of the specified element type and size.
   ///
   /// \pre \p VectorType must be a built-in type.
-  QualType getExtVectorType(QualType VectorType, unsigned NumElts) const;
+  CLANG_ABI QualType getExtVectorType(QualType VectorType, unsigned NumElts) const;
 
   /// \pre Return a non-unique reference to the type for a dependently-sized
   /// vector of the specified element type.
   ///
   /// FIXME: We will need these to be uniqued, or at least comparable, at some
   /// point.
-  QualType getDependentSizedExtVectorType(QualType VectorType,
+  CLANG_ABI QualType getDependentSizedExtVectorType(QualType VectorType,
                                           Expr *SizeExpr,
                                           SourceLocation AttrLoc) const;
 
@@ -1716,21 +1717,21 @@ public:
   ///
   /// \pre \p ElementType must be a valid matrix element type (see
   /// MatrixType::isValidElementType).
-  QualType getConstantMatrixType(QualType ElementType, unsigned NumRows,
+  CLANG_ABI QualType getConstantMatrixType(QualType ElementType, unsigned NumRows,
                                  unsigned NumColumns) const;
 
   /// Return the unique reference to the matrix type of the specified element
   /// type and size
-  QualType getDependentSizedMatrixType(QualType ElementType, Expr *RowExpr,
+  CLANG_ABI QualType getDependentSizedMatrixType(QualType ElementType, Expr *RowExpr,
                                        Expr *ColumnExpr,
                                        SourceLocation AttrLoc) const;
 
-  QualType getDependentAddressSpaceType(QualType PointeeType,
+  CLANG_ABI QualType getDependentAddressSpaceType(QualType PointeeType,
                                         Expr *AddrSpaceExpr,
                                         SourceLocation AttrLoc) const;
 
   /// Return a K&R style C function type like 'int()'.
-  QualType getFunctionNoProtoType(QualType ResultTy,
+  CLANG_ABI QualType getFunctionNoProtoType(QualType ResultTy,
                                   const FunctionType::ExtInfo &Info) const;
 
   QualType getFunctionNoProtoType(QualType ResultTy) const {
@@ -1743,11 +1744,11 @@ public:
     return getFunctionTypeInternal(ResultTy, Args, EPI, false);
   }
 
-  QualType adjustStringLiteralBaseType(QualType StrLTy) const;
+  CLANG_ABI QualType adjustStringLiteralBaseType(QualType StrLTy) const;
 
 private:
   /// Return a normal function type with a typed argument list.
-  QualType getFunctionTypeInternal(QualType ResultTy, ArrayRef<QualType> Args,
+  CLANG_ABI QualType getFunctionTypeInternal(QualType ResultTy, ArrayRef<QualType> Args,
                                    const FunctionProtoType::ExtProtoInfo &EPI,
                                    bool OnlyWantCanonical) const;
   QualType
@@ -1774,28 +1775,28 @@ public:
     return getTypeDeclTypeSlow(Decl);
   }
 
-  QualType getUsingType(const UsingShadowDecl *Found,
+  CLANG_ABI QualType getUsingType(const UsingShadowDecl *Found,
                         QualType Underlying) const;
 
   /// Return the unique reference to the type for the specified
   /// typedef-name decl.
-  QualType getTypedefType(const TypedefNameDecl *Decl,
+  CLANG_ABI QualType getTypedefType(const TypedefNameDecl *Decl,
                           QualType Underlying = QualType()) const;
 
-  QualType getRecordType(const RecordDecl *Decl) const;
+  CLANG_ABI QualType getRecordType(const RecordDecl *Decl) const;
 
-  QualType getEnumType(const EnumDecl *Decl) const;
+  CLANG_ABI QualType getEnumType(const EnumDecl *Decl) const;
 
   /// Compute BestType and BestPromotionType for an enum based on the highest
   /// number of negative and positive bits of its elements.
   /// Returns true if enum width is too large.
-  bool computeBestEnumTypes(bool IsPacked, unsigned NumNegativeBits,
+  CLANG_ABI bool computeBestEnumTypes(bool IsPacked, unsigned NumNegativeBits,
                             unsigned NumPositiveBits, QualType &BestType,
                             QualType &BestPromotionType);
 
   /// Determine whether the given integral value is representable within
   /// the given type T.
-  bool isRepresentableIntegerValue(llvm::APSInt &Value, QualType T);
+  CLANG_ABI bool isRepresentableIntegerValue(llvm::APSInt &Value, QualType T);
 
   /// Compute NumNegativeBits and NumPositiveBits for an enum based on
   /// the constant values of its enumerators.
@@ -1834,86 +1835,86 @@ public:
     return MembersRepresentableByInt;
   }
 
-  QualType
+  CLANG_ABI QualType
   getUnresolvedUsingType(const UnresolvedUsingTypenameDecl *Decl) const;
 
-  QualType getInjectedClassNameType(CXXRecordDecl *Decl, QualType TST) const;
+  CLANG_ABI QualType getInjectedClassNameType(CXXRecordDecl *Decl, QualType TST) const;
 
-  QualType getAttributedType(attr::Kind attrKind, QualType modifiedType,
+  CLANG_ABI QualType getAttributedType(attr::Kind attrKind, QualType modifiedType,
                              QualType equivalentType,
                              const Attr *attr = nullptr) const;
 
-  QualType getAttributedType(const Attr *attr, QualType modifiedType,
+  CLANG_ABI QualType getAttributedType(const Attr *attr, QualType modifiedType,
                              QualType equivalentType) const;
 
-  QualType getAttributedType(NullabilityKind nullability, QualType modifiedType,
+  CLANG_ABI QualType getAttributedType(NullabilityKind nullability, QualType modifiedType,
                              QualType equivalentType);
 
-  QualType getBTFTagAttributedType(const BTFTypeTagAttr *BTFAttr,
+  CLANG_ABI QualType getBTFTagAttributedType(const BTFTypeTagAttr *BTFAttr,
                                    QualType Wrapped) const;
 
-  QualType getHLSLAttributedResourceType(
+  CLANG_ABI QualType getHLSLAttributedResourceType(
       QualType Wrapped, QualType Contained,
       const HLSLAttributedResourceType::Attributes &Attrs);
 
-  QualType getHLSLInlineSpirvType(uint32_t Opcode, uint32_t Size,
+  CLANG_ABI QualType getHLSLInlineSpirvType(uint32_t Opcode, uint32_t Size,
                                   uint32_t Alignment,
                                   ArrayRef<SpirvOperand> Operands);
 
-  QualType getSubstTemplateTypeParmType(QualType Replacement,
+  CLANG_ABI QualType getSubstTemplateTypeParmType(QualType Replacement,
                                         Decl *AssociatedDecl, unsigned Index,
                                         UnsignedOrNone PackIndex,
                                         bool Final) const;
-  QualType getSubstTemplateTypeParmPackType(Decl *AssociatedDecl,
+  CLANG_ABI QualType getSubstTemplateTypeParmPackType(Decl *AssociatedDecl,
                                             unsigned Index, bool Final,
                                             const TemplateArgument &ArgPack);
 
-  QualType
+  CLANG_ABI QualType
   getTemplateTypeParmType(unsigned Depth, unsigned Index,
                           bool ParameterPack,
                           TemplateTypeParmDecl *ParmDecl = nullptr) const;
 
-  QualType getCanonicalTemplateSpecializationType(
+  CLANG_ABI QualType getCanonicalTemplateSpecializationType(
       TemplateName T, ArrayRef<TemplateArgument> CanonicalArgs) const;
 
-  QualType
+  CLANG_ABI QualType
   getTemplateSpecializationType(TemplateName T,
                                 ArrayRef<TemplateArgument> SpecifiedArgs,
                                 ArrayRef<TemplateArgument> CanonicalArgs,
                                 QualType Underlying = QualType()) const;
 
-  QualType
+  CLANG_ABI QualType
   getTemplateSpecializationType(TemplateName T,
                                 ArrayRef<TemplateArgumentLoc> SpecifiedArgs,
                                 ArrayRef<TemplateArgument> CanonicalArgs,
                                 QualType Canon = QualType()) const;
 
-  TypeSourceInfo *getTemplateSpecializationTypeInfo(
+  CLANG_ABI TypeSourceInfo *getTemplateSpecializationTypeInfo(
       TemplateName T, SourceLocation TLoc,
       const TemplateArgumentListInfo &SpecifiedArgs,
       ArrayRef<TemplateArgument> CanonicalArgs,
       QualType Canon = QualType()) const;
 
-  QualType getParenType(QualType NamedType) const;
+  CLANG_ABI QualType getParenType(QualType NamedType) const;
 
-  QualType getMacroQualifiedType(QualType UnderlyingTy,
+  CLANG_ABI QualType getMacroQualifiedType(QualType UnderlyingTy,
                                  const IdentifierInfo *MacroII) const;
 
-  QualType getElaboratedType(ElaboratedTypeKeyword Keyword,
+  CLANG_ABI QualType getElaboratedType(ElaboratedTypeKeyword Keyword,
                              NestedNameSpecifier *NNS, QualType NamedType,
                              TagDecl *OwnedTagDecl = nullptr) const;
-  QualType getDependentNameType(ElaboratedTypeKeyword Keyword,
+  CLANG_ABI QualType getDependentNameType(ElaboratedTypeKeyword Keyword,
                                 NestedNameSpecifier *NNS,
                                 const IdentifierInfo *Name) const;
 
-  QualType getDependentTemplateSpecializationType(
+  CLANG_ABI QualType getDependentTemplateSpecializationType(
       ElaboratedTypeKeyword Keyword, const DependentTemplateStorage &Name,
       ArrayRef<TemplateArgumentLoc> Args) const;
-  QualType getDependentTemplateSpecializationType(
+  CLANG_ABI QualType getDependentTemplateSpecializationType(
       ElaboratedTypeKeyword Keyword, const DependentTemplateStorage &Name,
       ArrayRef<TemplateArgument> Args, bool IsCanonical = false) const;
 
-  TemplateArgument getInjectedTemplateArg(NamedDecl *ParamDecl) const;
+  CLANG_ABI TemplateArgument getInjectedTemplateArg(NamedDecl *ParamDecl) const;
 
   /// Form a pack expansion type with the given pattern.
   /// \param NumExpansions The number of expansions for the pack, if known.
@@ -1922,74 +1923,74 @@ public:
   ///        expansion is used in a context where the arity is inferred from
   ///        elsewhere, such as if the pattern contains a placeholder type or
   ///        if this is the canonical type of another pack expansion type.
-  QualType getPackExpansionType(QualType Pattern, UnsignedOrNone NumExpansions,
+  CLANG_ABI QualType getPackExpansionType(QualType Pattern, UnsignedOrNone NumExpansions,
                                 bool ExpectPackInType = true) const;
 
-  QualType getObjCInterfaceType(const ObjCInterfaceDecl *Decl,
+  CLANG_ABI QualType getObjCInterfaceType(const ObjCInterfaceDecl *Decl,
                                 ObjCInterfaceDecl *PrevDecl = nullptr) const;
 
   /// Legacy interface: cannot provide type arguments or __kindof.
-  QualType getObjCObjectType(QualType Base,
+  CLANG_ABI QualType getObjCObjectType(QualType Base,
                              ObjCProtocolDecl * const *Protocols,
                              unsigned NumProtocols) const;
 
-  QualType getObjCObjectType(QualType Base,
+  CLANG_ABI QualType getObjCObjectType(QualType Base,
                              ArrayRef<QualType> typeArgs,
                              ArrayRef<ObjCProtocolDecl *> protocols,
                              bool isKindOf) const;
 
-  QualType getObjCTypeParamType(const ObjCTypeParamDecl *Decl,
+  CLANG_ABI QualType getObjCTypeParamType(const ObjCTypeParamDecl *Decl,
                                 ArrayRef<ObjCProtocolDecl *> protocols) const;
-  void adjustObjCTypeParamBoundType(const ObjCTypeParamDecl *Orig,
+  CLANG_ABI void adjustObjCTypeParamBoundType(const ObjCTypeParamDecl *Orig,
                                     ObjCTypeParamDecl *New) const;
 
-  bool ObjCObjectAdoptsQTypeProtocols(QualType QT, ObjCInterfaceDecl *Decl);
+  CLANG_ABI bool ObjCObjectAdoptsQTypeProtocols(QualType QT, ObjCInterfaceDecl *Decl);
 
   /// QIdProtocolsAdoptObjCObjectProtocols - Checks that protocols in
   /// QT's qualified-id protocol list adopt all protocols in IDecl's list
   /// of protocols.
-  bool QIdProtocolsAdoptObjCObjectProtocols(QualType QT,
+  CLANG_ABI bool QIdProtocolsAdoptObjCObjectProtocols(QualType QT,
                                             ObjCInterfaceDecl *IDecl);
 
   /// Return a ObjCObjectPointerType type for the given ObjCObjectType.
-  QualType getObjCObjectPointerType(QualType OIT) const;
+  CLANG_ABI QualType getObjCObjectPointerType(QualType OIT) const;
 
   /// C23 feature and GCC extension.
-  QualType getTypeOfExprType(Expr *E, TypeOfKind Kind) const;
-  QualType getTypeOfType(QualType QT, TypeOfKind Kind) const;
+  CLANG_ABI QualType getTypeOfExprType(Expr *E, TypeOfKind Kind) const;
+  CLANG_ABI QualType getTypeOfType(QualType QT, TypeOfKind Kind) const;
 
-  QualType getReferenceQualifiedType(const Expr *e) const;
+  CLANG_ABI QualType getReferenceQualifiedType(const Expr *e) const;
 
   /// C++11 decltype.
-  QualType getDecltypeType(Expr *e, QualType UnderlyingType) const;
+  CLANG_ABI QualType getDecltypeType(Expr *e, QualType UnderlyingType) const;
 
-  QualType getPackIndexingType(QualType Pattern, Expr *IndexExpr,
+  CLANG_ABI QualType getPackIndexingType(QualType Pattern, Expr *IndexExpr,
                                bool FullySubstituted = false,
                                ArrayRef<QualType> Expansions = {},
                                UnsignedOrNone Index = std::nullopt) const;
 
   /// Unary type transforms
-  QualType getUnaryTransformType(QualType BaseType, QualType UnderlyingType,
+  CLANG_ABI QualType getUnaryTransformType(QualType BaseType, QualType UnderlyingType,
                                  UnaryTransformType::UTTKind UKind) const;
 
   /// C++11 deduced auto type.
-  QualType getAutoType(QualType DeducedType, AutoTypeKeyword Keyword,
+  CLANG_ABI QualType getAutoType(QualType DeducedType, AutoTypeKeyword Keyword,
                        bool IsDependent, bool IsPack = false,
                        ConceptDecl *TypeConstraintConcept = nullptr,
                        ArrayRef<TemplateArgument> TypeConstraintArgs ={}) const;
 
   /// C++11 deduction pattern for 'auto' type.
-  QualType getAutoDeductType() const;
+  CLANG_ABI QualType getAutoDeductType() const;
 
   /// C++11 deduction pattern for 'auto &&' type.
-  QualType getAutoRRefDeductType() const;
+  CLANG_ABI QualType getAutoRRefDeductType() const;
 
   /// Remove any type constraints from a template parameter type, for
   /// equivalence comparison of template parameters.
-  QualType getUnconstrainedType(QualType T) const;
+  CLANG_ABI QualType getUnconstrainedType(QualType T) const;
 
   /// C++17 deduced class template specialization type.
-  QualType getDeducedTemplateSpecializationType(TemplateName Template,
+  CLANG_ABI QualType getDeducedTemplateSpecializationType(TemplateName Template,
                                                 QualType DeducedType,
                                                 bool IsDependent) const;
 
@@ -2002,27 +2003,27 @@ private:
 public:
   /// Return the unique reference to the type for the specified TagDecl
   /// (struct/union/class/enum) decl.
-  QualType getTagDeclType(const TagDecl *Decl) const;
+  CLANG_ABI QualType getTagDeclType(const TagDecl *Decl) const;
 
   /// Return the unique type for "size_t" (C99 7.17), defined in
   /// <stddef.h>.
   ///
   /// The sizeof operator requires this (C99 6.5.3.4p4).
-  QualType getSizeType() const;
+  CLANG_ABI QualType getSizeType() const;
 
-  CanQualType getCanonicalSizeType() const;
+  CLANG_ABI CanQualType getCanonicalSizeType() const;
 
   /// Return the unique signed counterpart of
   /// the integer type corresponding to size_t.
-  QualType getSignedSizeType() const;
+  CLANG_ABI QualType getSignedSizeType() const;
 
   /// Return the unique type for "intmax_t" (C99 7.18.1.5), defined in
   /// <stdint.h>.
-  CanQualType getIntMaxType() const;
+  CLANG_ABI CanQualType getIntMaxType() const;
 
   /// Return the unique type for "uintmax_t" (C99 7.18.1.5), defined in
   /// <stdint.h>.
-  CanQualType getUIntMaxType() const;
+  CLANG_ABI CanQualType getUIntMaxType() const;
 
   /// Return the unique wchar_t type available in C++ (and available as
   /// __wchar_t as a Microsoft extension).
@@ -2036,12 +2037,12 @@ public:
   /// Return the type of "signed wchar_t".
   ///
   /// Used when in C++, as a GCC extension.
-  QualType getSignedWCharType() const;
+  CLANG_ABI QualType getSignedWCharType() const;
 
   /// Return the type of "unsigned wchar_t".
   ///
   /// Used when in C++, as a GCC extension.
-  QualType getUnsignedWCharType() const;
+  CLANG_ABI QualType getUnsignedWCharType() const;
 
   /// In C99, this returns a type compatible with the type
   /// defined in <stddef.h> as defined by the target.
@@ -2049,30 +2050,30 @@ public:
 
   /// Return a type compatible with "intptr_t" (C99 7.18.1.4),
   /// as defined by the target.
-  QualType getIntPtrType() const;
+  CLANG_ABI QualType getIntPtrType() const;
 
   /// Return a type compatible with "uintptr_t" (C99 7.18.1.4),
   /// as defined by the target.
-  QualType getUIntPtrType() const;
+  CLANG_ABI QualType getUIntPtrType() const;
 
   /// Return the unique type for "ptrdiff_t" (C99 7.17) defined in
   /// <stddef.h>. Pointer - pointer requires this (C99 6.5.6p9).
-  QualType getPointerDiffType() const;
+  CLANG_ABI QualType getPointerDiffType() const;
 
   /// Return the unique unsigned counterpart of "ptrdiff_t"
   /// integer type. The standard (C11 7.21.6.1p7) refers to this type
   /// in the definition of %tu format specifier.
-  QualType getUnsignedPointerDiffType() const;
+  CLANG_ABI QualType getUnsignedPointerDiffType() const;
 
   /// Return the unique type for "pid_t" defined in
   /// <sys/types.h>. We need this to compute the correct type for vfork().
-  QualType getProcessIDType() const;
+  CLANG_ABI QualType getProcessIDType() const;
 
   /// Return the C structure type used to represent constant CFStrings.
-  QualType getCFConstantStringType() const;
+  CLANG_ABI QualType getCFConstantStringType() const;
 
   /// Returns the C struct type for objc_super
-  QualType getObjCSuperType() const;
+  CLANG_ABI QualType getObjCSuperType() const;
   void setObjCSuperType(QualType ST) { ObjCSuperType = ST; }
 
   /// Get the structure type used to representation CFStrings, or NULL
@@ -2082,12 +2083,12 @@ public:
       return getTypedefType(CFConstantStringTypeDecl);
     return QualType();
   }
-  void setCFConstantStringType(QualType T);
-  TypedefDecl *getCFConstantStringDecl() const;
-  RecordDecl *getCFConstantStringTagDecl() const;
+  CLANG_ABI void setCFConstantStringType(QualType T);
+  CLANG_ABI TypedefDecl *getCFConstantStringDecl() const;
+  CLANG_ABI RecordDecl *getCFConstantStringTagDecl() const;
 
   // This setter/getter represents the ObjC type for an NSConstantString.
-  void setObjCConstantStringInterface(ObjCInterfaceDecl *Decl);
+  CLANG_ABI void setObjCConstantStringInterface(ObjCInterfaceDecl *Decl);
   QualType getObjCConstantStringInterface() const {
     return ObjCConstantStringType;
   }
@@ -2157,9 +2158,9 @@ public:
     return NSCopyingName;
   }
 
-  CanQualType getNSUIntegerType() const;
+  CLANG_ABI CanQualType getNSUIntegerType() const;
 
-  CanQualType getNSIntegerType() const;
+  CLANG_ABI CanQualType getNSIntegerType() const;
 
   /// Retrieve the identifier 'bool'.
   IdentifierInfo *getBoolName() const {
@@ -2184,7 +2185,7 @@ public:
 
   /// Retrieve the typedef declaration corresponding to the Objective-C
   /// "instancetype" type.
-  TypedefDecl *getObjCInstanceTypeDecl();
+  CLANG_ABI TypedefDecl *getObjCInstanceTypeDecl();
 
   /// Set the type for the C FILE type.
   void setFILEDecl(TypeDecl *FILEDecl) { this->FILEDecl = FILEDecl; }
@@ -2241,18 +2242,18 @@ public:
   /// \p S.
   ///
   /// If \p Field is specified then record field names are also encoded.
-  void getObjCEncodingForType(QualType T, std::string &S,
+  CLANG_ABI void getObjCEncodingForType(QualType T, std::string &S,
                               const FieldDecl *Field=nullptr,
                               QualType *NotEncodedT=nullptr) const;
 
   /// Emit the Objective-C property type encoding for the given
   /// type \p T into \p S.
-  void getObjCEncodingForPropertyType(QualType T, std::string &S) const;
+  CLANG_ABI void getObjCEncodingForPropertyType(QualType T, std::string &S) const;
 
-  void getLegacyIntegralTypeEncoding(QualType &t) const;
+  CLANG_ABI void getLegacyIntegralTypeEncoding(QualType &t) const;
 
   /// Put the string version of the type qualifiers \p QT into \p S.
-  void getObjCEncodingForTypeQualifier(Decl::ObjCDeclQualifier QT,
+  CLANG_ABI void getObjCEncodingForTypeQualifier(Decl::ObjCDeclQualifier QT,
                                        std::string &S) const;
 
   /// Emit the encoded type for the function \p Decl into \p S.
@@ -2261,37 +2262,37 @@ public:
   ///
   /// \returns true if an error occurred (e.g., because one of the parameter
   /// types is incomplete), false otherwise.
-  std::string getObjCEncodingForFunctionDecl(const FunctionDecl *Decl) const;
+  CLANG_ABI std::string getObjCEncodingForFunctionDecl(const FunctionDecl *Decl) const;
 
   /// Emit the encoded type for the method declaration \p Decl into
   /// \p S.
-  std::string getObjCEncodingForMethodDecl(const ObjCMethodDecl *Decl,
+  CLANG_ABI std::string getObjCEncodingForMethodDecl(const ObjCMethodDecl *Decl,
                                            bool Extended = false) const;
 
   /// Return the encoded type for this block declaration.
-  std::string getObjCEncodingForBlock(const BlockExpr *blockExpr) const;
+  CLANG_ABI std::string getObjCEncodingForBlock(const BlockExpr *blockExpr) const;
 
   /// getObjCEncodingForPropertyDecl - Return the encoded type for
   /// this method declaration. If non-NULL, Container must be either
   /// an ObjCCategoryImplDecl or ObjCImplementationDecl; it should
   /// only be NULL when getting encodings for protocol properties.
-  std::string getObjCEncodingForPropertyDecl(const ObjCPropertyDecl *PD,
+  CLANG_ABI std::string getObjCEncodingForPropertyDecl(const ObjCPropertyDecl *PD,
                                              const Decl *Container) const;
 
-  bool ProtocolCompatibleWithProtocol(ObjCProtocolDecl *lProto,
+  CLANG_ABI bool ProtocolCompatibleWithProtocol(ObjCProtocolDecl *lProto,
                                       ObjCProtocolDecl *rProto) const;
 
-  ObjCPropertyImplDecl *getObjCPropertyImplDeclForPropertyDecl(
+  CLANG_ABI ObjCPropertyImplDecl *getObjCPropertyImplDeclForPropertyDecl(
                                                   const ObjCPropertyDecl *PD,
                                                   const Decl *Container) const;
 
   /// Return the size of type \p T for Objective-C encoding purpose,
   /// in characters.
-  CharUnits getObjCEncodingTypeSize(QualType T) const;
+  CLANG_ABI CharUnits getObjCEncodingTypeSize(QualType T) const;
 
   /// Retrieve the typedef corresponding to the predefined \c id type
   /// in Objective-C.
-  TypedefDecl *getObjCIdDecl() const;
+  CLANG_ABI TypedefDecl *getObjCIdDecl() const;
 
   /// Represents the Objective-CC \c id type.
   ///
@@ -2303,7 +2304,7 @@ public:
 
   /// Retrieve the typedef corresponding to the predefined 'SEL' type
   /// in Objective-C.
-  TypedefDecl *getObjCSelDecl() const;
+  CLANG_ABI TypedefDecl *getObjCSelDecl() const;
 
   /// Retrieve the type that corresponds to the predefined Objective-C
   /// 'SEL' type.
@@ -2315,7 +2316,7 @@ public:
 
   /// Retrieve the typedef declaration corresponding to the predefined
   /// Objective-C 'Class' type.
-  TypedefDecl *getObjCClassDecl() const;
+  CLANG_ABI TypedefDecl *getObjCClassDecl() const;
 
   /// Represents the Objective-C \c Class type.
   ///
@@ -2327,7 +2328,7 @@ public:
 
   /// Retrieve the Objective-C class declaration corresponding to
   /// the predefined \c Protocol class.
-  ObjCInterfaceDecl *getObjCProtocolDecl() const;
+  CLANG_ABI ObjCInterfaceDecl *getObjCProtocolDecl() const;
 
   /// Retrieve declaration of 'BOOL' typedef
   TypedefDecl *getBOOLDecl() const {
@@ -2351,7 +2352,7 @@ public:
 
   /// Retrieve the C type declaration corresponding to the predefined
   /// \c __builtin_va_list type.
-  TypedefDecl *getBuiltinVaListDecl() const;
+  CLANG_ABI TypedefDecl *getBuiltinVaListDecl() const;
 
   /// Retrieve the type of the \c __builtin_va_list type.
   QualType getBuiltinVaListType() const {
@@ -2361,11 +2362,11 @@ public:
   /// Retrieve the C type declaration corresponding to the predefined
   /// \c __va_list_tag type used to help define the \c __builtin_va_list type
   /// for some targets.
-  Decl *getVaListTagDecl() const;
+  CLANG_ABI Decl *getVaListTagDecl() const;
 
   /// Retrieve the C type declaration corresponding to the predefined
   /// \c __builtin_ms_va_list type.
-  TypedefDecl *getBuiltinMSVaListDecl() const;
+  CLANG_ABI TypedefDecl *getBuiltinMSVaListDecl() const;
 
   /// Retrieve the type of the \c __builtin_ms_va_list type.
   QualType getBuiltinMSVaListType() const {
@@ -2383,7 +2384,7 @@ public:
 
   /// Return whether a declaration to a builtin is allowed to be
   /// overloaded/redeclared.
-  bool canBuiltinBeRedeclared(const FunctionDecl *) const;
+  CLANG_ABI bool canBuiltinBeRedeclared(const FunctionDecl *) const;
 
   /// Return a type with additional \c const, \c volatile, or
   /// \c restrict qualifiers.
@@ -2446,31 +2447,31 @@ public:
     return getQualifiedType(Ty, Qs);
   }
 
-  unsigned char getFixedPointScale(QualType Ty) const;
-  unsigned char getFixedPointIBits(QualType Ty) const;
-  llvm::FixedPointSemantics getFixedPointSemantics(QualType Ty) const;
-  llvm::APFixedPoint getFixedPointMax(QualType Ty) const;
-  llvm::APFixedPoint getFixedPointMin(QualType Ty) const;
+  CLANG_ABI unsigned char getFixedPointScale(QualType Ty) const;
+  CLANG_ABI unsigned char getFixedPointIBits(QualType Ty) const;
+  CLANG_ABI llvm::FixedPointSemantics getFixedPointSemantics(QualType Ty) const;
+  CLANG_ABI llvm::APFixedPoint getFixedPointMax(QualType Ty) const;
+  CLANG_ABI llvm::APFixedPoint getFixedPointMin(QualType Ty) const;
 
-  DeclarationNameInfo getNameForTemplate(TemplateName Name,
+  CLANG_ABI DeclarationNameInfo getNameForTemplate(TemplateName Name,
                                          SourceLocation NameLoc) const;
 
-  TemplateName getOverloadedTemplateName(UnresolvedSetIterator Begin,
+  CLANG_ABI TemplateName getOverloadedTemplateName(UnresolvedSetIterator Begin,
                                          UnresolvedSetIterator End) const;
-  TemplateName getAssumedTemplateName(DeclarationName Name) const;
+  CLANG_ABI TemplateName getAssumedTemplateName(DeclarationName Name) const;
 
-  TemplateName getQualifiedTemplateName(NestedNameSpecifier *NNS,
+  CLANG_ABI TemplateName getQualifiedTemplateName(NestedNameSpecifier *NNS,
                                         bool TemplateKeyword,
                                         TemplateName Template) const;
-  TemplateName
+  CLANG_ABI TemplateName
   getDependentTemplateName(const DependentTemplateStorage &Name) const;
 
-  TemplateName getSubstTemplateTemplateParm(TemplateName replacement,
+  CLANG_ABI TemplateName getSubstTemplateTemplateParm(TemplateName replacement,
                                             Decl *AssociatedDecl,
                                             unsigned Index,
                                             UnsignedOrNone PackIndex,
                                             bool Final) const;
-  TemplateName getSubstTemplateTemplateParmPack(const TemplateArgument &ArgPack,
+  CLANG_ABI TemplateName getSubstTemplateTemplateParmPack(const TemplateArgument &ArgPack,
                                                 Decl *AssociatedDecl,
                                                 unsigned Index,
                                                 bool Final) const;
@@ -2481,7 +2482,7 @@ public:
   /// For example DeducedTemplateNames which have the same set of default
   /// arguments are equivalent, and are also equivalent to the underlying
   /// template when the deduced template arguments are the same.
-  TemplateName getDeducedTemplateName(TemplateName Underlying,
+  CLANG_ABI TemplateName getDeducedTemplateName(TemplateName Underlying,
                                       DefaultArguments DefaultArgs) const;
 
   enum GetBuiltinTypeError {
@@ -2501,7 +2502,7 @@ public:
     GE_Missing_ucontext
   };
 
-  QualType DecodeTypeStr(const char *&Str, const ASTContext &Context,
+  CLANG_ABI QualType DecodeTypeStr(const char *&Str, const ASTContext &Context,
                          ASTContext::GetBuiltinTypeError &Error,
                          bool &RequireICE, bool AllowTypeModifiers) const;
 
@@ -2510,7 +2511,7 @@ public:
   /// If \p IntegerConstantArgs is non-null, it is filled in with a bitmask of
   /// arguments to the builtin that are required to be integer constant
   /// expressions.
-  QualType GetBuiltinType(unsigned ID, GetBuiltinTypeError &Error,
+  CLANG_ABI QualType GetBuiltinType(unsigned ID, GetBuiltinTypeError &Error,
                           unsigned *IntegerConstantArgs = nullptr) const;
 
   /// Types and expressions required to build C++2a three-way comparisons
@@ -2528,30 +2529,30 @@ private:
 public:
   /// Return one of the GCNone, Weak or Strong Objective-C garbage
   /// collection attributes.
-  Qualifiers::GC getObjCGCAttrKind(QualType Ty) const;
+  CLANG_ABI Qualifiers::GC getObjCGCAttrKind(QualType Ty) const;
 
   /// Return true if the given vector types are of the same unqualified
   /// type or if they are equivalent to the same GCC vector type.
   ///
   /// \note This ignores whether they are target-specific (AltiVec or Neon)
   /// types.
-  bool areCompatibleVectorTypes(QualType FirstVec, QualType SecondVec);
+  CLANG_ABI bool areCompatibleVectorTypes(QualType FirstVec, QualType SecondVec);
 
   /// Return true if the given types are an RISC-V vector builtin type and a
   /// VectorType that is a fixed-length representation of the RISC-V vector
   /// builtin type for a specific vector-length.
-  bool areCompatibleRVVTypes(QualType FirstType, QualType SecondType);
+  CLANG_ABI bool areCompatibleRVVTypes(QualType FirstType, QualType SecondType);
 
   /// Return true if the given vector types are lax-compatible RISC-V vector
   /// types as defined by -flax-vector-conversions=, which permits implicit
   /// conversions between vectors with different number of elements and/or
   /// incompatible element types, false otherwise.
-  bool areLaxCompatibleRVVTypes(QualType FirstType, QualType SecondType);
+  CLANG_ABI bool areLaxCompatibleRVVTypes(QualType FirstType, QualType SecondType);
 
   /// Return true if the type has been explicitly qualified with ObjC ownership.
   /// A type may be implicitly qualified with ownership under ObjC ARC, and in
   /// some cases the compiler treats these differently.
-  bool hasDirectOwnershipQualifier(QualType Ty) const;
+  CLANG_ABI bool hasDirectOwnershipQualifier(QualType Ty) const;
 
   /// Return true if this is an \c NSObject object with its \c NSObject
   /// attribute set.
@@ -2565,14 +2566,14 @@ public:
 
   /// Return the APFloat 'semantics' for the specified scalar floating
   /// point type.
-  const llvm::fltSemantics &getFloatTypeSemantics(QualType T) const;
+  CLANG_ABI const llvm::fltSemantics &getFloatTypeSemantics(QualType T) const;
 
   /// Get the size and alignment of the specified complete type in bits.
-  TypeInfo getTypeInfo(const Type *T) const;
+  CLANG_ABI TypeInfo getTypeInfo(const Type *T) const;
   TypeInfo getTypeInfo(QualType T) const { return getTypeInfo(T.getTypePtr()); }
 
   /// Get default simd alignment of the specified complete type in bits.
-  unsigned getOpenMPDefaultSimdAlign(QualType T) const;
+  CLANG_ABI unsigned getOpenMPDefaultSimdAlign(QualType T) const;
 
   /// Return the size of the specified (complete) type \p T, in bits.
   uint64_t getTypeSize(QualType T) const { return getTypeInfo(T).Width; }
@@ -2584,15 +2585,15 @@ public:
   }
 
   /// Convert a size in bits to a size in characters.
-  CharUnits toCharUnitsFromBits(int64_t BitSize) const;
+  CLANG_ABI CharUnits toCharUnitsFromBits(int64_t BitSize) const;
 
   /// Convert a size in characters to a size in bits.
-  int64_t toBits(CharUnits CharSize) const;
+  CLANG_ABI int64_t toBits(CharUnits CharSize) const;
 
   /// Return the size of the specified (complete) type \p T, in
   /// characters.
-  CharUnits getTypeSizeInChars(QualType T) const;
-  CharUnits getTypeSizeInChars(const Type *T) const;
+  CLANG_ABI CharUnits getTypeSizeInChars(QualType T) const;
+  CLANG_ABI CharUnits getTypeSizeInChars(const Type *T) const;
 
   std::optional<CharUnits> getTypeSizeInCharsIfKnown(QualType Ty) const {
     if (Ty->isIncompleteType() || Ty->isDependentType())
@@ -2617,20 +2618,20 @@ public:
   unsigned getTypeUnadjustedAlign(QualType T) const {
     return getTypeUnadjustedAlign(T.getTypePtr());
   }
-  unsigned getTypeUnadjustedAlign(const Type *T) const;
+  CLANG_ABI unsigned getTypeUnadjustedAlign(const Type *T) const;
 
   /// Return the alignment of a type, in bits, or 0 if
   /// the type is incomplete and we cannot determine the alignment (for
   /// example, from alignment attributes). The returned alignment is the
   /// Preferred alignment if NeedsPreferredAlignment is true, otherwise is the
   /// ABI alignment.
-  unsigned getTypeAlignIfKnown(QualType T,
+  CLANG_ABI unsigned getTypeAlignIfKnown(QualType T,
                                bool NeedsPreferredAlignment = false) const;
 
   /// Return the ABI-specified alignment of a (complete) type \p T, in
   /// characters.
-  CharUnits getTypeAlignInChars(QualType T) const;
-  CharUnits getTypeAlignInChars(const Type *T) const;
+  CLANG_ABI CharUnits getTypeAlignInChars(QualType T) const;
+  CLANG_ABI CharUnits getTypeAlignInChars(const Type *T) const;
 
   /// Return the PreferredAlignment of a (complete) type \p T, in
   /// characters.
@@ -2641,23 +2642,23 @@ public:
   /// getTypeUnadjustedAlignInChars - Return the ABI-specified alignment of a type,
   /// in characters, before alignment adjustments. This method does not work on
   /// incomplete types.
-  CharUnits getTypeUnadjustedAlignInChars(QualType T) const;
-  CharUnits getTypeUnadjustedAlignInChars(const Type *T) const;
+  CLANG_ABI CharUnits getTypeUnadjustedAlignInChars(QualType T) const;
+  CLANG_ABI CharUnits getTypeUnadjustedAlignInChars(const Type *T) const;
 
   // getTypeInfoDataSizeInChars - Return the size of a type, in chars. If the
   // type is a record, its data size is returned.
-  TypeInfoChars getTypeInfoDataSizeInChars(QualType T) const;
+  CLANG_ABI TypeInfoChars getTypeInfoDataSizeInChars(QualType T) const;
 
-  TypeInfoChars getTypeInfoInChars(const Type *T) const;
-  TypeInfoChars getTypeInfoInChars(QualType T) const;
+  CLANG_ABI TypeInfoChars getTypeInfoInChars(const Type *T) const;
+  CLANG_ABI TypeInfoChars getTypeInfoInChars(QualType T) const;
 
   /// Determine if the alignment the type has was required using an
   /// alignment attribute.
-  bool isAlignmentRequired(const Type *T) const;
-  bool isAlignmentRequired(QualType T) const;
+  CLANG_ABI bool isAlignmentRequired(const Type *T) const;
+  CLANG_ABI bool isAlignmentRequired(QualType T) const;
 
   /// More type predicates useful for type checking/promotion
-  bool isPromotableIntegerType(QualType T) const; // C99 6.3.1.1p2
+  CLANG_ABI bool isPromotableIntegerType(QualType T) const; // C99 6.3.1.1p2
 
   /// Return the "preferred" alignment of the specified type \p T for
   /// the current target, in bits.
@@ -2669,25 +2670,25 @@ public:
   unsigned getPreferredTypeAlign(QualType T) const {
     return getPreferredTypeAlign(T.getTypePtr());
   }
-  unsigned getPreferredTypeAlign(const Type *T) const;
+  CLANG_ABI unsigned getPreferredTypeAlign(const Type *T) const;
 
   /// Return the default alignment for __attribute__((aligned)) on
   /// this target, to be used if no alignment value is specified.
-  unsigned getTargetDefaultAlignForAttributeAligned() const;
+  CLANG_ABI unsigned getTargetDefaultAlignForAttributeAligned() const;
 
   /// Return the alignment in bits that should be given to a
   /// global variable with type \p T. If \p VD is non-null it will be
   /// considered specifically for the query.
-  unsigned getAlignOfGlobalVar(QualType T, const VarDecl *VD) const;
+  CLANG_ABI unsigned getAlignOfGlobalVar(QualType T, const VarDecl *VD) const;
 
   /// Return the alignment in characters that should be given to a
   /// global variable with type \p T. If \p VD is non-null it will be
   /// considered specifically for the query.
-  CharUnits getAlignOfGlobalVarInChars(QualType T, const VarDecl *VD) const;
+  CLANG_ABI CharUnits getAlignOfGlobalVarInChars(QualType T, const VarDecl *VD) const;
 
   /// Return the minimum alignment as specified by the target. If \p VD is
   /// non-null it may be used to identify external or weak variables.
-  unsigned getMinGlobalAlignOfVar(uint64_t Size, const VarDecl *VD) const;
+  CLANG_ABI unsigned getMinGlobalAlignOfVar(uint64_t Size, const VarDecl *VD) const;
 
   /// Return a conservative estimate of the alignment of the specified
   /// decl \p D.
@@ -2699,24 +2700,24 @@ public:
   /// and  large arrays don't get any special treatment. If not \p ForAlignof
   /// it computes the value expected by CodeGen: references are treated like
   /// pointers and large arrays get extra alignment.
-  CharUnits getDeclAlign(const Decl *D, bool ForAlignof = false) const;
+  CLANG_ABI CharUnits getDeclAlign(const Decl *D, bool ForAlignof = false) const;
 
   /// Return the alignment (in bytes) of the thrown exception object. This is
   /// only meaningful for targets that allocate C++ exceptions in a system
   /// runtime, such as those using the Itanium C++ ABI.
-  CharUnits getExnObjectAlignment() const;
+  CLANG_ABI CharUnits getExnObjectAlignment() const;
 
   /// Get or compute information about the layout of the specified
   /// record (struct/union/class) \p D, which indicates its size and field
   /// position information.
-  const ASTRecordLayout &getASTRecordLayout(const RecordDecl *D) const;
+  CLANG_ABI const ASTRecordLayout &getASTRecordLayout(const RecordDecl *D) const;
 
   /// Get or compute information about the layout of the specified
   /// Objective-C interface.
-  const ASTRecordLayout &getASTObjCInterfaceLayout(const ObjCInterfaceDecl *D)
+  CLANG_ABI const ASTRecordLayout &getASTObjCInterfaceLayout(const ObjCInterfaceDecl *D)
     const;
 
-  void DumpRecordLayout(const RecordDecl *RD, raw_ostream &OS,
+  CLANG_ABI void DumpRecordLayout(const RecordDecl *RD, raw_ostream &OS,
                         bool Simple = false) const;
 
   /// Get our current best idea for the key function of the
@@ -2729,7 +2730,7 @@ public:
   /// Other ABIs use the same idea.  However, the ARM C++ ABI ignores
   /// virtual functions that are defined 'inline', which means that
   /// the result of this computation can change.
-  const CXXMethodDecl *getCurrentKeyFunction(const CXXRecordDecl *RD);
+  CLANG_ABI const CXXMethodDecl *getCurrentKeyFunction(const CXXRecordDecl *RD);
 
   /// Observe that the given method cannot be a key function.
   /// Checks the key-function cache for the method's class and clears it
@@ -2739,7 +2740,7 @@ public:
   /// inline are not considered to be key functions.
   ///
   /// \param method should be the declaration from the class definition
-  void setNonKeyFunction(const CXXMethodDecl *method);
+  CLANG_ABI void setNonKeyFunction(const CXXMethodDecl *method);
 
   /// Loading virtual member pointers using the virtual inheritance model
   /// always results in an adjustment using the vbtable even if the index is
@@ -2750,42 +2751,42 @@ public:
   /// vbptr from an nv-base.  In this case, the first slot in the vbtable
   /// points to the start of the nv-base which introduced the vbptr and *not*
   /// the MDC.  Modify the NonVirtualBaseAdjustment to account for this.
-  CharUnits getOffsetOfBaseWithVBPtr(const CXXRecordDecl *RD) const;
+  CLANG_ABI CharUnits getOffsetOfBaseWithVBPtr(const CXXRecordDecl *RD) const;
 
   /// Get the offset of a FieldDecl or IndirectFieldDecl, in bits.
-  uint64_t getFieldOffset(const ValueDecl *FD) const;
+  CLANG_ABI uint64_t getFieldOffset(const ValueDecl *FD) const;
 
   /// Get the offset of an ObjCIvarDecl in bits.
-  uint64_t lookupFieldBitOffset(const ObjCInterfaceDecl *OID,
+  CLANG_ABI uint64_t lookupFieldBitOffset(const ObjCInterfaceDecl *OID,
                                 const ObjCIvarDecl *Ivar) const;
 
   /// Find the 'this' offset for the member path in a pointer-to-member
   /// APValue.
-  CharUnits getMemberPointerPathAdjustment(const APValue &MP) const;
+  CLANG_ABI CharUnits getMemberPointerPathAdjustment(const APValue &MP) const;
 
-  bool isNearlyEmpty(const CXXRecordDecl *RD) const;
+  CLANG_ABI bool isNearlyEmpty(const CXXRecordDecl *RD) const;
 
-  VTableContextBase *getVTableContext();
+  CLANG_ABI VTableContextBase *getVTableContext();
 
   /// If \p T is null pointer, assume the target in ASTContext.
-  MangleContext *createMangleContext(const TargetInfo *T = nullptr);
+  CLANG_ABI MangleContext *createMangleContext(const TargetInfo *T = nullptr);
 
   /// Creates a device mangle context to correctly mangle lambdas in a mixed
   /// architecture compile by setting the lambda mangling number source to the
   /// DeviceLambdaManglingNumber. Currently this asserts that the TargetInfo
   /// (from the AuxTargetInfo) is a an itanium target.
-  MangleContext *createDeviceMangleContext(const TargetInfo &T);
+  CLANG_ABI MangleContext *createDeviceMangleContext(const TargetInfo &T);
 
-  void DeepCollectObjCIvars(const ObjCInterfaceDecl *OI, bool leafClass,
+  CLANG_ABI void DeepCollectObjCIvars(const ObjCInterfaceDecl *OI, bool leafClass,
                             SmallVectorImpl<const ObjCIvarDecl*> &Ivars) const;
 
-  unsigned CountNonClassIvars(const ObjCInterfaceDecl *OI) const;
-  void CollectInheritedProtocols(const Decl *CDecl,
+  CLANG_ABI unsigned CountNonClassIvars(const ObjCInterfaceDecl *OI) const;
+  CLANG_ABI void CollectInheritedProtocols(const Decl *CDecl,
                           llvm::SmallPtrSet<ObjCProtocolDecl*, 8> &Protocols);
 
   /// Return true if the specified type has unique object representations
   /// according to (C++17 [meta.unary.prop]p9)
-  bool
+  CLANG_ABI bool
   hasUniqueObjectRepresentations(QualType Ty,
                                  bool CheckIfTriviallyCopyable = true) const;
 
@@ -2814,7 +2815,7 @@ public:
   ///
   /// Qualifiers are stripped off, functions are turned into function
   /// pointers, and arrays decay one level into pointers.
-  CanQualType getCanonicalParamType(QualType T) const;
+  CLANG_ABI CanQualType getCanonicalParamType(QualType T) const;
 
   /// Determine whether the given types \p T1 and \p T2 are equivalent.
   bool hasSameType(QualType T1, QualType T2) const {
@@ -2825,7 +2826,7 @@ public:
   }
 
   /// Determine whether the given expressions \p X and \p Y are equivalent.
-  bool hasSameExpr(const Expr *X, const Expr *Y) const;
+  CLANG_ABI bool hasSameExpr(const Expr *X, const Expr *Y) const;
 
   /// Return this type as a completely-unqualified array type,
   /// capturing the qualifiers in \p Quals.
@@ -2840,7 +2841,7 @@ public:
   ///
   /// \returns if this is an array type, the completely unqualified array type
   /// that corresponds to it. Otherwise, returns T.getUnqualifiedType().
-  QualType getUnqualifiedArrayType(QualType T, Qualifiers &Quals) const;
+  CLANG_ABI QualType getUnqualifiedArrayType(QualType T, Qualifiers &Quals) const;
   QualType getUnqualifiedArrayType(QualType T) const {
     Qualifiers Quals;
     return getUnqualifiedArrayType(T, Quals);
@@ -2881,12 +2882,12 @@ public:
     return true;
   }
 
-  bool ObjCMethodsAreEqual(const ObjCMethodDecl *MethodDecl,
+  CLANG_ABI bool ObjCMethodsAreEqual(const ObjCMethodDecl *MethodDecl,
                            const ObjCMethodDecl *MethodImp);
 
-  bool UnwrapSimilarTypes(QualType &T1, QualType &T2,
+  CLANG_ABI bool UnwrapSimilarTypes(QualType &T1, QualType &T2,
                           bool AllowPiMismatch = true) const;
-  void UnwrapSimilarArrayTypes(QualType &T1, QualType &T2,
+  CLANG_ABI void UnwrapSimilarArrayTypes(QualType &T1, QualType &T2,
                                bool AllowPiMismatch = true) const;
 
   /// Determine if two types are similar, according to the C++ rules. That is,
@@ -2896,10 +2897,10 @@ public:
   ///
   /// Clang offers a number of qualifiers in addition to the C++ qualifiers;
   /// those qualifiers are also ignored in the 'similarity' check.
-  bool hasSimilarType(QualType T1, QualType T2) const;
+  CLANG_ABI bool hasSimilarType(QualType T1, QualType T2) const;
 
   /// Determine if two types are similar, ignoring only CVR qualifiers.
-  bool hasCvrSimilarType(QualType T1, QualType T2);
+  CLANG_ABI bool hasCvrSimilarType(QualType T1, QualType T2);
 
   /// Retrieves the "canonical" nested name specifier for a
   /// given nested name specifier.
@@ -2924,7 +2925,7 @@ public:
   /// S::X<template-param-0-0>, since 'S' and 'X' are uniquely defined
   /// by declarations in the type system and the canonical type for
   /// the template type parameter 'T' is template-param-0-0.
-  NestedNameSpecifier *
+  CLANG_ABI NestedNameSpecifier *
   getCanonicalNestedNameSpecifier(NestedNameSpecifier *NNS) const;
 
   /// Retrieves the default calling convention for the current context.
@@ -2933,7 +2934,7 @@ public:
   /// target's default calling convention if the -fdefault-calling-conv option
   /// is used; to get the target's default calling convention, e.g. for built-in
   /// functions, call getTargetInfo().getDefaultCallingConv() instead.
-  CallingConv getDefaultCallingConvention(bool IsVariadic,
+  CLANG_ABI CallingConv getDefaultCallingConvention(bool IsVariadic,
                                           bool IsCXXMethod) const;
 
   /// Retrieves the "canonical" template name that refers to a
@@ -2954,32 +2955,32 @@ public:
   /// template name uses the shortest form of the dependent
   /// nested-name-specifier, which itself contains all canonical
   /// types, values, and templates.
-  TemplateName getCanonicalTemplateName(TemplateName Name,
+  CLANG_ABI TemplateName getCanonicalTemplateName(TemplateName Name,
                                         bool IgnoreDeduced = false) const;
 
   /// Determine whether the given template names refer to the same
   /// template.
-  bool hasSameTemplateName(const TemplateName &X, const TemplateName &Y,
+  CLANG_ABI bool hasSameTemplateName(const TemplateName &X, const TemplateName &Y,
                            bool IgnoreDeduced = false) const;
 
   /// Determine whether the two declarations refer to the same entity.
-  bool isSameEntity(const NamedDecl *X, const NamedDecl *Y) const;
+  CLANG_ABI bool isSameEntity(const NamedDecl *X, const NamedDecl *Y) const;
 
   /// Determine whether two template parameter lists are similar enough
   /// that they may be used in declarations of the same template.
-  bool isSameTemplateParameterList(const TemplateParameterList *X,
+  CLANG_ABI bool isSameTemplateParameterList(const TemplateParameterList *X,
                                    const TemplateParameterList *Y) const;
 
   /// Determine whether two template parameters are similar enough
   /// that they may be used in declarations of the same template.
-  bool isSameTemplateParameter(const NamedDecl *X, const NamedDecl *Y) const;
+  CLANG_ABI bool isSameTemplateParameter(const NamedDecl *X, const NamedDecl *Y) const;
 
   /// Determine whether two 'requires' expressions are similar enough that they
   /// may be used in re-declarations.
   ///
   /// Use of 'requires' isn't mandatory, works with constraints expressed in
   /// other ways too.
-  bool isSameAssociatedConstraint(const AssociatedConstraint &ACX,
+  CLANG_ABI bool isSameAssociatedConstraint(const AssociatedConstraint &ACX,
                                   const AssociatedConstraint &ACY) const;
 
   /// Determine whether two 'requires' expressions are similar enough that they
@@ -2987,16 +2988,16 @@ public:
   ///
   /// Use of 'requires' isn't mandatory, works with constraints expressed in
   /// other ways too.
-  bool isSameConstraintExpr(const Expr *XCE, const Expr *YCE) const;
+  CLANG_ABI bool isSameConstraintExpr(const Expr *XCE, const Expr *YCE) const;
 
   /// Determine whether two type contraint are similar enough that they could
   /// used in declarations of the same template.
-  bool isSameTypeConstraint(const TypeConstraint *XTC,
+  CLANG_ABI bool isSameTypeConstraint(const TypeConstraint *XTC,
                             const TypeConstraint *YTC) const;
 
   /// Determine whether two default template arguments are similar enough
   /// that they may be used in declarations of the same template.
-  bool isSameDefaultTemplateArgument(const NamedDecl *X,
+  CLANG_ABI bool isSameDefaultTemplateArgument(const NamedDecl *X,
                                      const NamedDecl *Y) const;
 
   /// Retrieve the "canonical" template argument.
@@ -3004,34 +3005,34 @@ public:
   /// The canonical template argument is the simplest template argument
   /// (which may be a type, value, expression, or declaration) that
   /// expresses the value of the argument.
-  TemplateArgument getCanonicalTemplateArgument(const TemplateArgument &Arg)
+  CLANG_ABI TemplateArgument getCanonicalTemplateArgument(const TemplateArgument &Arg)
     const;
 
   /// Canonicalize the given template argument list.
   ///
   /// Returns true if any arguments were non-canonical, false otherwise.
-  bool
+  CLANG_ABI bool
   canonicalizeTemplateArguments(MutableArrayRef<TemplateArgument> Args) const;
 
   /// Canonicalize the given TemplateTemplateParmDecl.
-  TemplateTemplateParmDecl *
+  CLANG_ABI TemplateTemplateParmDecl *
   getCanonicalTemplateTemplateParmDecl(TemplateTemplateParmDecl *TTP) const;
 
-  TemplateTemplateParmDecl *findCanonicalTemplateTemplateParmDeclInternal(
+  CLANG_ABI TemplateTemplateParmDecl *findCanonicalTemplateTemplateParmDeclInternal(
       TemplateTemplateParmDecl *TTP) const;
-  TemplateTemplateParmDecl *insertCanonicalTemplateTemplateParmDeclInternal(
+  CLANG_ABI TemplateTemplateParmDecl *insertCanonicalTemplateTemplateParmDeclInternal(
       TemplateTemplateParmDecl *CanonTTP) const;
 
   /// Determine whether the given template arguments \p Arg1 and \p Arg2 are
   /// equivalent.
-  bool isSameTemplateArgument(const TemplateArgument &Arg1,
+  CLANG_ABI bool isSameTemplateArgument(const TemplateArgument &Arg1,
                               const TemplateArgument &Arg2) const;
 
   /// Type Query functions.  If the type is an instance of the specified class,
   /// return the Type pointer for the underlying maximally pretty type.  This
   /// is a member of ASTContext because this may need to do some amount of
   /// canonicalization, e.g. to move type qualifiers into the element type.
-  const ArrayType *getAsArrayType(QualType T) const;
+  CLANG_ABI const ArrayType *getAsArrayType(QualType T) const;
   const ConstantArrayType *getAsConstantArrayType(QualType T) const {
     return dyn_cast_or_null<ConstantArrayType>(getAsArrayType(T));
   }
@@ -3049,17 +3050,17 @@ public:
   /// Return the innermost element type of an array type.
   ///
   /// For example, will return "int" for int[m][n]
-  QualType getBaseElementType(const ArrayType *VAT) const;
+  CLANG_ABI QualType getBaseElementType(const ArrayType *VAT) const;
 
   /// Return the innermost element type of a type (which needn't
   /// actually be an array type).
-  QualType getBaseElementType(QualType QT) const;
+  CLANG_ABI QualType getBaseElementType(QualType QT) const;
 
   /// Return number of constant array elements.
-  uint64_t getConstantArrayElementCount(const ConstantArrayType *CA) const;
+  CLANG_ABI uint64_t getConstantArrayElementCount(const ConstantArrayType *CA) const;
 
   /// Return number of elements initialized in an ArrayInitLoopExpr.
-  uint64_t
+  CLANG_ABI uint64_t
   getArrayInitLoopExprElementCount(const ArrayInitLoopExpr *AILE) const;
 
   /// Perform adjustment on the parameter type of a function.
@@ -3067,14 +3068,14 @@ public:
   /// This routine adjusts the given parameter type @p T to the actual
   /// parameter type used by semantic analysis (C99 6.7.5.3p[7,8],
   /// C++ [dcl.fct]p3). The adjusted parameter type is returned.
-  QualType getAdjustedParameterType(QualType T) const;
+  CLANG_ABI QualType getAdjustedParameterType(QualType T) const;
 
   /// Retrieve the parameter type as adjusted for use in the signature
   /// of a function, decaying array and function types and removing top-level
   /// cv-qualifiers.
-  QualType getSignatureParameterType(QualType T) const;
+  CLANG_ABI QualType getSignatureParameterType(QualType T) const;
 
-  QualType getExceptionObjectType(QualType T) const;
+  CLANG_ABI QualType getExceptionObjectType(QualType T) const;
 
   /// Return the properly qualified result of decaying the specified
   /// array type to a pointer.
@@ -3084,48 +3085,48 @@ public:
   /// qualified element of the array.
   ///
   /// See C99 6.7.5.3p7 and C99 6.3.2.1p3.
-  QualType getArrayDecayedType(QualType T) const;
+  CLANG_ABI QualType getArrayDecayedType(QualType T) const;
 
   /// Return the type that \p PromotableType will promote to: C99
   /// 6.3.1.1p2, assuming that \p PromotableType is a promotable integer type.
-  QualType getPromotedIntegerType(QualType PromotableType) const;
+  CLANG_ABI QualType getPromotedIntegerType(QualType PromotableType) const;
 
   /// Recurses in pointer/array types until it finds an Objective-C
   /// retainable type and returns its ownership.
-  Qualifiers::ObjCLifetime getInnerObjCOwnership(QualType T) const;
+  CLANG_ABI Qualifiers::ObjCLifetime getInnerObjCOwnership(QualType T) const;
 
   /// Whether this is a promotable bitfield reference according
   /// to C99 6.3.1.1p2, bullet 2 (and GCC extensions).
   ///
   /// \returns the type this bit-field will promote to, or NULL if no
   /// promotion occurs.
-  QualType isPromotableBitField(Expr *E) const;
+  CLANG_ABI QualType isPromotableBitField(Expr *E) const;
 
   /// Return the highest ranked integer type, see C99 6.3.1.8p1.
   ///
   /// If \p LHS > \p RHS, returns 1.  If \p LHS == \p RHS, returns 0.  If
   /// \p LHS < \p RHS, return -1.
-  int getIntegerTypeOrder(QualType LHS, QualType RHS) const;
+  CLANG_ABI int getIntegerTypeOrder(QualType LHS, QualType RHS) const;
 
   /// Compare the rank of the two specified floating point types,
   /// ignoring the domain of the type (i.e. 'double' == '_Complex double').
   ///
   /// If \p LHS > \p RHS, returns 1.  If \p LHS == \p RHS, returns 0.  If
   /// \p LHS < \p RHS, return -1.
-  int getFloatingTypeOrder(QualType LHS, QualType RHS) const;
+  CLANG_ABI int getFloatingTypeOrder(QualType LHS, QualType RHS) const;
 
   /// Compare the rank of two floating point types as above, but compare equal
   /// if both types have the same floating-point semantics on the target (i.e.
   /// long double and double on AArch64 will return 0).
-  int getFloatingTypeSemanticOrder(QualType LHS, QualType RHS) const;
+  CLANG_ABI int getFloatingTypeSemanticOrder(QualType LHS, QualType RHS) const;
 
-  unsigned getTargetAddressSpace(LangAS AS) const;
+  CLANG_ABI unsigned getTargetAddressSpace(LangAS AS) const;
 
-  LangAS getLangASForBuiltinAddressSpace(unsigned AS) const;
+  CLANG_ABI LangAS getLangASForBuiltinAddressSpace(unsigned AS) const;
 
   /// Get target-dependent integer value for null pointer which is used for
   /// constant folding.
-  uint64_t getTargetNullPointerValue(QualType QT) const;
+  CLANG_ABI uint64_t getTargetNullPointerValue(QualType QT) const;
 
   bool addressSpaceMapManglingFor(LangAS AS) const {
     return AddrSpaceMapMangling || isTargetAddressSpace(AS);
@@ -3136,7 +3137,7 @@ public:
   // Merges two exception specifications, such that the resulting
   // exception spec is the union of both. For example, if either
   // of them can throw something, the result can throw it as well.
-  FunctionProtoType::ExceptionSpecInfo
+  CLANG_ABI FunctionProtoType::ExceptionSpecInfo
   mergeExceptionSpecs(FunctionProtoType::ExceptionSpecInfo ESI1,
                       FunctionProtoType::ExceptionSpecInfo ESI2,
                       SmallVectorImpl<QualType> &ExceptionTypeStorage,
@@ -3147,7 +3148,7 @@ public:
   // both types need only be the same unqualified type.
   // The result will drop the qualifiers which do not occur
   // in both types.
-  QualType getCommonSugaredType(QualType X, QualType Y,
+  CLANG_ABI QualType getCommonSugaredType(QualType X, QualType Y,
                                 bool Unqualified = false);
 
 private:
@@ -3160,11 +3161,11 @@ public:
   //===--------------------------------------------------------------------===//
 
   /// Compatibility predicates used to check assignment expressions.
-  bool typesAreCompatible(QualType T1, QualType T2,
+  CLANG_ABI bool typesAreCompatible(QualType T1, QualType T2,
                           bool CompareUnqualified = false); // C99 6.2.7p1
 
-  bool propertyTypesAreCompatible(QualType, QualType);
-  bool typesAreBlockPointerCompatible(QualType, QualType);
+  CLANG_ABI bool propertyTypesAreCompatible(QualType, QualType);
+  CLANG_ABI bool typesAreBlockPointerCompatible(QualType, QualType);
 
   bool isObjCIdType(QualType T) const {
     if (const auto *ET = dyn_cast<ElaboratedType>(T))
@@ -3184,43 +3185,43 @@ public:
     return T == getObjCSelType();
   }
 
-  bool ObjCQualifiedIdTypesAreCompatible(const ObjCObjectPointerType *LHS,
+  CLANG_ABI bool ObjCQualifiedIdTypesAreCompatible(const ObjCObjectPointerType *LHS,
                                          const ObjCObjectPointerType *RHS,
                                          bool ForCompare);
 
-  bool ObjCQualifiedClassTypesAreCompatible(const ObjCObjectPointerType *LHS,
+  CLANG_ABI bool ObjCQualifiedClassTypesAreCompatible(const ObjCObjectPointerType *LHS,
                                             const ObjCObjectPointerType *RHS);
 
   // Check the safety of assignment from LHS to RHS
-  bool canAssignObjCInterfaces(const ObjCObjectPointerType *LHSOPT,
+  CLANG_ABI bool canAssignObjCInterfaces(const ObjCObjectPointerType *LHSOPT,
                                const ObjCObjectPointerType *RHSOPT);
-  bool canAssignObjCInterfaces(const ObjCObjectType *LHS,
+  CLANG_ABI bool canAssignObjCInterfaces(const ObjCObjectType *LHS,
                                const ObjCObjectType *RHS);
-  bool canAssignObjCInterfacesInBlockPointer(
+  CLANG_ABI bool canAssignObjCInterfacesInBlockPointer(
                                           const ObjCObjectPointerType *LHSOPT,
                                           const ObjCObjectPointerType *RHSOPT,
                                           bool BlockReturnType);
-  bool areComparableObjCPointerTypes(QualType LHS, QualType RHS);
-  QualType areCommonBaseCompatible(const ObjCObjectPointerType *LHSOPT,
+  CLANG_ABI bool areComparableObjCPointerTypes(QualType LHS, QualType RHS);
+  CLANG_ABI QualType areCommonBaseCompatible(const ObjCObjectPointerType *LHSOPT,
                                    const ObjCObjectPointerType *RHSOPT);
-  bool canBindObjCObjectType(QualType To, QualType From);
+  CLANG_ABI bool canBindObjCObjectType(QualType To, QualType From);
 
   // Functions for calculating composite types
-  QualType mergeTypes(QualType, QualType, bool OfBlockPointer = false,
+  CLANG_ABI QualType mergeTypes(QualType, QualType, bool OfBlockPointer = false,
                       bool Unqualified = false, bool BlockReturnType = false,
                       bool IsConditionalOperator = false);
-  QualType mergeFunctionTypes(QualType, QualType, bool OfBlockPointer = false,
+  CLANG_ABI QualType mergeFunctionTypes(QualType, QualType, bool OfBlockPointer = false,
                               bool Unqualified = false, bool AllowCXX = false,
                               bool IsConditionalOperator = false);
-  QualType mergeFunctionParameterTypes(QualType, QualType,
+  CLANG_ABI QualType mergeFunctionParameterTypes(QualType, QualType,
                                        bool OfBlockPointer = false,
                                        bool Unqualified = false);
-  QualType mergeTransparentUnionType(QualType, QualType,
+  CLANG_ABI QualType mergeTransparentUnionType(QualType, QualType,
                                      bool OfBlockPointer=false,
                                      bool Unqualified = false);
-  QualType mergeTagDefinitions(QualType, QualType);
+  CLANG_ABI QualType mergeTagDefinitions(QualType, QualType);
 
-  QualType mergeObjCGCQualifiers(QualType, QualType);
+  CLANG_ABI QualType mergeObjCGCQualifiers(QualType, QualType);
 
   /// This function merges the ExtParameterInfo lists of two functions. It
   /// returns true if the lists are compatible. The merged list is returned in
@@ -3241,13 +3242,13 @@ public:
   /// \param NewParamInfos The composite list of ExtParameterInfo. The list is
   /// empty if none of the flags are set.
   ///
-  bool mergeExtParameterInfo(
+  CLANG_ABI bool mergeExtParameterInfo(
       const FunctionProtoType *FirstFnType,
       const FunctionProtoType *SecondFnType,
       bool &CanUseFirst, bool &CanUseSecond,
       SmallVectorImpl<FunctionProtoType::ExtParameterInfo> &NewParamInfos);
 
-  void ResetObjCLayout(const ObjCInterfaceDecl *D);
+  CLANG_ABI void ResetObjCLayout(const ObjCInterfaceDecl *D);
 
   void addObjCSubClass(const ObjCInterfaceDecl *D,
                        const ObjCInterfaceDecl *SubClass) {
@@ -3260,7 +3261,7 @@ public:
 
   // The width of an integer, as defined in C99 6.2.6.2. This is the number
   // of bits in an integer type excluding any padding bits.
-  unsigned getIntWidth(QualType T) const;
+  CLANG_ABI unsigned getIntWidth(QualType T) const;
 
   // Per C99 6.2.5p6, for every signed integer type, there is a corresponding
   // unsigned integer type.  This method takes a signed type, and returns the
@@ -3268,7 +3269,7 @@ public:
   // With the introduction of fixed point types in ISO N1169, this method also
   // accepts fixed point types and returns the corresponding unsigned type for
   // a given fixed point type.
-  QualType getCorrespondingUnsignedType(QualType T) const;
+  CLANG_ABI QualType getCorrespondingUnsignedType(QualType T) const;
 
   // Per C99 6.2.5p6, for every signed integer type, there is a corresponding
   // unsigned integer type.  This method takes an unsigned type, and returns the
@@ -3276,21 +3277,21 @@ public:
   // With the introduction of fixed point types in ISO N1169, this method also
   // accepts fixed point types and returns the corresponding signed type for
   // a given fixed point type.
-  QualType getCorrespondingSignedType(QualType T) const;
+  CLANG_ABI QualType getCorrespondingSignedType(QualType T) const;
 
   // Per ISO N1169, this method accepts fixed point types and returns the
   // corresponding saturated type for a given fixed point type.
-  QualType getCorrespondingSaturatedType(QualType Ty) const;
+  CLANG_ABI QualType getCorrespondingSaturatedType(QualType Ty) const;
 
   // Per ISO N1169, this method accepts fixed point types and returns the
   // corresponding non-saturated type for a given fixed point type.
-  QualType getCorrespondingUnsaturatedType(QualType Ty) const;
+  CLANG_ABI QualType getCorrespondingUnsaturatedType(QualType Ty) const;
 
   // This method accepts fixed point types and returns the corresponding signed
   // type. Unlike getCorrespondingUnsignedType(), this only accepts unsigned
   // fixed point types because there are unsigned integer types like bool and
   // char8_t that don't have signed equivalents.
-  QualType getCorrespondingSignedFixedPointType(QualType Ty) const;
+  CLANG_ABI QualType getCorrespondingSignedFixedPointType(QualType Ty) const;
 
   //===--------------------------------------------------------------------===//
   //                    Integer Values
@@ -3309,15 +3310,15 @@ public:
     return Res;
   }
 
-  bool isSentinelNullExpr(const Expr *E);
+  CLANG_ABI bool isSentinelNullExpr(const Expr *E);
 
   /// Get the implementation of the ObjCInterfaceDecl \p D, or nullptr if
   /// none exists.
-  ObjCImplementationDecl *getObjCImplementation(ObjCInterfaceDecl *D);
+  CLANG_ABI ObjCImplementationDecl *getObjCImplementation(ObjCInterfaceDecl *D);
 
   /// Get the implementation of the ObjCCategoryDecl \p D, or nullptr if
   /// none exists.
-  ObjCCategoryImplDecl *getObjCImplementation(ObjCCategoryDecl *D);
+  CLANG_ABI ObjCCategoryImplDecl *getObjCImplementation(ObjCCategoryDecl *D);
 
   /// Return true if there is at least one \@implementation in the TU.
   bool AnyObjCImplementation() {
@@ -3325,33 +3326,33 @@ public:
   }
 
   /// Set the implementation of ObjCInterfaceDecl.
-  void setObjCImplementation(ObjCInterfaceDecl *IFaceD,
+  CLANG_ABI void setObjCImplementation(ObjCInterfaceDecl *IFaceD,
                              ObjCImplementationDecl *ImplD);
 
   /// Set the implementation of ObjCCategoryDecl.
-  void setObjCImplementation(ObjCCategoryDecl *CatD,
+  CLANG_ABI void setObjCImplementation(ObjCCategoryDecl *CatD,
                              ObjCCategoryImplDecl *ImplD);
 
   /// Get the duplicate declaration of a ObjCMethod in the same
   /// interface, or null if none exists.
-  const ObjCMethodDecl *
+  CLANG_ABI const ObjCMethodDecl *
   getObjCMethodRedeclaration(const ObjCMethodDecl *MD) const;
 
-  void setObjCMethodRedeclaration(const ObjCMethodDecl *MD,
+  CLANG_ABI void setObjCMethodRedeclaration(const ObjCMethodDecl *MD,
                                   const ObjCMethodDecl *Redecl);
 
   /// Returns the Objective-C interface that \p ND belongs to if it is
   /// an Objective-C method/property/ivar etc. that is part of an interface,
   /// otherwise returns null.
-  const ObjCInterfaceDecl *getObjContainingInterface(const NamedDecl *ND) const;
+  CLANG_ABI const ObjCInterfaceDecl *getObjContainingInterface(const NamedDecl *ND) const;
 
   /// Set the copy initialization expression of a block var decl. \p CanThrow
   /// indicates whether the copy expression can throw or not.
-  void setBlockVarCopyInit(const VarDecl* VD, Expr *CopyExpr, bool CanThrow);
+  CLANG_ABI void setBlockVarCopyInit(const VarDecl* VD, Expr *CopyExpr, bool CanThrow);
 
   /// Get the copy initialization expression of the VarDecl \p VD, or
   /// nullptr if none exists.
-  BlockVarCopyInit getBlockVarCopyInit(const VarDecl* VD) const;
+  CLANG_ABI BlockVarCopyInit getBlockVarCopyInit(const VarDecl* VD) const;
 
   /// Allocate an uninitialized TypeSourceInfo.
   ///
@@ -3364,12 +3365,12 @@ public:
   ///
   /// \param Size the size of the type info to create, or 0 if the size
   /// should be calculated based on the type.
-  TypeSourceInfo *CreateTypeSourceInfo(QualType T, unsigned Size = 0) const;
+  CLANG_ABI TypeSourceInfo *CreateTypeSourceInfo(QualType T, unsigned Size = 0) const;
 
   /// Allocate a TypeSourceInfo where all locations have been
   /// initialized to a given location, which defaults to the empty
   /// location.
-  TypeSourceInfo *
+  CLANG_ABI TypeSourceInfo *
   getTrivialTypeSourceInfo(QualType T,
                            SourceLocation Loc = SourceLocation()) const;
 
@@ -3380,7 +3381,7 @@ public:
   ///
   /// \param Data Pointer data that will be provided to the callback function
   /// when it is called.
-  void AddDeallocation(void (*Callback)(void *), void *Data) const;
+  CLANG_ABI void AddDeallocation(void (*Callback)(void *), void *Data) const;
 
   /// If T isn't trivially destructible, calls AddDeallocation to register it
   /// for destruction.
@@ -3391,8 +3392,8 @@ public:
     }
   }
 
-  GVALinkage GetGVALinkageForFunction(const FunctionDecl *FD) const;
-  GVALinkage GetGVALinkageForVariable(const VarDecl *VD) const;
+  CLANG_ABI GVALinkage GetGVALinkageForFunction(const FunctionDecl *FD) const;
+  CLANG_ABI GVALinkage GetGVALinkageForVariable(const VarDecl *VD) const;
 
   /// Determines if the decl can be CodeGen'ed or deserialized from PCH
   /// lazily, only when used; this is only relevant for function or file scoped
@@ -3400,65 +3401,65 @@ public:
   ///
   /// \returns true if the function/var must be CodeGen'ed/deserialized even if
   /// it is not used.
-  bool DeclMustBeEmitted(const Decl *D);
+  CLANG_ABI bool DeclMustBeEmitted(const Decl *D);
 
   /// Visits all versions of a multiversioned function with the passed
   /// predicate.
-  void forEachMultiversionedFunctionVersion(
+  CLANG_ABI void forEachMultiversionedFunctionVersion(
       const FunctionDecl *FD,
       llvm::function_ref<void(FunctionDecl *)> Pred) const;
 
-  const CXXConstructorDecl *
+  CLANG_ABI const CXXConstructorDecl *
   getCopyConstructorForExceptionObject(CXXRecordDecl *RD);
 
-  void addCopyConstructorForExceptionObject(CXXRecordDecl *RD,
+  CLANG_ABI void addCopyConstructorForExceptionObject(CXXRecordDecl *RD,
                                             CXXConstructorDecl *CD);
 
-  void addTypedefNameForUnnamedTagDecl(TagDecl *TD, TypedefNameDecl *TND);
+  CLANG_ABI void addTypedefNameForUnnamedTagDecl(TagDecl *TD, TypedefNameDecl *TND);
 
-  TypedefNameDecl *getTypedefNameForUnnamedTagDecl(const TagDecl *TD);
+  CLANG_ABI TypedefNameDecl *getTypedefNameForUnnamedTagDecl(const TagDecl *TD);
 
-  void addDeclaratorForUnnamedTagDecl(TagDecl *TD, DeclaratorDecl *DD);
+  CLANG_ABI void addDeclaratorForUnnamedTagDecl(TagDecl *TD, DeclaratorDecl *DD);
 
-  DeclaratorDecl *getDeclaratorForUnnamedTagDecl(const TagDecl *TD);
+  CLANG_ABI DeclaratorDecl *getDeclaratorForUnnamedTagDecl(const TagDecl *TD);
 
-  void setManglingNumber(const NamedDecl *ND, unsigned Number);
-  unsigned getManglingNumber(const NamedDecl *ND,
+  CLANG_ABI void setManglingNumber(const NamedDecl *ND, unsigned Number);
+  CLANG_ABI unsigned getManglingNumber(const NamedDecl *ND,
                              bool ForAuxTarget = false) const;
 
-  void setStaticLocalNumber(const VarDecl *VD, unsigned Number);
-  unsigned getStaticLocalNumber(const VarDecl *VD) const;
+  CLANG_ABI void setStaticLocalNumber(const VarDecl *VD, unsigned Number);
+  CLANG_ABI unsigned getStaticLocalNumber(const VarDecl *VD) const;
 
   bool hasSeenTypeAwareOperatorNewOrDelete() const {
     return !TypeAwareOperatorNewAndDeletes.empty();
   }
-  void setIsDestroyingOperatorDelete(const FunctionDecl *FD, bool IsDestroying);
-  bool isDestroyingOperatorDelete(const FunctionDecl *FD) const;
-  void setIsTypeAwareOperatorNewOrDelete(const FunctionDecl *FD,
+  CLANG_ABI void setIsDestroyingOperatorDelete(const FunctionDecl *FD, bool IsDestroying);
+  CLANG_ABI bool isDestroyingOperatorDelete(const FunctionDecl *FD) const;
+  CLANG_ABI void setIsTypeAwareOperatorNewOrDelete(const FunctionDecl *FD,
                                          bool IsTypeAware);
-  bool isTypeAwareOperatorNewOrDelete(const FunctionDecl *FD) const;
+  CLANG_ABI bool isTypeAwareOperatorNewOrDelete(const FunctionDecl *FD) const;
 
   /// Retrieve the context for computing mangling numbers in the given
   /// DeclContext.
-  MangleNumberingContext &getManglingNumberContext(const DeclContext *DC);
+  CLANG_ABI MangleNumberingContext &getManglingNumberContext(const DeclContext *DC);
   enum NeedExtraManglingDecl_t { NeedExtraManglingDecl };
-  MangleNumberingContext &getManglingNumberContext(NeedExtraManglingDecl_t,
+  CLANG_ABI MangleNumberingContext &getManglingNumberContext(NeedExtraManglingDecl_t,
                                                    const Decl *D);
 
-  std::unique_ptr<MangleNumberingContext> createMangleNumberingContext() const;
+  CLANG_ABI std::unique_ptr<MangleNumberingContext> createMangleNumberingContext() const;
 
   /// Used by ParmVarDecl to store on the side the
   /// index of the parameter when it exceeds the size of the normal bitfield.
-  void setParameterIndex(const ParmVarDecl *D, unsigned index);
+  CLANG_ABI void setParameterIndex(const ParmVarDecl *D, unsigned index);
 
   /// Used by ParmVarDecl to retrieve on the side the
   /// index of the parameter when it exceeds the size of the normal bitfield.
-  unsigned getParameterIndex(const ParmVarDecl *D) const;
+  CLANG_ABI unsigned getParameterIndex(const ParmVarDecl *D) const;
 
   /// Return a string representing the human readable name for the specified
   /// function declaration or file name. Used by SourceLocExpr and
   /// PredefinedExpr to cache evaluated results.
-  StringLiteral *getPredefinedStringLiteralFromCache(StringRef Key) const;
+  CLANG_ABI StringLiteral *getPredefinedStringLiteralFromCache(StringRef Key) const;
 
   /// Return the next version number to be used for a string literal evaluated
   /// as part of constant evaluation.
@@ -3466,25 +3467,25 @@ public:
 
   /// Return a declaration for the global GUID object representing the given
   /// GUID value.
-  MSGuidDecl *getMSGuidDecl(MSGuidDeclParts Parts) const;
+  CLANG_ABI MSGuidDecl *getMSGuidDecl(MSGuidDeclParts Parts) const;
 
   /// Return a declaration for a uniquified anonymous global constant
   /// corresponding to a given APValue.
-  UnnamedGlobalConstantDecl *
+  CLANG_ABI UnnamedGlobalConstantDecl *
   getUnnamedGlobalConstantDecl(QualType Ty, const APValue &Value) const;
 
   /// Return the template parameter object of the given type with the given
   /// value.
-  TemplateParamObjectDecl *getTemplateParamObjectDecl(QualType T,
+  CLANG_ABI TemplateParamObjectDecl *getTemplateParamObjectDecl(QualType T,
                                                       const APValue &V) const;
 
   /// Parses the target attributes passed in, and returns only the ones that are
   /// valid feature names.
-  ParsedTargetAttr filterFunctionTargetAttrs(const TargetAttr *TD) const;
+  CLANG_ABI ParsedTargetAttr filterFunctionTargetAttrs(const TargetAttr *TD) const;
 
-  void getFunctionFeatureMap(llvm::StringMap<bool> &FeatureMap,
+  CLANG_ABI void getFunctionFeatureMap(llvm::StringMap<bool> &FeatureMap,
                              const FunctionDecl *) const;
-  void getFunctionFeatureMap(llvm::StringMap<bool> &FeatureMap,
+  CLANG_ABI void getFunctionFeatureMap(llvm::StringMap<bool> &FeatureMap,
                              GlobalDecl GD) const;
 
   /// Generates and stores SYCL kernel metadata for the provided
@@ -3493,17 +3494,17 @@ public:
   /// type for the name of a SYCL kernel. Callers are required to detect
   /// conflicting SYCL kernel names and issue a diagnostic prior to calling
   /// this function.
-  void registerSYCLEntryPointFunction(FunctionDecl *FD);
+  CLANG_ABI void registerSYCLEntryPointFunction(FunctionDecl *FD);
 
   /// Given a type used as a SYCL kernel name, returns a reference to the
   /// metadata generated from the corresponding SYCL kernel entry point.
   /// Aborts if the provided type is not a registered SYCL kernel name.
-  const SYCLKernelInfo &getSYCLKernelInfo(QualType T) const;
+  CLANG_ABI const SYCLKernelInfo &getSYCLKernelInfo(QualType T) const;
 
   /// Returns a pointer to the metadata generated from the corresponding
   /// SYCLkernel entry point if the provided type corresponds to a registered
   /// SYCL kernel name. Returns a null pointer otherwise.
-  const SYCLKernelInfo *findSYCLKernelInfo(QualType T) const;
+  CLANG_ABI const SYCLKernelInfo *findSYCLKernelInfo(QualType T) const;
 
   //===--------------------------------------------------------------------===//
   //                    Statistics
@@ -3558,7 +3559,7 @@ public:
   /// It is normally invoked after ASTContext construction.
   ///
   /// \param Target The target
-  void InitBuiltinTypes(const TargetInfo &Target,
+  CLANG_ABI void InitBuiltinTypes(const TargetInfo &Target,
                         const TargetInfo *AuxTarget = nullptr);
 
 private:
@@ -3617,13 +3618,13 @@ OPT_LIST(V)
 
 public:
   // Adds the encoding of a method parameter or return type.
-  void getObjCEncodingForMethodParameter(Decl::ObjCDeclQualifier QT,
+  CLANG_ABI void getObjCEncodingForMethodParameter(Decl::ObjCDeclQualifier QT,
                                          QualType T, std::string& S,
                                          bool Extended) const;
 
   /// Returns true if this is an inline-initialized static data member
   /// which is treated as a definition for MSVC compatibility.
-  bool isMSStaticDataMemberInlineDefinition(const VarDecl *VD) const;
+  CLANG_ABI bool isMSStaticDataMemberInlineDefinition(const VarDecl *VD) const;
 
   enum class InlineVariableDefinitionKind {
     /// Not an inline variable.
@@ -3644,7 +3645,7 @@ public:
   /// C++14 and before, for a constexpr static data member, if there is an
   /// out-of-line declaration of the member, we may promote it from weak to
   /// strong.
-  InlineVariableDefinitionKind
+  CLANG_ABI InlineVariableDefinitionKind
   getInlineVariableDefinitionKind(const VarDecl *VD) const;
 
 private:
@@ -3702,23 +3703,23 @@ public:
   llvm::StringMap<SectionInfo> SectionInfos;
 
   /// Return a new OMPTraitInfo object owned by this context.
-  OMPTraitInfo &getNewOMPTraitInfo();
+  CLANG_ABI OMPTraitInfo &getNewOMPTraitInfo();
 
   /// Whether a C++ static variable or CUDA/HIP kernel may be externalized.
-  bool mayExternalize(const Decl *D) const;
+  CLANG_ABI bool mayExternalize(const Decl *D) const;
 
   /// Whether a C++ static variable or CUDA/HIP kernel should be externalized.
-  bool shouldExternalize(const Decl *D) const;
+  CLANG_ABI bool shouldExternalize(const Decl *D) const;
 
   /// Resolve the root record to be used to derive the vtable pointer
   /// authentication policy for the specified record.
-  const CXXRecordDecl *
+  CLANG_ABI const CXXRecordDecl *
   baseForVTableAuthentication(const CXXRecordDecl *ThisClass);
 
-  bool useAbbreviatedThunkName(GlobalDecl VirtualMethodDecl,
+  CLANG_ABI bool useAbbreviatedThunkName(GlobalDecl VirtualMethodDecl,
                                StringRef MangledName);
 
-  StringRef getCUIDHash() const;
+  CLANG_ABI StringRef getCUIDHash() const;
 
 private:
   /// All OMPTraitInfo objects live in this collection, one per
@@ -3729,7 +3730,7 @@ private:
 };
 
 /// Insertion operator for diagnostics.
-const StreamingDiagnostic &operator<<(const StreamingDiagnostic &DB,
+CLANG_ABI const StreamingDiagnostic &operator<<(const StreamingDiagnostic &DB,
                                       const ASTContext::SectionInfo &Section);
 
 /// Utility function for constructing a nullary selector.

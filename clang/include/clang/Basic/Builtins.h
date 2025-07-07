@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_BASIC_BUILTINS_H
 #define LLVM_CLANG_BASIC_BUILTINS_H
 
+#include "clang/Support/Compiler.h"
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/StringMap.h"
 #include "llvm/ADT/StringRef.h"
@@ -60,7 +61,7 @@ struct HeaderDesc {
   constexpr HeaderDesc() : ID() {}
   constexpr HeaderDesc(HeaderID ID) : ID(ID) {}
 
-  const char *getName() const;
+  CLANG_ABI const char *getName() const;
 };
 
 namespace Builtin {
@@ -93,7 +94,7 @@ struct Info {
   /// Get the name for the builtin represented by this `Info` object.
   ///
   /// Must be provided the `Shard` for this `Info` object.
-  std::string getName(const InfosShard &Shard) const;
+  CLANG_ABI std::string getName(const InfosShard &Shard) const;
 };
 
 /// A constexpr function to construct an infos array from X-macros.
@@ -235,30 +236,30 @@ class Context {
   unsigned NumAuxTargetBuiltins = 0;
 
 public:
-  Context();
+  CLANG_ABI Context();
 
   /// Perform target-specific initialization
   /// \param AuxTarget Target info to incorporate builtins from. May be nullptr.
-  void InitializeTarget(const TargetInfo &Target, const TargetInfo *AuxTarget);
+  CLANG_ABI void InitializeTarget(const TargetInfo &Target, const TargetInfo *AuxTarget);
 
   /// Mark the identifiers for all the builtins with their
   /// appropriate builtin ID # and mark any non-portable builtin identifiers as
   /// such.
-  void initializeBuiltins(IdentifierTable &Table, const LangOptions& LangOpts);
+  CLANG_ABI void initializeBuiltins(IdentifierTable &Table, const LangOptions& LangOpts);
 
   /// Return the identifier name for the specified builtin,
   /// e.g. "__builtin_abs".
-  std::string getName(unsigned ID) const;
+  CLANG_ABI std::string getName(unsigned ID) const;
 
   /// Return the identifier name for the specified builtin inside single quotes
   /// for a diagnostic, e.g. "'__builtin_abs'".
-  std::string getQuotedName(unsigned ID) const;
+  CLANG_ABI std::string getQuotedName(unsigned ID) const;
 
   /// Get the type descriptor string for the specified builtin.
-  const char *getTypeString(unsigned ID) const;
+  CLANG_ABI const char *getTypeString(unsigned ID) const;
 
   /// Get the attributes descriptor string for the specified builtin.
-  const char *getAttributesString(unsigned ID) const;
+  CLANG_ABI const char *getAttributesString(unsigned ID) const;
 
   /// Return true if this function is a target-specific builtin.
   bool isTSBuiltin(unsigned ID) const {
@@ -379,17 +380,17 @@ public:
   /// Determine whether this builtin is like printf in its
   /// formatting rules and, if so, set the index to the format string
   /// argument and whether this function as a va_list argument.
-  bool isPrintfLike(unsigned ID, unsigned &FormatIdx, bool &HasVAListArg);
+  CLANG_ABI bool isPrintfLike(unsigned ID, unsigned &FormatIdx, bool &HasVAListArg);
 
   /// Determine whether this builtin is like scanf in its
   /// formatting rules and, if so, set the index to the format string
   /// argument and whether this function as a va_list argument.
-  bool isScanfLike(unsigned ID, unsigned &FormatIdx, bool &HasVAListArg);
+  CLANG_ABI bool isScanfLike(unsigned ID, unsigned &FormatIdx, bool &HasVAListArg);
 
   /// Determine whether this builtin has callback behavior (see
   /// llvm::AbstractCallSites for details). If so, add the index to the
   /// callback callee argument and the callback payload arguments.
-  bool performsCallback(unsigned ID,
+  CLANG_ABI bool performsCallback(unsigned ID,
                         llvm::SmallVectorImpl<int> &Encoding) const;
 
   /// Return true if this function has no side effects and doesn't
@@ -405,9 +406,9 @@ public:
     return strchr(getAttributesString(ID), 'g') != nullptr;
   }
 
-  const char *getRequiredFeatures(unsigned ID) const;
+  CLANG_ABI const char *getRequiredFeatures(unsigned ID) const;
 
-  unsigned getRequiredVectorWidth(unsigned ID) const;
+  CLANG_ABI unsigned getRequiredVectorWidth(unsigned ID) const;
 
   /// Return true if the builtin ID belongs exclusively to the AuxTarget,
   /// and false if it belongs to both primary and aux target, or neither.
@@ -421,11 +422,11 @@ public:
 
   /// Returns true if this is a libc/libm function without the '__builtin_'
   /// prefix.
-  static bool isBuiltinFunc(llvm::StringRef Name);
+  CLANG_ABI static bool isBuiltinFunc(llvm::StringRef Name);
 
   /// Returns true if this is a builtin that can be redeclared.  Returns true
   /// for non-builtins.
-  bool canBeRedeclared(unsigned ID) const;
+  CLANG_ABI bool canBeRedeclared(unsigned ID) const;
 
   /// Return true if this function can be constant evaluated by Clang frontend.
   bool isConstantEvaluated(unsigned ID) const {
@@ -438,7 +439,7 @@ public:
   }
 
 private:
-  std::pair<const InfosShard &, const Info &>
+  CLANG_ABI std::pair<const InfosShard &, const Info &>
   getShardAndInfo(unsigned ID) const;
 
   const Info &getInfo(unsigned ID) const { return getShardAndInfo(ID).second; }
@@ -452,7 +453,7 @@ private:
 /// enabled.
 /// \p TargetFeatureMap maps a target feature to true if it is enabled and
 ///    false if it is disabled.
-bool evaluateRequiredTargetFeatures(
+CLANG_ABI bool evaluateRequiredTargetFeatures(
     llvm::StringRef RequiredFatures,
     const llvm::StringMap<bool> &TargetFetureMap);
 

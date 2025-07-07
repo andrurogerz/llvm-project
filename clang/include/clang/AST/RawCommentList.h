@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_AST_RAWCOMMENTLIST_H
 #define LLVM_CLANG_AST_RAWCOMMENTLIST_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/CommentOptions.h"
 #include "clang/Basic/SourceLocation.h"
 #include "llvm/ADT/ArrayRef.h"
@@ -44,7 +45,7 @@ public:
 
   RawComment() : Kind(RCK_Invalid), IsAlmostTrailingComment(false) { }
 
-  RawComment(const SourceManager &SourceMgr, SourceRange SR,
+  CLANG_ABI RawComment(const SourceManager &SourceMgr, SourceRange SR,
              const CommentOptions &CommentOpts, bool Merged);
 
   CommentKind getKind() const LLVM_READONLY {
@@ -147,7 +148,7 @@ public:
   ///     "This is a first line.\n"
   ///     "  This is a second line. It is indented.\n"
   ///     "This is a third line."
-  std::string getFormattedText(const SourceManager &SourceMgr,
+  CLANG_ABI std::string getFormattedText(const SourceManager &SourceMgr,
                                DiagnosticsEngine &Diags) const;
 
   struct CommentLine {
@@ -162,11 +163,11 @@ public:
   /// Returns sanitized comment text as separated lines with locations in
   /// source, suitable for further processing and rendering requiring source
   /// locations.
-  std::vector<CommentLine> getFormattedLines(const SourceManager &SourceMgr,
+  CLANG_ABI std::vector<CommentLine> getFormattedLines(const SourceManager &SourceMgr,
                                              DiagnosticsEngine &Diags) const;
 
   /// Parse the comment, assuming it is attached to decl \c D.
-  comments::FullComment *parse(const ASTContext &Context,
+  CLANG_ABI comments::FullComment *parse(const ASTContext &Context,
                                const Preprocessor *PP, const Decl *D) const;
 
 private:
@@ -200,9 +201,9 @@ private:
     IsAlmostTrailingComment(IsAlmostTrailingComment)
   { }
 
-  StringRef getRawTextSlow(const SourceManager &SourceMgr) const;
+  CLANG_ABI StringRef getRawTextSlow(const SourceManager &SourceMgr) const;
 
-  const char *extractBriefText(const ASTContext &Context) const;
+  CLANG_ABI const char *extractBriefText(const ASTContext &Context) const;
 
   friend class ASTReader;
 };
@@ -213,18 +214,18 @@ class RawCommentList {
 public:
   RawCommentList(SourceManager &SourceMgr) : SourceMgr(SourceMgr) {}
 
-  void addComment(const RawComment &RC, const CommentOptions &CommentOpts,
+  CLANG_ABI void addComment(const RawComment &RC, const CommentOptions &CommentOpts,
                   llvm::BumpPtrAllocator &Allocator);
 
   /// \returns A mapping from an offset of the start of the comment to the
   /// comment itself, or nullptr in case there are no comments in \p File.
-  const std::map<unsigned, RawComment *> *getCommentsInFile(FileID File) const;
+  CLANG_ABI const std::map<unsigned, RawComment *> *getCommentsInFile(FileID File) const;
 
-  bool empty() const;
+  CLANG_ABI bool empty() const;
 
-  unsigned getCommentBeginLine(RawComment *C, FileID File,
+  CLANG_ABI unsigned getCommentBeginLine(RawComment *C, FileID File,
                                unsigned Offset) const;
-  unsigned getCommentEndOffset(RawComment *C) const;
+  CLANG_ABI unsigned getCommentEndOffset(RawComment *C) const;
 
 private:
   SourceManager &SourceMgr;

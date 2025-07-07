@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_STMTCXX_H
 #define LLVM_CLANG_AST_STMTCXX_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/DeclarationName.h"
 #include "clang/AST/Expr.h"
 #include "clang/AST/NestedNameSpecifier.h"
@@ -47,7 +48,7 @@ public:
 
   SourceLocation getCatchLoc() const { return CatchLoc; }
   VarDecl *getExceptionDecl() const { return ExceptionDecl; }
-  QualType getCaughtType() const;
+  CLANG_ABI QualType getCaughtType() const;
   Stmt *getHandlerBlock() const { return HandlerBlock; }
 
   static bool classof(const Stmt *T) {
@@ -84,10 +85,10 @@ class CXXTryStmt final : public Stmt,
   Stmt **getStmts() { return getTrailingObjects(); }
 
 public:
-  static CXXTryStmt *Create(const ASTContext &C, SourceLocation tryLoc,
+  CLANG_ABI static CXXTryStmt *Create(const ASTContext &C, SourceLocation tryLoc,
                             CompoundStmt *tryBlock, ArrayRef<Stmt *> handlers);
 
-  static CXXTryStmt *Create(const ASTContext &C, EmptyShell Empty,
+  CLANG_ABI static CXXTryStmt *Create(const ASTContext &C, EmptyShell Empty,
                             unsigned numHandlers);
 
   SourceLocation getBeginLoc() const LLVM_READONLY { return getTryLoc(); }
@@ -144,19 +145,19 @@ class CXXForRangeStmt : public Stmt {
 
   friend class ASTStmtReader;
 public:
-  CXXForRangeStmt(Stmt *InitStmt, DeclStmt *Range, DeclStmt *Begin,
+  CLANG_ABI CXXForRangeStmt(Stmt *InitStmt, DeclStmt *Range, DeclStmt *Begin,
                   DeclStmt *End, Expr *Cond, Expr *Inc, DeclStmt *LoopVar,
                   Stmt *Body, SourceLocation FL, SourceLocation CAL,
                   SourceLocation CL, SourceLocation RPL);
   CXXForRangeStmt(EmptyShell Empty) : Stmt(CXXForRangeStmtClass, Empty) { }
 
   Stmt *getInit() { return SubExprs[INIT]; }
-  VarDecl *getLoopVariable();
-  Expr *getRangeInit();
+  CLANG_ABI VarDecl *getLoopVariable();
+  CLANG_ABI Expr *getRangeInit();
 
   const Stmt *getInit() const { return SubExprs[INIT]; }
-  const VarDecl *getLoopVariable() const;
-  const Expr *getRangeInit() const;
+  CLANG_ABI const VarDecl *getLoopVariable() const;
+  CLANG_ABI const Expr *getRangeInit() const;
 
 
   DeclStmt *getRangeStmt() { return cast<DeclStmt>(SubExprs[RANGE]); }
@@ -366,8 +367,8 @@ private:
   CoroutineBodyStmt(CtorArgs const& Args);
 
 public:
-  static CoroutineBodyStmt *Create(const ASTContext &C, CtorArgs const &Args);
-  static CoroutineBodyStmt *Create(const ASTContext &C, EmptyShell,
+  CLANG_ABI static CoroutineBodyStmt *Create(const ASTContext &C, CtorArgs const &Args);
+  CLANG_ABI static CoroutineBodyStmt *Create(const ASTContext &C, EmptyShell,
                                    unsigned NumParams);
 
   bool hasDependentPromiseType() const {

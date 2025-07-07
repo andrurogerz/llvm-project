@@ -17,6 +17,7 @@
 #ifndef LLVM_CLANG_AST_TYPE_H
 #define LLVM_CLANG_AST_TYPE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/DependenceFlags.h"
 #include "clang/AST/NestedNameSpecifier.h"
 #include "clang/AST/TemplateName.h"
@@ -312,11 +313,11 @@ public:
     return Result;
   }
 
-  std::string getAsString() const;
-  std::string getAsString(const PrintingPolicy &Policy) const;
+  CLANG_ABI std::string getAsString() const;
+  CLANG_ABI std::string getAsString(const PrintingPolicy &Policy) const;
 
-  bool isEmptyWhenPrinted(const PrintingPolicy &Policy) const;
-  void print(raw_ostream &OS, const PrintingPolicy &Policy) const;
+  CLANG_ABI bool isEmptyWhenPrinted(const PrintingPolicy &Policy) const;
+  CLANG_ABI void print(raw_ostream &OS, const PrintingPolicy &Policy) const;
 
   void Profile(llvm::FoldingSetNodeID &ID) const { ID.AddInteger(Data); }
 };
@@ -710,7 +711,7 @@ public:
     return A == B || isTargetAddressSpaceSupersetOf(A, B, Ctx);
   }
 
-  static bool isTargetAddressSpaceSupersetOf(LangAS A, LangAS B,
+  CLANG_ABI static bool isTargetAddressSpaceSupersetOf(LangAS A, LangAS B,
                                              const ASTContext &Ctx);
 
   /// Returns true if the address space in these qualifiers is equal to or
@@ -761,7 +762,7 @@ public:
 
   /// Determine whether this set of qualifiers is a strict superset of
   /// another set of qualifiers, not considering qualifier compatibility.
-  bool isStrictSupersetOf(Qualifiers Other) const;
+  CLANG_ABI bool isStrictSupersetOf(Qualifiers Other) const;
 
   bool operator==(Qualifiers Other) const { return Mask == Other.Mask; }
   bool operator!=(Qualifiers Other) const { return Mask != Other.Mask; }
@@ -791,13 +792,13 @@ public:
     return L;
   }
 
-  std::string getAsString() const;
-  std::string getAsString(const PrintingPolicy &Policy) const;
+  CLANG_ABI std::string getAsString() const;
+  CLANG_ABI std::string getAsString(const PrintingPolicy &Policy) const;
 
-  static std::string getAddrSpaceAsString(LangAS AS);
+  CLANG_ABI static std::string getAddrSpaceAsString(LangAS AS);
 
-  bool isEmptyWhenPrinted(const PrintingPolicy &Policy) const;
-  void print(raw_ostream &OS, const PrintingPolicy &Policy,
+  CLANG_ABI bool isEmptyWhenPrinted(const PrintingPolicy &Policy) const;
+  CLANG_ABI void print(raw_ostream &OS, const PrintingPolicy &Policy,
              bool appendSpaceIfNonEmpty = false) const;
 
   void Profile(llvm::FoldingSetNodeID &ID) const { ID.AddInteger(Mask); }
@@ -963,7 +964,7 @@ public:
   unsigned getLocalFastQualifiers() const { return Value.getInt(); }
   void setLocalFastQualifiers(unsigned Quals) { Value.setInt(Quals); }
 
-  bool UseExcessPrecision(const ASTContext &Ctx);
+  CLANG_ABI bool UseExcessPrecision(const ASTContext &Ctx);
 
   /// Retrieves a pointer to the underlying (unqualified) type.
   ///
@@ -974,7 +975,7 @@ public:
   const Type *getTypePtrOrNull() const;
 
   /// Retrieves a pointer to the name of the base type.
-  const IdentifierInfo *getBaseTypeIdentifier() const;
+  CLANG_ABI const IdentifierInfo *getBaseTypeIdentifier() const;
 
   /// Divides a QualType into its unqualified type and a set of local
   /// qualifiers.
@@ -1028,7 +1029,7 @@ public:
   /// If ExcludeCtor is true, the duration when the object's constructor runs
   /// will not be considered. The caller will need to verify that the object is
   /// not written to during its construction. ExcludeDtor works similarly.
-  std::optional<NonConstantStorageReason>
+  CLANG_ABI std::optional<NonConstantStorageReason>
   isNonConstantStorage(const ASTContext &Ctx, bool ExcludeCtor,
                        bool ExcludeDtor);
 
@@ -1098,23 +1099,23 @@ public:
   }
 
   /// Determine whether this is a Plain Old Data (POD) type (C++ 3.9p10).
-  bool isPODType(const ASTContext &Context) const;
+  CLANG_ABI bool isPODType(const ASTContext &Context) const;
 
   /// Return true if this is a POD type according to the rules of the C++98
   /// standard, regardless of the current compilation's language.
-  bool isCXX98PODType(const ASTContext &Context) const;
+  CLANG_ABI bool isCXX98PODType(const ASTContext &Context) const;
 
   /// Return true if this is a POD type according to the more relaxed rules
   /// of the C++11 standard, regardless of the current compilation's language.
   /// (C++0x [basic.types]p9). Note that, unlike
   /// CXXRecordDecl::isCXX11StandardLayout, this takes DRs into account.
-  bool isCXX11PODType(const ASTContext &Context) const;
+  CLANG_ABI bool isCXX11PODType(const ASTContext &Context) const;
 
   /// Return true if this is a trivial type per (C++0x [basic.types]p9)
-  bool isTrivialType(const ASTContext &Context) const;
+  CLANG_ABI bool isTrivialType(const ASTContext &Context) const;
 
   /// Return true if this is a trivially copyable type (C++0x [basic.types]p9)
-  bool isTriviallyCopyableType(const ASTContext &Context) const;
+  CLANG_ABI bool isTriviallyCopyableType(const ASTContext &Context) const;
 
   /// Return true if the type is safe to bitwise copy using memcpy/memmove.
   ///
@@ -1128,25 +1129,25 @@ public:
   ///    which can cause issues if those poisoned padding bits are accessed.
   ///  - Types with Objective-C lifetimes, where specific runtime
   ///    semantics may not be preserved during a bitwise copy.
-  bool isBitwiseCloneableType(const ASTContext &Context) const;
+  CLANG_ABI bool isBitwiseCloneableType(const ASTContext &Context) const;
 
   /// Return true if this is a trivially copyable type
-  bool isTriviallyCopyConstructibleType(const ASTContext &Context) const;
+  CLANG_ABI bool isTriviallyCopyConstructibleType(const ASTContext &Context) const;
 
   /// Returns true if it is a class and it might be dynamic.
-  bool mayBeDynamicClass() const;
+  CLANG_ABI bool mayBeDynamicClass() const;
 
   /// Returns true if it is not a class or if the class might not be dynamic.
-  bool mayBeNotDynamicClass() const;
+  CLANG_ABI bool mayBeNotDynamicClass() const;
 
   /// Returns true if it is a WebAssembly Reference Type.
-  bool isWebAssemblyReferenceType() const;
+  CLANG_ABI bool isWebAssemblyReferenceType() const;
 
   /// Returns true if it is a WebAssembly Externref Type.
-  bool isWebAssemblyExternrefType() const;
+  CLANG_ABI bool isWebAssemblyExternrefType() const;
 
   /// Returns true if it is a WebAssembly Funcref Type.
-  bool isWebAssemblyFuncrefType() const;
+  CLANG_ABI bool isWebAssemblyFuncrefType() const;
 
   // Don't promise in the API that anything besides 'const' can be
   // easily added.
@@ -1276,13 +1277,13 @@ public:
   /// an lvalue. It removes a top-level reference (since there are no
   /// expressions of reference type) and deletes top-level cvr-qualifiers
   /// from non-class types (in C++) or all types (in C).
-  QualType getNonLValueExprType(const ASTContext &Context) const;
+  CLANG_ABI QualType getNonLValueExprType(const ASTContext &Context) const;
 
   /// Remove an outer pack expansion type (if any) from this type. Used as part
   /// of converting the type of a declaration to the type of an expression that
   /// references that expression. It's meaningless for an expression to have a
   /// pack expansion type.
-  QualType getNonPackExpansionType() const;
+  CLANG_ABI QualType getNonPackExpansionType() const;
 
   /// Return the specified type with any "sugar" removed from
   /// the type.  This takes off typedefs, typeof's etc.  If the outer level of
@@ -1332,13 +1333,13 @@ public:
                                  const PrintingPolicy &Policy) {
     return getAsString(split.Ty, split.Quals, Policy);
   }
-  static std::string getAsString(const Type *ty, Qualifiers qs,
+  CLANG_ABI static std::string getAsString(const Type *ty, Qualifiers qs,
                                  const PrintingPolicy &Policy);
 
-  std::string getAsString() const;
-  std::string getAsString(const PrintingPolicy &Policy) const;
+  CLANG_ABI std::string getAsString() const;
+  CLANG_ABI std::string getAsString(const PrintingPolicy &Policy) const;
 
-  void print(raw_ostream &OS, const PrintingPolicy &Policy,
+  CLANG_ABI void print(raw_ostream &OS, const PrintingPolicy &Policy,
              const Twine &PlaceHolder = Twine(),
              unsigned Indentation = 0) const;
 
@@ -1348,12 +1349,12 @@ public:
     return print(split.Ty, split.Quals, OS, policy, PlaceHolder, Indentation);
   }
 
-  static void print(const Type *ty, Qualifiers qs,
+  CLANG_ABI static void print(const Type *ty, Qualifiers qs,
                     raw_ostream &OS, const PrintingPolicy &policy,
                     const Twine &PlaceHolder,
                     unsigned Indentation = 0);
 
-  void getAsStringInternal(std::string &Str,
+  CLANG_ABI void getAsStringInternal(std::string &Str,
                            const PrintingPolicy &Policy) const;
 
   static void getAsStringInternal(SplitQualType split, std::string &out,
@@ -1361,7 +1362,7 @@ public:
     return getAsStringInternal(split.Ty, split.Quals, out, policy);
   }
 
-  static void getAsStringInternal(const Type *ty, Qualifiers qs,
+  CLANG_ABI static void getAsStringInternal(const Type *ty, Qualifiers qs,
                                   std::string &out,
                                   const PrintingPolicy &policy);
 
@@ -1390,9 +1391,9 @@ public:
     return StreamedQualTypeHelper(*this, Policy, PlaceHolder, Indentation);
   }
 
-  void dump(const char *s) const;
-  void dump() const;
-  void dump(llvm::raw_ostream &OS, const ASTContext &Context) const;
+  CLANG_ABI void dump(const char *s) const;
+  CLANG_ABI void dump() const;
+  CLANG_ABI void dump(llvm::raw_ostream &OS, const ASTContext &Context) const;
 
   void Profile(llvm::FoldingSetNodeID &ID) const {
     ID.AddPointer(getAsOpaquePtr());
@@ -1447,7 +1448,7 @@ public:
   }
 
   // true when Type is objc's weak and weak is enabled but ARC isn't.
-  bool isNonWeakInMRRWithObjCWeak(const ASTContext &Context) const;
+  CLANG_ABI bool isNonWeakInMRRWithObjCWeak(const ASTContext &Context) const;
 
   PointerAuthQualifier getPointerAuth() const {
     return getQualifiers().getPointerAuth();
@@ -1482,7 +1483,7 @@ public:
   /// Check if this is a non-trivial type that would cause a C struct
   /// transitively containing this type to be non-trivial to default initialize
   /// and return the kind.
-  PrimitiveDefaultInitializeKind
+  CLANG_ABI PrimitiveDefaultInitializeKind
   isNonTrivialToPrimitiveDefaultInitialize() const;
 
   enum PrimitiveCopyKind {
@@ -1519,7 +1520,7 @@ public:
   /// Check if this is a non-trivial type that would cause a C struct
   /// transitively containing this type to be non-trivial to copy and return the
   /// kind.
-  PrimitiveCopyKind isNonTrivialToPrimitiveCopy() const;
+  CLANG_ABI PrimitiveCopyKind isNonTrivialToPrimitiveCopy() const;
 
   /// Check if this is a non-trivial type that would cause a C struct
   /// transitively containing this type to be non-trivial to destructively
@@ -1527,7 +1528,7 @@ public:
   /// move in which the source object is placed in a valid but unspecified state
   /// after it is moved, as opposed to a truly destructive move in which the
   /// source object is placed in an uninitialized state.
-  PrimitiveCopyKind isNonTrivialToPrimitiveDestructiveMove() const;
+  CLANG_ABI PrimitiveCopyKind isNonTrivialToPrimitiveDestructiveMove() const;
 
   enum DestructionKind {
     DK_none,
@@ -1587,7 +1588,7 @@ public:
   /// \param context The context in which the subject type was written.
   ///
   /// \returns the resulting type.
-  QualType substObjCTypeArgs(ASTContext &ctx,
+  CLANG_ABI QualType substObjCTypeArgs(ASTContext &ctx,
                              ArrayRef<QualType> typeArgs,
                              ObjCSubstitutionContext context) const;
 
@@ -1611,40 +1612,40 @@ public:
   ///
   /// \returns the subject type after replacing all of the Objective-C type
   /// parameters with their corresponding arguments.
-  QualType substObjCMemberType(QualType objectType,
+  CLANG_ABI QualType substObjCMemberType(QualType objectType,
                                const DeclContext *dc,
                                ObjCSubstitutionContext context) const;
 
   /// Strip Objective-C "__kindof" types from the given type.
-  QualType stripObjCKindOfType(const ASTContext &ctx) const;
+  CLANG_ABI QualType stripObjCKindOfType(const ASTContext &ctx) const;
 
   /// Remove all qualifiers including _Atomic.
   ///
   /// Like getUnqualifiedType(), the type may still be qualified if it is a
   /// sugared array type.  To strip qualifiers even from within a sugared array
   /// type, use in conjunction with ASTContext::getUnqualifiedArrayType.
-  QualType getAtomicUnqualifiedType() const;
+  CLANG_ABI QualType getAtomicUnqualifiedType() const;
 
 private:
   // These methods are implemented in a separate translation unit;
   // "static"-ize them to avoid creating temporary QualTypes in the
   // caller.
-  static bool isConstant(QualType T, const ASTContext& Ctx);
-  static QualType getDesugaredType(QualType T, const ASTContext &Context);
-  static SplitQualType getSplitDesugaredType(QualType T);
-  static SplitQualType getSplitUnqualifiedTypeImpl(QualType type);
-  static QualType getSingleStepDesugaredTypeImpl(QualType type,
+  CLANG_ABI static bool isConstant(QualType T, const ASTContext& Ctx);
+  CLANG_ABI static QualType getDesugaredType(QualType T, const ASTContext &Context);
+  CLANG_ABI static SplitQualType getSplitDesugaredType(QualType T);
+  CLANG_ABI static SplitQualType getSplitUnqualifiedTypeImpl(QualType type);
+  CLANG_ABI static QualType getSingleStepDesugaredTypeImpl(QualType type,
                                                  const ASTContext &C);
-  static QualType IgnoreParens(QualType T);
-  static DestructionKind isDestructedTypeImpl(QualType type);
+  CLANG_ABI static QualType IgnoreParens(QualType T);
+  CLANG_ABI static DestructionKind isDestructedTypeImpl(QualType type);
 
   /// Check if \param RD is or contains a non-trivial C union.
-  static bool hasNonTrivialToPrimitiveDefaultInitializeCUnion(const RecordDecl *RD);
-  static bool hasNonTrivialToPrimitiveDestructCUnion(const RecordDecl *RD);
-  static bool hasNonTrivialToPrimitiveCopyCUnion(const RecordDecl *RD);
+  CLANG_ABI static bool hasNonTrivialToPrimitiveDefaultInitializeCUnion(const RecordDecl *RD);
+  CLANG_ABI static bool hasNonTrivialToPrimitiveDestructCUnion(const RecordDecl *RD);
+  CLANG_ABI static bool hasNonTrivialToPrimitiveCopyCUnion(const RecordDecl *RD);
 };
 
-raw_ostream &operator<<(raw_ostream &OS, QualType QT);
+CLANG_ABI raw_ostream &operator<<(raw_ostream &OS, QualType QT);
 
 } // namespace clang
 
@@ -2404,7 +2405,7 @@ public:
   /// Pull a single level of sugar off of this locally-unqualified type.
   /// Users should generally prefer SplitQualType::getSingleStepDesugaredType()
   /// or QualType::getSingleStepDesugaredType(const ASTContext&).
-  QualType getLocallyUnqualifiedSingleStepDesugaredType() const;
+  CLANG_ABI QualType getLocallyUnqualifiedSingleStepDesugaredType() const;
 
   /// As an extension, we classify types as one of "sized" or "sizeless";
   /// every type is one or the other.  Standard types are all sized;
@@ -2412,49 +2413,49 @@ public:
   ///
   /// Sizeless types contain data with no specified size, alignment,
   /// or layout.
-  bool isSizelessType() const;
-  bool isSizelessBuiltinType() const;
+  CLANG_ABI bool isSizelessType() const;
+  CLANG_ABI bool isSizelessBuiltinType() const;
 
   /// Returns true for all scalable vector types.
-  bool isSizelessVectorType() const;
+  CLANG_ABI bool isSizelessVectorType() const;
 
   /// Returns true for SVE scalable vector types.
-  bool isSVESizelessBuiltinType() const;
+  CLANG_ABI bool isSVESizelessBuiltinType() const;
 
   /// Returns true for RVV scalable vector types.
-  bool isRVVSizelessBuiltinType() const;
+  CLANG_ABI bool isRVVSizelessBuiltinType() const;
 
   /// Check if this is a WebAssembly Externref Type.
-  bool isWebAssemblyExternrefType() const;
+  CLANG_ABI bool isWebAssemblyExternrefType() const;
 
   /// Returns true if this is a WebAssembly table type: either an array of
   /// reference types, or a pointer to a reference type (which can only be
   /// created by array to pointer decay).
-  bool isWebAssemblyTableType() const;
+  CLANG_ABI bool isWebAssemblyTableType() const;
 
   /// Determines if this is a sizeless type supported by the
   /// 'arm_sve_vector_bits' type attribute, which can be applied to a single
   /// SVE vector or predicate, excluding tuple types such as svint32x4_t.
-  bool isSveVLSBuiltinType() const;
+  CLANG_ABI bool isSveVLSBuiltinType() const;
 
   /// Returns the representative type for the element of an SVE builtin type.
   /// This is used to represent fixed-length SVE vectors created with the
   /// 'arm_sve_vector_bits' type attribute as VectorType.
-  QualType getSveEltType(const ASTContext &Ctx) const;
+  CLANG_ABI QualType getSveEltType(const ASTContext &Ctx) const;
 
   /// Determines if this is a sizeless type supported by the
   /// 'riscv_rvv_vector_bits' type attribute, which can be applied to a single
   /// RVV vector or mask.
-  bool isRVVVLSBuiltinType() const;
+  CLANG_ABI bool isRVVVLSBuiltinType() const;
 
   /// Returns the representative type for the element of an RVV builtin type.
   /// This is used to represent fixed-length RVV vectors created with the
   /// 'riscv_rvv_vector_bits' type attribute as VectorType.
-  QualType getRVVEltType(const ASTContext &Ctx) const;
+  CLANG_ABI QualType getRVVEltType(const ASTContext &Ctx) const;
 
   /// Returns the representative type for the element of a sizeless vector
   /// builtin type.
-  QualType getSizelessVectorEltType(const ASTContext &Ctx) const;
+  CLANG_ABI QualType getSizelessVectorEltType(const ASTContext &Ctx) const;
 
   /// Types are partitioned into 3 broad categories (C99 6.2.5p1):
   /// object types, function types, and incomplete types.
@@ -2467,7 +2468,7 @@ public:
   /// Def If non-null, and the type refers to some kind of declaration
   /// that can be completed (such as a C struct, C++ class, or Objective-C
   /// class), will be set to the declaration.
-  bool isIncompleteType(NamedDecl **Def = nullptr) const;
+  CLANG_ABI bool isIncompleteType(NamedDecl **Def = nullptr) const;
 
   /// Return true if this is an incomplete or object
   /// type, in other words, not a function type.
@@ -2493,7 +2494,7 @@ public:
   /// // This decl now has complete type 'char[5]'.
   /// char foo[5]; // foo has a complete type
   /// \endcode
-  bool isAlwaysIncompleteType() const;
+  CLANG_ABI bool isAlwaysIncompleteType() const;
 
   /// Determine whether this type is an object type.
   bool isObjectType() const {
@@ -2505,14 +2506,14 @@ public:
 
   /// Return true if this is a literal type
   /// (C++11 [basic.types]p10)
-  bool isLiteralType(const ASTContext &Ctx) const;
+  CLANG_ABI bool isLiteralType(const ASTContext &Ctx) const;
 
   /// Determine if this type is a structural type, per C++20 [temp.param]p7.
-  bool isStructuralType() const;
+  CLANG_ABI bool isStructuralType() const;
 
   /// Test if this type is a standard-layout type.
   /// (C++0x [basic.type]p9)
-  bool isStandardLayoutType() const;
+  CLANG_ABI bool isStandardLayoutType() const;
 
   /// Helper methods to distinguish type categories. All type predicates
   /// operate on the canonical type, ignoring typedefs and qualifiers.
@@ -2542,31 +2543,31 @@ public:
   bool isEnumeralType() const;
 
   /// Determine whether this type is a scoped enumeration type.
-  bool isScopedEnumeralType() const;
+  CLANG_ABI bool isScopedEnumeralType() const;
   bool isBooleanType() const;
-  bool isCharType() const;
-  bool isWideCharType() const;
-  bool isChar8Type() const;
-  bool isChar16Type() const;
-  bool isChar32Type() const;
-  bool isAnyCharacterType() const;
-  bool isUnicodeCharacterType() const;
-  bool isIntegralType(const ASTContext &Ctx) const;
+  CLANG_ABI bool isCharType() const;
+  CLANG_ABI bool isWideCharType() const;
+  CLANG_ABI bool isChar8Type() const;
+  CLANG_ABI bool isChar16Type() const;
+  CLANG_ABI bool isChar32Type() const;
+  CLANG_ABI bool isAnyCharacterType() const;
+  CLANG_ABI bool isUnicodeCharacterType() const;
+  CLANG_ABI bool isIntegralType(const ASTContext &Ctx) const;
 
   /// Determine whether this type is an integral or enumeration type.
   bool isIntegralOrEnumerationType() const;
 
   /// Determine whether this type is an integral or unscoped enumeration type.
-  bool isIntegralOrUnscopedEnumerationType() const;
-  bool isUnscopedEnumerationType() const;
+  CLANG_ABI bool isIntegralOrUnscopedEnumerationType() const;
+  CLANG_ABI bool isUnscopedEnumerationType() const;
 
   /// Floating point categories.
-  bool isRealFloatingType() const; // C99 6.2.5p10 (float, double, long double)
+  CLANG_ABI bool isRealFloatingType() const; // C99 6.2.5p10 (float, double, long double)
   /// isComplexType() does *not* include complex integers (a GCC extension).
   /// isComplexIntegerType() can be used to test for complex integers.
-  bool isComplexType() const;      // C99 6.2.5p11 (complex)
+  CLANG_ABI bool isComplexType() const;      // C99 6.2.5p11 (complex)
   bool isAnyComplexType() const;   // C99 6.2.5p11 (complex) + Complex Int.
-  bool isFloatingType() const;     // C99 6.2.5p11 (real floating + complex)
+  CLANG_ABI bool isFloatingType() const;     // C99 6.2.5p11 (real floating + complex)
   bool isHalfType() const;         // OpenCL 6.1.1.1, NEON (IEEE 754-2008 half)
   bool isFloat16Type() const;      // C11 extension ISO/IEC TS 18661
   bool isFloat32Type() const;
@@ -2575,11 +2576,11 @@ public:
   bool isMFloat8Type() const;
   bool isFloat128Type() const;
   bool isIbm128Type() const;
-  bool isRealType() const;         // C99 6.2.5p17 (real floating + integer)
-  bool isArithmeticType() const;   // C99 6.2.5p18 (integer + floating)
+  CLANG_ABI bool isRealType() const;         // C99 6.2.5p17 (real floating + integer)
+  CLANG_ABI bool isArithmeticType() const;   // C99 6.2.5p18 (integer + floating)
   bool isVoidType() const;         // C99 6.2.5p19
   bool isScalarType() const;       // C99 6.2.5p21 (arithmetic + pointers)
-  bool isAggregateType() const;
+  CLANG_ABI bool isAggregateType() const;
   bool isFundamentalType() const;
   bool isCompoundType() const;
 
@@ -2592,13 +2593,13 @@ public:
   bool isPointerOrReferenceType() const;
   bool isSignableType(const ASTContext &Ctx) const;
   bool isSignablePointerType() const;
-  bool isSignableIntegerType(const ASTContext &Ctx) const;
+  CLANG_ABI bool isSignableIntegerType(const ASTContext &Ctx) const;
   bool isAnyPointerType() const;   // Any C pointer or ObjC object pointer
-  bool isCountAttributedType() const;
+  CLANG_ABI bool isCountAttributedType() const;
   bool isCFIUncheckedCalleeFunctionType() const;
   bool hasPointeeToToCFIUncheckedCalleeFunctionType() const;
   bool isBlockPointerType() const;
-  bool isVoidPointerType() const;
+  CLANG_ABI bool isVoidPointerType() const;
   bool isReferenceType() const;
   bool isLValueReferenceType() const;
   bool isRValueReferenceType() const;
@@ -2615,34 +2616,34 @@ public:
   bool isArrayParameterType() const;
   bool isDependentSizedArrayType() const;
   bool isRecordType() const;
-  bool isClassType() const;
-  bool isStructureType() const;
-  bool isStructureTypeWithFlexibleArrayMember() const;
-  bool isObjCBoxableRecordType() const;
-  bool isInterfaceType() const;
-  bool isStructureOrClassType() const;
-  bool isUnionType() const;
-  bool isComplexIntegerType() const;            // GCC _Complex integer type.
+  CLANG_ABI bool isClassType() const;
+  CLANG_ABI bool isStructureType() const;
+  CLANG_ABI bool isStructureTypeWithFlexibleArrayMember() const;
+  CLANG_ABI bool isObjCBoxableRecordType() const;
+  CLANG_ABI bool isInterfaceType() const;
+  CLANG_ABI bool isStructureOrClassType() const;
+  CLANG_ABI bool isUnionType() const;
+  CLANG_ABI bool isComplexIntegerType() const;            // GCC _Complex integer type.
   bool isVectorType() const;                    // GCC vector type.
   bool isExtVectorType() const;                 // Extended vector type.
   bool isExtVectorBoolType() const;             // Extended vector type with bool element.
   // Extended vector type with bool element that is packed. HLSL doesn't pack
   // its bool vectors.
-  bool isPackedVectorBoolType(const ASTContext &ctx) const;
+  CLANG_ABI bool isPackedVectorBoolType(const ASTContext &ctx) const;
   bool isSubscriptableVectorType() const;
   bool isMatrixType() const;                    // Matrix type.
   bool isConstantMatrixType() const;            // Constant matrix type.
   bool isDependentAddressSpaceType() const;     // value-dependent address space qualifier
   bool isObjCObjectPointerType() const;         // pointer to ObjC object
-  bool isObjCRetainableType() const;            // ObjC object or block pointer
-  bool isObjCLifetimeType() const;              // (array of)* retainable type
-  bool isObjCIndirectLifetimeType() const;      // (pointer to)* lifetime type
-  bool isObjCNSObjectType() const;              // __attribute__((NSObject))
-  bool isObjCIndependentClassType() const;      // __attribute__((objc_independent_class))
+  CLANG_ABI bool isObjCRetainableType() const;            // ObjC object or block pointer
+  CLANG_ABI bool isObjCLifetimeType() const;              // (array of)* retainable type
+  CLANG_ABI bool isObjCIndirectLifetimeType() const;      // (pointer to)* lifetime type
+  CLANG_ABI bool isObjCNSObjectType() const;              // __attribute__((NSObject))
+  CLANG_ABI bool isObjCIndependentClassType() const;      // __attribute__((objc_independent_class))
   // FIXME: change this to 'raw' interface type, so we can used 'interface' type
   // for the common case.
   bool isObjCObjectType() const;                // NSString or typeof(*(id)0)
-  bool isObjCQualifiedInterfaceType() const;    // NSString<foo>
+  CLANG_ABI bool isObjCQualifiedInterfaceType() const;    // NSString<foo>
   bool isObjCQualifiedIdType() const;           // id<foo>
   bool isObjCQualifiedClassType() const;        // Class<foo>
   bool isObjCObjectOrInterfaceType() const;
@@ -2665,7 +2666,7 @@ public:
   /// \param bound Will be set to the bound on non-id subtype types,
   /// which will be (possibly specialized) Objective-C class type, or
   /// null for 'id.
-  bool isObjCIdOrObjectKindOfType(const ASTContext &ctx,
+  CLANG_ABI bool isObjCIdOrObjectKindOfType(const ASTContext &ctx,
                                   const ObjCObjectType *&bound) const;
 
   bool isObjCClassType() const;                 // Class
@@ -2676,19 +2677,19 @@ public:
   /// Unlike \c isObjCIdOrObjectKindOfType, there is no relevant bound
   /// here because Objective-C's type system cannot express "a class
   /// object for a subclass of NSFoo".
-  bool isObjCClassOrClassKindOfType() const;
+  CLANG_ABI bool isObjCClassOrClassKindOfType() const;
 
-  bool isBlockCompatibleObjCPointerType(ASTContext &ctx) const;
+  CLANG_ABI bool isBlockCompatibleObjCPointerType(ASTContext &ctx) const;
   bool isObjCSelType() const;                 // Class
   bool isObjCBuiltinType() const;               // 'id' or 'Class'
-  bool isObjCARCBridgableType() const;
-  bool isCARCBridgableType() const;
+  CLANG_ABI bool isObjCARCBridgableType() const;
+  CLANG_ABI bool isCARCBridgableType() const;
   bool isTemplateTypeParmType() const;          // C++ template type parameter
   bool isNullPtrType() const;                   // C++11 std::nullptr_t or
                                                 // C23   nullptr_t
-  bool isNothrowT() const;                      // C++   std::nothrow_t
-  bool isAlignValT() const;                     // C++17 std::align_val_t
-  bool isStdByteType() const;                   // C++17 std::byte
+  CLANG_ABI bool isNothrowT() const;                      // C++   std::nothrow_t
+  CLANG_ABI bool isAlignValT() const;                     // C++17 std::align_val_t
+  CLANG_ABI bool isStdByteType() const;                   // C++17 std::byte
   bool isAtomicType() const;                    // C11 _Atomic()
   bool isUndeducedAutoType() const;             // C++11 auto or
                                                 // C++14 decltype(auto)
@@ -2723,22 +2724,22 @@ public:
   bool isHLSLBuiltinIntangibleType() const; // Any HLSL builtin intangible type
   bool isHLSLAttributedResourceType() const;
   bool isHLSLInlineSpirvType() const;
-  bool isHLSLResourceRecord() const;
-  bool isHLSLIntangibleType()
+  CLANG_ABI bool isHLSLResourceRecord() const;
+  CLANG_ABI bool isHLSLIntangibleType()
       const; // Any HLSL intangible type (builtin, array, class)
 
   /// Determines if this type, which must satisfy
   /// isObjCLifetimeType(), is implicitly __unsafe_unretained rather
   /// than implicitly __strong.
-  bool isObjCARCImplicitlyUnretainedType() const;
+  CLANG_ABI bool isObjCARCImplicitlyUnretainedType() const;
 
   /// Check if the type is the CUDA device builtin surface type.
-  bool isCUDADeviceBuiltinSurfaceType() const;
+  CLANG_ABI bool isCUDADeviceBuiltinSurfaceType() const;
   /// Check if the type is the CUDA device builtin texture type.
-  bool isCUDADeviceBuiltinTextureType() const;
+  CLANG_ABI bool isCUDADeviceBuiltinTextureType() const;
 
   /// Return the implicit lifetime for this type, which must not be dependent.
-  Qualifiers::ObjCLifetime getObjCARCImplicitLifetime() const;
+  CLANG_ABI Qualifiers::ObjCLifetime getObjCARCImplicitLifetime() const;
 
   enum ScalarTypeKind {
     STK_CPointer,
@@ -2754,7 +2755,7 @@ public:
   };
 
   /// Given that this is a scalar type, classify it.
-  ScalarTypeKind getScalarTypeKind() const;
+  CLANG_ABI ScalarTypeKind getScalarTypeKind() const;
 
   TypeDependence getDependence() const {
     return static_cast<TypeDependence>(TypeBits.Dependence);
@@ -2791,15 +2792,15 @@ public:
 
   /// Whether this type involves a variable-length array type
   /// with a definite size.
-  bool hasSizedVLAType() const;
+  CLANG_ABI bool hasSizedVLAType() const;
 
   /// Whether this type is or contains a local or unnamed type.
-  bool hasUnnamedOrLocalType() const;
+  CLANG_ABI bool hasUnnamedOrLocalType() const;
 
   bool isOverloadableType() const;
 
   /// Determine wither this type is a C++ elaborated-type-specifier.
-  bool isElaboratedTypeSpecifier() const;
+  CLANG_ABI bool isElaboratedTypeSpecifier() const;
 
   bool canDecayToPointerType() const;
 
@@ -2814,65 +2815,65 @@ public:
 
   /// Determine whether this type has an integer representation
   /// of some sort, e.g., it is an integer type or a vector.
-  bool hasIntegerRepresentation() const;
+  CLANG_ABI bool hasIntegerRepresentation() const;
 
   /// Determine whether this type has an signed integer representation
   /// of some sort, e.g., it is an signed integer type or a vector.
-  bool hasSignedIntegerRepresentation() const;
+  CLANG_ABI bool hasSignedIntegerRepresentation() const;
 
   /// Determine whether this type has an unsigned integer representation
   /// of some sort, e.g., it is an unsigned integer type or a vector.
-  bool hasUnsignedIntegerRepresentation() const;
+  CLANG_ABI bool hasUnsignedIntegerRepresentation() const;
 
   /// Determine whether this type has a floating-point representation
   /// of some sort, e.g., it is a floating-point type or a vector thereof.
-  bool hasFloatingRepresentation() const;
+  CLANG_ABI bool hasFloatingRepresentation() const;
 
   /// Determine whether this type has a boolean representation -- i.e., it is a
   /// boolean type, an enum type whose underlying type is a boolean type, or a
   /// vector of booleans.
-  bool hasBooleanRepresentation() const;
+  CLANG_ABI bool hasBooleanRepresentation() const;
 
   // Type Checking Functions: Check to see if this type is structurally the
   // specified type, ignoring typedefs and qualifiers, and return a pointer to
   // the best type we can.
-  const RecordType *getAsStructureType() const;
+  CLANG_ABI const RecordType *getAsStructureType() const;
   /// NOTE: getAs*ArrayType are methods on ASTContext.
-  const RecordType *getAsUnionType() const;
-  const ComplexType *getAsComplexIntegerType() const; // GCC complex int type.
-  const ObjCObjectType *getAsObjCInterfaceType() const;
+  CLANG_ABI const RecordType *getAsUnionType() const;
+  CLANG_ABI const ComplexType *getAsComplexIntegerType() const; // GCC complex int type.
+  CLANG_ABI const ObjCObjectType *getAsObjCInterfaceType() const;
 
   // The following is a convenience method that returns an ObjCObjectPointerType
   // for object declared using an interface.
-  const ObjCObjectPointerType *getAsObjCInterfacePointerType() const;
-  const ObjCObjectPointerType *getAsObjCQualifiedIdType() const;
-  const ObjCObjectPointerType *getAsObjCQualifiedClassType() const;
-  const ObjCObjectType *getAsObjCQualifiedInterfaceType() const;
+  CLANG_ABI const ObjCObjectPointerType *getAsObjCInterfacePointerType() const;
+  CLANG_ABI const ObjCObjectPointerType *getAsObjCQualifiedIdType() const;
+  CLANG_ABI const ObjCObjectPointerType *getAsObjCQualifiedClassType() const;
+  CLANG_ABI const ObjCObjectType *getAsObjCQualifiedInterfaceType() const;
 
   /// Retrieves the CXXRecordDecl that this type refers to, either
   /// because the type is a RecordType or because it is the injected-class-name
   /// type of a class template or class template partial specialization.
-  CXXRecordDecl *getAsCXXRecordDecl() const;
+  CLANG_ABI CXXRecordDecl *getAsCXXRecordDecl() const;
 
   /// Retrieves the RecordDecl this type refers to.
-  RecordDecl *getAsRecordDecl() const;
+  CLANG_ABI RecordDecl *getAsRecordDecl() const;
 
   /// Retrieves the TagDecl that this type refers to, either
   /// because the type is a TagType or because it is the injected-class-name
   /// type of a class template or class template partial specialization.
-  TagDecl *getAsTagDecl() const;
+  CLANG_ABI TagDecl *getAsTagDecl() const;
 
   /// If this is a pointer or reference to a RecordType, return the
   /// CXXRecordDecl that the type refers to.
   ///
   /// If this is not a pointer or reference, or the type being pointed to does
   /// not refer to a CXXRecordDecl, returns NULL.
-  const CXXRecordDecl *getPointeeCXXRecordDecl() const;
+  CLANG_ABI const CXXRecordDecl *getPointeeCXXRecordDecl() const;
 
   /// Get the DeducedType whose type will be deduced for a variable with
   /// an initializer of this type. This looks through declarators like pointer
   /// types, but not through decltype or typedefs.
-  DeducedType *getContainedDeducedType() const;
+  CLANG_ABI DeducedType *getContainedDeducedType() const;
 
   /// Get the AutoType whose type will be deduced for a variable with
   /// an initializer of this type. This looks through declarators like pointer
@@ -2884,7 +2885,7 @@ public:
   /// Determine whether this type was written with a leading 'auto'
   /// corresponding to a trailing return type (possibly for a nested
   /// function type within a pointer to function type or similar).
-  bool hasAutoForTrailingReturnType() const;
+  CLANG_ABI bool hasAutoForTrailingReturnType() const;
 
   /// Member-template getAs<specific type>'.  Look through sugar for
   /// an instance of \<specific type>.   This scheme will eventually
@@ -2898,7 +2899,7 @@ public:
   /// is not a type alias, or null if there is no such type.
   /// This is used when you want as-written template arguments or the template
   /// name for a class template specialization.
-  const TemplateSpecializationType *
+  CLANG_ABI const TemplateSpecializationType *
   getAsNonAliasTemplateSpecializationType() const;
 
   const TemplateSpecializationType *
@@ -2933,7 +2934,7 @@ public:
 
   /// Determine whether this type had the specified attribute applied to it
   /// (looking through top-level type sugar).
-  bool hasAttr(attr::Kind AK) const;
+  CLANG_ABI bool hasAttr(attr::Kind AK) const;
 
   /// Get the base element type of this type, potentially discarding type
   /// qualifiers.  This should never be used when type qualifiers
@@ -2943,7 +2944,7 @@ public:
   /// If this is an array type, return the element type of the array,
   /// potentially with type qualifiers missing.
   /// This should never be used when type qualifiers are meaningful.
-  const Type *getArrayElementTypeNoTypeQual() const;
+  CLANG_ABI const Type *getArrayElementTypeNoTypeQual() const;
 
   /// If this is a pointer type, return the pointee type.
   /// If this is an array type, return the array element type.
@@ -2952,29 +2953,29 @@ public:
 
   /// If this is a pointer, ObjC object pointer, or block
   /// pointer, this returns the respective pointee.
-  QualType getPointeeType() const;
+  CLANG_ABI QualType getPointeeType() const;
 
   /// Return the specified type with any "sugar" removed from the type,
   /// removing any typedefs, typeofs, etc., as well as any qualifiers.
-  const Type *getUnqualifiedDesugaredType() const;
+  CLANG_ABI const Type *getUnqualifiedDesugaredType() const;
 
   /// Return true if this is an integer type that is
   /// signed, according to C99 6.2.5p4 [char, signed char, short, int, long..],
   /// or an enum decl which has a signed representation.
-  bool isSignedIntegerType() const;
+  CLANG_ABI bool isSignedIntegerType() const;
 
   /// Return true if this is an integer type that is
   /// unsigned, according to C99 6.2.5p6 [which returns true for _Bool],
   /// or an enum decl which has an unsigned representation.
-  bool isUnsignedIntegerType() const;
+  CLANG_ABI bool isUnsignedIntegerType() const;
 
   /// Determines whether this is an integer type that is signed or an
   /// enumeration types whose underlying type is a signed integer type.
-  bool isSignedIntegerOrEnumerationType() const;
+  CLANG_ABI bool isSignedIntegerOrEnumerationType() const;
 
   /// Determines whether this is an integer type that is unsigned or an
   /// enumeration types whose underlying type is a unsigned integer type.
-  bool isUnsignedIntegerOrEnumerationType() const;
+  CLANG_ABI bool isUnsignedIntegerOrEnumerationType() const;
 
   /// Return true if this is a fixed point type according to
   /// ISO/IEC JTC1 SC22 WG14 N1169.
@@ -3005,14 +3006,14 @@ public:
   /// Return true if this is not a variable sized type,
   /// according to the rules of C99 6.7.5p3.  It is not legal to call this on
   /// incomplete types.
-  bool isConstantSizeType() const;
+  CLANG_ABI bool isConstantSizeType() const;
 
   /// Returns true if this type can be represented by some
   /// set of type specifiers.
-  bool isSpecifierType() const;
+  CLANG_ABI bool isSpecifierType() const;
 
   /// Determine the linkage of this type.
-  Linkage getLinkage() const;
+  CLANG_ABI Linkage getLinkage() const;
 
   /// Determine the visibility of this type.
   Visibility getVisibility() const {
@@ -3025,25 +3026,25 @@ public:
   }
 
   /// Determine the linkage and visibility of this type.
-  LinkageInfo getLinkageAndVisibility() const;
+  CLANG_ABI LinkageInfo getLinkageAndVisibility() const;
 
   /// True if the computed linkage is valid. Used for consistency
   /// checking. Should always return true.
-  bool isLinkageValid() const;
+  CLANG_ABI bool isLinkageValid() const;
 
   /// Determine the nullability of the given type.
   ///
   /// Note that nullability is only captured as sugar within the type
   /// system, not as part of the canonical type, so nullability will
   /// be lost by canonicalization and desugaring.
-  std::optional<NullabilityKind> getNullability() const;
+  CLANG_ABI std::optional<NullabilityKind> getNullability() const;
 
   /// Determine whether the given type can have a nullability
   /// specifier applied to it, i.e., if it is any kind of pointer type.
   ///
   /// \param ResultIfUnknown The value to return if we don't yet know whether
   ///        this type can have nullability because it is dependent.
-  bool canHaveNullability(bool ResultIfUnknown = true) const;
+  CLANG_ABI bool canHaveNullability(bool ResultIfUnknown = true) const;
 
   /// Retrieve the set of substitutions required when accessing a member
   /// of the Objective-C receiver type that is declared in the given context.
@@ -3060,45 +3061,45 @@ public:
   /// the type parameters of the given declaration context in any type described
   /// within that context, or an empty optional to indicate that no
   /// substitution is required.
-  std::optional<ArrayRef<QualType>>
+  CLANG_ABI std::optional<ArrayRef<QualType>>
   getObjCSubstitutions(const DeclContext *dc) const;
 
   /// Determines if this is an ObjC interface type that may accept type
   /// parameters.
-  bool acceptsObjCTypeParams() const;
+  CLANG_ABI bool acceptsObjCTypeParams() const;
 
-  const char *getTypeClassName() const;
+  CLANG_ABI const char *getTypeClassName() const;
 
   QualType getCanonicalTypeInternal() const {
     return CanonicalType;
   }
 
   CanQualType getCanonicalTypeUnqualified() const; // in CanonicalType.h
-  void dump() const;
-  void dump(llvm::raw_ostream &OS, const ASTContext &Context) const;
+  CLANG_ABI void dump() const;
+  CLANG_ABI void dump(llvm::raw_ostream &OS, const ASTContext &Context) const;
 };
 
 /// This will check for a TypedefType by removing any existing sugar
 /// until it reaches a TypedefType or a non-sugared type.
-template <> const TypedefType *Type::getAs() const;
-template <> const UsingType *Type::getAs() const;
+template <> CLANG_ABI const TypedefType *Type::getAs() const;
+template <> CLANG_ABI const UsingType *Type::getAs() const;
 
 /// This will check for a TemplateSpecializationType by removing any
 /// existing sugar until it reaches a TemplateSpecializationType or a
 /// non-sugared type.
-template <> const TemplateSpecializationType *Type::getAs() const;
+template <> CLANG_ABI const TemplateSpecializationType *Type::getAs() const;
 
 /// This will check for an AttributedType by removing any existing sugar
 /// until it reaches an AttributedType or a non-sugared type.
-template <> const AttributedType *Type::getAs() const;
+template <> CLANG_ABI const AttributedType *Type::getAs() const;
 
 /// This will check for a BoundsAttributedType by removing any existing
 /// sugar until it reaches an BoundsAttributedType or a non-sugared type.
-template <> const BoundsAttributedType *Type::getAs() const;
+template <> CLANG_ABI const BoundsAttributedType *Type::getAs() const;
 
 /// This will check for a CountAttributedType by removing any existing
 /// sugar until it reaches an CountAttributedType or a non-sugared type.
-template <> const CountAttributedType *Type::getAs() const;
+template <> CLANG_ABI const CountAttributedType *Type::getAs() const;
 
 // We can do canonical leaf types faster, because we don't have to
 // worry about preserving child type decoration.
@@ -3163,7 +3164,7 @@ private:
 
 public:
   Kind getKind() const { return static_cast<Kind>(BuiltinTypeBits.Kind); }
-  StringRef getName(const PrintingPolicy &Policy) const;
+  CLANG_ABI StringRef getName(const PrintingPolicy &Policy) const;
 
   const char *getNameAsCString(const PrintingPolicy &Policy) const {
     // The StringRef is null-terminated.
@@ -3321,14 +3322,14 @@ public:
   /// \p D is to a declaration referenced by the argument of attribute. \p Deref
   /// indicates whether \p D is referenced as a dereferenced form, e.g., \p
   /// Deref is true for `*n` in `int *__counted_by(*n)`.
-  TypeCoupledDeclRefInfo(ValueDecl *D = nullptr, bool Deref = false);
+  CLANG_ABI TypeCoupledDeclRefInfo(ValueDecl *D = nullptr, bool Deref = false);
 
-  bool isDeref() const;
-  ValueDecl *getDecl() const;
-  unsigned getInt() const;
-  void *getOpaqueValue() const;
-  bool operator==(const TypeCoupledDeclRefInfo &Other) const;
-  void setFromOpaqueValue(void *V);
+  CLANG_ABI bool isDeref() const;
+  CLANG_ABI ValueDecl *getDecl() const;
+  CLANG_ABI unsigned getInt() const;
+  CLANG_ABI void *getOpaqueValue() const;
+  CLANG_ABI bool operator==(const TypeCoupledDeclRefInfo &Other) const;
+  CLANG_ABI void setFromOpaqueValue(void *V);
 };
 
 /// [BoundsSafety] Represents a parent type class for CountAttributedType and
@@ -3344,7 +3345,7 @@ class BoundsAttributedType : public Type, public llvm::FoldingSetNode {
 protected:
   ArrayRef<TypeCoupledDeclRefInfo> Decls; // stored in trailing objects
 
-  BoundsAttributedType(TypeClass TC, QualType Wrapped, QualType Canon);
+  CLANG_ABI BoundsAttributedType(TypeClass TC, QualType Wrapped, QualType Canon);
 
 public:
   bool isSugared() const { return true; }
@@ -3366,7 +3367,7 @@ public:
     return {dependent_decl_begin(), dependent_decl_end()};
   }
 
-  bool referencesFieldDecls() const;
+  CLANG_ABI bool referencesFieldDecls() const;
 
   static bool classof(const Type *T) {
     // Currently, only `class CountAttributedType` inherits
@@ -3426,14 +3427,14 @@ public:
     Profile(ID, desugar(), CountExpr, isCountInBytes(), isOrNull());
   }
 
-  static void Profile(llvm::FoldingSetNodeID &ID, QualType WrappedTy,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, QualType WrappedTy,
                       Expr *CountExpr, bool CountInBytes, bool Nullable);
 
   static bool classof(const Type *T) {
     return T->getTypeClass() == CountAttributed;
   }
 
-  StringRef getAttributeName(bool WithMacroPrefix) const;
+  CLANG_ABI StringRef getAttributeName(bool WithMacroPrefix) const;
 };
 
 /// Represents a type which was implicitly adjusted by the semantic
@@ -3637,9 +3638,9 @@ public:
   /// Note: this can trigger extra deserialization when external AST sources are
   /// used. Prefer `getCXXRecordDecl()` unless you really need the most recent
   /// decl.
-  CXXRecordDecl *getMostRecentCXXRecordDecl() const;
+  CLANG_ABI CXXRecordDecl *getMostRecentCXXRecordDecl() const;
 
-  bool isSugared() const;
+  CLANG_ABI bool isSugared() const;
   QualType desugar() const {
     return isSugared() ? getCanonicalTypeInternal() : QualType(this, 0);
   }
@@ -3651,7 +3652,7 @@ public:
     Profile(ID, getPointeeType(), getQualifier(), getCXXRecordDecl());
   }
 
-  static void Profile(llvm::FoldingSetNodeID &ID, QualType Pointee,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, QualType Pointee,
                       const NestedNameSpecifier *Qualifier,
                       const CXXRecordDecl *Cls);
 
@@ -3660,7 +3661,7 @@ public:
   }
 
 private:
-  CXXRecordDecl *getCXXRecordDecl() const;
+  CLANG_ABI CXXRecordDecl *getCXXRecordDecl() const;
 };
 
 /// Capture whether this is a normal array (e.g. int X[4])
@@ -3678,7 +3679,7 @@ private:
 protected:
   friend class ASTContext; // ASTContext creates these.
 
-  ArrayType(TypeClass tc, QualType et, QualType can, ArraySizeModifier sm,
+  CLANG_ABI ArrayType(TypeClass tc, QualType et, QualType can, ArraySizeModifier sm,
             unsigned tq, const Expr *sz = nullptr);
 
 public:
@@ -3813,22 +3814,22 @@ public:
 
   /// Determine the number of bits required to address a member of
   // an array with the given element type and number of elements.
-  static unsigned getNumAddressingBits(const ASTContext &Context,
+  CLANG_ABI static unsigned getNumAddressingBits(const ASTContext &Context,
                                        QualType ElementType,
                                        const llvm::APInt &NumElements);
 
-  unsigned getNumAddressingBits(const ASTContext &Context) const;
+  CLANG_ABI unsigned getNumAddressingBits(const ASTContext &Context) const;
 
   /// Determine the maximum number of active bits that an array's size
   /// can require, which limits the maximum size of the array.
-  static unsigned getMaxSizeBits(const ASTContext &Context);
+  CLANG_ABI static unsigned getMaxSizeBits(const ASTContext &Context);
 
   void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Ctx) {
     Profile(ID, Ctx, getElementType(), getZExtSize(), getSizeExpr(),
             getSizeModifier(), getIndexTypeCVRQualifiers());
   }
 
-  static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Ctx,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Ctx,
                       QualType ET, uint64_t ArraySize, const Expr *SizeExpr,
                       ArraySizeModifier SizeMod, unsigned TypeQuals);
 
@@ -3851,7 +3852,7 @@ public:
     return T->getTypeClass() == ArrayParameter;
   }
 
-  QualType getConstantArrayType(const ASTContext &Ctx) const;
+  CLANG_ABI QualType getConstantArrayType(const ASTContext &Ctx) const;
 };
 
 /// Represents a C array with an unspecified size.  For example 'int A[]' has
@@ -3993,7 +3994,7 @@ public:
             getSizeModifier(), getIndexTypeCVRQualifiers(), getSizeExpr());
   }
 
-  static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
                       QualType ET, ArraySizeModifier SizeMod,
                       unsigned TypeQuals, Expr *E);
 };
@@ -4035,7 +4036,7 @@ public:
     Profile(ID, Context, getPointeeType(), getAddrSpaceExpr());
   }
 
-  static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
                       QualType PointeeType, Expr *AddrSpaceExpr);
 };
 
@@ -4078,7 +4079,7 @@ public:
     Profile(ID, Context, getElementType(), getSizeExpr());
   }
 
-  static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
                       QualType ElementType, Expr *SizeExpr);
 };
 
@@ -4130,10 +4131,10 @@ protected:
   /// The element type of the vector.
   QualType ElementType;
 
-  VectorType(QualType vecType, unsigned nElements, QualType canonType,
+  CLANG_ABI VectorType(QualType vecType, unsigned nElements, QualType canonType,
              VectorKind vecKind);
 
-  VectorType(TypeClass tc, QualType vecType, unsigned nElements,
+  CLANG_ABI VectorType(TypeClass tc, QualType vecType, unsigned nElements,
              QualType canonType, VectorKind vecKind);
 
 public:
@@ -4204,7 +4205,7 @@ public:
     Profile(ID, Context, getElementType(), getSizeExpr(), getVectorKind());
   }
 
-  static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
                       QualType ElementType, const Expr *SizeExpr,
                       VectorKind VecKind);
 };
@@ -4292,9 +4293,9 @@ protected:
   /// The element type of the matrix.
   QualType ElementType;
 
-  MatrixType(QualType ElementTy, QualType CanonElementTy);
+  CLANG_ABI MatrixType(QualType ElementTy, QualType CanonElementTy);
 
-  MatrixType(TypeClass TypeClass, QualType ElementTy, QualType CanonElementTy,
+  CLANG_ABI MatrixType(TypeClass TypeClass, QualType ElementTy, QualType CanonElementTy,
              const Expr *RowExpr = nullptr, const Expr *ColumnExpr = nullptr);
 
 public:
@@ -4331,10 +4332,10 @@ protected:
 
   static constexpr unsigned MaxElementsPerDimension = (1 << 20) - 1;
 
-  ConstantMatrixType(QualType MatrixElementType, unsigned NRows,
+  CLANG_ABI ConstantMatrixType(QualType MatrixElementType, unsigned NRows,
                      unsigned NColumns, QualType CanonElementType);
 
-  ConstantMatrixType(TypeClass typeClass, QualType MatrixType, unsigned NRows,
+  CLANG_ABI ConstantMatrixType(TypeClass typeClass, QualType MatrixType, unsigned NRows,
                      unsigned NColumns, QualType CanonElementType);
 
 public:
@@ -4404,7 +4405,7 @@ public:
     Profile(ID, Context, getElementType(), getRowExpr(), getColumnExpr());
   }
 
-  static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
                       QualType ElementType, Expr *RowExpr, Expr *ColumnExpr);
 };
 
@@ -4746,7 +4747,7 @@ public:
 
   /// Determine whether this is a function prototype that includes the
   /// cfi_unchecked_callee attribute.
-  bool getCFIUncheckedCalleeAttr() const;
+  CLANG_ABI bool getCFIUncheckedCalleeAttr() const;
 
   bool getCmseNSCallAttr() const { return getExtInfo().getCmseNSCall(); }
   CallingConv getCallConv() const { return getExtInfo().getCC(); }
@@ -4766,7 +4767,7 @@ public:
     return getReturnType().getNonLValueExprType(Context);
   }
 
-  static StringRef getNameForCallConv(CallingConv CC);
+  CLANG_ABI static StringRef getNameForCallConv(CallingConv CC);
 
   static bool classof(const Type *T) {
     return T->getTypeClass() == FunctionNoProto ||
@@ -4853,7 +4854,7 @@ public:
   Kind kind() const { return FKind; }
 
   /// Return the opposite kind, for effects which have opposites.
-  Kind oppositeKind() const;
+  CLANG_ABI Kind oppositeKind() const;
 
   /// For serialization.
   uint32_t toOpaqueInt32() const { return uint32_t(FKind); }
@@ -4880,7 +4881,7 @@ public:
   }
 
   /// The description printed in diagnostics, e.g. 'nonblocking'.
-  StringRef name() const;
+  CLANG_ABI StringRef name() const;
 
   friend raw_ostream &operator<<(raw_ostream &OS,
                                  const FunctionEffect &Effect) {
@@ -4894,7 +4895,7 @@ public:
   /// blocked inference.
   /// Example: This allows nonblocking(false) to prevent inference for the
   /// function.
-  std::optional<FunctionEffect>
+  CLANG_ABI std::optional<FunctionEffect>
   effectProhibitingInference(const Decl &Callee,
                              FunctionEffectKindSet CalleeFX) const;
 
@@ -4902,7 +4903,7 @@ public:
   // FE_InferrableOnCallees flag may trigger inference rather than an immediate
   // diagnostic. Caller should be assumed to have the effect (it may not have it
   // explicitly when inferring).
-  bool shouldDiagnoseFunctionCall(bool Direct,
+  CLANG_ABI bool shouldDiagnoseFunctionCall(bool Direct,
                                   FunctionEffectKindSet CalleeFX) const;
 
   friend bool operator==(FunctionEffect LHS, FunctionEffect RHS) {
@@ -4943,7 +4944,7 @@ struct FunctionEffectWithCondition {
       : Effect(E), Cond(C) {}
 
   /// Return a textual description of the effect, and its condition, if any.
-  std::string description() const;
+  CLANG_ABI std::string description() const;
 
   friend raw_ostream &operator<<(raw_ostream &OS,
                                  const FunctionEffectWithCondition &CFE);
@@ -5023,7 +5024,7 @@ public:
   static FunctionEffectsRef get(QualType QT);
 
   /// Asserts invariants.
-  static FunctionEffectsRef create(ArrayRef<FunctionEffect> FX,
+  CLANG_ABI static FunctionEffectsRef create(ArrayRef<FunctionEffect> FX,
                                    ArrayRef<EffectConditionExpr> Conds);
 
   FunctionEffectsRef() = default;
@@ -5048,7 +5049,7 @@ public:
     return !(LHS == RHS);
   }
 
-  void dump(llvm::raw_ostream &OS) const;
+  CLANG_ABI void dump(llvm::raw_ostream &OS) const;
 };
 
 /// A mutable set of FunctionEffect::Kind.
@@ -5085,7 +5086,7 @@ class FunctionEffectKindSet {
     }
 
   public:
-    iterator();
+    CLANG_ABI iterator();
     iterator(const FunctionEffectKindSet &O, size_t I) : Outer(&O), Idx(I) {
       advanceToNextSetBit();
     }
@@ -5122,7 +5123,7 @@ public:
   bool contains(const FunctionEffect::Kind EK) const {
     return KindBits.test(kindToPos(EK));
   }
-  void dump(llvm::raw_ostream &OS) const;
+  CLANG_ABI void dump(llvm::raw_ostream &OS) const;
 
   static FunctionEffectKindSet difference(FunctionEffectKindSet LHS,
                                           FunctionEffectKindSet RHS) {
@@ -5154,7 +5155,7 @@ public:
 
   operator FunctionEffectsRef() const { return {Effects, Conditions}; }
 
-  void dump(llvm::raw_ostream &OS) const;
+  CLANG_ABI void dump(llvm::raw_ostream &OS) const;
 
   // Mutators
 
@@ -5169,16 +5170,16 @@ public:
   using Conflicts = SmallVector<Conflict>;
 
   // Returns true for success (obviating a check of Errs.empty()).
-  bool insert(const FunctionEffectWithCondition &NewEC, Conflicts &Errs);
+  CLANG_ABI bool insert(const FunctionEffectWithCondition &NewEC, Conflicts &Errs);
 
   // Returns true for success (obviating a check of Errs.empty()).
-  bool insert(const FunctionEffectsRef &Set, Conflicts &Errs);
+  CLANG_ABI bool insert(const FunctionEffectsRef &Set, Conflicts &Errs);
 
   // Set operations
 
-  static FunctionEffectSet getUnion(FunctionEffectsRef LHS,
+  CLANG_ABI static FunctionEffectSet getUnion(FunctionEffectsRef LHS,
                                     FunctionEffectsRef RHS, Conflicts &Errs);
-  static FunctionEffectSet getIntersection(FunctionEffectsRef LHS,
+  CLANG_ABI static FunctionEffectSet getIntersection(FunctionEffectsRef LHS,
                                            FunctionEffectsRef RHS);
 };
 
@@ -5276,7 +5277,7 @@ public:
 
     ExceptionSpecInfo(ExceptionSpecificationType EST) : Type(EST) {}
 
-    void instantiate();
+    CLANG_ABI void instantiate();
   };
 
   /// Extra information about a function prototype. ExtProtoInfo is not
@@ -5503,11 +5504,11 @@ public:
   }
 
   /// Return whether this function has a dependent exception spec.
-  bool hasDependentExceptionSpec() const;
+  CLANG_ABI bool hasDependentExceptionSpec() const;
 
   /// Return whether this function has an instantiation-dependent exception
   /// spec.
-  bool hasInstantiationDependentExceptionSpec() const;
+  CLANG_ABI bool hasInstantiationDependentExceptionSpec() const;
 
   /// Return all the available information about this type's exception spec.
   ExceptionSpecInfo getExceptionSpecInfo() const {
@@ -5571,7 +5572,7 @@ public:
 
   /// Determine whether this function type has a non-throwing exception
   /// specification.
-  CanThrowResult canThrow() const;
+  CLANG_ABI CanThrowResult canThrow() const;
 
   /// Determine whether this function type has a non-throwing exception
   /// specification. If this depends on template arguments, returns
@@ -5594,7 +5595,7 @@ public:
   /// A function template whose last parameter is a parameter pack can be
   /// called with an arbitrary number of arguments, much like a variadic
   /// function.
-  bool isTemplateVariadic() const;
+  CLANG_ABI bool isTemplateVariadic() const;
 
   /// Whether this function prototype has a trailing return type.
   bool hasTrailingReturn() const { return FunctionTypeBits.HasTrailingReturn; }
@@ -5753,15 +5754,15 @@ public:
   bool isSugared() const { return false; }
   QualType desugar() const { return QualType(this, 0); }
 
-  void printExceptionSpecification(raw_ostream &OS,
+  CLANG_ABI void printExceptionSpecification(raw_ostream &OS,
                                    const PrintingPolicy &Policy) const;
 
   static bool classof(const Type *T) {
     return T->getTypeClass() == FunctionProto;
   }
 
-  void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Ctx);
-  static void Profile(llvm::FoldingSetNodeID &ID, QualType Result,
+  CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Ctx);
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, QualType Result,
                       param_type_iterator ArgTys, unsigned NumArgs,
                       const ExtProtoInfo &EPI, const ASTContext &Context,
                       bool Canonical);
@@ -5813,7 +5814,7 @@ class UsingType final : public Type,
 
 public:
   UsingShadowDecl *getFoundDecl() const { return Found; }
-  QualType getUnderlyingType() const;
+  CLANG_ABI QualType getUnderlyingType() const;
 
   bool isSugared() const { return true; }
 
@@ -5850,7 +5851,7 @@ public:
   bool isSugared() const { return true; }
 
   // This always has the 'same' type as declared, but not necessarily identical.
-  QualType desugar() const;
+  CLANG_ABI QualType desugar() const;
 
   // Internal helper, for debugging purposes.
   bool typeMatchesDecl() const { return !TypedefBits.hasTypeDifferentFromDecl; }
@@ -5890,10 +5891,10 @@ public:
 
   /// Return this attributed type's modified type with no qualifiers attached to
   /// it.
-  QualType getModifiedType() const;
+  CLANG_ABI QualType getModifiedType() const;
 
   bool isSugared() const { return true; }
-  QualType desugar() const;
+  CLANG_ABI QualType desugar() const;
 
   static bool classof(const Type *T) {
     return T->getTypeClass() == MacroQualified;
@@ -5909,7 +5910,7 @@ class TypeOfExprType : public Type {
 protected:
   friend class ASTContext; // ASTContext creates these.
 
-  TypeOfExprType(const ASTContext &Context, Expr *E, TypeOfKind Kind,
+  CLANG_ABI TypeOfExprType(const ASTContext &Context, Expr *E, TypeOfKind Kind,
                  QualType Can = QualType());
 
 public:
@@ -5921,10 +5922,10 @@ public:
   }
 
   /// Remove a single level of sugar.
-  QualType desugar() const;
+  CLANG_ABI QualType desugar() const;
 
   /// Returns whether this type directly provides sugar.
-  bool isSugared() const;
+  CLANG_ABI bool isSugared() const;
 
   static bool classof(const Type *T) { return T->getTypeClass() == TypeOfExpr; }
 };
@@ -5946,7 +5947,7 @@ public:
             getKind() == TypeOfKind::Unqualified);
   }
 
-  static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
                       Expr *E, bool IsUnqual);
 };
 
@@ -5965,7 +5966,7 @@ public:
   QualType getUnmodifiedType() const { return TOType; }
 
   /// Remove a single level of sugar.
-  QualType desugar() const;
+  CLANG_ABI QualType desugar() const;
 
   /// Returns whether this type directly provides sugar.
   bool isSugared() const { return true; }
@@ -5986,17 +5987,17 @@ class DecltypeType : public Type {
 protected:
   friend class ASTContext; // ASTContext creates these.
 
-  DecltypeType(Expr *E, QualType underlyingType, QualType can = QualType());
+  CLANG_ABI DecltypeType(Expr *E, QualType underlyingType, QualType can = QualType());
 
 public:
   Expr *getUnderlyingExpr() const { return E; }
   QualType getUnderlyingType() const { return UnderlyingType; }
 
   /// Remove a single level of sugar.
-  QualType desugar() const;
+  CLANG_ABI QualType desugar() const;
 
   /// Returns whether this type directly provides sugar.
-  bool isSugared() const;
+  CLANG_ABI bool isSugared() const;
 
   static bool classof(const Type *T) { return T->getTypeClass() == Decltype; }
 };
@@ -6009,13 +6010,13 @@ public:
 /// of this class via DecltypeType nodes.
 class DependentDecltypeType : public DecltypeType, public llvm::FoldingSetNode {
 public:
-  DependentDecltypeType(Expr *E);
+  CLANG_ABI DependentDecltypeType(Expr *E);
 
   void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context) {
     Profile(ID, Context, getUnderlyingExpr());
   }
 
-  static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
                       Expr *E);
 };
 
@@ -6035,7 +6036,7 @@ class PackIndexingType final
 
 protected:
   friend class ASTContext; // ASTContext creates these.
-  PackIndexingType(QualType Canonical, QualType Pattern, Expr *IndexExpr,
+  CLANG_ABI PackIndexingType(QualType Canonical, QualType Pattern, Expr *IndexExpr,
                    bool FullySubstituted, ArrayRef<QualType> Expansions = {});
 
 public:
@@ -6055,7 +6056,7 @@ public:
     return *(getExpansionsPtr() + *getSelectedIndex());
   }
 
-  UnsignedOrNone getSelectedIndex() const;
+  CLANG_ABI UnsignedOrNone getSelectedIndex() const;
 
   bool hasSelectedType() const { return getSelectedIndex() != std::nullopt; }
 
@@ -6071,8 +6072,8 @@ public:
     return T->getTypeClass() == PackIndexing;
   }
 
-  void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context);
-  static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
+  CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context);
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
                       QualType Pattern, Expr *E, bool FullySubstituted,
                       ArrayRef<QualType> Expansions);
 
@@ -6103,7 +6104,7 @@ private:
 protected:
   friend class ASTContext;
 
-  UnaryTransformType(QualType BaseTy, QualType UnderlyingTy, UTTKind UKind,
+  CLANG_ABI UnaryTransformType(QualType BaseTy, QualType UnderlyingTy, UTTKind UKind,
                      QualType CanonicalTy);
 
 public:
@@ -6140,13 +6141,13 @@ class TagType : public Type {
   TagDecl *decl;
 
 protected:
-  TagType(TypeClass TC, const TagDecl *D, QualType can);
+  CLANG_ABI TagType(TypeClass TC, const TagDecl *D, QualType can);
 
 public:
-  TagDecl *getDecl() const;
+  CLANG_ABI TagDecl *getDecl() const;
 
   /// Determines whether this type is in the process of being defined.
-  bool isBeingDefined() const;
+  CLANG_ABI bool isBeingDefined() const;
 
   static bool classof(const Type *T) {
     return T->getTypeClass() == Enum || T->getTypeClass() == Record;
@@ -6171,7 +6172,7 @@ public:
 
   /// Recursively check all fields in the record for const-ness. If any field
   /// is declared const, return true. Otherwise, return false.
-  bool hasConstFields() const;
+  CLANG_ABI bool hasConstFields() const;
 
   bool isSugared() const { return false; }
   QualType desugar() const { return QualType(this, 0); }
@@ -6230,7 +6231,7 @@ private:
                  QualType equivalent);
 
 private:
-  AttributedType(QualType canon, attr::Kind attrKind, const Attr *attr,
+  CLANG_ABI AttributedType(QualType canon, attr::Kind attrKind, const Attr *attr,
                  QualType modified, QualType equivalent);
 
 public:
@@ -6261,15 +6262,15 @@ public:
   ///
   /// Type qualifiers are often, but not always, reflected in the canonical
   /// type.
-  bool isQualifier() const;
+  CLANG_ABI bool isQualifier() const;
 
-  bool isMSTypeSpec() const;
+  CLANG_ABI bool isMSTypeSpec() const;
 
-  bool isWebAssemblyFuncrefSpec() const;
+  CLANG_ABI bool isWebAssemblyFuncrefSpec() const;
 
-  bool isCallingConv() const;
+  CLANG_ABI bool isCallingConv() const;
 
-  std::optional<NullabilityKind> getImmediateNullability() const;
+  CLANG_ABI std::optional<NullabilityKind> getImmediateNullability() const;
 
   /// Strip off the top-level nullability annotation on the given
   /// type, if it's there.
@@ -6280,7 +6281,7 @@ public:
   /// to the underlying modified type.
   ///
   /// \returns the top-level nullability, if present.
-  static std::optional<NullabilityKind> stripOuterNullability(QualType &T);
+  CLANG_ABI static std::optional<NullabilityKind> stripOuterNullability(QualType &T);
 
   void Profile(llvm::FoldingSetNodeID &ID) {
     Profile(ID, getAttrKind(), ModifiedType, EquivalentType, Attribute);
@@ -6402,7 +6403,7 @@ public:
   }
 
   // Returns handle type from HLSL resource, if the type is a resource
-  static const HLSLAttributedResourceType *
+  CLANG_ABI static const HLSLAttributedResourceType *
   findHandleTypeOnResource(const Type *RT);
 };
 
@@ -6564,7 +6565,7 @@ public:
 
   TemplateTypeParmDecl *getDecl() const { return TTPDecl; }
 
-  IdentifierInfo *getIdentifier() const;
+  CLANG_ABI IdentifierInfo *getIdentifier() const;
 
   bool isSugared() const { return false; }
   QualType desugar() const { return QualType(this, 0); }
@@ -6622,7 +6623,7 @@ public:
   Decl *getAssociatedDecl() const { return AssociatedDecl; }
 
   /// Gets the template parameter declaration that was substituted for.
-  const TemplateTypeParmDecl *getReplacedParameter() const;
+  CLANG_ABI const TemplateTypeParmDecl *getReplacedParameter() const;
 
   /// Returns the index of the replaced parameter in the associated declaration.
   /// This should match the result of `getReplacedParameter()->getIndex()`.
@@ -6645,7 +6646,7 @@ public:
             getPackIndex(), getFinal());
   }
 
-  static void Profile(llvm::FoldingSetNodeID &ID, QualType Replacement,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, QualType Replacement,
                       const Decl *AssociatedDecl, unsigned Index,
                       UnsignedOrNone PackIndex, bool Final);
 
@@ -6680,15 +6681,15 @@ class SubstTemplateTypeParmPackType : public Type, public llvm::FoldingSetNode {
                                 const TemplateArgument &ArgPack);
 
 public:
-  IdentifierInfo *getIdentifier() const;
+  CLANG_ABI IdentifierInfo *getIdentifier() const;
 
   /// A template-like entity which owns the whole pattern being substituted.
   /// This will usually own a set of template parameters, or in some
   /// cases might even be a template parameter itself.
-  Decl *getAssociatedDecl() const;
+  CLANG_ABI Decl *getAssociatedDecl() const;
 
   /// Gets the template parameter declaration that was substituted for.
-  const TemplateTypeParmDecl *getReplacedParameter() const;
+  CLANG_ABI const TemplateTypeParmDecl *getReplacedParameter() const;
 
   /// Returns the index of the replaced parameter in the associated declaration.
   /// This should match the result of `getReplacedParameter()->getIndex()`.
@@ -6696,7 +6697,7 @@ public:
 
   // This substitution will be Final, which means the substitution will be fully
   // sugared: it doesn't need to be resugared later.
-  bool getFinal() const;
+  CLANG_ABI bool getFinal() const;
 
   unsigned getNumArgs() const {
     return SubstTemplateTypeParmPackTypeBits.NumArgs;
@@ -6705,10 +6706,10 @@ public:
   bool isSugared() const { return false; }
   QualType desugar() const { return QualType(this, 0); }
 
-  TemplateArgument getArgumentPack() const;
+  CLANG_ABI TemplateArgument getArgumentPack() const;
 
-  void Profile(llvm::FoldingSetNodeID &ID);
-  static void Profile(llvm::FoldingSetNodeID &ID, const Decl *AssociatedDecl,
+  CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID);
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, const Decl *AssociatedDecl,
                       unsigned Index, bool Final,
                       const TemplateArgument &ArgPack);
 
@@ -6794,8 +6795,8 @@ public:
     return (AutoTypeKeyword)AutoTypeBits.Keyword;
   }
 
-  void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context);
-  static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
+  CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context);
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
                       QualType Deduced, AutoTypeKeyword Keyword,
                       bool IsDependent, ConceptDecl *CD,
                       ArrayRef<TemplateArgument> Arguments);
@@ -6892,13 +6893,13 @@ public:
   /// Note that the \p Args parameter is unused: this is intentional, to remind
   /// the caller that they need to pass in the converted arguments, not the
   /// specified arguments.
-  static bool
+  CLANG_ABI static bool
   anyDependentTemplateArguments(ArrayRef<TemplateArgumentLoc> Args,
                                 ArrayRef<TemplateArgument> Converted);
-  static bool
+  CLANG_ABI static bool
   anyDependentTemplateArguments(const TemplateArgumentListInfo &,
                                 ArrayRef<TemplateArgument> Converted);
-  static bool anyInstantiationDependentTemplateArguments(
+  CLANG_ABI static bool anyInstantiationDependentTemplateArguments(
       ArrayRef<TemplateArgumentLoc> Args);
 
   /// True if this template specialization type matches a current
@@ -6926,7 +6927,7 @@ public:
 
   /// Get the aliased type, if this is a specialization of a type alias
   /// template.
-  QualType getAliasedType() const;
+  CLANG_ABI QualType getAliasedType() const;
 
   /// Retrieve the name of the template that we are specializing.
   TemplateName getTemplateName() const { return Template; }
@@ -6944,8 +6945,8 @@ public:
     return isTypeAlias() ? getAliasedType() : getCanonicalTypeInternal();
   }
 
-  void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Ctx);
-  static void Profile(llvm::FoldingSetNodeID &ID, TemplateName T,
+  CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Ctx);
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, TemplateName T,
                       ArrayRef<TemplateArgument> Args, QualType Underlying,
                       const ASTContext &Context);
 
@@ -6956,24 +6957,24 @@ public:
 
 /// Print a template argument list, including the '<' and '>'
 /// enclosing the template arguments.
-void printTemplateArgumentList(raw_ostream &OS,
+CLANG_ABI void printTemplateArgumentList(raw_ostream &OS,
                                ArrayRef<TemplateArgument> Args,
                                const PrintingPolicy &Policy,
                                const TemplateParameterList *TPL = nullptr);
 
-void printTemplateArgumentList(raw_ostream &OS,
+CLANG_ABI void printTemplateArgumentList(raw_ostream &OS,
                                ArrayRef<TemplateArgumentLoc> Args,
                                const PrintingPolicy &Policy,
                                const TemplateParameterList *TPL = nullptr);
 
-void printTemplateArgumentList(raw_ostream &OS,
+CLANG_ABI void printTemplateArgumentList(raw_ostream &OS,
                                const TemplateArgumentListInfo &Args,
                                const PrintingPolicy &Policy,
                                const TemplateParameterList *TPL = nullptr);
 
 /// Make a best-effort determination of whether the type T can be produced by
 /// substituting Args into the default argument of Param.
-bool isSubstitutedDefaultArgument(ASTContext &Ctx, TemplateArgument Arg,
+CLANG_ABI bool isSubstitutedDefaultArgument(ASTContext &Ctx, TemplateArgument Arg,
                                   const NamedDecl *Param,
                                   ArrayRef<TemplateArgument> Args,
                                   unsigned Depth);
@@ -7036,7 +7037,7 @@ public:
     return getInjectedTST()->getTemplateName();
   }
 
-  CXXRecordDecl *getDecl() const;
+  CLANG_ABI CXXRecordDecl *getDecl() const;
 
   bool isSugared() const { return false; }
   QualType desugar() const { return QualType(this, 0); }
@@ -7108,30 +7109,30 @@ public:
   }
 
   /// Converts a type specifier (DeclSpec::TST) into an elaborated type keyword.
-  static ElaboratedTypeKeyword getKeywordForTypeSpec(unsigned TypeSpec);
+  CLANG_ABI static ElaboratedTypeKeyword getKeywordForTypeSpec(unsigned TypeSpec);
 
   /// Converts a type specifier (DeclSpec::TST) into a tag type kind.
   /// It is an error to provide a type specifier which *isn't* a tag kind here.
-  static TagTypeKind getTagTypeKindForTypeSpec(unsigned TypeSpec);
+  CLANG_ABI static TagTypeKind getTagTypeKindForTypeSpec(unsigned TypeSpec);
 
   /// Converts a TagTypeKind into an elaborated type keyword.
-  static ElaboratedTypeKeyword getKeywordForTagTypeKind(TagTypeKind Tag);
+  CLANG_ABI static ElaboratedTypeKeyword getKeywordForTagTypeKind(TagTypeKind Tag);
 
   /// Converts an elaborated type keyword into a TagTypeKind.
   /// It is an error to provide an elaborated type keyword
   /// which *isn't* a tag kind here.
-  static TagTypeKind getTagTypeKindForKeyword(ElaboratedTypeKeyword Keyword);
+  CLANG_ABI static TagTypeKind getTagTypeKindForKeyword(ElaboratedTypeKeyword Keyword);
 
-  static bool KeywordIsTagTypeKind(ElaboratedTypeKeyword Keyword);
+  CLANG_ABI static bool KeywordIsTagTypeKind(ElaboratedTypeKeyword Keyword);
 
-  static StringRef getKeywordName(ElaboratedTypeKeyword Keyword);
+  CLANG_ABI static StringRef getKeywordName(ElaboratedTypeKeyword Keyword);
 
   static StringRef getTagTypeKindName(TagTypeKind Kind) {
     return getKeywordName(getKeywordForTagTypeKind(Kind));
   }
 
   class CannotCastToThisType {};
-  static CannotCastToThisType classof(const Type *);
+  CLANG_ABI static CannotCastToThisType classof(const Type *);
 };
 
 /// Represents a type that was referred to using an elaborated type
@@ -7303,7 +7304,7 @@ public:
     Profile(ID, Context, getKeyword(), Name, template_arguments());
   }
 
-  static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
                       ElaboratedTypeKeyword Keyword,
                       const DependentTemplateStorage &Name,
                       ArrayRef<TemplateArgument> Args);
@@ -7480,8 +7481,8 @@ public:
     return T->getTypeClass() == ObjCTypeParam;
   }
 
-  void Profile(llvm::FoldingSetNodeID &ID);
-  static void Profile(llvm::FoldingSetNodeID &ID,
+  CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID);
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID,
                       const ObjCTypeParamDecl *OTPDecl,
                       QualType CanonicalType,
                       ArrayRef<ObjCProtocolDecl *> protocols);
@@ -7558,7 +7559,7 @@ class ObjCObjectType : public Type,
 protected:
   enum Nonce_ObjCInterface { Nonce_ObjCInterface };
 
-  ObjCObjectType(QualType Canonical, QualType Base,
+  CLANG_ABI ObjCObjectType(QualType Canonical, QualType Base,
                  ArrayRef<QualType> typeArgs,
                  ArrayRef<ObjCProtocolDecl *> protocols,
                  bool isKindOf);
@@ -7571,7 +7572,7 @@ protected:
     ObjCObjectTypeBits.IsKindOf = 0;
   }
 
-  void computeSuperClassTypeSlow() const;
+  CLANG_ABI void computeSuperClassTypeSlow() const;
 
 public:
   /// Gets the base type of this object type.  This is always (possibly
@@ -7608,7 +7609,7 @@ public:
 
   /// Determine whether this object type is "specialized", meaning
   /// that it has type arguments.
-  bool isSpecialized() const;
+  CLANG_ABI bool isSpecialized() const;
 
   /// Determine whether this object type was written with type arguments.
   bool isSpecializedAsWritten() const {
@@ -7624,7 +7625,7 @@ public:
   bool isUnspecializedAsWritten() const { return !isSpecializedAsWritten(); }
 
   /// Retrieve the type arguments of this object type (semantically).
-  ArrayRef<QualType> getTypeArgs() const;
+  CLANG_ABI ArrayRef<QualType> getTypeArgs() const;
 
   /// Retrieve the type arguments of this object type as they were
   /// written.
@@ -7636,7 +7637,7 @@ public:
   bool isKindOfTypeAsWritten() const { return ObjCObjectTypeBits.IsKindOf; }
 
   /// Whether this ia a "__kindof" type (semantically).
-  bool isKindOfType() const;
+  CLANG_ABI bool isKindOfType() const;
 
   /// Retrieve the type of the superclass of this object type.
   ///
@@ -7654,7 +7655,7 @@ public:
 
   /// Strip off the Objective-C "kindof" type and (with it) any
   /// protocol qualifiers.
-  QualType stripObjCKindOfTypeAndQuals(const ASTContext &ctx) const;
+  CLANG_ABI QualType stripObjCKindOfTypeAndQuals(const ASTContext &ctx) const;
 
   bool isSugared() const { return false; }
   QualType desugar() const { return QualType(this, 0); }
@@ -7682,8 +7683,8 @@ class ObjCObjectTypeImpl : public ObjCObjectType, public llvm::FoldingSetNode {
       : ObjCObjectType(Canonical, Base, typeArgs, protocols, isKindOf) {}
 
 public:
-  void Profile(llvm::FoldingSetNodeID &ID);
-  static void Profile(llvm::FoldingSetNodeID &ID,
+  CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID);
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID,
                       QualType Base,
                       ArrayRef<QualType> typeArgs,
                       ArrayRef<ObjCProtocolDecl *> protocols,
@@ -7729,7 +7730,7 @@ class ObjCInterfaceType : public ObjCObjectType {
 
 public:
   /// Get the declaration of this interface.
-  ObjCInterfaceDecl *getDecl() const;
+  CLANG_ABI ObjCInterfaceDecl *getDecl() const;
 
   bool isSugared() const { return false; }
   QualType desugar() const { return QualType(this, 0); }
@@ -7818,7 +7819,7 @@ public:
   /// qualifiers on the interface are ignored.
   ///
   /// \return null if the base type for this pointer is 'id' or 'Class'
-  const ObjCInterfaceType *getInterfaceType() const;
+  CLANG_ABI const ObjCInterfaceType *getInterfaceType() const;
 
   /// If this pointer points to an Objective \@interface
   /// type, gets the declaration for that interface.
@@ -7922,11 +7923,11 @@ public:
   /// superclass of the current class type, potentially producing a
   /// pointer to a specialization of the superclass type. Produces a
   /// null type if there is no superclass.
-  QualType getSuperClassType() const;
+  CLANG_ABI QualType getSuperClassType() const;
 
   /// Strip off the Objective-C "kindof" type and (with it) any
   /// protocol qualifiers.
-  const ObjCObjectPointerType *stripObjCKindOfTypeAndQuals(
+  CLANG_ABI const ObjCObjectPointerType *stripObjCKindOfTypeAndQuals(
                                  const ASTContext &ctx) const;
 
   void Profile(llvm::FoldingSetNodeID &ID) {
@@ -8013,7 +8014,7 @@ class BitIntType final : public Type, public llvm::FoldingSetNode {
   unsigned NumBits : 24;
 
 protected:
-  BitIntType(bool isUnsigned, unsigned NumBits);
+  CLANG_ABI BitIntType(bool isUnsigned, unsigned NumBits);
 
 public:
   bool isUnsigned() const { return IsUnsigned; }
@@ -8041,12 +8042,12 @@ class DependentBitIntType final : public Type, public llvm::FoldingSetNode {
   llvm::PointerIntPair<Expr*, 1, bool> ExprAndUnsigned;
 
 protected:
-  DependentBitIntType(bool IsUnsigned, Expr *NumBits);
+  CLANG_ABI DependentBitIntType(bool IsUnsigned, Expr *NumBits);
 
 public:
-  bool isUnsigned() const;
+  CLANG_ABI bool isUnsigned() const;
   bool isSigned() const { return !isUnsigned(); }
-  Expr *getNumBitsExpr() const;
+  CLANG_ABI Expr *getNumBitsExpr() const;
 
   bool isSugared() const { return false; }
   QualType desugar() const { return QualType(this, 0); }
@@ -8054,7 +8055,7 @@ public:
   void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context) {
     Profile(ID, Context, isUnsigned(), getNumBitsExpr());
   }
-  static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
                       bool IsUnsigned, Expr *NumBitsExpr);
 
   static bool classof(const Type *T) {
@@ -8112,10 +8113,10 @@ public:
   }
 
   /// Apply the collected qualifiers to the given type.
-  QualType apply(const ASTContext &Context, QualType QT) const;
+  CLANG_ABI QualType apply(const ASTContext &Context, QualType QT) const;
 
   /// Apply the collected qualifiers to the given type.
-  QualType apply(const ASTContext &Context, const Type* T) const;
+  CLANG_ABI QualType apply(const ASTContext &Context, const Type* T) const;
 };
 
 /// A container of type source information.
@@ -9092,7 +9093,7 @@ QualType DecayedType::getPointeeType() const {
 // as a scaled integer.
 // TODO: At some point, we should change the arguments to instead just accept an
 // APFixedPoint instead of APSInt and scale.
-void FixedPointValueToString(SmallVectorImpl<char> &Str, llvm::APSInt Val,
+CLANG_ABI void FixedPointValueToString(SmallVectorImpl<char> &Str, llvm::APSInt Val,
                              unsigned Scale);
 
 inline FunctionEffectsRef FunctionEffectsRef::get(QualType QT) {

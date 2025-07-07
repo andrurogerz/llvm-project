@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_SYMEXPR_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_SYMEXPR_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Type.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/FoldingSet.h"
@@ -29,7 +30,7 @@ using SymbolID = unsigned;
 
 /// Symbolic value. These values used to capture symbolic execution of
 /// the program.
-class SymExpr : public llvm::FoldingSetNode {
+class CLANG_ABI SymExpr : public llvm::FoldingSetNode {
   virtual void anchor();
 
 public:
@@ -95,13 +96,13 @@ public:
 
   public:
     symbol_iterator() = default;
-    symbol_iterator(const SymExpr *SE);
+    CLANG_ABI symbol_iterator(const SymExpr *SE);
 
-    symbol_iterator &operator++();
-    const SymExpr *operator*();
+    CLANG_ABI symbol_iterator &operator++();
+    CLANG_ABI const SymExpr *operator*();
 
-    bool operator==(const symbol_iterator &X) const;
-    bool operator!=(const symbol_iterator &X) const;
+    CLANG_ABI bool operator==(const symbol_iterator &X) const;
+    CLANG_ABI bool operator!=(const symbol_iterator &X) const;
   };
 
   llvm::iterator_range<symbol_iterator> symbols() const {
@@ -135,7 +136,7 @@ using SymbolRefSmallVectorTy = SmallVector<SymbolRef, 2>;
 
 /// A symbol representing data which can be stored in a memory location
 /// (region).
-class SymbolData : public SymExpr {
+class CLANG_ABI SymbolData : public SymExpr {
   void anchor() override;
 
 protected:

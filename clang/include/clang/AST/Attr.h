@@ -92,7 +92,7 @@ public:
   unsigned getSpellingListIndex() const {
     return getAttributeSpellingListIndex();
   }
-  const char *getSpelling() const;
+  CLANG_ABI const char *getSpelling() const;
 
   SourceLocation getLocation() const { return getRange().getBegin(); }
 
@@ -107,14 +107,14 @@ public:
   bool isPackExpansion() const { return IsPackExpansion; }
 
   // Clone this attribute.
-  Attr *clone(ASTContext &C) const;
+  CLANG_ABI Attr *clone(ASTContext &C) const;
 
   bool isLateParsed() const { return IsLateParsed; }
 
   // Pretty print this attribute.
-  void printPretty(raw_ostream &OS, const PrintingPolicy &Policy) const;
+  CLANG_ABI void printPretty(raw_ostream &OS, const PrintingPolicy &Policy) const;
 
-  static StringRef getDocumentation(attr::Kind);
+  CLANG_ABI static StringRef getDocumentation(attr::Kind);
 };
 
 class TypeAttr : public Attr {

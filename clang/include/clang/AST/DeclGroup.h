@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_DECLGROUP_H
 #define LLVM_CLANG_AST_DECLGROUP_H
 
+#include "clang/Support/Compiler.h"
 #include "llvm/Support/TrailingObjects.h"
 #include <cassert>
 #include <cstdint>
@@ -33,7 +34,7 @@ private:
 public:
   friend TrailingObjects;
 
-  static DeclGroup *Create(ASTContext &C, Decl **Decls, unsigned NumDecls);
+  CLANG_ABI static DeclGroup *Create(ASTContext &C, Decl **Decls, unsigned NumDecls);
 
   unsigned size() const { return NumDecls; }
 

@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_BASIC_DIAGNOSTIC_H
 #define LLVM_CLANG_BASIC_DIAGNOSTIC_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/DiagnosticIDs.h"
 #include "clang/Basic/DiagnosticOptions.h"
 #include "clang/Basic/SourceLocation.h"
@@ -195,8 +196,8 @@ class DiagStorageAllocator {
   unsigned NumFreeListEntries;
 
 public:
-  DiagStorageAllocator();
-  ~DiagStorageAllocator();
+  CLANG_ABI DiagStorageAllocator();
+  CLANG_ABI ~DiagStorageAllocator();
 
   /// Allocate new storage.
   DiagnosticStorage *Allocate() {
@@ -401,7 +402,7 @@ private:
       return DiagMap.lookup(Diag);
     }
 
-    DiagnosticMapping &getOrAddMapping(diag::kind Diag);
+    CLANG_ABI DiagnosticMapping &getOrAddMapping(diag::kind Diag);
 
     const_iterator begin() const { return DiagMap.begin(); }
     const_iterator end() const { return DiagMap.end(); }
@@ -415,13 +416,13 @@ private:
   class DiagStateMap {
   public:
     /// Add an initial diagnostic state.
-    void appendFirst(DiagState *State);
+    CLANG_ABI void appendFirst(DiagState *State);
 
     /// Add a new latest state point.
-    void append(SourceManager &SrcMgr, SourceLocation Loc, DiagState *State);
+    CLANG_ABI void append(SourceManager &SrcMgr, SourceLocation Loc, DiagState *State);
 
     /// Look up the diagnostic state at a given source location.
-    DiagState *lookup(SourceManager &SrcMgr, SourceLocation Loc) const;
+    CLANG_ABI DiagState *lookup(SourceManager &SrcMgr, SourceLocation Loc) const;
 
     /// Determine whether this map is empty.
     bool empty() const { return Files.empty(); }
@@ -437,7 +438,7 @@ private:
     }
 
     /// Produce a debugging dump of the diagnostic state.
-    LLVM_DUMP_METHOD void dump(SourceManager &SrcMgr,
+    CLANG_ABI LLVM_DUMP_METHOD void dump(SourceManager &SrcMgr,
                                StringRef DiagName = StringRef()) const;
 
     /// Grab the most-recently-added state point.
@@ -482,7 +483,7 @@ private:
       /// be at least one of these (the state on entry to the file).
       llvm::SmallVector<DiagStatePoint, 4> StateTransitions;
 
-      DiagState *lookup(unsigned Offset) const;
+      CLANG_ABI DiagState *lookup(unsigned Offset) const;
     };
 
     /// The diagnostic states for each file.
@@ -575,17 +576,17 @@ private:
       DiagSuppressionMapping;
 
 public:
-  explicit DiagnosticsEngine(IntrusiveRefCntPtr<DiagnosticIDs> Diags,
+  CLANG_ABI explicit DiagnosticsEngine(IntrusiveRefCntPtr<DiagnosticIDs> Diags,
                              DiagnosticOptions &DiagOpts,
                              DiagnosticConsumer *client = nullptr,
                              bool ShouldOwnClient = true);
   DiagnosticsEngine(const DiagnosticsEngine &) = delete;
   DiagnosticsEngine &operator=(const DiagnosticsEngine &) = delete;
-  ~DiagnosticsEngine();
+  CLANG_ABI ~DiagnosticsEngine();
 
   friend void DiagnosticsTestHelper(DiagnosticsEngine &);
-  LLVM_DUMP_METHOD void dump() const;
-  LLVM_DUMP_METHOD void dump(StringRef DiagName) const;
+  CLANG_ABI LLVM_DUMP_METHOD void dump() const;
+  CLANG_ABI LLVM_DUMP_METHOD void dump(StringRef DiagName) const;
 
   const IntrusiveRefCntPtr<DiagnosticIDs> &getDiagnosticIDs() const {
     return Diags;
@@ -632,20 +633,20 @@ public:
 
   /// Copies the current DiagMappings and pushes the new copy
   /// onto the top of the stack.
-  void pushMappings(SourceLocation Loc);
+  CLANG_ABI void pushMappings(SourceLocation Loc);
 
   /// Pops the current DiagMappings off the top of the stack,
   /// causing the new top of the stack to be the active mappings.
   ///
   /// \returns \c true if the pop happens, \c false if there is only one
   /// DiagMapping on the stack.
-  bool popMappings(SourceLocation Loc);
+  CLANG_ABI bool popMappings(SourceLocation Loc);
 
   /// Set the diagnostic client associated with this diagnostic object.
   ///
   /// \param ShouldOwnClient true if the diagnostic object should take
   /// ownership of \c client.
-  void setClient(DiagnosticConsumer *client, bool ShouldOwnClient = true);
+  CLANG_ABI void setClient(DiagnosticConsumer *client, bool ShouldOwnClient = true);
 
   /// Specify a limit for the number of errors we should
   /// emit before giving up.
@@ -825,7 +826,7 @@ public:
   ///
   /// \param Loc The source location that this change of diagnostic state should
   /// take affect. It can be null if we are setting the latest state.
-  void setSeverity(diag::kind Diag, diag::Severity Map, SourceLocation Loc);
+  CLANG_ABI void setSeverity(diag::kind Diag, diag::Severity Map, SourceLocation Loc);
 
   /// Change an entire diagnostic group (e.g. "unknown-pragmas") to
   /// have the specified mapping.
@@ -838,10 +839,10 @@ public:
   ///
   /// \param Loc The source location that this change of diagnostic state should
   /// take affect. It can be null if we are setting the state from command-line.
-  bool setSeverityForGroup(diag::Flavor Flavor, StringRef Group,
+  CLANG_ABI bool setSeverityForGroup(diag::Flavor Flavor, StringRef Group,
                            diag::Severity Map,
                            SourceLocation Loc = SourceLocation());
-  bool setSeverityForGroup(diag::Flavor Flavor, diag::Group Group,
+  CLANG_ABI bool setSeverityForGroup(diag::Flavor Flavor, diag::Group Group,
                            diag::Severity Map,
                            SourceLocation Loc = SourceLocation());
 
@@ -850,21 +851,21 @@ public:
   /// This function always only operates on the current diagnostic state.
   ///
   /// \returns True if the given group is unknown, false otherwise.
-  bool setDiagnosticGroupWarningAsError(StringRef Group, bool Enabled);
+  CLANG_ABI bool setDiagnosticGroupWarningAsError(StringRef Group, bool Enabled);
 
   /// Set the error-as-fatal flag for the given diagnostic group.
   ///
   /// This function always only operates on the current diagnostic state.
   ///
   /// \returns True if the given group is unknown, false otherwise.
-  bool setDiagnosticGroupErrorAsFatal(StringRef Group, bool Enabled);
+  CLANG_ABI bool setDiagnosticGroupErrorAsFatal(StringRef Group, bool Enabled);
 
   /// Add the specified mapping to all diagnostics of the specified
   /// flavor.
   ///
   /// Mainly to be used by -Wno-everything to disable all warnings but allow
   /// subsequent -W options to enable specific warnings.
-  void setSeverityForAll(diag::Flavor Flavor, diag::Severity Map,
+  CLANG_ABI void setSeverityForAll(diag::Flavor Flavor, diag::Severity Map,
                          SourceLocation Loc = SourceLocation());
 
   bool hasErrorOccurred() const { return ErrorOccurred; }
@@ -928,11 +929,11 @@ public:
 
   /// Reset the state of the diagnostic object to its initial configuration.
   /// \param[in] soft - if true, doesn't reset the diagnostic mappings and state
-  void Reset(bool soft = false);
+  CLANG_ABI void Reset(bool soft = false);
   /// We keep a cache of FileIDs for diagnostics mapped by pragmas. These might
   /// get invalidated when diagnostics engine is shared across different
   /// compilations. Provide users with a way to reset that.
-  void ResetPragmas();
+  CLANG_ABI void ResetPragmas();
 
   //===--------------------------------------------------------------------===//
   // DiagnosticsEngine classification and reporting interfaces.
@@ -982,8 +983,8 @@ public:
   /// matched against the globs as-is.
   /// These take presumed locations into account, and can still be overriden by
   /// clang-diagnostics pragmas.
-  void setDiagSuppressionMapping(llvm::MemoryBuffer &Input);
-  bool isSuppressedViaMapping(diag::kind DiagId, SourceLocation DiagLoc) const;
+  CLANG_ABI void setDiagSuppressionMapping(llvm::MemoryBuffer &Input);
+  CLANG_ABI bool isSuppressedViaMapping(diag::kind DiagId, SourceLocation DiagLoc) const;
 
   /// Issue the message to the client.
   ///
@@ -996,7 +997,7 @@ public:
   inline DiagnosticBuilder Report(SourceLocation Loc, unsigned DiagID);
   inline DiagnosticBuilder Report(unsigned DiagID);
 
-  void Report(const StoredDiagnostic &storedDiag);
+  CLANG_ABI void Report(const StoredDiagnostic &storedDiag);
 
 private:
   // This is private state used by DiagnosticBuilder.  We put it here instead of
@@ -1059,7 +1060,7 @@ protected:
   /// Emit the diagnostic
   ///
   /// \param Force Emit the diagnostic regardless of suppression settings.
-  bool EmitDiagnostic(const DiagnosticBuilder &DB, bool Force = false);
+  CLANG_ABI bool EmitDiagnostic(const DiagnosticBuilder &DB, bool Force = false);
 
   /// @}
 };
@@ -1259,7 +1260,7 @@ class DiagnosticBuilder : public StreamingDiagnostic {
 
   DiagnosticBuilder() = default;
 
-  DiagnosticBuilder(DiagnosticsEngine *DiagObj, SourceLocation DiagLoc,
+  CLANG_ABI DiagnosticBuilder(DiagnosticsEngine *DiagObj, SourceLocation DiagLoc,
                     unsigned DiagID);
 
 protected:
@@ -1298,7 +1299,7 @@ protected:
 public:
   /// Copy constructor.  When copied, this "takes" the diagnostic info from the
   /// input and neuters it.
-  DiagnosticBuilder(const DiagnosticBuilder &D);
+  CLANG_ABI DiagnosticBuilder(const DiagnosticBuilder &D);
 
   template <typename T> const DiagnosticBuilder &operator<<(const T &V) const {
     assert(isActive() && "Clients must not add to cleared diagnostic!");
@@ -1519,7 +1520,7 @@ operator<<(const StreamingDiagnostic &DB, const std::optional<FixItHint> &Opt) {
 /// context-sensitive keyword.
 using DiagNullabilityKind = std::pair<NullabilityKind, bool>;
 
-const StreamingDiagnostic &operator<<(const StreamingDiagnostic &DB,
+CLANG_ABI const StreamingDiagnostic &operator<<(const StreamingDiagnostic &DB,
                                       DiagNullabilityKind nullability);
 
 inline DiagnosticBuilder DiagnosticsEngine::Report(SourceLocation Loc,
@@ -1527,7 +1528,7 @@ inline DiagnosticBuilder DiagnosticsEngine::Report(SourceLocation Loc,
   return DiagnosticBuilder(this, Loc, DiagID);
 }
 
-const StreamingDiagnostic &operator<<(const StreamingDiagnostic &DB,
+CLANG_ABI const StreamingDiagnostic &operator<<(const StreamingDiagnostic &DB,
                                       llvm::Error &&E);
 
 inline DiagnosticBuilder DiagnosticsEngine::Report(unsigned DiagID) {
@@ -1550,8 +1551,8 @@ class Diagnostic {
   std::optional<StringRef> StoredDiagMessage;
 
 public:
-  Diagnostic(const DiagnosticsEngine *DO, const DiagnosticBuilder &DiagBuilder);
-  Diagnostic(const DiagnosticsEngine *DO, SourceLocation DiagLoc,
+  CLANG_ABI Diagnostic(const DiagnosticsEngine *DO, const DiagnosticBuilder &DiagBuilder);
+  CLANG_ABI Diagnostic(const DiagnosticsEngine *DO, SourceLocation DiagLoc,
              unsigned DiagID, const DiagnosticStorage &DiagStorage,
              StringRef StoredDiagMessage);
 
@@ -1653,11 +1654,11 @@ public:
   /// formal arguments into the %0 slots.
   ///
   /// The result is appended onto the \p OutStr array.
-  void FormatDiagnostic(SmallVectorImpl<char> &OutStr) const;
+  CLANG_ABI void FormatDiagnostic(SmallVectorImpl<char> &OutStr) const;
 
   /// Format the given format-string into the output buffer using the
   /// arguments stored in this diagnostic.
-  void FormatDiagnostic(const char *DiagStr, const char *DiagEnd,
+  CLANG_ABI void FormatDiagnostic(const char *DiagStr, const char *DiagEnd,
                         SmallVectorImpl<char> &OutStr) const;
 };
 
@@ -1675,10 +1676,10 @@ class StoredDiagnostic {
 
 public:
   StoredDiagnostic() = default;
-  StoredDiagnostic(DiagnosticsEngine::Level Level, const Diagnostic &Info);
-  StoredDiagnostic(DiagnosticsEngine::Level Level, unsigned ID,
+  CLANG_ABI StoredDiagnostic(DiagnosticsEngine::Level Level, const Diagnostic &Info);
+  CLANG_ABI StoredDiagnostic(DiagnosticsEngine::Level Level, unsigned ID,
                    StringRef Message);
-  StoredDiagnostic(DiagnosticsEngine::Level Level, unsigned ID,
+  CLANG_ABI StoredDiagnostic(DiagnosticsEngine::Level Level, unsigned ID,
                    StringRef Message, FullSourceLoc Loc,
                    ArrayRef<CharSourceRange> Ranges,
                    ArrayRef<FixItHint> Fixits);
@@ -1711,11 +1712,11 @@ public:
 };
 
 // Simple debug printing of StoredDiagnostic.
-llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const StoredDiagnostic &);
+CLANG_ABI llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const StoredDiagnostic &);
 
 /// Abstract interface, implemented by clients of the front-end, which
 /// formats and prints fully processed diagnostics.
-class DiagnosticConsumer {
+class CLANG_ABI DiagnosticConsumer {
 protected:
   unsigned NumWarnings = 0; ///< Number of warnings reported
   unsigned NumErrors = 0;   ///< Number of errors reported
@@ -1770,7 +1771,7 @@ public:
 };
 
 /// A diagnostic client that ignores all diagnostics.
-class IgnoringDiagConsumer : public DiagnosticConsumer {
+class CLANG_ABI IgnoringDiagConsumer : public DiagnosticConsumer {
   virtual void anchor();
 
   void HandleDiagnostic(DiagnosticsEngine::Level DiagLevel,
@@ -1782,7 +1783,7 @@ class IgnoringDiagConsumer : public DiagnosticConsumer {
 /// Diagnostic consumer that forwards diagnostics along to an
 /// existing, already-initialized diagnostic consumer.
 ///
-class ForwardingDiagnosticConsumer : public DiagnosticConsumer {
+class CLANG_ABI ForwardingDiagnosticConsumer : public DiagnosticConsumer {
   DiagnosticConsumer &Target;
 
 public:
@@ -1820,10 +1821,10 @@ const char ToggleHighlight = 127;
 
 /// ProcessWarningOptions - Initialize the diagnostic client and process the
 /// warning options specified on the command line.
-void ProcessWarningOptions(DiagnosticsEngine &Diags,
+CLANG_ABI void ProcessWarningOptions(DiagnosticsEngine &Diags,
                            const DiagnosticOptions &Opts,
                            llvm::vfs::FileSystem &VFS, bool ReportDiags = true);
-void EscapeStringForDiagnostic(StringRef Str, SmallVectorImpl<char> &OutStr);
+CLANG_ABI void EscapeStringForDiagnostic(StringRef Str, SmallVectorImpl<char> &OutStr);
 } // namespace clang
 
 #endif // LLVM_CLANG_BASIC_DIAGNOSTIC_H

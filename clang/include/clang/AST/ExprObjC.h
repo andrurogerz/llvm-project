@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_EXPROBJC_H
 #define LLVM_CLANG_AST_EXPROBJC_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Attr.h"
 #include "clang/AST/ComputeDependence.h"
 #include "clang/AST/Decl.h"
@@ -205,12 +206,12 @@ public:
   friend class ASTStmtReader;
   friend TrailingObjects;
 
-  static ObjCArrayLiteral *Create(const ASTContext &C,
+  CLANG_ABI static ObjCArrayLiteral *Create(const ASTContext &C,
                                   ArrayRef<Expr *> Elements,
                                   QualType T, ObjCMethodDecl * Method,
                                   SourceRange SR);
 
-  static ObjCArrayLiteral *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static ObjCArrayLiteral *CreateEmpty(const ASTContext &C,
                                        unsigned NumElements);
 
   SourceLocation getBeginLoc() const LLVM_READONLY { return Range.getBegin(); }
@@ -344,13 +345,13 @@ public:
   friend class ASTStmtWriter;
   friend TrailingObjects;
 
-  static ObjCDictionaryLiteral *Create(const ASTContext &C,
+  CLANG_ABI static ObjCDictionaryLiteral *Create(const ASTContext &C,
                                        ArrayRef<ObjCDictionaryElement> VK,
                                        bool HasPackExpansions,
                                        QualType T, ObjCMethodDecl *method,
                                        SourceRange SR);
 
-  static ObjCDictionaryLiteral *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static ObjCDictionaryLiteral *CreateEmpty(const ASTContext &C,
                                             unsigned NumElements,
                                             bool HasPackExpansions);
 
@@ -771,7 +772,7 @@ public:
   bool isClassReceiver() const { return isa<ObjCInterfaceDecl *>(Receiver); }
 
   /// Determine the type of the base, regardless of the kind of receiver.
-  QualType getReceiverType(const ASTContext &ctx) const;
+  CLANG_ABI QualType getReceiverType(const ASTContext &ctx) const;
 
   SourceLocation getBeginLoc() const LLVM_READONLY {
     return isObjectReceiver() ? getBase()->getBeginLoc()
@@ -1127,7 +1128,7 @@ public:
   /// \param Args The message send arguments.
   ///
   /// \param RBracLoc The location of the closing square bracket ']'.
-  static ObjCMessageExpr *Create(const ASTContext &Context, QualType T,
+  CLANG_ABI static ObjCMessageExpr *Create(const ASTContext &Context, QualType T,
                                  ExprValueKind VK,
                                  SourceLocation LBracLoc,
                                  SourceLocation SuperLoc,
@@ -1163,7 +1164,7 @@ public:
   /// \param Args The message send arguments.
   ///
   /// \param RBracLoc The location of the closing square bracket ']'.
-  static ObjCMessageExpr *Create(const ASTContext &Context, QualType T,
+  CLANG_ABI static ObjCMessageExpr *Create(const ASTContext &Context, QualType T,
                                  ExprValueKind VK,
                                  SourceLocation LBracLoc,
                                  TypeSourceInfo *Receiver,
@@ -1197,7 +1198,7 @@ public:
   /// \param Args The message send arguments.
   ///
   /// \param RBracLoc The location of the closing square bracket ']'.
-  static ObjCMessageExpr *Create(const ASTContext &Context, QualType T,
+  CLANG_ABI static ObjCMessageExpr *Create(const ASTContext &Context, QualType T,
                                  ExprValueKind VK,
                                  SourceLocation LBracLoc,
                                  Expr *Receiver,
@@ -1215,7 +1216,7 @@ public:
   ///
   /// \param NumArgs The number of message arguments, not including
   /// the receiver.
-  static ObjCMessageExpr *CreateEmpty(const ASTContext &Context,
+  CLANG_ABI static ObjCMessageExpr *CreateEmpty(const ASTContext &Context,
                                       unsigned NumArgs,
                                       unsigned NumStoredSelLocs);
 
@@ -1233,7 +1234,7 @@ public:
   /// of references (the expression would not have a reference type).
   /// It is also not always the declared return type of the method because
   /// of `instancetype` (in that case it's an expression type).
-  QualType getCallReturnType(ASTContext &Ctx) const;
+  CLANG_ABI QualType getCallReturnType(ASTContext &Ctx) const;
 
   /// Returns the WarnUnusedResultAttr that is declared on the callee
   /// or its return type declaration, together with a NamedDecl that
@@ -1249,7 +1250,7 @@ public:
   }
 
   /// Source range of the receiver.
-  SourceRange getReceiverRange() const;
+  CLANG_ABI SourceRange getReceiverRange() const;
 
   /// Determine whether this is an instance message to either a
   /// computed object or to super.
@@ -1322,7 +1323,7 @@ public:
   /// is a send to super or not, etc.
   ///
   /// \returns The type of the receiver.
-  QualType getReceiverType() const;
+  CLANG_ABI QualType getReceiverType() const;
 
   /// Retrieve the Objective-C interface to which this message
   /// is being directed, if known.
@@ -1334,7 +1335,7 @@ public:
   /// is a send to super or not, etc.
   ///
   /// \returns The Objective-C interface if known, otherwise nullptr.
-  ObjCInterfaceDecl *getReceiverInterface() const;
+  CLANG_ABI ObjCInterfaceDecl *getReceiverInterface() const;
 
   /// Retrieve the type referred to by 'super'.
   ///
@@ -1354,7 +1355,7 @@ public:
     setReceiverPointer(T.getAsOpaquePtr());
   }
 
-  Selector getSelector() const;
+  CLANG_ABI Selector getSelector() const;
 
   void setSelector(Selector S) {
     HasMethod = false;
@@ -1439,7 +1440,7 @@ public:
     return getStoredSelLocs()[Index];
   }
 
-  void getSelectorLocs(SmallVectorImpl<SourceLocation> &SelLocs) const;
+  CLANG_ABI void getSelectorLocs(SmallVectorImpl<SourceLocation> &SelLocs) const;
 
   unsigned getNumSelectorLocs() const {
     if (isImplicit())
@@ -1459,9 +1460,9 @@ public:
   SourceLocation getEndLoc() const LLVM_READONLY { return RBracLoc; }
 
   // Iterators
-  child_range children();
+  CLANG_ABI child_range children();
 
-  const_child_range children() const;
+  CLANG_ABI const_child_range children() const;
 
   using arg_iterator = ExprIterator;
   using const_arg_iterator = ConstExprIterator;
@@ -1671,7 +1672,7 @@ public:
   }
 
   /// Retrieve the kind of bridge being performed as a string.
-  StringRef getBridgeKindName() const;
+  CLANG_ABI StringRef getBridgeKindName() const;
 
   /// The location of the bridge keyword.
   SourceLocation getBridgeKeywordLoc() const { return BridgeKeywordLoc; }

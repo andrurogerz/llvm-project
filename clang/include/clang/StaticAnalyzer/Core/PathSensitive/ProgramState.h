@@ -484,8 +484,8 @@ public:
   void dump() const;
 
 private:
-  friend void ProgramStateRetain(const ProgramState *state);
-  friend void ProgramStateRelease(const ProgramState *state);
+  CLANG_ABI friend void ProgramStateRetain(const ProgramState *state);
+  CLANG_ABI friend void ProgramStateRelease(const ProgramState *state);
 
   SVal desugarReference(SVal Val) const;
   SVal wrapSymbolicRegion(SVal Base) const;
@@ -497,7 +497,7 @@ private:
 
 class ProgramStateManager {
   friend class ProgramState;
-  friend void ProgramStateRelease(const ProgramState *state);
+  CLANG_ABI friend void ProgramStateRelease(const ProgramState *state);
 private:
   /// Eng - The ExprEngine that owns this state manager.
   ExprEngine *Eng; /* Can be null. */

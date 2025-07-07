@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_MEMREGION_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_MEMREGION_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/CharUnits.h"
 #include "clang/AST/Decl.h"
@@ -95,7 +96,7 @@ public:
 //===----------------------------------------------------------------------===//
 
 /// MemRegion - The root abstract class for all memory regions.
-class MemRegion : public llvm::FoldingSetNode {
+class CLANG_ABI MemRegion : public llvm::FoldingSetNode {
 public:
   enum Kind {
 #define REGION(Id, Parent) Id ## Kind,
@@ -233,7 +234,7 @@ public:
 
 /// MemSpaceRegion - A memory region that represents a "memory space";
 ///  for example, the set of global variables, the stack frame, etc.
-class MemSpaceRegion : public MemRegion {
+class CLANG_ABI MemSpaceRegion : public MemRegion {
 protected:
   MemRegionManager &Mgr;
 
@@ -256,7 +257,7 @@ public:
 
 /// CodeSpaceRegion - The memory space that holds the executable code of
 /// functions and blocks.
-class CodeSpaceRegion : public MemSpaceRegion {
+class CLANG_ABI CodeSpaceRegion : public MemSpaceRegion {
   friend class MemRegionManager;
 
   CodeSpaceRegion(MemRegionManager &mgr)
@@ -270,7 +271,7 @@ public:
   }
 };
 
-class GlobalsSpaceRegion : public MemSpaceRegion {
+class CLANG_ABI GlobalsSpaceRegion : public MemSpaceRegion {
   virtual void anchor();
 
 protected:
@@ -290,7 +291,7 @@ public:
 ///
 /// Currently, only the static locals are placed there, so we know that these
 /// variables do not get invalidated by calls to other functions.
-class StaticGlobalSpaceRegion : public GlobalsSpaceRegion {
+class CLANG_ABI StaticGlobalSpaceRegion : public GlobalsSpaceRegion {
   friend class MemRegionManager;
 
   const CodeTextRegion *CR;
@@ -319,7 +320,7 @@ public:
 /// invalidating a set of related global values as is done in
 /// RegionStoreManager::invalidateRegions (instead of finding all the dependent
 /// globals, we invalidate the whole parent region).
-class NonStaticGlobalSpaceRegion : public GlobalsSpaceRegion {
+class CLANG_ABI NonStaticGlobalSpaceRegion : public GlobalsSpaceRegion {
   void anchor() override;
 
 protected:
@@ -338,7 +339,7 @@ public:
 
 /// The region containing globals which are defined in system/external
 /// headers and are considered modifiable by system calls (ex: errno).
-class GlobalSystemSpaceRegion : public NonStaticGlobalSpaceRegion {
+class CLANG_ABI GlobalSystemSpaceRegion : public NonStaticGlobalSpaceRegion {
   friend class MemRegionManager;
 
   GlobalSystemSpaceRegion(MemRegionManager &mgr)
@@ -357,7 +358,7 @@ public:
 /// (system or internal). Ex: Const global scalars would be modeled as part of
 /// this region. This region also includes most system globals since they have
 /// low chance of being modified.
-class GlobalImmutableSpaceRegion : public NonStaticGlobalSpaceRegion {
+class CLANG_ABI GlobalImmutableSpaceRegion : public NonStaticGlobalSpaceRegion {
   friend class MemRegionManager;
 
   GlobalImmutableSpaceRegion(MemRegionManager &mgr)
@@ -374,7 +375,7 @@ public:
 /// The region containing globals which can be modified by calls to
 /// "internally" defined functions - (for now just) functions other than system
 /// calls.
-class GlobalInternalSpaceRegion : public NonStaticGlobalSpaceRegion {
+class CLANG_ABI GlobalInternalSpaceRegion : public NonStaticGlobalSpaceRegion {
   friend class MemRegionManager;
 
   GlobalInternalSpaceRegion(MemRegionManager &mgr)
@@ -388,7 +389,7 @@ public:
   }
 };
 
-class HeapSpaceRegion : public MemSpaceRegion {
+class CLANG_ABI HeapSpaceRegion : public MemSpaceRegion {
   friend class MemRegionManager;
 
   HeapSpaceRegion(MemRegionManager &mgr)
@@ -402,7 +403,7 @@ public:
   }
 };
 
-class UnknownSpaceRegion : public MemSpaceRegion {
+class CLANG_ABI UnknownSpaceRegion : public MemSpaceRegion {
   friend class MemRegionManager;
 
   UnknownSpaceRegion(MemRegionManager &mgr)
@@ -416,7 +417,7 @@ public:
   }
 };
 
-class StackSpaceRegion : public MemSpaceRegion {
+class CLANG_ABI StackSpaceRegion : public MemSpaceRegion {
   virtual void anchor();
 
   const StackFrameContext *SFC;
@@ -440,7 +441,7 @@ public:
   }
 };
 
-class StackLocalsSpaceRegion : public StackSpaceRegion {
+class CLANG_ABI StackLocalsSpaceRegion : public StackSpaceRegion {
   friend class MemRegionManager;
 
   StackLocalsSpaceRegion(MemRegionManager &mgr, const StackFrameContext *sfc)
@@ -454,7 +455,7 @@ public:
   }
 };
 
-class StackArgumentsSpaceRegion : public StackSpaceRegion {
+class CLANG_ABI StackArgumentsSpaceRegion : public StackSpaceRegion {
 private:
   friend class MemRegionManager;
 
@@ -471,7 +472,7 @@ public:
 
 /// SubRegion - A region that subsets another larger region.  Most regions
 ///  are subclasses of SubRegion.
-class SubRegion : public MemRegion {
+class CLANG_ABI SubRegion : public MemRegion {
   virtual void anchor();
 
 protected:
@@ -503,7 +504,7 @@ public:
 
 /// AllocaRegion - A region that represents an untyped blob of bytes created
 ///  by a call to 'alloca'.
-class AllocaRegion : public SubRegion {
+class CLANG_ABI AllocaRegion : public SubRegion {
   friend class MemRegionManager;
 
   // Block counter. Used to distinguish different pieces of memory allocated by
@@ -536,7 +537,7 @@ public:
 };
 
 /// TypedRegion - An abstract class representing regions that are typed.
-class TypedRegion : public SubRegion {
+class CLANG_ABI TypedRegion : public SubRegion {
   void anchor() override;
 
 protected:
@@ -560,7 +561,7 @@ public:
 };
 
 /// TypedValueRegion - An abstract class representing regions having a typed value.
-class TypedValueRegion : public TypedRegion {
+class CLANG_ABI TypedValueRegion : public TypedRegion {
   void anchor() override;
 
 protected:
@@ -591,7 +592,7 @@ public:
   }
 };
 
-class CodeTextRegion : public TypedRegion {
+class CLANG_ABI CodeTextRegion : public TypedRegion {
   void anchor() override;
 
 protected:
@@ -609,7 +610,7 @@ public:
 };
 
 /// FunctionCodeRegion - A region that represents code texts of function.
-class FunctionCodeRegion : public CodeTextRegion {
+class CLANG_ABI FunctionCodeRegion : public CodeTextRegion {
   friend class MemRegionManager;
 
   const NamedDecl *FD;
@@ -656,7 +657,7 @@ public:
 ///  which correspond to "code+data".  The distinction is important, because
 ///  like a closure a block captures the values of externally referenced
 ///  variables.
-class BlockCodeRegion : public CodeTextRegion {
+class CLANG_ABI BlockCodeRegion : public CodeTextRegion {
   friend class MemRegionManager;
 
   const BlockDecl *BD;
@@ -703,7 +704,7 @@ public:
 ///  which correspond to "code+data".  The distinction is important, because
 ///  like a closure a block captures the values of externally referenced
 ///  variables.
-class BlockDataRegion : public TypedRegion {
+class CLANG_ABI BlockDataRegion : public TypedRegion {
   friend class MemRegionManager;
 
   const BlockCodeRegion *BC;
@@ -805,7 +806,7 @@ private:
 ///  either a real region, a NULL pointer, etc.  It essentially is used to
 ///  map the concept of symbolic values into the domain of regions.  Symbolic
 ///  regions do not need to be typed.
-class SymbolicRegion : public SubRegion {
+class CLANG_ABI SymbolicRegion : public SubRegion {
   friend class MemRegionManager;
 
   const SymbolRef sym;
@@ -854,7 +855,7 @@ public:
 };
 
 /// StringRegion - Region associated with a StringLiteral.
-class StringRegion : public TypedValueRegion {
+class CLANG_ABI StringRegion : public TypedValueRegion {
   friend class MemRegionManager;
 
   const StringLiteral *Str;
@@ -888,7 +889,7 @@ public:
 };
 
 /// The region associated with an ObjCStringLiteral.
-class ObjCStringRegion : public TypedValueRegion {
+class CLANG_ABI ObjCStringRegion : public TypedValueRegion {
   friend class MemRegionManager;
 
   const ObjCStringLiteral *Str;
@@ -925,7 +926,7 @@ public:
 /// CompoundLiteralRegion - A memory region representing a compound literal.
 ///   Compound literals are essentially temporaries that are stack allocated
 ///   or in the global constant pool.
-class CompoundLiteralRegion : public TypedValueRegion {
+class CLANG_ABI CompoundLiteralRegion : public TypedValueRegion {
   friend class MemRegionManager;
 
   const CompoundLiteralExpr *CL;
@@ -994,7 +995,7 @@ public:
   const VarDecl *getDecl() const override = 0;
 
   /// It might return null.
-  const StackFrameContext *getStackFrame() const;
+  CLANG_ABI const StackFrameContext *getStackFrame() const;
 
   QualType getValueType() const override {
     // FIXME: We can cache this if needed.
@@ -1007,7 +1008,7 @@ public:
   }
 };
 
-class NonParamVarRegion : public VarRegion {
+class CLANG_ABI NonParamVarRegion : public VarRegion {
   friend class MemRegionManager;
 
   const VarDecl *VD;
@@ -1059,7 +1060,7 @@ public:
 // implementing stack frame creations for functions without decl (functions
 // passed by unknown function pointer) methods of `ParamVarRegion` must be
 // updated.
-class ParamVarRegion : public VarRegion {
+class CLANG_ABI ParamVarRegion : public VarRegion {
   friend class MemRegionManager;
 
   const Expr *OriginExpr;
@@ -1099,7 +1100,7 @@ public:
 /// CXXThisRegion - Represents the region for the implicit 'this' parameter
 ///  in a call to a C++ method.  This region doesn't represent the object
 ///  referred to by 'this', but rather 'this' itself.
-class CXXThisRegion : public TypedValueRegion {
+class CLANG_ABI CXXThisRegion : public TypedValueRegion {
   friend class MemRegionManager;
 
   CXXThisRegion(const PointerType *thisPointerTy,
@@ -1131,7 +1132,7 @@ private:
   const PointerType *ThisPointerTy;
 };
 
-class FieldRegion : public DeclRegion {
+class CLANG_ABI FieldRegion : public DeclRegion {
   friend class MemRegionManager;
 
   const FieldDecl *FD;
@@ -1171,7 +1172,7 @@ public:
   }
 };
 
-class ObjCIvarRegion : public DeclRegion {
+class CLANG_ABI ObjCIvarRegion : public DeclRegion {
   friend class MemRegionManager;
 
   const ObjCIvarDecl *IVD;
@@ -1219,12 +1220,12 @@ public:
   // It might return null.
   const MemRegion *getRegion() const { return Region; }
 
-  void dumpToStream(raw_ostream &os) const;
-  void dump() const;
+  CLANG_ABI void dumpToStream(raw_ostream &os) const;
+  CLANG_ABI void dump() const;
 };
 
 /// ElementRegion is used to represent both array elements and casts.
-class ElementRegion : public TypedValueRegion {
+class CLANG_ABI ElementRegion : public TypedValueRegion {
   friend class MemRegionManager;
 
   QualType ElementType;
@@ -1263,7 +1264,7 @@ public:
 };
 
 // C++ temporary object associated with an expression.
-class CXXTempObjectRegion : public TypedValueRegion {
+class CLANG_ABI CXXTempObjectRegion : public TypedValueRegion {
   friend class MemRegionManager;
 
   Expr const *Ex;
@@ -1297,7 +1298,7 @@ public:
 
 // C++ temporary object that have lifetime extended to lifetime of the
 // variable. Usually they represent temporary bounds to reference variables.
-class CXXLifetimeExtendedObjectRegion : public TypedValueRegion {
+class CLANG_ABI CXXLifetimeExtendedObjectRegion : public TypedValueRegion {
   friend class MemRegionManager;
 
   Expr const *Ex;
@@ -1336,7 +1337,7 @@ public:
 
 // CXXBaseObjectRegion represents a base object within a C++ object. It is
 // identified by the base class declaration and the region of its parent object.
-class CXXBaseObjectRegion : public TypedValueRegion {
+class CLANG_ABI CXXBaseObjectRegion : public TypedValueRegion {
   friend class MemRegionManager;
 
   llvm::PointerIntPair<const CXXRecordDecl *, 1, bool> Data;
@@ -1375,7 +1376,7 @@ public:
 // region of its parent object. It is a bit counter-intuitive (but not otherwise
 // unseen) that this region represents a larger segment of memory that its
 // super-region.
-class CXXDerivedObjectRegion : public TypedValueRegion {
+class CLANG_ABI CXXDerivedObjectRegion : public TypedValueRegion {
   friend class MemRegionManager;
 
   const CXXRecordDecl *DerivedD;
@@ -1452,7 +1453,7 @@ class MemRegionManager {
 
 public:
   MemRegionManager(ASTContext &c, llvm::BumpPtrAllocator &a) : Ctx(c), A(a) {}
-  ~MemRegionManager();
+  CLANG_ABI ~MemRegionManager();
 
   ASTContext &getContext() { return Ctx; }
   const ASTContext &getContext() const { return Ctx; }
@@ -1461,80 +1462,80 @@ public:
 
   /// \returns The static size in bytes of the region \p MR.
   /// \note The region \p MR must be a 'SubRegion'.
-  DefinedOrUnknownSVal getStaticSize(const MemRegion *MR,
+  CLANG_ABI DefinedOrUnknownSVal getStaticSize(const MemRegion *MR,
                                      SValBuilder &SVB) const;
 
   /// getStackLocalsRegion - Retrieve the memory region associated with the
   ///  specified stack frame.
-  const StackLocalsSpaceRegion *
+  CLANG_ABI const StackLocalsSpaceRegion *
   getStackLocalsRegion(const StackFrameContext *STC);
 
   /// getStackArgumentsRegion - Retrieve the memory region associated with
   ///  function/method arguments of the specified stack frame.
-  const StackArgumentsSpaceRegion *
+  CLANG_ABI const StackArgumentsSpaceRegion *
   getStackArgumentsRegion(const StackFrameContext *STC);
 
   /// getGlobalsRegion - Retrieve the memory region associated with
   ///  global variables.
-  const GlobalsSpaceRegion *getGlobalsRegion(
+  CLANG_ABI const GlobalsSpaceRegion *getGlobalsRegion(
       MemRegion::Kind K = MemRegion::GlobalInternalSpaceRegionKind,
       const CodeTextRegion *R = nullptr);
 
   /// getHeapRegion - Retrieve the memory region associated with the
   ///  generic "heap".
-  const HeapSpaceRegion *getHeapRegion();
+  CLANG_ABI const HeapSpaceRegion *getHeapRegion();
 
   /// getUnknownRegion - Retrieve the memory region associated with unknown
   /// memory space.
-  const UnknownSpaceRegion *getUnknownRegion();
+  CLANG_ABI const UnknownSpaceRegion *getUnknownRegion();
 
-  const CodeSpaceRegion *getCodeRegion();
+  CLANG_ABI const CodeSpaceRegion *getCodeRegion();
 
   /// getAllocaRegion - Retrieve a region associated with a call to alloca().
-  const AllocaRegion *getAllocaRegion(const Expr *Ex, unsigned Cnt,
+  CLANG_ABI const AllocaRegion *getAllocaRegion(const Expr *Ex, unsigned Cnt,
                                       const LocationContext *LC);
 
   /// getCompoundLiteralRegion - Retrieve the region associated with a
   ///  given CompoundLiteral.
-  const CompoundLiteralRegion*
+  CLANG_ABI const CompoundLiteralRegion*
   getCompoundLiteralRegion(const CompoundLiteralExpr *CL,
                            const LocationContext *LC);
 
   /// getCXXThisRegion - Retrieve the [artificial] region associated with the
   ///  parameter 'this'.
-  const CXXThisRegion *getCXXThisRegion(QualType thisPointerTy,
+  CLANG_ABI const CXXThisRegion *getCXXThisRegion(QualType thisPointerTy,
                                         const LocationContext *LC);
 
   /// Retrieve or create a "symbolic" memory region.
   /// If no memory space is specified, `UnknownSpaceRegion` will be used.
-  const SymbolicRegion *
+  CLANG_ABI const SymbolicRegion *
   getSymbolicRegion(SymbolRef Sym, const MemSpaceRegion *MemSpace = nullptr);
 
   /// Return a unique symbolic region belonging to heap memory space.
-  const SymbolicRegion *getSymbolicHeapRegion(SymbolRef sym);
+  CLANG_ABI const SymbolicRegion *getSymbolicHeapRegion(SymbolRef sym);
 
-  const StringRegion *getStringRegion(const StringLiteral *Str);
+  CLANG_ABI const StringRegion *getStringRegion(const StringLiteral *Str);
 
-  const ObjCStringRegion *getObjCStringRegion(const ObjCStringLiteral *Str);
-
-  /// getVarRegion - Retrieve or create the memory region associated with
-  ///  a specified VarDecl and LocationContext.
-  const VarRegion *getVarRegion(const VarDecl *VD, const LocationContext *LC);
+  CLANG_ABI const ObjCStringRegion *getObjCStringRegion(const ObjCStringLiteral *Str);
 
   /// getVarRegion - Retrieve or create the memory region associated with
   ///  a specified VarDecl and LocationContext.
-  const NonParamVarRegion *getNonParamVarRegion(const VarDecl *VD,
+  CLANG_ABI const VarRegion *getVarRegion(const VarDecl *VD, const LocationContext *LC);
+
+  /// getVarRegion - Retrieve or create the memory region associated with
+  ///  a specified VarDecl and LocationContext.
+  CLANG_ABI const NonParamVarRegion *getNonParamVarRegion(const VarDecl *VD,
                                                 const MemRegion *superR);
 
   /// getParamVarRegion - Retrieve or create the memory region
   /// associated with a specified CallExpr, Index and LocationContext.
-  const ParamVarRegion *getParamVarRegion(const Expr *OriginExpr,
+  CLANG_ABI const ParamVarRegion *getParamVarRegion(const Expr *OriginExpr,
                                           unsigned Index,
                                           const LocationContext *LC);
 
   /// getElementRegion - Retrieve the memory region associated with the
   ///  associated element type, index, and super region.
-  const ElementRegion *getElementRegion(QualType elementType, NonLoc Idx,
+  CLANG_ABI const ElementRegion *getElementRegion(QualType elementType, NonLoc Idx,
                                         const SubRegion *superRegion,
                                         const ASTContext &Ctx);
 
@@ -1548,7 +1549,7 @@ public:
   ///  a specified FieldDecl.  'superRegion' corresponds to the containing
   ///  memory region (which typically represents the memory representing
   ///  a structure or class).
-  const FieldRegion *getFieldRegion(const FieldDecl *fd,
+  CLANG_ABI const FieldRegion *getFieldRegion(const FieldDecl *fd,
                                     const SubRegion* superRegion);
 
   const FieldRegion *getFieldRegionWithSuper(const FieldRegion *FR,
@@ -1560,15 +1561,15 @@ public:
   ///   a specified Objective-c instance variable.  'superRegion' corresponds
   ///   to the containing region (which typically represents the Objective-C
   ///   object).
-  const ObjCIvarRegion *getObjCIvarRegion(const ObjCIvarDecl *ivd,
+  CLANG_ABI const ObjCIvarRegion *getObjCIvarRegion(const ObjCIvarDecl *ivd,
                                           const SubRegion* superRegion);
 
-  const CXXTempObjectRegion *getCXXTempObjectRegion(Expr const *Ex,
+  CLANG_ABI const CXXTempObjectRegion *getCXXTempObjectRegion(Expr const *Ex,
                                                     LocationContext const *LC);
 
   /// Create a CXXLifetimeExtendedObjectRegion for temporaries which are
   /// lifetime-extended by local references.
-  const CXXLifetimeExtendedObjectRegion *
+  CLANG_ABI const CXXLifetimeExtendedObjectRegion *
   getCXXLifetimeExtendedObjectRegion(Expr const *Ex, ValueDecl const *VD,
                                      LocationContext const *LC);
 
@@ -1576,14 +1577,14 @@ public:
   /// lifetime-extended by *static* references.
   /// This differs from \ref getCXXLifetimeExtendedObjectRegion(Expr const *,
   /// ValueDecl const *, LocationContext const *) in the super-region used.
-  const CXXLifetimeExtendedObjectRegion *
+  CLANG_ABI const CXXLifetimeExtendedObjectRegion *
   getCXXStaticLifetimeExtendedObjectRegion(const Expr *Ex, ValueDecl const *VD);
 
   /// Create a CXXBaseObjectRegion with the given base class for region
   /// \p Super.
   ///
   /// The type of \p Super is assumed be a class deriving from \p BaseClass.
-  const CXXBaseObjectRegion *
+  CLANG_ABI const CXXBaseObjectRegion *
   getCXXBaseObjectRegion(const CXXRecordDecl *BaseClass, const SubRegion *Super,
                          bool IsVirtual);
 
@@ -1600,12 +1601,12 @@ public:
   /// \p Super. This should not be used for casting an existing
   /// CXXBaseObjectRegion back to the derived type; instead, CXXBaseObjectRegion
   /// should be removed.
-  const CXXDerivedObjectRegion *
+  CLANG_ABI const CXXDerivedObjectRegion *
   getCXXDerivedObjectRegion(const CXXRecordDecl *BaseClass,
                             const SubRegion *Super);
 
-  const FunctionCodeRegion *getFunctionCodeRegion(const NamedDecl *FD);
-  const BlockCodeRegion *getBlockCodeRegion(const BlockDecl *BD,
+  CLANG_ABI const FunctionCodeRegion *getFunctionCodeRegion(const NamedDecl *FD);
+  CLANG_ABI const BlockCodeRegion *getBlockCodeRegion(const BlockDecl *BD,
                                             CanQualType locTy,
                                             AnalysisDeclContext *AC);
 
@@ -1613,7 +1614,7 @@ public:
   ///  of a block.  Unlike many other MemRegions, the LocationContext*
   ///  argument is allowed to be NULL for cases where we have no known
   ///  context.
-  const BlockDataRegion *getBlockDataRegion(const BlockCodeRegion *bc,
+  CLANG_ABI const BlockDataRegion *getBlockDataRegion(const BlockCodeRegion *bc,
                                             const LocationContext *lc,
                                             unsigned blockCount);
 
@@ -1685,10 +1686,10 @@ public:
     // the number of bits StorageTypeForKinds can store.
   };
 
-  void setTrait(SymbolRef Sym, InvalidationKinds IK);
-  void setTrait(const MemRegion *MR, InvalidationKinds IK);
-  bool hasTrait(SymbolRef Sym, InvalidationKinds IK) const;
-  bool hasTrait(const MemRegion *MR, InvalidationKinds IK) const;
+  CLANG_ABI void setTrait(SymbolRef Sym, InvalidationKinds IK);
+  CLANG_ABI void setTrait(const MemRegion *MR, InvalidationKinds IK);
+  CLANG_ABI bool hasTrait(SymbolRef Sym, InvalidationKinds IK) const;
+  CLANG_ABI bool hasTrait(const MemRegion *MR, InvalidationKinds IK) const;
 };
 
 //===----------------------------------------------------------------------===//

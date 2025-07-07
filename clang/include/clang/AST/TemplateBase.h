@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_TEMPLATEBASE_H
 #define LLVM_CLANG_AST_TEMPLATEBASE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/DependenceFlags.h"
 #include "clang/AST/NestedNameSpecifier.h"
 #include "clang/AST/TemplateName.h"
@@ -180,8 +181,8 @@ private:
     struct TV TypeOrValue;
   };
 
-  void initFromType(QualType T, bool IsNullPtr, bool IsDefaulted);
-  void initFromDeclaration(ValueDecl *D, QualType QT, bool IsDefaulted);
+  CLANG_ABI void initFromType(QualType T, bool IsNullPtr, bool IsDefaulted);
+  CLANG_ABI void initFromDeclaration(ValueDecl *D, QualType QT, bool IsDefaulted);
   void initFromIntegral(const ASTContext &Ctx, const llvm::APSInt &Value,
                         QualType Type, bool IsDefaulted);
   void initFromStructural(const ASTContext &Ctx, QualType Type,
@@ -206,11 +207,11 @@ public:
 
   /// Construct an integral constant template argument. The memory to
   /// store the value is allocated with Ctx.
-  TemplateArgument(const ASTContext &Ctx, const llvm::APSInt &Value,
+  CLANG_ABI TemplateArgument(const ASTContext &Ctx, const llvm::APSInt &Value,
                    QualType Type, bool IsDefaulted = false);
 
   /// Construct a template argument from an arbitrary constant value.
-  TemplateArgument(const ASTContext &Ctx, QualType Type, const APValue &Value,
+  CLANG_ABI TemplateArgument(const ASTContext &Ctx, QualType Type, const APValue &Value,
                    bool IsDefaulted = false);
 
   /// Construct an integral constant template argument with the same
@@ -289,7 +290,7 @@ public:
 
   /// Create a new template argument pack by copying the given set of
   /// template arguments.
-  static TemplateArgument CreatePackCopy(ASTContext &Context,
+  CLANG_ABI static TemplateArgument CreatePackCopy(ASTContext &Context,
                                          ArrayRef<TemplateArgument> Args);
 
   /// Return the kind of stored template argument.
@@ -298,23 +299,23 @@ public:
   /// Determine whether this template argument has no value.
   bool isNull() const { return getKind() == Null; }
 
-  TemplateArgumentDependence getDependence() const;
+  CLANG_ABI TemplateArgumentDependence getDependence() const;
 
   /// Whether this template argument is dependent on a template
   /// parameter such that its result can change from one instantiation to
   /// another.
-  bool isDependent() const;
+  CLANG_ABI bool isDependent() const;
 
   /// Whether this template argument is dependent on a template
   /// parameter.
-  bool isInstantiationDependent() const;
+  CLANG_ABI bool isInstantiationDependent() const;
 
   /// Whether this template argument contains an unexpanded
   /// parameter pack.
-  bool containsUnexpandedParameterPack() const;
+  CLANG_ABI bool containsUnexpandedParameterPack() const;
 
   /// Determine whether this template argument is a pack expansion.
-  bool isPackExpansion() const;
+  CLANG_ABI bool isPackExpansion() const;
 
   /// Retrieve the type for a type template argument.
   QualType getAsType() const {
@@ -357,7 +358,7 @@ public:
 
   /// Retrieve the number of expansions that a template template argument
   /// expansion will produce, if known.
-  UnsignedOrNone getNumTemplateExpansions() const;
+  CLANG_ABI UnsignedOrNone getNumTemplateExpansions() const;
 
   /// Retrieve the template argument as an integral value.
   // FIXME: Provide a way to read the integral data without copying the value.
@@ -403,7 +404,7 @@ public:
 
   /// If this is a non-type template argument, get its type. Otherwise,
   /// returns a null QualType.
-  QualType getNonTypeTemplateArgumentType() const;
+  CLANG_ABI QualType getNonTypeTemplateArgumentType() const;
 
   /// Retrieve the template argument as an expression.
   Expr *getAsExpr() const {
@@ -454,24 +455,24 @@ public:
 
   /// Determines whether two template arguments are superficially the
   /// same.
-  bool structurallyEquals(const TemplateArgument &Other) const;
+  CLANG_ABI bool structurallyEquals(const TemplateArgument &Other) const;
 
   /// When the template argument is a pack expansion, returns
   /// the pattern of the pack expansion.
-  TemplateArgument getPackExpansionPattern() const;
+  CLANG_ABI TemplateArgument getPackExpansionPattern() const;
 
   /// Print this template argument to the given output stream.
-  void print(const PrintingPolicy &Policy, raw_ostream &Out,
+  CLANG_ABI void print(const PrintingPolicy &Policy, raw_ostream &Out,
              bool IncludeType) const;
 
   /// Debugging aid that dumps the template argument.
-  void dump(raw_ostream &Out, const ASTContext &Context) const;
+  CLANG_ABI void dump(raw_ostream &Out, const ASTContext &Context) const;
 
   /// Debugging aid that dumps the template argument to standard error.
-  void dump() const;
+  CLANG_ABI void dump() const;
 
   /// Used to insert TemplateArguments into FoldingSets.
-  void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context) const;
+  CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context) const;
 };
 
 /// Location information for a TemplateArgument.
@@ -500,7 +501,7 @@ public:
   TemplateArgumentLocInfo(Expr *E) { Pointer = E; }
   // Ctx is used for allocation -- this case is unusually large and also rare,
   // so we store the payload out-of-line.
-  TemplateArgumentLocInfo(ASTContext &Ctx, NestedNameSpecifierLoc QualifierLoc,
+  CLANG_ABI TemplateArgumentLocInfo(ASTContext &Ctx, NestedNameSpecifierLoc QualifierLoc,
                           SourceLocation TemplateNameLoc,
                           SourceLocation EllipsisLoc);
 
@@ -575,7 +576,7 @@ public:
   }
 
   /// - Fetches the full source range of the argument.
-  SourceRange getSourceRange() const LLVM_READONLY;
+  CLANG_ABI SourceRange getSourceRange() const LLVM_READONLY;
 
   const TemplateArgument &getArgument() const { return Argument; }
 
@@ -716,11 +717,11 @@ public:
     return getTemplateArgs()[I];
   }
 
-  static const ASTTemplateArgumentListInfo *
+  CLANG_ABI static const ASTTemplateArgumentListInfo *
   Create(const ASTContext &C, const TemplateArgumentListInfo &List);
 
   // FIXME: Is it ever necessary to copy to another context?
-  static const ASTTemplateArgumentListInfo *
+  CLANG_ABI static const ASTTemplateArgumentListInfo *
   Create(const ASTContext &C, const ASTTemplateArgumentListInfo *List);
 };
 
@@ -747,23 +748,23 @@ struct alignas(void *) ASTTemplateKWAndArgsInfo {
   /// The number of template arguments in TemplateArgs.
   unsigned NumTemplateArgs;
 
-  void initializeFrom(SourceLocation TemplateKWLoc,
+  CLANG_ABI void initializeFrom(SourceLocation TemplateKWLoc,
                       const TemplateArgumentListInfo &List,
                       TemplateArgumentLoc *OutArgArray);
   // FIXME: The parameter Deps is the result populated by this method, the
   // caller doesn't need it since it is populated by computeDependence. remove
   // it.
-  void initializeFrom(SourceLocation TemplateKWLoc,
+  CLANG_ABI void initializeFrom(SourceLocation TemplateKWLoc,
                       const TemplateArgumentListInfo &List,
                       TemplateArgumentLoc *OutArgArray,
                       TemplateArgumentDependence &Deps);
-  void initializeFrom(SourceLocation TemplateKWLoc);
+  CLANG_ABI void initializeFrom(SourceLocation TemplateKWLoc);
 
-  void copyInto(const TemplateArgumentLoc *ArgArray,
+  CLANG_ABI void copyInto(const TemplateArgumentLoc *ArgArray,
                 TemplateArgumentListInfo &List) const;
 };
 
-const StreamingDiagnostic &operator<<(const StreamingDiagnostic &DB,
+CLANG_ABI const StreamingDiagnostic &operator<<(const StreamingDiagnostic &DB,
                                       const TemplateArgument &Arg);
 
 } // namespace clang

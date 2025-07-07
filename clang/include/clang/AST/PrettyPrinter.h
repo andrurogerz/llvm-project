@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_PRETTYPRINTER_H
 #define LLVM_CLANG_AST_PRETTYPRINTER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/LangOptions.h"
 
@@ -22,7 +23,7 @@ class DeclContext;
 class LangOptions;
 class Stmt;
 
-class PrinterHelper {
+class CLANG_ABI PrinterHelper {
 public:
   virtual ~PrinterHelper();
   virtual bool handledStmt(Stmt* E, raw_ostream& OS) = 0;

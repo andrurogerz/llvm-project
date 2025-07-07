@@ -22,13 +22,14 @@ enum OverloadedOperatorKind : int {
   OO_None,                ///< Not an overloaded operator
 #define OVERLOADED_OPERATOR(Name,Spelling,Token,Unary,Binary,MemberOnly) \
   OO_##Name,
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/OperatorKinds.def"
   NUM_OVERLOADED_OPERATORS
 };
 
 /// Retrieve the spelling of the given overloaded operator, without
 /// the preceding "operator" keyword.
-const char *getOperatorSpelling(OverloadedOperatorKind Operator);
+CLANG_ABI const char *getOperatorSpelling(OverloadedOperatorKind Operator);
 
 /// Get the other overloaded operator that the given operator can be rewritten
 /// into, if any such operator exists.

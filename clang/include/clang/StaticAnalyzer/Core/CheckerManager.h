@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_CHECKERMANAGER_H
 #define LLVM_CLANG_STATICANALYZER_CORE_CHECKERMANAGER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Analysis/ProgramPoint.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/LangOptions.h"
@@ -139,7 +140,7 @@ public:
   // registration functions are defined in the Checkers library, and the library
   // dependencies look like this: Core -> Checkers -> Frontend.
 
-  CheckerManager(
+  CLANG_ABI CheckerManager(
       ASTContext &Context, AnalyzerOptions &AOptions, const Preprocessor &PP,
       ArrayRef<std::string> plugins,
       ArrayRef<std::function<void(CheckerRegistry &)>> checkerRegistrationFns);
@@ -154,15 +155,15 @@ public:
   /// Constructs a CheckerManager without requiring an AST. No checker
   /// registration will take place. Only useful when one needs to print the
   /// help flags through CheckerRegistryData, and the AST is unavailable.
-  CheckerManager(AnalyzerOptions &AOptions, const LangOptions &LangOpts,
+  CLANG_ABI CheckerManager(AnalyzerOptions &AOptions, const LangOptions &LangOpts,
                  DiagnosticsEngine &Diags, ArrayRef<std::string> plugins);
 
-  ~CheckerManager();
+  CLANG_ABI ~CheckerManager();
 
   void setCurrentCheckerName(CheckerNameRef name) { CurrentCheckerName = name; }
   CheckerNameRef getCurrentCheckerName() const { return CurrentCheckerName; }
 
-  bool hasPathSensitiveCheckers() const;
+  CLANG_ABI bool hasPathSensitiveCheckers() const;
 
   const LangOptions &getLangOpts() const { return LangOpts; }
   const AnalyzerOptions &getAnalyzerOptions() const { return AOptions; }
@@ -181,7 +182,7 @@ public:
 
   /// Emits an error through a DiagnosticsEngine about an invalid user supplied
   /// checker option value.
-  void reportInvalidCheckerOptionValue(const CheckerFrontend *Checker,
+  CLANG_ABI void reportInvalidCheckerOptionValue(const CheckerFrontend *Checker,
                                        StringRef OptionName,
                                        StringRef ExpectedValueDesc) const;
 
@@ -230,11 +231,11 @@ public:
 //===----------------------------------------------------------------------===//
 
   /// Run checkers handling Decls.
-  void runCheckersOnASTDecl(const Decl *D, AnalysisManager& mgr,
+  CLANG_ABI void runCheckersOnASTDecl(const Decl *D, AnalysisManager& mgr,
                             BugReporter &BR);
 
   /// Run checkers handling Decls containing a Stmt body.
-  void runCheckersOnASTBody(const Decl *D, AnalysisManager& mgr,
+  CLANG_ABI void runCheckersOnASTBody(const Decl *D, AnalysisManager& mgr,
                             BugReporter &BR);
 
 //===----------------------------------------------------------------------===//
@@ -269,7 +270,7 @@ public:
   }
 
   /// Run checkers for visiting Stmts.
-  void runCheckersForStmt(bool isPreVisit,
+  CLANG_ABI void runCheckersForStmt(bool isPreVisit,
                           ExplodedNodeSet &Dst, const ExplodedNodeSet &Src,
                           const Stmt *S, ExprEngine &Eng,
                           bool wasInlined = false);
@@ -302,7 +303,7 @@ public:
   }
 
   /// Run checkers for visiting obj-c messages.
-  void runCheckersForObjCMessage(ObjCMessageVisitKind visitKind,
+  CLANG_ABI void runCheckersForObjCMessage(ObjCMessageVisitKind visitKind,
                                  ExplodedNodeSet &Dst,
                                  const ExplodedNodeSet &Src,
                                  const ObjCMethodCall &msg, ExprEngine &Eng,
@@ -323,13 +324,13 @@ public:
   }
 
   /// Run checkers for visiting obj-c messages.
-  void runCheckersForCallEvent(bool isPreVisit, ExplodedNodeSet &Dst,
+  CLANG_ABI void runCheckersForCallEvent(bool isPreVisit, ExplodedNodeSet &Dst,
                                const ExplodedNodeSet &Src,
                                const CallEvent &Call, ExprEngine &Eng,
                                bool wasInlined = false);
 
   /// Run checkers for load/store of a location.
-  void runCheckersForLocation(ExplodedNodeSet &Dst,
+  CLANG_ABI void runCheckersForLocation(ExplodedNodeSet &Dst,
                               const ExplodedNodeSet &Src,
                               SVal location,
                               bool isLoad,
@@ -338,42 +339,42 @@ public:
                               ExprEngine &Eng);
 
   /// Run checkers for binding of a value to a location.
-  void runCheckersForBind(ExplodedNodeSet &Dst,
+  CLANG_ABI void runCheckersForBind(ExplodedNodeSet &Dst,
                           const ExplodedNodeSet &Src,
                           SVal location, SVal val,
                           const Stmt *S, ExprEngine &Eng,
                           const ProgramPoint &PP);
 
   /// Run checkers after taking a control flow edge.
-  void runCheckersForBlockEntrance(ExplodedNodeSet &Dst,
+  CLANG_ABI void runCheckersForBlockEntrance(ExplodedNodeSet &Dst,
                                    const ExplodedNodeSet &Src,
                                    const BlockEntrance &Entrance,
                                    ExprEngine &Eng) const;
 
   /// Run checkers for end of analysis.
-  void runCheckersForEndAnalysis(ExplodedGraph &G, BugReporter &BR,
+  CLANG_ABI void runCheckersForEndAnalysis(ExplodedGraph &G, BugReporter &BR,
                                  ExprEngine &Eng);
 
   /// Run checkers on beginning of function.
-  void runCheckersForBeginFunction(ExplodedNodeSet &Dst,
+  CLANG_ABI void runCheckersForBeginFunction(ExplodedNodeSet &Dst,
                                    const BlockEdge &L,
                                    ExplodedNode *Pred,
                                    ExprEngine &Eng);
 
   /// Run checkers on end of function.
-  void runCheckersForEndFunction(NodeBuilderContext &BC,
+  CLANG_ABI void runCheckersForEndFunction(NodeBuilderContext &BC,
                                  ExplodedNodeSet &Dst,
                                  ExplodedNode *Pred,
                                  ExprEngine &Eng,
                                  const ReturnStmt *RS);
 
   /// Run checkers for branch condition.
-  void runCheckersForBranchCondition(const Stmt *condition,
+  CLANG_ABI void runCheckersForBranchCondition(const Stmt *condition,
                                      ExplodedNodeSet &Dst, ExplodedNode *Pred,
                                      ExprEngine &Eng);
 
   /// Run checkers between C++ operator new and constructor calls.
-  void runCheckersForNewAllocator(const CXXAllocatorCall &Call,
+  CLANG_ABI void runCheckersForNewAllocator(const CXXAllocatorCall &Call,
                                   ExplodedNodeSet &Dst, ExplodedNode *Pred,
                                   ExprEngine &Eng, bool wasInlined = false);
 
@@ -382,7 +383,7 @@ public:
   /// Allows modifying SymbolReaper object. For example, checkers can explicitly
   /// register symbols of interest as live. These symbols will not be marked
   /// dead and removed.
-  void runCheckersForLiveSymbols(ProgramStateRef state,
+  CLANG_ABI void runCheckersForLiveSymbols(ProgramStateRef state,
                                  SymbolReaper &SymReaper);
 
   /// Run checkers for dead symbols.
@@ -390,7 +391,7 @@ public:
   /// Notifies checkers when symbols become dead. For example, this allows
   /// checkers to aggressively clean up/reduce the checker state and produce
   /// precise diagnostics.
-  void runCheckersForDeadSymbols(ExplodedNodeSet &Dst,
+  CLANG_ABI void runCheckersForDeadSymbols(ExplodedNodeSet &Dst,
                                  const ExplodedNodeSet &Src,
                                  SymbolReaper &SymReaper, const Stmt *S,
                                  ExprEngine &Eng,
@@ -407,7 +408,7 @@ public:
   ///   i.e. all regions that may have been touched by this change.
   /// \param Call The call expression wrapper if the regions are invalidated
   ///   by a call.
-  ProgramStateRef
+  CLANG_ABI ProgramStateRef
   runCheckersForRegionChanges(ProgramStateRef state,
                               const InvalidatedSymbols *invalidated,
                               ArrayRef<const MemRegion *> ExplicitRegions,
@@ -430,7 +431,7 @@ public:
   /// \param ITraits Information about invalidation for a particular
   ///        region/symbol.
   /// \returns Checkers can modify the state by returning a new one.
-  ProgramStateRef
+  CLANG_ABI ProgramStateRef
   runCheckersForPointerEscape(ProgramStateRef State,
                               const InvalidatedSymbols &Escaped,
                               const CallEvent *Call,
@@ -438,18 +439,18 @@ public:
                               RegionAndSymbolInvalidationTraits *ITraits);
 
   /// Run checkers for handling assumptions on symbolic values.
-  ProgramStateRef runCheckersForEvalAssume(ProgramStateRef state,
+  CLANG_ABI ProgramStateRef runCheckersForEvalAssume(ProgramStateRef state,
                                            SVal Cond, bool Assumption);
 
   /// Run checkers for evaluating a call.
   ///
   /// Warning: Currently, the CallEvent MUST come from a CallExpr!
-  void runCheckersForEvalCall(ExplodedNodeSet &Dst, const ExplodedNodeSet &Src,
+  CLANG_ABI void runCheckersForEvalCall(ExplodedNodeSet &Dst, const ExplodedNodeSet &Src,
                               const CallEvent &CE, ExprEngine &Eng,
                               const EvalCallOptions &CallOpts);
 
   /// Run checkers for the entire Translation Unit.
-  void runCheckersOnEndOfTranslationUnit(const TranslationUnitDecl *TU,
+  CLANG_ABI void runCheckersOnEndOfTranslationUnit(const TranslationUnitDecl *TU,
                                          AnalysisManager &mgr,
                                          BugReporter &BR);
 
@@ -463,7 +464,7 @@ public:
   /// \param NL    The preferred representation of a newline.
   /// \param Space The preferred space between the left side and the message.
   /// \param IsDot Whether the message will be printed in 'dot' format.
-  void runCheckersForPrintStateJson(raw_ostream &Out, ProgramStateRef State,
+  CLANG_ABI void runCheckersForPrintStateJson(raw_ostream &Out, ProgramStateRef State,
                                     const char *NL = "\n",
                                     unsigned int Space = 0,
                                     bool IsDot = false) const;
@@ -480,9 +481,9 @@ public:
 
   using HandlesDeclFunc = bool (*)(const Decl *D);
 
-  void _registerForDecl(CheckDeclFunc checkfn, HandlesDeclFunc isForDeclFn);
+  CLANG_ABI void _registerForDecl(CheckDeclFunc checkfn, HandlesDeclFunc isForDeclFn);
 
-  void _registerForBody(CheckDeclFunc checkfn);
+  CLANG_ABI void _registerForBody(CheckDeclFunc checkfn);
 
   //===--------------------------------------------------------------------===//
   // Internal registration functions for path-sensitive checking.
@@ -549,49 +550,49 @@ public:
 
   using HandlesStmtFunc = bool (*)(const Stmt *D);
 
-  void _registerForPreStmt(CheckStmtFunc checkfn,
+  CLANG_ABI void _registerForPreStmt(CheckStmtFunc checkfn,
                            HandlesStmtFunc isForStmtFn);
-  void _registerForPostStmt(CheckStmtFunc checkfn,
+  CLANG_ABI void _registerForPostStmt(CheckStmtFunc checkfn,
                             HandlesStmtFunc isForStmtFn);
 
-  void _registerForPreObjCMessage(CheckObjCMessageFunc checkfn);
-  void _registerForPostObjCMessage(CheckObjCMessageFunc checkfn);
+  CLANG_ABI void _registerForPreObjCMessage(CheckObjCMessageFunc checkfn);
+  CLANG_ABI void _registerForPostObjCMessage(CheckObjCMessageFunc checkfn);
 
-  void _registerForObjCMessageNil(CheckObjCMessageFunc checkfn);
+  CLANG_ABI void _registerForObjCMessageNil(CheckObjCMessageFunc checkfn);
 
-  void _registerForPreCall(CheckCallFunc checkfn);
-  void _registerForPostCall(CheckCallFunc checkfn);
+  CLANG_ABI void _registerForPreCall(CheckCallFunc checkfn);
+  CLANG_ABI void _registerForPostCall(CheckCallFunc checkfn);
 
-  void _registerForLocation(CheckLocationFunc checkfn);
+  CLANG_ABI void _registerForLocation(CheckLocationFunc checkfn);
 
-  void _registerForBind(CheckBindFunc checkfn);
+  CLANG_ABI void _registerForBind(CheckBindFunc checkfn);
 
-  void _registerForBlockEntrance(CheckBlockEntranceFunc checkfn);
+  CLANG_ABI void _registerForBlockEntrance(CheckBlockEntranceFunc checkfn);
 
-  void _registerForEndAnalysis(CheckEndAnalysisFunc checkfn);
+  CLANG_ABI void _registerForEndAnalysis(CheckEndAnalysisFunc checkfn);
 
-  void _registerForBeginFunction(CheckBeginFunctionFunc checkfn);
-  void _registerForEndFunction(CheckEndFunctionFunc checkfn);
+  CLANG_ABI void _registerForBeginFunction(CheckBeginFunctionFunc checkfn);
+  CLANG_ABI void _registerForEndFunction(CheckEndFunctionFunc checkfn);
 
-  void _registerForBranchCondition(CheckBranchConditionFunc checkfn);
+  CLANG_ABI void _registerForBranchCondition(CheckBranchConditionFunc checkfn);
 
-  void _registerForNewAllocator(CheckNewAllocatorFunc checkfn);
+  CLANG_ABI void _registerForNewAllocator(CheckNewAllocatorFunc checkfn);
 
-  void _registerForLiveSymbols(CheckLiveSymbolsFunc checkfn);
+  CLANG_ABI void _registerForLiveSymbols(CheckLiveSymbolsFunc checkfn);
 
-  void _registerForDeadSymbols(CheckDeadSymbolsFunc checkfn);
+  CLANG_ABI void _registerForDeadSymbols(CheckDeadSymbolsFunc checkfn);
 
-  void _registerForRegionChanges(CheckRegionChangesFunc checkfn);
+  CLANG_ABI void _registerForRegionChanges(CheckRegionChangesFunc checkfn);
 
-  void _registerForPointerEscape(CheckPointerEscapeFunc checkfn);
+  CLANG_ABI void _registerForPointerEscape(CheckPointerEscapeFunc checkfn);
 
-  void _registerForConstPointerEscape(CheckPointerEscapeFunc checkfn);
+  CLANG_ABI void _registerForConstPointerEscape(CheckPointerEscapeFunc checkfn);
 
-  void _registerForEvalAssume(EvalAssumeFunc checkfn);
+  CLANG_ABI void _registerForEvalAssume(EvalAssumeFunc checkfn);
 
-  void _registerForEvalCall(EvalCallFunc checkfn);
+  CLANG_ABI void _registerForEvalCall(EvalCallFunc checkfn);
 
-  void _registerForEndOfTranslationUnit(CheckEndOfTranslationUnit checkfn);
+  CLANG_ABI void _registerForEndOfTranslationUnit(CheckEndOfTranslationUnit checkfn);
 
   //===--------------------------------------------------------------------===//
   // Internal registration functions for events.

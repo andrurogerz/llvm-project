@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_DECLARATIONNAME_H
 #define LLVM_CLANG_AST_DECLARATIONNAME_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Type.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/IdentifierTable.h"
@@ -349,8 +350,8 @@ private:
 
   /// Get and set the FETokenInfo in the less common cases where the
   /// declaration name do not point to an identifier.
-  void *getFETokenInfoSlow() const;
-  void setFETokenInfoSlow(void *T);
+  CLANG_ABI void *getFETokenInfoSlow() const;
+  CLANG_ABI void setFETokenInfoSlow(void *T);
 
 public:
   /// Construct an empty declaration name.
@@ -410,10 +411,10 @@ public:
   /// Note that this does not capture all of the notions of "dependent name",
   /// because an identifier can be a dependent name if it is used as the
   /// callee in a call expression with dependent arguments.
-  bool isDependentName() const;
+  CLANG_ABI bool isDependentName() const;
 
   /// Retrieve the human-readable string for this name.
-  std::string getAsString() const;
+  CLANG_ABI std::string getAsString() const;
 
   /// Retrieve the IdentifierInfo * stored in this declaration name,
   /// or null if this declaration name isn't a simple identifier.
@@ -564,14 +565,14 @@ public:
     return Name;
   }
 
-  static int compare(DeclarationName LHS, DeclarationName RHS);
+  CLANG_ABI static int compare(DeclarationName LHS, DeclarationName RHS);
 
-  void print(raw_ostream &OS, const PrintingPolicy &Policy) const;
+  CLANG_ABI void print(raw_ostream &OS, const PrintingPolicy &Policy) const;
 
-  void dump() const;
+  CLANG_ABI void dump() const;
 };
 
-raw_ostream &operator<<(raw_ostream &OS, DeclarationName N);
+CLANG_ABI raw_ostream &operator<<(raw_ostream &OS, DeclarationName N);
 
 /// Ordering on two declaration names. If both names are identifiers,
 /// this provides a lexicographical ordering.
@@ -640,7 +641,7 @@ class DeclarationNameTable {
   llvm::FoldingSet<detail::CXXDeductionGuideNameExtra> CXXDeductionGuideNames;
 
 public:
-  DeclarationNameTable(const ASTContext &C);
+  CLANG_ABI DeclarationNameTable(const ASTContext &C);
   DeclarationNameTable(const DeclarationNameTable &) = delete;
   DeclarationNameTable &operator=(const DeclarationNameTable &) = delete;
   DeclarationNameTable(DeclarationNameTable &&) = delete;
@@ -653,16 +654,16 @@ public:
   }
 
   /// Returns the name of a C++ constructor for the given Type.
-  DeclarationName getCXXConstructorName(CanQualType Ty);
+  CLANG_ABI DeclarationName getCXXConstructorName(CanQualType Ty);
 
   /// Returns the name of a C++ destructor for the given Type.
-  DeclarationName getCXXDestructorName(CanQualType Ty);
+  CLANG_ABI DeclarationName getCXXDestructorName(CanQualType Ty);
 
   /// Returns the name of a C++ deduction guide for the given template.
-  DeclarationName getCXXDeductionGuideName(TemplateDecl *TD);
+  CLANG_ABI DeclarationName getCXXDeductionGuideName(TemplateDecl *TD);
 
   /// Returns the name of a C++ conversion function for the given Type.
-  DeclarationName getCXXConversionFunctionName(CanQualType Ty);
+  CLANG_ABI DeclarationName getCXXConversionFunctionName(CanQualType Ty);
 
   /// Returns a declaration name for special kind of C++ name,
   /// e.g., for a constructor, destructor, or conversion function.
@@ -670,7 +671,7 @@ public:
   ///   * DeclarationName::CXXConstructorName,
   ///   * DeclarationName::CXXDestructorName or
   ///   * DeclarationName::CXXConversionFunctionName
-  DeclarationName getCXXSpecialName(DeclarationName::NameKind Kind,
+  CLANG_ABI DeclarationName getCXXSpecialName(DeclarationName::NameKind Kind,
                                     CanQualType Ty);
 
   /// Get the name of the overloadable C++ operator corresponding to Op.
@@ -679,7 +680,7 @@ public:
   }
 
   /// Get the name of the literal operator function with II as the identifier.
-  DeclarationName getCXXLiteralOperatorName(const IdentifierInfo *II);
+  CLANG_ABI DeclarationName getCXXLiteralOperatorName(const IdentifierInfo *II);
 };
 
 /// DeclarationNameLoc - Additional source/type location info
@@ -729,7 +730,7 @@ class DeclarationNameLoc {
   }
 
 public:
-  DeclarationNameLoc(DeclarationName Name);
+  CLANG_ABI DeclarationNameLoc(DeclarationName Name);
   // FIXME: this should go away once all DNLocs are properly initialized.
   DeclarationNameLoc() { memset((void*) this, 0, sizeof(*this)); }
 
@@ -882,17 +883,17 @@ public:
   }
 
   /// Determine whether this name involves a template parameter.
-  bool isInstantiationDependent() const;
+  CLANG_ABI bool isInstantiationDependent() const;
 
   /// Determine whether this name contains an unexpanded
   /// parameter pack.
-  bool containsUnexpandedParameterPack() const;
+  CLANG_ABI bool containsUnexpandedParameterPack() const;
 
   /// getAsString - Retrieve the human-readable string for this name.
-  std::string getAsString() const;
+  CLANG_ABI std::string getAsString() const;
 
   /// printName - Print the human-readable name to a stream.
-  void printName(raw_ostream &OS, PrintingPolicy Policy) const;
+  CLANG_ABI void printName(raw_ostream &OS, PrintingPolicy Policy) const;
 
   /// getBeginLoc - Retrieve the location of the first token.
   SourceLocation getBeginLoc() const { return NameLoc; }
@@ -908,7 +909,7 @@ public:
   }
 
 private:
-  SourceLocation getEndLocPrivate() const;
+  CLANG_ABI SourceLocation getEndLocPrivate() const;
 };
 
 /// Insertion operator for partial diagnostics.  This allows binding
@@ -920,7 +921,7 @@ inline const StreamingDiagnostic &operator<<(const StreamingDiagnostic &PD,
   return PD;
 }
 
-raw_ostream &operator<<(raw_ostream &OS, DeclarationNameInfo DNInfo);
+CLANG_ABI raw_ostream &operator<<(raw_ostream &OS, DeclarationNameInfo DNInfo);
 
 } // namespace clang
 

@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_BASIC_LANGSTANDARD_H
 #define LLVM_CLANG_BASIC_LANGSTANDARD_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/StringRef.h"
 
@@ -43,7 +44,7 @@ enum class Language : uint8_t {
   HLSL,
   ///@}
 };
-StringRef languageToString(Language L);
+CLANG_ABI StringRef languageToString(Language L);
 
 enum LangFeatures {
   LineComment = (1 << 0),
@@ -149,13 +150,13 @@ public:
   /// isOpenCL - Language is a OpenCL variant.
   bool isOpenCL() const { return Flags & OpenCL; }
 
-  static Kind getLangKind(StringRef Name);
-  static Kind getHLSLLangKind(StringRef Name);
-  static const LangStandard &getLangStandardForKind(Kind K);
-  static const LangStandard *getLangStandardForName(StringRef Name);
+  CLANG_ABI static Kind getLangKind(StringRef Name);
+  CLANG_ABI static Kind getHLSLLangKind(StringRef Name);
+  CLANG_ABI static const LangStandard &getLangStandardForKind(Kind K);
+  CLANG_ABI static const LangStandard *getLangStandardForName(StringRef Name);
 };
 
-LangStandard::Kind getDefaultLanguageStandard(clang::Language Lang,
+CLANG_ABI LangStandard::Kind getDefaultLanguageStandard(clang::Language Lang,
                                               const llvm::Triple &T);
 
 }  // end namespace clang
