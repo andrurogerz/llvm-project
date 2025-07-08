@@ -308,6 +308,17 @@ if (NOT LLVM_LINK_LLVM_DYLIB AND CLANG_LINK_CLANG_DYLIB)
                       "LLVM_LINK_LLVM_DYLIB=OFF")
 endif()
 
+# Used to test building the Clang shared library with explicit symbol visibility on
+# Windows and Linux. For ELF platforms default symbols visibility is set to hidden.
+set(CLANG_BUILD_CLANG_DYLIB_VIS FALSE CACHE BOOL "")
+mark_as_advanced(CLANG_BUILD_LLVM_CLANG_VIS)
+
+if(CLANG_BUILD_CLANG_DYLIB_VIS)
+  set(CLANG_LINK_CLANG_DYLIB)
+endif()
+
+
+
 # The libdir suffix must exactly match whatever LLVM's configuration used.
 set(CLANG_LIBDIR_SUFFIX "${LLVM_LIBDIR_SUFFIX}")
 
