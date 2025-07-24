@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_TOOLING_REFACTORING_RENAME_SYMBOLOCCURRENCES_H
 #define LLVM_CLANG_TOOLING_REFACTORING_RENAME_SYMBOLOCCURRENCES_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/SourceLocation.h"
 #include "llvm/ADT/ArrayRef.h"
@@ -60,7 +61,7 @@ public:
     MatchingSymbol
   };
 
-  SymbolOccurrence(const SymbolName &Name, OccurrenceKind Kind,
+  CLANG_ABI SymbolOccurrence(const SymbolName &Name, OccurrenceKind Kind,
                    ArrayRef<SourceLocation> Locations);
 
   SymbolOccurrence(SymbolOccurrence &&) = default;

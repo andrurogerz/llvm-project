@@ -17,6 +17,7 @@
 #ifndef LLVM_CLANG_FRONTEND_FRONTENDACTION_H
 #define LLVM_CLANG_FRONTEND_FRONTENDACTION_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTConsumer.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/LangOptions.h"
@@ -34,7 +35,7 @@ class ASTMergeAction;
 class CompilerInstance;
 
 /// Abstract base class for actions which can be performed by the frontend.
-class FrontendAction {
+class CLANG_ABI FrontendAction {
   FrontendInputFile CurrentInput;
   std::unique_ptr<ASTUnit> CurrentASTUnit;
   CompilerInstance *Instance;
@@ -246,7 +247,7 @@ public:
 };
 
 /// Abstract base class to use for AST consumer-based frontend actions.
-class ASTFrontendAction : public FrontendAction {
+class CLANG_ABI ASTFrontendAction : public FrontendAction {
 protected:
   /// Implement the ExecuteAction interface by running Sema on
   /// the already-initialized AST consumer.
@@ -260,7 +261,7 @@ public:
   bool usesPreprocessorOnly() const override { return false; }
 };
 
-class PluginASTAction : public ASTFrontendAction {
+class CLANG_ABI PluginASTAction : public ASTFrontendAction {
   virtual void anchor();
 public:
   std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
@@ -291,7 +292,7 @@ public:
 };
 
 /// Abstract base class to use for preprocessor-based frontend actions.
-class PreprocessorFrontendAction : public FrontendAction {
+class CLANG_ABI PreprocessorFrontendAction : public FrontendAction {
 protected:
   /// Provide a default implementation which returns aborts;
   /// this method should never be called by FrontendAction clients.
@@ -308,7 +309,7 @@ public:
 /// Deriving from this class allows an action to inject custom logic around
 /// some existing action's behavior. It implements every virtual method in
 /// the FrontendAction interface by forwarding to the wrapped action.
-class WrapperFrontendAction : public FrontendAction {
+class CLANG_ABI WrapperFrontendAction : public FrontendAction {
 protected:
   std::unique_ptr<FrontendAction> WrappedAction;
 

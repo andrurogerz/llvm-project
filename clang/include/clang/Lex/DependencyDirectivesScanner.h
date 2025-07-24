@@ -17,6 +17,7 @@
 #ifndef LLVM_CLANG_LEX_DEPENDENCYDIRECTIVESSCANNER_H
 #define LLVM_CLANG_LEX_DEPENDENCYDIRECTIVESSCANNER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/SourceLocation.h"
 #include "llvm/ADT/ArrayRef.h"
 
@@ -114,7 +115,7 @@ struct Directive {
 /// \returns false on success, true on error. If the diagnostic engine is not
 /// null, an appropriate error is reported using the given input location
 /// with the offset that corresponds to the \p Input buffer offset.
-bool scanSourceForDependencyDirectives(
+CLANG_ABI bool scanSourceForDependencyDirectives(
     StringRef Input, SmallVectorImpl<dependency_directives_scan::Token> &Tokens,
     SmallVectorImpl<dependency_directives_scan::Directive> &Directives,
     DiagnosticsEngine *Diags = nullptr,
@@ -130,7 +131,7 @@ bool scanSourceForDependencyDirectives(
 ///
 /// This is used primarily for testing purposes, during dependency scanning the
 /// \p Lexer uses the tokens directly, not their printed version.
-void printDependencyDirectivesAsSource(
+CLANG_ABI void printDependencyDirectivesAsSource(
     StringRef Source,
     ArrayRef<dependency_directives_scan::Directive> Directives,
     llvm::raw_ostream &OS);

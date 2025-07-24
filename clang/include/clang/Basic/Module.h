@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_BASIC_MODULE_H
 #define LLVM_CLANG_BASIC_MODULE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/DirectoryEntry.h"
 #include "clang/Basic/FileEntry.h"
 #include "clang/Basic/SourceLocation.h"
@@ -553,11 +554,11 @@ public:
   std::vector<Conflict> Conflicts;
 
   /// Construct a new module or submodule.
-  Module(ModuleConstructorTag, StringRef Name, SourceLocation DefinitionLoc,
+  CLANG_ABI Module(ModuleConstructorTag, StringRef Name, SourceLocation DefinitionLoc,
          Module *Parent, bool IsFramework, bool IsExplicit,
          unsigned VisibilityID);
 
-  ~Module();
+  CLANG_ABI ~Module();
 
   /// Determine whether this module has been declared unimportable.
   bool isUnimportable() const { return IsUnimportable; }
@@ -575,11 +576,11 @@ public:
   ///
   /// \param ShadowingModule If this module is unimportable because it is
   /// shadowed, this parameter will be set to the shadowing module.
-  bool isUnimportable(const LangOptions &LangOpts, const TargetInfo &Target,
+  CLANG_ABI bool isUnimportable(const LangOptions &LangOpts, const TargetInfo &Target,
                       Requirement &Req, Module *&ShadowingModule) const;
 
   /// Determine whether this module can be built in this compilation.
-  bool isForBuilding(const LangOptions &LangOpts) const;
+  CLANG_ABI bool isForBuilding(const LangOptions &LangOpts) const;
 
   /// Determine whether this module is available for use within the
   /// current translation unit.
@@ -602,7 +603,7 @@ public:
   ///
   /// \param ShadowingModule If this module is unavailable because it is
   /// shadowed, this parameter will be set to the shadowing module.
-  bool isAvailable(const LangOptions &LangOpts,
+  CLANG_ABI bool isAvailable(const LangOptions &LangOpts,
                    const TargetInfo &Target,
                    Requirement &Req,
                    UnresolvedHeaderDirective &MissingHeader,
@@ -617,7 +618,7 @@ public:
   /// the parent-child relationship between individual modules.
   ///
   /// Returns \c false if \p Other is \c nullptr.
-  bool isSubModuleOf(const Module *Other) const;
+  CLANG_ABI bool isSubModuleOf(const Module *Other) const;
 
   /// Determine whether this module is a part of a framework,
   /// either because it is a framework module or because it is a submodule
@@ -709,13 +710,13 @@ public:
   /// its top-level module.
   /// \param AllowStringLiterals If \c true, components that might not be
   ///        lexically valid as identifiers will be emitted as string literals.
-  std::string getFullModuleName(bool AllowStringLiterals = false) const;
+  CLANG_ABI std::string getFullModuleName(bool AllowStringLiterals = false) const;
 
   /// Whether the full name of this module is equal to joining
   /// \p nameParts with "."s.
   ///
   /// This is more efficient than getFullModuleName().
-  bool fullModuleNameIs(ArrayRef<StringRef> nameParts) const;
+  CLANG_ABI bool fullModuleNameIs(ArrayRef<StringRef> nameParts) const;
 
   /// Retrieve the top-level module for this (sub)module, which may
   /// be this module.
@@ -726,7 +727,7 @@ public:
 
   /// Retrieve the top-level module for this (sub)module, which may
   /// be this module.
-  const Module *getTopLevelModule() const;
+  CLANG_ABI const Module *getTopLevelModule() const;
 
   /// Retrieve the name of the top-level module.
   StringRef getTopLevelModuleName() const {
@@ -763,10 +764,10 @@ public:
   /// Get the effective umbrella directory for this module: either the one
   /// explicitly written in the module map file, or the parent of the umbrella
   /// header.
-  OptionalDirectoryEntryRef getEffectiveUmbrellaDir() const;
+  CLANG_ABI OptionalDirectoryEntryRef getEffectiveUmbrellaDir() const;
 
   /// Add a top-level header associated with this module.
-  void addTopHeader(FileEntryRef File);
+  CLANG_ABI void addTopHeader(FileEntryRef File);
 
   /// Add a top-level header filename associated with this module.
   void addTopHeaderFilename(StringRef Filename) {
@@ -774,11 +775,11 @@ public:
   }
 
   /// The top-level headers associated with this module.
-  ArrayRef<FileEntryRef> getTopHeaders(FileManager &FileMgr);
+  CLANG_ABI ArrayRef<FileEntryRef> getTopHeaders(FileManager &FileMgr);
 
   /// Determine whether this module has declared its intention to
   /// directly use another module.
-  bool directlyUses(const Module *Requested);
+  CLANG_ABI bool directlyUses(const Module *Requested);
 
   /// Add the given feature requirement to the list of features
   /// required by this module.
@@ -794,29 +795,29 @@ public:
   ///
   /// \param Target The target options that will be used to evaluate the
   /// availability of this feature.
-  void addRequirement(StringRef Feature, bool RequiredState,
+  CLANG_ABI void addRequirement(StringRef Feature, bool RequiredState,
                       const LangOptions &LangOpts,
                       const TargetInfo &Target);
 
   /// Mark this module and all of its submodules as unavailable.
-  void markUnavailable(bool Unimportable);
+  CLANG_ABI void markUnavailable(bool Unimportable);
 
   /// Find the submodule with the given name.
   ///
   /// \returns The submodule if found, or NULL otherwise.
-  Module *findSubmodule(StringRef Name) const;
+  CLANG_ABI Module *findSubmodule(StringRef Name) const;
 
   /// Get the Global Module Fragment (sub-module) for this module, it there is
   /// one.
   ///
   /// \returns The GMF sub-module if found, or NULL otherwise.
-  Module *getGlobalModuleFragment() const;
+  CLANG_ABI Module *getGlobalModuleFragment() const;
 
   /// Get the Private Module Fragment (sub-module) for this module, it there is
   /// one.
   ///
   /// \returns The PMF sub-module if found, or NULL otherwise.
-  Module *getPrivateModuleFragment() const;
+  CLANG_ABI Module *getPrivateModuleFragment() const;
 
   /// Determine whether the specified module would be visible to
   /// a lookup at the end of this module.
@@ -846,20 +847,20 @@ public:
   ///
   /// This provides a subset of immediately imported modules (the ones that are
   /// directly exported), not the complete set of exported modules.
-  void getExportedModules(SmallVectorImpl<Module *> &Exported) const;
+  CLANG_ABI void getExportedModules(SmallVectorImpl<Module *> &Exported) const;
 
   static StringRef getModuleInputBufferName() {
     return "<module-includes>";
   }
 
   /// Print the module map for this module to the given stream.
-  void print(raw_ostream &OS, unsigned Indent = 0, bool Dump = false) const;
+  CLANG_ABI void print(raw_ostream &OS, unsigned Indent = 0, bool Dump = false) const;
 
   /// Dump the contents of this module to the given output stream.
-  void dump() const;
+  CLANG_ABI void dump() const;
 
 private:
-  void buildVisibleModulesCache() const;
+  CLANG_ABI void buildVisibleModulesCache() const;
 };
 
 /// A set of visible modules.
@@ -910,7 +911,7 @@ public:
                          StringRef Message)>;
 
   /// Make a specific module visible.
-  void setVisible(
+  CLANG_ABI void setVisible(
       Module *M, SourceLocation Loc, bool IncludeExports = true,
       VisibleCallback Vis = [](Module *) {},
       ConflictCallback Cb = [](ArrayRef<Module *>, Module *, StringRef) {});

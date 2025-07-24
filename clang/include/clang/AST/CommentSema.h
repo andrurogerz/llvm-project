@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_COMMENTSEMA_H
 #define LLVM_CLANG_AST_COMMENTSEMA_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Comment.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/SourceLocation.h"
@@ -69,11 +70,11 @@ class Sema {
   SmallVector<HTMLStartTagComment *, 8> HTMLOpenTags;
 
 public:
-  Sema(llvm::BumpPtrAllocator &Allocator, const SourceManager &SourceMgr,
+  CLANG_ABI Sema(llvm::BumpPtrAllocator &Allocator, const SourceManager &SourceMgr,
        DiagnosticsEngine &Diags, CommandTraits &Traits,
        const Preprocessor *PP);
 
-  void setDecl(const Decl *D);
+  CLANG_ABI void setDecl(const Decl *D);
 
   /// Returns a copy of array, owned by Sema's allocator.
   template<typename T>
@@ -83,97 +84,97 @@ public:
     return {};
   }
 
-  ParagraphComment *actOnParagraphComment(
+  CLANG_ABI ParagraphComment *actOnParagraphComment(
       ArrayRef<InlineContentComment *> Content);
 
-  BlockCommandComment *actOnBlockCommandStart(SourceLocation LocBegin,
+  CLANG_ABI BlockCommandComment *actOnBlockCommandStart(SourceLocation LocBegin,
                                               SourceLocation LocEnd,
                                               unsigned CommandID,
                                               CommandMarkerKind CommandMarker);
 
-  void actOnBlockCommandArgs(BlockCommandComment *Command,
+  CLANG_ABI void actOnBlockCommandArgs(BlockCommandComment *Command,
                              ArrayRef<BlockCommandComment::Argument> Args);
 
-  void actOnBlockCommandFinish(BlockCommandComment *Command,
+  CLANG_ABI void actOnBlockCommandFinish(BlockCommandComment *Command,
                                ParagraphComment *Paragraph);
 
-  ParamCommandComment *actOnParamCommandStart(SourceLocation LocBegin,
+  CLANG_ABI ParamCommandComment *actOnParamCommandStart(SourceLocation LocBegin,
                                               SourceLocation LocEnd,
                                               unsigned CommandID,
                                               CommandMarkerKind CommandMarker);
 
-  void actOnParamCommandDirectionArg(ParamCommandComment *Command,
+  CLANG_ABI void actOnParamCommandDirectionArg(ParamCommandComment *Command,
                                      SourceLocation ArgLocBegin,
                                      SourceLocation ArgLocEnd,
                                      StringRef Arg);
 
-  void actOnParamCommandParamNameArg(ParamCommandComment *Command,
+  CLANG_ABI void actOnParamCommandParamNameArg(ParamCommandComment *Command,
                                      SourceLocation ArgLocBegin,
                                      SourceLocation ArgLocEnd,
                                      StringRef Arg);
 
-  void actOnParamCommandFinish(ParamCommandComment *Command,
+  CLANG_ABI void actOnParamCommandFinish(ParamCommandComment *Command,
                                ParagraphComment *Paragraph);
 
-  TParamCommandComment *actOnTParamCommandStart(SourceLocation LocBegin,
+  CLANG_ABI TParamCommandComment *actOnTParamCommandStart(SourceLocation LocBegin,
                                                 SourceLocation LocEnd,
                                                 unsigned CommandID,
                                                 CommandMarkerKind CommandMarker);
 
-  void actOnTParamCommandParamNameArg(TParamCommandComment *Command,
+  CLANG_ABI void actOnTParamCommandParamNameArg(TParamCommandComment *Command,
                                       SourceLocation ArgLocBegin,
                                       SourceLocation ArgLocEnd,
                                       StringRef Arg);
 
-  void actOnTParamCommandFinish(TParamCommandComment *Command,
+  CLANG_ABI void actOnTParamCommandFinish(TParamCommandComment *Command,
                                 ParagraphComment *Paragraph);
 
-  InlineCommandComment *actOnInlineCommand(SourceLocation CommandLocBegin,
+  CLANG_ABI InlineCommandComment *actOnInlineCommand(SourceLocation CommandLocBegin,
                                            SourceLocation CommandLocEnd,
                                            unsigned CommandID,
                                            ArrayRef<Comment::Argument> Args);
 
-  InlineContentComment *actOnUnknownCommand(SourceLocation LocBegin,
+  CLANG_ABI InlineContentComment *actOnUnknownCommand(SourceLocation LocBegin,
                                             SourceLocation LocEnd,
                                             StringRef CommandName);
 
-  InlineContentComment *actOnUnknownCommand(SourceLocation LocBegin,
+  CLANG_ABI InlineContentComment *actOnUnknownCommand(SourceLocation LocBegin,
                                             SourceLocation LocEnd,
                                             unsigned CommandID);
 
-  TextComment *actOnText(SourceLocation LocBegin,
+  CLANG_ABI TextComment *actOnText(SourceLocation LocBegin,
                          SourceLocation LocEnd,
                          StringRef Text);
 
-  VerbatimBlockComment *actOnVerbatimBlockStart(SourceLocation Loc,
+  CLANG_ABI VerbatimBlockComment *actOnVerbatimBlockStart(SourceLocation Loc,
                                                 unsigned CommandID);
 
-  VerbatimBlockLineComment *actOnVerbatimBlockLine(SourceLocation Loc,
+  CLANG_ABI VerbatimBlockLineComment *actOnVerbatimBlockLine(SourceLocation Loc,
                                                    StringRef Text);
 
-  void actOnVerbatimBlockFinish(VerbatimBlockComment *Block,
+  CLANG_ABI void actOnVerbatimBlockFinish(VerbatimBlockComment *Block,
                                 SourceLocation CloseNameLocBegin,
                                 StringRef CloseName,
                                 ArrayRef<VerbatimBlockLineComment *> Lines);
 
-  VerbatimLineComment *actOnVerbatimLine(SourceLocation LocBegin,
+  CLANG_ABI VerbatimLineComment *actOnVerbatimLine(SourceLocation LocBegin,
                                          unsigned CommandID,
                                          SourceLocation TextBegin,
                                          StringRef Text);
 
-  HTMLStartTagComment *actOnHTMLStartTagStart(SourceLocation LocBegin,
+  CLANG_ABI HTMLStartTagComment *actOnHTMLStartTagStart(SourceLocation LocBegin,
                                               StringRef TagName);
 
-  void actOnHTMLStartTagFinish(HTMLStartTagComment *Tag,
+  CLANG_ABI void actOnHTMLStartTagFinish(HTMLStartTagComment *Tag,
                                ArrayRef<HTMLStartTagComment::Attribute> Attrs,
                                SourceLocation GreaterLoc,
                                bool IsSelfClosing);
 
-  HTMLEndTagComment *actOnHTMLEndTag(SourceLocation LocBegin,
+  CLANG_ABI HTMLEndTagComment *actOnHTMLEndTag(SourceLocation LocBegin,
                                      SourceLocation LocEnd,
                                      StringRef TagName);
 
-  FullComment *actOnFullComment(ArrayRef<BlockContentComment *> Blocks);
+  CLANG_ABI FullComment *actOnFullComment(ArrayRef<BlockContentComment *> Blocks);
 
 private:
   void checkBlockCommandEmptyParagraph(BlockCommandComment *Command);

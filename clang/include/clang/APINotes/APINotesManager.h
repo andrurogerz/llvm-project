@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_APINOTES_APINOTESMANAGER_H
 #define LLVM_CLANG_APINOTES_APINOTESMANAGER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/SourceLocation.h"
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/DenseMap.h"
@@ -122,8 +123,8 @@ class APINotesManager {
                                                   bool Public);
 
 public:
-  APINotesManager(SourceManager &SM, const LangOptions &LangOpts);
-  ~APINotesManager();
+  CLANG_ABI APINotesManager(SourceManager &SM, const LangOptions &LangOpts);
+  CLANG_ABI ~APINotesManager();
 
   /// Set the Swift version to use when filtering API notes.
   void setSwiftVersion(llvm::VersionTuple Version) {
@@ -138,7 +139,7 @@ public:
   /// for the current module.
   ///
   /// \returns true if API notes were successfully loaded, \c false otherwise.
-  bool loadCurrentModuleAPINotes(Module *M, bool LookInModule,
+  CLANG_ABI bool loadCurrentModuleAPINotes(Module *M, bool LookInModule,
                                  ArrayRef<std::string> SearchPaths);
 
   /// Get FileEntry for the APINotes of the module that is currently being
@@ -151,7 +152,7 @@ public:
   /// notes for the current module.
   ///
   /// \returns a vector of FileEntry where APINotes files are.
-  llvm::SmallVector<FileEntryRef, 2>
+  CLANG_ABI llvm::SmallVector<FileEntryRef, 2>
   getCurrentModuleAPINotes(Module *M, bool LookInModule,
                            ArrayRef<std::string> SearchPaths);
 
@@ -160,7 +161,7 @@ public:
   /// \param Buffers Array of compiled API notes.
   ///
   /// \returns true if API notes were successfully loaded, \c false otherwise.
-  bool loadCurrentModuleAPINotesFromBuffer(ArrayRef<StringRef> Buffers);
+  CLANG_ABI bool loadCurrentModuleAPINotesFromBuffer(ArrayRef<StringRef> Buffers);
 
   /// Retrieve the set of API notes readers for the current module.
   ArrayRef<APINotesReader *> getCurrentModuleReaders() const {
@@ -173,7 +174,7 @@ public:
   }
 
   /// Find the API notes readers that correspond to the given source location.
-  llvm::SmallVector<APINotesReader *, 2> findAPINotes(SourceLocation Loc);
+  CLANG_ABI llvm::SmallVector<APINotesReader *, 2> findAPINotes(SourceLocation Loc);
 
   bool captureVersionIndependentSwift() { return VersionIndependentSwift; }
 };

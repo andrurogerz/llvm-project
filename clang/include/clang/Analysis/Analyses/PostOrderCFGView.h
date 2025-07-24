@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_ANALYSES_POSTORDERCFGVIEW_H
 #define LLVM_CLANG_ANALYSIS_ANALYSES_POSTORDERCFGVIEW_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Analysis/AnalysisDeclContext.h"
 #include "clang/Analysis/CFG.h"
 #include "clang/Basic/LLVM.h"
@@ -24,7 +25,7 @@
 
 namespace clang {
 
-class PostOrderCFGView : public ManagedAnalysis {
+class CLANG_ABI PostOrderCFGView : public ManagedAnalysis {
   virtual void anchor();
 
 public:
@@ -132,7 +133,7 @@ public:
   public:
     BlockOrderCompare(const PostOrderCFGView &pov) : POV(pov) {}
 
-    bool operator()(const CFGBlock *b1, const CFGBlock *b2) const;
+    CLANG_ABI bool operator()(const CFGBlock *b1, const CFGBlock *b2) const;
   };
 
   BlockOrderCompare getComparator() const {

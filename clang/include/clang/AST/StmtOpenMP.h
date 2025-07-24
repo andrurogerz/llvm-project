@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_STMTOPENMP_H
 #define LLVM_CLANG_AST_STMTOPENMP_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/Expr.h"
 #include "clang/AST/OpenMPClause.h"
@@ -579,7 +580,7 @@ public:
   ///
   /// Stand-alone directives are executable directives
   /// that have no associated user code.
-  bool isStandaloneDirective() const;
+  CLANG_ABI bool isStandaloneDirective() const;
 
   /// Returns the AST node representing OpenMP structured-block of this
   /// OpenMP executable directive,
@@ -587,7 +588,7 @@ public:
   const Stmt *getStructuredBlock() const {
     return const_cast<OMPExecutableDirective *>(this)->getStructuredBlock();
   }
-  Stmt *getStructuredBlock();
+  CLANG_ABI Stmt *getStructuredBlock();
 
   const Stmt *getRawStmt() const {
     return const_cast<OMPExecutableDirective *>(this)->getRawStmt();
@@ -648,7 +649,7 @@ public:
   /// taskgroup descriptor.
   /// \param HasCancel true if this directive has inner cancel directive.
   ///
-  static OMPParallelDirective *
+  CLANG_ABI static OMPParallelDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt, Expr *TaskRedRef,
          bool HasCancel);
@@ -658,7 +659,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPParallelDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPParallelDirective *CreateEmpty(const ASTContext &C,
                                            unsigned NumClauses, EmptyShell);
 
   /// Returns special task reduction reference expression.
@@ -879,7 +880,7 @@ public:
   /// CurStmt.
   /// \param TryImperfectlyNestedLoops true, if we need to try to look for the
   /// imperfectly nested loop.
-  static Stmt *tryToFindNextInnerLoop(Stmt *CurStmt,
+  CLANG_ABI static Stmt *tryToFindNextInnerLoop(Stmt *CurStmt,
                                       bool TryImperfectlyNestedLoops);
   static const Stmt *tryToFindNextInnerLoop(const Stmt *CurStmt,
                                             bool TryImperfectlyNestedLoops) {
@@ -889,7 +890,7 @@ public:
 
   /// Calls the specified callback function for all the loops in \p CurStmt,
   /// from the outermost to the innermost.
-  static bool
+  CLANG_ABI static bool
   doForAllLoops(Stmt *CurStmt, bool TryImperfectlyNestedLoops,
                 unsigned NumLoops,
                 llvm::function_ref<bool(unsigned, Stmt *)> Callback,
@@ -935,7 +936,7 @@ public:
 
   /// Calls the specified callback function for all the loop bodies in \p
   /// CurStmt, from the outermost loop to the innermost.
-  static void doForAllLoopsBodies(
+  CLANG_ABI static void doForAllLoopsBodies(
       Stmt *CurStmt, bool TryImperfectlyNestedLoops, unsigned NumLoops,
       llvm::function_ref<void(unsigned, Stmt *, Stmt *)> Callback);
   static void doForAllLoopsBodies(
@@ -985,10 +986,10 @@ public:
   /// Might be nullptr if either the directive generates no loops and is handled
   /// directly in CodeGen, or resolving a template-dependence context is
   /// required.
-  Stmt *getTransformedStmt() const;
+  CLANG_ABI Stmt *getTransformedStmt() const;
 
   /// Return preinits statement.
-  Stmt *getPreInits() const;
+  CLANG_ABI Stmt *getPreInits() const;
 
   static bool classof(const Stmt *T) {
     Stmt::StmtClass C = T->getStmtClass();
@@ -1306,14 +1307,14 @@ protected:
     Data->getChildren()[CombinedParForInDistConditionOffset] =
         CombParForInDistCond;
   }
-  void setCounters(ArrayRef<Expr *> A);
-  void setPrivateCounters(ArrayRef<Expr *> A);
-  void setInits(ArrayRef<Expr *> A);
-  void setUpdates(ArrayRef<Expr *> A);
-  void setFinals(ArrayRef<Expr *> A);
-  void setDependentCounters(ArrayRef<Expr *> A);
-  void setDependentInits(ArrayRef<Expr *> A);
-  void setFinalsConditions(ArrayRef<Expr *> A);
+  CLANG_ABI void setCounters(ArrayRef<Expr *> A);
+  CLANG_ABI void setPrivateCounters(ArrayRef<Expr *> A);
+  CLANG_ABI void setInits(ArrayRef<Expr *> A);
+  CLANG_ABI void setUpdates(ArrayRef<Expr *> A);
+  CLANG_ABI void setFinals(ArrayRef<Expr *> A);
+  CLANG_ABI void setDependentCounters(ArrayRef<Expr *> A);
+  CLANG_ABI void setDependentInits(ArrayRef<Expr *> A);
+  CLANG_ABI void setFinalsConditions(ArrayRef<Expr *> A);
 
 public:
   Expr *getIterationVariable() const {
@@ -1464,7 +1465,7 @@ public:
            "expected loop bound distribute sharing directive");
     return cast<Expr>(Data->getChildren()[CombinedParForInDistConditionOffset]);
   }
-  Stmt *getBody();
+  CLANG_ABI Stmt *getBody();
   const Stmt *getBody() const {
     return const_cast<OMPLoopDirective *>(this)->getBody();
   }
@@ -1601,7 +1602,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPSimdDirective *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPSimdDirective *Create(const ASTContext &C, SourceLocation StartLoc,
                                   SourceLocation EndLoc, unsigned CollapsedNum,
                                   ArrayRef<OMPClause *> Clauses,
                                   Stmt *AssociatedStmt,
@@ -1614,7 +1615,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPSimdDirective *CreateEmpty(const ASTContext &C, unsigned NumClauses,
+  CLANG_ABI static OMPSimdDirective *CreateEmpty(const ASTContext &C, unsigned NumClauses,
                                        unsigned CollapsedNum, EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -1679,7 +1680,7 @@ public:
   /// taskgroup descriptor.
   /// \param HasCancel true if current directive has inner cancel directive.
   ///
-  static OMPForDirective *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPForDirective *Create(const ASTContext &C, SourceLocation StartLoc,
                                  SourceLocation EndLoc, unsigned CollapsedNum,
                                  ArrayRef<OMPClause *> Clauses,
                                  Stmt *AssociatedStmt, const HelperExprs &Exprs,
@@ -1692,7 +1693,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPForDirective *CreateEmpty(const ASTContext &C, unsigned NumClauses,
+  CLANG_ABI static OMPForDirective *CreateEmpty(const ASTContext &C, unsigned NumClauses,
                                       unsigned CollapsedNum, EmptyShell);
 
   /// Returns special task reduction reference expression.
@@ -1754,7 +1755,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPForSimdDirective *
+  CLANG_ABI static OMPForSimdDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -1766,7 +1767,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPForSimdDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPForSimdDirective *CreateEmpty(const ASTContext &C,
                                           unsigned NumClauses,
                                           unsigned CollapsedNum, EmptyShell);
 
@@ -1825,7 +1826,7 @@ public:
   /// taskgroup descriptor.
   /// \param HasCancel true if current directive has inner directive.
   ///
-  static OMPSectionsDirective *
+  CLANG_ABI static OMPSectionsDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt, Expr *TaskRedRef,
          bool HasCancel);
@@ -1836,7 +1837,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPSectionsDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPSectionsDirective *CreateEmpty(const ASTContext &C,
                                            unsigned NumClauses, EmptyShell);
 
   /// Returns special task reduction reference expression.
@@ -1893,7 +1894,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param HasCancel true if current directive has inner directive.
   ///
-  static OMPSectionDirective *Create(const ASTContext &C,
+  CLANG_ABI static OMPSectionDirective *Create(const ASTContext &C,
                                      SourceLocation StartLoc,
                                      SourceLocation EndLoc,
                                      Stmt *AssociatedStmt, bool HasCancel);
@@ -1902,7 +1903,7 @@ public:
   ///
   /// \param C AST context.
   ///
-  static OMPSectionDirective *CreateEmpty(const ASTContext &C, EmptyShell);
+  CLANG_ABI static OMPSectionDirective *CreateEmpty(const ASTContext &C, EmptyShell);
 
   /// Set cancel state.
   void setHasCancel(bool Has) { HasCancel = Has; }
@@ -1949,7 +1950,7 @@ public:
   /// \param EndLoc Ending Location of the directive.
   /// \param AssociatedStmt Statement, associated with the directive.
   ///
-  static OMPScopeDirective *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPScopeDirective *Create(const ASTContext &C, SourceLocation StartLoc,
                                    SourceLocation EndLoc,
                                    ArrayRef<OMPClause *> Clauses,
                                    Stmt *AssociatedStmt);
@@ -1958,7 +1959,7 @@ public:
   ///
   /// \param C AST context.
   ///
-  static OMPScopeDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPScopeDirective *CreateEmpty(const ASTContext &C,
                                         unsigned NumClauses, EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -2001,7 +2002,7 @@ public:
   /// \param Clauses List of clauses.
   /// \param AssociatedStmt Statement, associated with the directive.
   ///
-  static OMPSingleDirective *
+  CLANG_ABI static OMPSingleDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt);
 
@@ -2011,7 +2012,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPSingleDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPSingleDirective *CreateEmpty(const ASTContext &C,
                                          unsigned NumClauses, EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -2051,7 +2052,7 @@ public:
   /// \param EndLoc Ending Location of the directive.
   /// \param AssociatedStmt Statement, associated with the directive.
   ///
-  static OMPMasterDirective *Create(const ASTContext &C,
+  CLANG_ABI static OMPMasterDirective *Create(const ASTContext &C,
                                     SourceLocation StartLoc,
                                     SourceLocation EndLoc,
                                     Stmt *AssociatedStmt);
@@ -2060,7 +2061,7 @@ public:
   ///
   /// \param C AST context.
   ///
-  static OMPMasterDirective *CreateEmpty(const ASTContext &C, EmptyShell);
+  CLANG_ABI static OMPMasterDirective *CreateEmpty(const ASTContext &C, EmptyShell);
 
   static bool classof(const Stmt *T) {
     return T->getStmtClass() == OMPMasterDirectiveClass;
@@ -2113,7 +2114,7 @@ public:
   /// \param Clauses List of clauses.
   /// \param AssociatedStmt Statement, associated with the directive.
   ///
-  static OMPCriticalDirective *
+  CLANG_ABI static OMPCriticalDirective *
   Create(const ASTContext &C, const DeclarationNameInfo &Name,
          SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt);
@@ -2123,7 +2124,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPCriticalDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPCriticalDirective *CreateEmpty(const ASTContext &C,
                                            unsigned NumClauses, EmptyShell);
 
   /// Return name of the directive.
@@ -2195,7 +2196,7 @@ public:
   /// taskgroup descriptor.
   /// \param HasCancel true if current directive has inner cancel directive.
   ///
-  static OMPParallelForDirective *
+  CLANG_ABI static OMPParallelForDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs, Expr *TaskRedRef,
@@ -2208,7 +2209,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPParallelForDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPParallelForDirective *CreateEmpty(const ASTContext &C,
                                               unsigned NumClauses,
                                               unsigned CollapsedNum,
                                               EmptyShell);
@@ -2276,7 +2277,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPParallelForSimdDirective *
+  CLANG_ABI static OMPParallelForSimdDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -2288,7 +2289,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPParallelForSimdDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPParallelForSimdDirective *CreateEmpty(const ASTContext &C,
                                                   unsigned NumClauses,
                                                   unsigned CollapsedNum,
                                                   EmptyShell);
@@ -2334,7 +2335,7 @@ public:
   /// \param TaskRedRef Task reduction special reference expression to handle
   /// taskgroup descriptor.
   ///
-  static OMPParallelMasterDirective *
+  CLANG_ABI static OMPParallelMasterDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt, Expr *TaskRedRef);
 
@@ -2344,7 +2345,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPParallelMasterDirective *
+  CLANG_ABI static OMPParallelMasterDirective *
   CreateEmpty(const ASTContext &C, unsigned NumClauses, EmptyShell);
 
   /// Returns special task reduction reference expression.
@@ -2397,7 +2398,7 @@ public:
   /// \param TaskRedRef Task reduction special reference expression to handle
   /// taskgroup descriptor.
   ///
-  static OMPParallelMaskedDirective *
+  CLANG_ABI static OMPParallelMaskedDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt, Expr *TaskRedRef);
 
@@ -2407,7 +2408,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPParallelMaskedDirective *
+  CLANG_ABI static OMPParallelMaskedDirective *
   CreateEmpty(const ASTContext &C, unsigned NumClauses, EmptyShell);
 
   /// Returns special task reduction reference expression.
@@ -2475,7 +2476,7 @@ public:
   /// taskgroup descriptor.
   /// \param HasCancel true if current directive has inner cancel directive.
   ///
-  static OMPParallelSectionsDirective *
+  CLANG_ABI static OMPParallelSectionsDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt, Expr *TaskRedRef,
          bool HasCancel);
@@ -2486,7 +2487,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPParallelSectionsDirective *
+  CLANG_ABI static OMPParallelSectionsDirective *
   CreateEmpty(const ASTContext &C, unsigned NumClauses, EmptyShell);
 
   /// Returns special task reduction reference expression.
@@ -2548,7 +2549,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param HasCancel true, if current directive has inner cancel directive.
   ///
-  static OMPTaskDirective *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPTaskDirective *Create(const ASTContext &C, SourceLocation StartLoc,
                                   SourceLocation EndLoc,
                                   ArrayRef<OMPClause *> Clauses,
                                   Stmt *AssociatedStmt, bool HasCancel);
@@ -2559,7 +2560,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTaskDirective *CreateEmpty(const ASTContext &C, unsigned NumClauses,
+  CLANG_ABI static OMPTaskDirective *CreateEmpty(const ASTContext &C, unsigned NumClauses,
                                        EmptyShell);
 
   /// Return true if current directive has inner cancel directive.
@@ -2602,14 +2603,14 @@ public:
   /// \param StartLoc Starting location of the directive kind.
   /// \param EndLoc Ending Location of the directive.
   ///
-  static OMPTaskyieldDirective *
+  CLANG_ABI static OMPTaskyieldDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc);
 
   /// Creates an empty directive.
   ///
   /// \param C AST context.
   ///
-  static OMPTaskyieldDirective *CreateEmpty(const ASTContext &C, EmptyShell);
+  CLANG_ABI static OMPTaskyieldDirective *CreateEmpty(const ASTContext &C, EmptyShell);
 
   static bool classof(const Stmt *T) {
     return T->getStmtClass() == OMPTaskyieldDirectiveClass;
@@ -2648,14 +2649,14 @@ public:
   /// \param StartLoc Starting location of the directive kind.
   /// \param EndLoc Ending Location of the directive.
   ///
-  static OMPBarrierDirective *
+  CLANG_ABI static OMPBarrierDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc);
 
   /// Creates an empty directive.
   ///
   /// \param C AST context.
   ///
-  static OMPBarrierDirective *CreateEmpty(const ASTContext &C, EmptyShell);
+  CLANG_ABI static OMPBarrierDirective *CreateEmpty(const ASTContext &C, EmptyShell);
 
   static bool classof(const Stmt *T) {
     return T->getStmtClass() == OMPBarrierDirectiveClass;
@@ -2695,7 +2696,7 @@ public:
   /// \param EndLoc Ending Location of the directive.
   /// \param Clauses List of clauses.
   ///
-  static OMPTaskwaitDirective *Create(const ASTContext &C,
+  CLANG_ABI static OMPTaskwaitDirective *Create(const ASTContext &C,
                                       SourceLocation StartLoc,
                                       SourceLocation EndLoc,
                                       ArrayRef<OMPClause *> Clauses);
@@ -2705,7 +2706,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTaskwaitDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTaskwaitDirective *CreateEmpty(const ASTContext &C,
                                            unsigned NumClauses, EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -2751,7 +2752,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param ReductionRef Reference to the task_reduction return variable.
   ///
-  static OMPTaskgroupDirective *
+  CLANG_ABI static OMPTaskgroupDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt,
          Expr *ReductionRef);
@@ -2761,7 +2762,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTaskgroupDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTaskgroupDirective *CreateEmpty(const ASTContext &C,
                                             unsigned NumClauses, EmptyShell);
 
 
@@ -2813,7 +2814,7 @@ public:
   /// \param Clauses List of clauses (only single OMPFlushClause clause is
   /// allowed).
   ///
-  static OMPFlushDirective *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPFlushDirective *Create(const ASTContext &C, SourceLocation StartLoc,
                                    SourceLocation EndLoc,
                                    ArrayRef<OMPClause *> Clauses);
 
@@ -2823,7 +2824,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPFlushDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPFlushDirective *CreateEmpty(const ASTContext &C,
                                         unsigned NumClauses, EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -2865,7 +2866,7 @@ public:
   /// \param EndLoc Ending Location of the directive.
   /// \param Clauses List of clauses.
   ///
-  static OMPDepobjDirective *Create(const ASTContext &C,
+  CLANG_ABI static OMPDepobjDirective *Create(const ASTContext &C,
                                     SourceLocation StartLoc,
                                     SourceLocation EndLoc,
                                     ArrayRef<OMPClause *> Clauses);
@@ -2876,7 +2877,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPDepobjDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPDepobjDirective *CreateEmpty(const ASTContext &C,
                                          unsigned NumClauses, EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -2918,7 +2919,7 @@ public:
   /// \param Clauses List of clauses.
   /// \param AssociatedStmt Statement, associated with the directive.
   ///
-  static OMPOrderedDirective *
+  CLANG_ABI static OMPOrderedDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt);
 
@@ -2928,7 +2929,7 @@ public:
   /// \param NumClauses Number of clauses.
   /// \param IsStandalone true, if the standalone directive is created.
   ///
-  static OMPOrderedDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPOrderedDirective *CreateEmpty(const ASTContext &C,
                                           unsigned NumClauses,
                                           bool IsStandalone, EmptyShell);
 
@@ -3057,7 +3058,7 @@ public:
   /// \param Clauses List of clauses.
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Associated expressions or statements.
-  static OMPAtomicDirective *Create(const ASTContext &C,
+  CLANG_ABI static OMPAtomicDirective *Create(const ASTContext &C,
                                     SourceLocation StartLoc,
                                     SourceLocation EndLoc,
                                     ArrayRef<OMPClause *> Clauses,
@@ -3069,7 +3070,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPAtomicDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPAtomicDirective *CreateEmpty(const ASTContext &C,
                                          unsigned NumClauses, EmptyShell);
 
   /// Get 'x' part of the associated expression/statement.
@@ -3176,7 +3177,7 @@ public:
   /// \param Clauses List of clauses.
   /// \param AssociatedStmt Statement, associated with the directive.
   ///
-  static OMPTargetDirective *
+  CLANG_ABI static OMPTargetDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt);
 
@@ -3186,7 +3187,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTargetDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTargetDirective *CreateEmpty(const ASTContext &C,
                                          unsigned NumClauses, EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -3231,7 +3232,7 @@ public:
   /// \param Clauses List of clauses.
   /// \param AssociatedStmt Statement, associated with the directive.
   ///
-  static OMPTargetDataDirective *
+  CLANG_ABI static OMPTargetDataDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt);
 
@@ -3240,7 +3241,7 @@ public:
   /// \param C AST context.
   /// \param N The number of clauses.
   ///
-  static OMPTargetDataDirective *CreateEmpty(const ASTContext &C, unsigned N,
+  CLANG_ABI static OMPTargetDataDirective *CreateEmpty(const ASTContext &C, unsigned N,
                                              EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -3286,7 +3287,7 @@ public:
   /// \param Clauses List of clauses.
   /// \param AssociatedStmt Statement, associated with the directive.
   ///
-  static OMPTargetEnterDataDirective *
+  CLANG_ABI static OMPTargetEnterDataDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt);
 
@@ -3295,7 +3296,7 @@ public:
   /// \param C AST context.
   /// \param N The number of clauses.
   ///
-  static OMPTargetEnterDataDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTargetEnterDataDirective *CreateEmpty(const ASTContext &C,
                                                   unsigned N, EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -3341,7 +3342,7 @@ public:
   /// \param Clauses List of clauses.
   /// \param AssociatedStmt Statement, associated with the directive.
   ///
-  static OMPTargetExitDataDirective *
+  CLANG_ABI static OMPTargetExitDataDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt);
 
@@ -3350,7 +3351,7 @@ public:
   /// \param C AST context.
   /// \param N The number of clauses.
   ///
-  static OMPTargetExitDataDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTargetExitDataDirective *CreateEmpty(const ASTContext &C,
                                                  unsigned N, EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -3406,7 +3407,7 @@ public:
   /// taskgroup descriptor.
   /// \param HasCancel true if this directive has inner cancel directive.
   ///
-  static OMPTargetParallelDirective *
+  CLANG_ABI static OMPTargetParallelDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt, Expr *TaskRedRef,
          bool HasCancel);
@@ -3417,7 +3418,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTargetParallelDirective *
+  CLANG_ABI static OMPTargetParallelDirective *
   CreateEmpty(const ASTContext &C, unsigned NumClauses, EmptyShell);
 
   /// Returns special task reduction reference expression.
@@ -3497,7 +3498,7 @@ public:
   /// taskgroup descriptor.
   /// \param HasCancel true if current directive has inner cancel directive.
   ///
-  static OMPTargetParallelForDirective *
+  CLANG_ABI static OMPTargetParallelForDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs, Expr *TaskRedRef,
@@ -3510,7 +3511,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTargetParallelForDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTargetParallelForDirective *CreateEmpty(const ASTContext &C,
                                                     unsigned NumClauses,
                                                     unsigned CollapsedNum,
                                                     EmptyShell);
@@ -3568,7 +3569,7 @@ public:
   /// \param Clauses List of clauses.
   /// \param AssociatedStmt Statement, associated with the directive.
   ///
-  static OMPTeamsDirective *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPTeamsDirective *Create(const ASTContext &C, SourceLocation StartLoc,
                                    SourceLocation EndLoc,
                                    ArrayRef<OMPClause *> Clauses,
                                    Stmt *AssociatedStmt);
@@ -3579,7 +3580,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTeamsDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTeamsDirective *CreateEmpty(const ASTContext &C,
                                         unsigned NumClauses, EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -3626,7 +3627,7 @@ public:
   /// \param StartLoc Starting location of the directive kind.
   /// \param EndLoc Ending Location of the directive.
   ///
-  static OMPCancellationPointDirective *
+  CLANG_ABI static OMPCancellationPointDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          OpenMPDirectiveKind CancelRegion);
 
@@ -3634,7 +3635,7 @@ public:
   ///
   /// \param C AST context.
   ///
-  static OMPCancellationPointDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPCancellationPointDirective *CreateEmpty(const ASTContext &C,
                                                     EmptyShell);
 
   /// Get cancellation region for the current cancellation point.
@@ -3683,7 +3684,7 @@ public:
   /// \param EndLoc Ending Location of the directive.
   /// \param Clauses List of clauses.
   ///
-  static OMPCancelDirective *
+  CLANG_ABI static OMPCancelDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, OpenMPDirectiveKind CancelRegion);
 
@@ -3692,7 +3693,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPCancelDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPCancelDirective *CreateEmpty(const ASTContext &C,
                                          unsigned NumClauses, EmptyShell);
 
   /// Get cancellation region for the current cancellation point.
@@ -3752,7 +3753,7 @@ public:
   /// \param Exprs Helper expressions for CodeGen.
   /// \param HasCancel true if this directive has inner cancel directive.
   ///
-  static OMPTaskLoopDirective *
+  CLANG_ABI static OMPTaskLoopDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs, bool HasCancel);
@@ -3764,7 +3765,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTaskLoopDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTaskLoopDirective *CreateEmpty(const ASTContext &C,
                                            unsigned NumClauses,
                                            unsigned CollapsedNum, EmptyShell);
 
@@ -3820,7 +3821,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPTaskLoopSimdDirective *
+  CLANG_ABI static OMPTaskLoopSimdDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -3832,7 +3833,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTaskLoopSimdDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTaskLoopSimdDirective *CreateEmpty(const ASTContext &C,
                                                unsigned NumClauses,
                                                unsigned CollapsedNum,
                                                EmptyShell);
@@ -3893,7 +3894,7 @@ public:
   /// \param Exprs Helper expressions for CodeGen.
   /// \param HasCancel true if this directive has inner cancel directive.
   ///
-  static OMPMasterTaskLoopDirective *
+  CLANG_ABI static OMPMasterTaskLoopDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs, bool HasCancel);
@@ -3905,7 +3906,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPMasterTaskLoopDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPMasterTaskLoopDirective *CreateEmpty(const ASTContext &C,
                                                  unsigned NumClauses,
                                                  unsigned CollapsedNum,
                                                  EmptyShell);
@@ -3969,7 +3970,7 @@ public:
   /// \param Exprs Helper expressions for CodeGen.
   /// \param HasCancel true if this directive has inner cancel directive.
   ///
-  static OMPMaskedTaskLoopDirective *
+  CLANG_ABI static OMPMaskedTaskLoopDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs, bool HasCancel);
@@ -3981,7 +3982,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPMaskedTaskLoopDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPMaskedTaskLoopDirective *CreateEmpty(const ASTContext &C,
                                                  unsigned NumClauses,
                                                  unsigned CollapsedNum,
                                                  EmptyShell);
@@ -4038,7 +4039,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPMasterTaskLoopSimdDirective *
+  CLANG_ABI static OMPMasterTaskLoopSimdDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -4049,7 +4050,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPMasterTaskLoopSimdDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPMasterTaskLoopSimdDirective *CreateEmpty(const ASTContext &C,
                                                      unsigned NumClauses,
                                                      unsigned CollapsedNum,
                                                      EmptyShell);
@@ -4103,7 +4104,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPMaskedTaskLoopSimdDirective *
+  CLANG_ABI static OMPMaskedTaskLoopSimdDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -4114,7 +4115,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPMaskedTaskLoopSimdDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPMaskedTaskLoopSimdDirective *CreateEmpty(const ASTContext &C,
                                                      unsigned NumClauses,
                                                      unsigned CollapsedNum,
                                                      EmptyShell);
@@ -4177,7 +4178,7 @@ public:
   /// \param Exprs Helper expressions for CodeGen.
   /// \param HasCancel true if this directive has inner cancel directive.
   ///
-  static OMPParallelMasterTaskLoopDirective *
+  CLANG_ABI static OMPParallelMasterTaskLoopDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs, bool HasCancel);
@@ -4189,7 +4190,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPParallelMasterTaskLoopDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPParallelMasterTaskLoopDirective *CreateEmpty(const ASTContext &C,
                                                          unsigned NumClauses,
                                                          unsigned CollapsedNum,
                                                          EmptyShell);
@@ -4255,7 +4256,7 @@ public:
   /// \param Exprs Helper expressions for CodeGen.
   /// \param HasCancel true if this directive has inner cancel directive.
   ///
-  static OMPParallelMaskedTaskLoopDirective *
+  CLANG_ABI static OMPParallelMaskedTaskLoopDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs, bool HasCancel);
@@ -4267,7 +4268,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPParallelMaskedTaskLoopDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPParallelMaskedTaskLoopDirective *CreateEmpty(const ASTContext &C,
                                                          unsigned NumClauses,
                                                          unsigned CollapsedNum,
                                                          EmptyShell);
@@ -4326,7 +4327,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPParallelMasterTaskLoopSimdDirective *
+  CLANG_ABI static OMPParallelMasterTaskLoopSimdDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -4338,7 +4339,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPParallelMasterTaskLoopSimdDirective *
+  CLANG_ABI static OMPParallelMasterTaskLoopSimdDirective *
   CreateEmpty(const ASTContext &C, unsigned NumClauses, unsigned CollapsedNum,
               EmptyShell);
 
@@ -4393,7 +4394,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPParallelMaskedTaskLoopSimdDirective *
+  CLANG_ABI static OMPParallelMaskedTaskLoopSimdDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -4405,7 +4406,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPParallelMaskedTaskLoopSimdDirective *
+  CLANG_ABI static OMPParallelMaskedTaskLoopSimdDirective *
   CreateEmpty(const ASTContext &C, unsigned NumClauses, unsigned CollapsedNum,
               EmptyShell);
 
@@ -4458,7 +4459,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPDistributeDirective *
+  CLANG_ABI static OMPDistributeDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -4470,7 +4471,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPDistributeDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPDistributeDirective *CreateEmpty(const ASTContext &C,
                                              unsigned NumClauses,
                                              unsigned CollapsedNum, EmptyShell);
 
@@ -4517,7 +4518,7 @@ public:
   /// \param Clauses List of clauses.
   /// \param AssociatedStmt Statement, associated with the directive.
   ///
-  static OMPTargetUpdateDirective *
+  CLANG_ABI static OMPTargetUpdateDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt);
 
@@ -4527,7 +4528,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses The number of clauses.
   ///
-  static OMPTargetUpdateDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTargetUpdateDirective *CreateEmpty(const ASTContext &C,
                                                unsigned NumClauses, EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -4595,7 +4596,7 @@ public:
   /// taskgroup descriptor.
   /// \param HasCancel true if this directive has inner cancel directive.
   ///
-  static OMPDistributeParallelForDirective *
+  CLANG_ABI static OMPDistributeParallelForDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs, Expr *TaskRedRef,
@@ -4608,7 +4609,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPDistributeParallelForDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPDistributeParallelForDirective *CreateEmpty(const ASTContext &C,
                                                         unsigned NumClauses,
                                                         unsigned CollapsedNum,
                                                         EmptyShell);
@@ -4677,7 +4678,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPDistributeParallelForSimdDirective *Create(
+  CLANG_ABI static OMPDistributeParallelForSimdDirective *Create(
       const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
       unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
       Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -4688,7 +4689,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPDistributeParallelForSimdDirective *CreateEmpty(
+  CLANG_ABI static OMPDistributeParallelForSimdDirective *CreateEmpty(
       const ASTContext &C, unsigned NumClauses, unsigned CollapsedNum,
       EmptyShell);
 
@@ -4741,7 +4742,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPDistributeSimdDirective *
+  CLANG_ABI static OMPDistributeSimdDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -4752,7 +4753,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPDistributeSimdDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPDistributeSimdDirective *CreateEmpty(const ASTContext &C,
                                                  unsigned NumClauses,
                                                  unsigned CollapsedNum,
                                                  EmptyShell);
@@ -4808,7 +4809,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPTargetParallelForSimdDirective *
+  CLANG_ABI static OMPTargetParallelForSimdDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -4819,7 +4820,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTargetParallelForSimdDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTargetParallelForSimdDirective *CreateEmpty(const ASTContext &C,
                                                         unsigned NumClauses,
                                                         unsigned CollapsedNum,
                                                         EmptyShell);
@@ -4874,7 +4875,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPTargetSimdDirective *
+  CLANG_ABI static OMPTargetSimdDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -4885,7 +4886,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTargetSimdDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTargetSimdDirective *CreateEmpty(const ASTContext &C,
                                              unsigned NumClauses,
                                              unsigned CollapsedNum,
                                              EmptyShell);
@@ -4939,7 +4940,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPTeamsDistributeDirective *
+  CLANG_ABI static OMPTeamsDistributeDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -4950,7 +4951,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTeamsDistributeDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTeamsDistributeDirective *CreateEmpty(const ASTContext &C,
                                                   unsigned NumClauses,
                                                   unsigned CollapsedNum,
                                                   EmptyShell);
@@ -5005,7 +5006,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPTeamsDistributeSimdDirective *
+  CLANG_ABI static OMPTeamsDistributeSimdDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -5017,7 +5018,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTeamsDistributeSimdDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTeamsDistributeSimdDirective *CreateEmpty(const ASTContext &C,
                                                       unsigned NumClauses,
                                                       unsigned CollapsedNum,
                                                       EmptyShell);
@@ -5074,7 +5075,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPTeamsDistributeParallelForSimdDirective *
+  CLANG_ABI static OMPTeamsDistributeParallelForSimdDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -5085,7 +5086,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTeamsDistributeParallelForSimdDirective *
+  CLANG_ABI static OMPTeamsDistributeParallelForSimdDirective *
   CreateEmpty(const ASTContext &C, unsigned NumClauses, unsigned CollapsedNum,
               EmptyShell);
 
@@ -5154,7 +5155,7 @@ public:
   /// taskgroup descriptor.
   /// \param HasCancel true if this directive has inner cancel directive.
   ///
-  static OMPTeamsDistributeParallelForDirective *
+  CLANG_ABI static OMPTeamsDistributeParallelForDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs, Expr *TaskRedRef,
@@ -5166,7 +5167,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTeamsDistributeParallelForDirective *
+  CLANG_ABI static OMPTeamsDistributeParallelForDirective *
   CreateEmpty(const ASTContext &C, unsigned NumClauses, unsigned CollapsedNum,
               EmptyShell);
 
@@ -5225,7 +5226,7 @@ public:
   /// \param Clauses List of clauses.
   /// \param AssociatedStmt Statement, associated with the directive.
   ///
-  static OMPTargetTeamsDirective *Create(const ASTContext &C,
+  CLANG_ABI static OMPTargetTeamsDirective *Create(const ASTContext &C,
                                          SourceLocation StartLoc,
                                          SourceLocation EndLoc,
                                          ArrayRef<OMPClause *> Clauses,
@@ -5236,7 +5237,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTargetTeamsDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTargetTeamsDirective *CreateEmpty(const ASTContext &C,
                                               unsigned NumClauses, EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -5289,7 +5290,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPTargetTeamsDistributeDirective *
+  CLANG_ABI static OMPTargetTeamsDistributeDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -5300,7 +5301,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTargetTeamsDistributeDirective *
+  CLANG_ABI static OMPTargetTeamsDistributeDirective *
   CreateEmpty(const ASTContext &C, unsigned NumClauses, unsigned CollapsedNum,
               EmptyShell);
 
@@ -5371,7 +5372,7 @@ public:
   /// taskgroup descriptor.
   /// \param HasCancel true if this directive has inner cancel directive.
   ///
-  static OMPTargetTeamsDistributeParallelForDirective *
+  CLANG_ABI static OMPTargetTeamsDistributeParallelForDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs, Expr *TaskRedRef,
@@ -5383,7 +5384,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTargetTeamsDistributeParallelForDirective *
+  CLANG_ABI static OMPTargetTeamsDistributeParallelForDirective *
   CreateEmpty(const ASTContext &C, unsigned NumClauses, unsigned CollapsedNum,
               EmptyShell);
 
@@ -5457,7 +5458,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPTargetTeamsDistributeParallelForSimdDirective *
+  CLANG_ABI static OMPTargetTeamsDistributeParallelForSimdDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -5468,7 +5469,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTargetTeamsDistributeParallelForSimdDirective *
+  CLANG_ABI static OMPTargetTeamsDistributeParallelForSimdDirective *
   CreateEmpty(const ASTContext &C, unsigned NumClauses, unsigned CollapsedNum,
               EmptyShell);
 
@@ -5524,7 +5525,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPTargetTeamsDistributeSimdDirective *
+  CLANG_ABI static OMPTargetTeamsDistributeSimdDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -5535,7 +5536,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTargetTeamsDistributeSimdDirective *
+  CLANG_ABI static OMPTargetTeamsDistributeSimdDirective *
   CreateEmpty(const ASTContext &C, unsigned NumClauses, unsigned CollapsedNum,
               EmptyShell);
 
@@ -5584,7 +5585,7 @@ public:
   /// \param TransformedStmt The loop nest after tiling, or nullptr in
   ///                        dependent contexts.
   /// \param PreInits Helper preinits statements for the loop nest.
-  static OMPTileDirective *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPTileDirective *Create(const ASTContext &C, SourceLocation StartLoc,
                                   SourceLocation EndLoc,
                                   ArrayRef<OMPClause *> Clauses,
                                   unsigned NumLoops, Stmt *AssociatedStmt,
@@ -5595,7 +5596,7 @@ public:
   /// \param C          Context of the AST.
   /// \param NumClauses Number of clauses to allocate.
   /// \param NumLoops   Number of associated loops to allocate.
-  static OMPTileDirective *CreateEmpty(const ASTContext &C, unsigned NumClauses,
+  CLANG_ABI static OMPTileDirective *CreateEmpty(const ASTContext &C, unsigned NumClauses,
                                        unsigned NumLoops);
 
   /// Gets/sets the associated loops after tiling.
@@ -5661,7 +5662,7 @@ public:
   /// \param TransformedStmt The loop nest after striping, or nullptr in
   ///                        dependent contexts.
   /// \param PreInits Helper preinits statements for the loop nest.
-  static OMPStripeDirective *
+  CLANG_ABI static OMPStripeDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, unsigned NumLoops, Stmt *AssociatedStmt,
          Stmt *TransformedStmt, Stmt *PreInits);
@@ -5671,7 +5672,7 @@ public:
   /// \param C          Context of the AST.
   /// \param NumClauses Number of clauses to allocate.
   /// \param NumLoops   Number of associated loops to allocate.
-  static OMPStripeDirective *
+  CLANG_ABI static OMPStripeDirective *
   CreateEmpty(const ASTContext &C, unsigned NumClauses, unsigned NumLoops);
   /// Gets/sets the associated loops after striping.
   ///
@@ -5738,7 +5739,7 @@ public:
   /// \param TransformedStmt The loop nest after tiling, or nullptr in
   ///                        dependent contexts.
   /// \param PreInits   Helper preinits statements for the loop nest.
-  static OMPUnrollDirective *
+  CLANG_ABI static OMPUnrollDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt,
          unsigned NumGeneratedLoops, Stmt *TransformedStmt, Stmt *PreInits);
@@ -5747,7 +5748,7 @@ public:
   ///
   /// \param C          Context of the AST.
   /// \param NumClauses Number of clauses to allocate.
-  static OMPUnrollDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPUnrollDirective *CreateEmpty(const ASTContext &C,
                                          unsigned NumClauses);
 
   /// Get the de-sugared associated loops after unrolling.
@@ -5813,7 +5814,7 @@ public:
   /// \param TransformedStmt The loop nest after tiling, or nullptr in
   ///                        dependent contexts.
   /// \param PreInits   Helper preinits statements for the loop nest.
-  static OMPReverseDirective *Create(const ASTContext &C,
+  CLANG_ABI static OMPReverseDirective *Create(const ASTContext &C,
                                      SourceLocation StartLoc,
                                      SourceLocation EndLoc,
                                      Stmt *AssociatedStmt, unsigned NumLoops,
@@ -5823,7 +5824,7 @@ public:
   ///
   /// \param C          Context of the AST.
   /// \param NumLoops   Number of associated loops to allocate
-  static OMPReverseDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPReverseDirective *CreateEmpty(const ASTContext &C,
                                           unsigned NumLoops);
 
   /// Gets/sets the associated loops after the transformation, i.e. after
@@ -5887,7 +5888,7 @@ public:
   /// \param TransformedStmt The loop nest after tiling, or nullptr in
   ///                        dependent contexts.
   /// \param PreInits  Helper preinits statements for the loop nest.
-  static OMPInterchangeDirective *
+  CLANG_ABI static OMPInterchangeDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, unsigned NumLoops, Stmt *AssociatedStmt,
          Stmt *TransformedStmt, Stmt *PreInits);
@@ -5897,7 +5898,7 @@ public:
   /// \param C          Context of the AST.
   /// \param NumClauses Number of clauses to allocate.
   /// \param NumLoops   Number of associated loops to allocate.
-  static OMPInterchangeDirective *
+  CLANG_ABI static OMPInterchangeDirective *
   CreateEmpty(const ASTContext &C, unsigned NumClauses, unsigned NumLoops);
 
   /// Gets the associated loops after the transformation. This is the de-sugared
@@ -5948,7 +5949,7 @@ public:
   /// \param Clauses List of clauses (only single OMPFlushClause clause is
   /// allowed).
   ///
-  static OMPScanDirective *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPScanDirective *Create(const ASTContext &C, SourceLocation StartLoc,
                                   SourceLocation EndLoc,
                                   ArrayRef<OMPClause *> Clauses);
 
@@ -5958,7 +5959,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPScanDirective *CreateEmpty(const ASTContext &C, unsigned NumClauses,
+  CLANG_ABI static OMPScanDirective *CreateEmpty(const ASTContext &C, unsigned NumClauses,
                                        EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -6002,7 +6003,7 @@ public:
   /// \param EndLoc Ending Location of the directive.
   /// \param Clauses The directive's clauses.
   ///
-  static OMPInteropDirective *Create(const ASTContext &C,
+  CLANG_ABI static OMPInteropDirective *Create(const ASTContext &C,
                                      SourceLocation StartLoc,
                                      SourceLocation EndLoc,
                                      ArrayRef<OMPClause *> Clauses);
@@ -6011,7 +6012,7 @@ public:
   ///
   /// \param C AST context.
   ///
-  static OMPInteropDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPInteropDirective *CreateEmpty(const ASTContext &C,
                                           unsigned NumClauses, EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -6063,7 +6064,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param TargetCallLoc Location of the target-call.
   ///
-  static OMPDispatchDirective *
+  CLANG_ABI static OMPDispatchDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt,
          SourceLocation TargetCallLoc);
@@ -6074,7 +6075,7 @@ public:
   /// \param C AST context.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPDispatchDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPDispatchDirective *CreateEmpty(const ASTContext &C,
                                            unsigned NumClauses, EmptyShell);
 
   /// Return location of target-call.
@@ -6119,7 +6120,7 @@ public:
   /// \param EndLoc Ending Location of the directive.
   /// \param AssociatedStmt Statement, associated with the directive.
   ///
-  static OMPMaskedDirective *
+  CLANG_ABI static OMPMaskedDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt);
 
@@ -6127,7 +6128,7 @@ public:
   ///
   /// \param C AST context.
   ///
-  static OMPMaskedDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPMaskedDirective *CreateEmpty(const ASTContext &C,
                                          unsigned NumClauses, EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -6160,11 +6161,11 @@ class OMPMetaDirective final : public OMPExecutableDirective {
   void setIfStmt(Stmt *S) { IfStmt = S; }
 
 public:
-  static OMPMetaDirective *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPMetaDirective *Create(const ASTContext &C, SourceLocation StartLoc,
                                   SourceLocation EndLoc,
                                   ArrayRef<OMPClause *> Clauses,
                                   Stmt *AssociatedStmt, Stmt *IfStmt);
-  static OMPMetaDirective *CreateEmpty(const ASTContext &C, unsigned NumClauses,
+  CLANG_ABI static OMPMetaDirective *CreateEmpty(const ASTContext &C, unsigned NumClauses,
                                        EmptyShell);
   Stmt *getIfStmt() const { return IfStmt; }
 
@@ -6215,7 +6216,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPGenericLoopDirective *
+  CLANG_ABI static OMPGenericLoopDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -6226,7 +6227,7 @@ public:
   /// \param NumClauses Number of clauses.
   /// \param CollapsedNum Number of collapsed nested loops.
   ///
-  static OMPGenericLoopDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPGenericLoopDirective *CreateEmpty(const ASTContext &C,
                                               unsigned NumClauses,
                                               unsigned CollapsedNum,
                                               EmptyShell);
@@ -6279,7 +6280,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPTeamsGenericLoopDirective *
+  CLANG_ABI static OMPTeamsGenericLoopDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -6291,7 +6292,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTeamsGenericLoopDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTeamsGenericLoopDirective *CreateEmpty(const ASTContext &C,
                                                    unsigned NumClauses,
                                                    unsigned CollapsedNum,
                                                    EmptyShell);
@@ -6350,7 +6351,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPTargetTeamsGenericLoopDirective *
+  CLANG_ABI static OMPTargetTeamsGenericLoopDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs, bool CanBeParallelFor);
@@ -6362,7 +6363,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTargetTeamsGenericLoopDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPTargetTeamsGenericLoopDirective *CreateEmpty(const ASTContext &C,
                                                          unsigned NumClauses,
                                                          unsigned CollapsedNum,
                                                          EmptyShell);
@@ -6419,7 +6420,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPParallelGenericLoopDirective *
+  CLANG_ABI static OMPParallelGenericLoopDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -6431,7 +6432,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPParallelGenericLoopDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPParallelGenericLoopDirective *CreateEmpty(const ASTContext &C,
                                                       unsigned NumClauses,
                                                       unsigned CollapsedNum,
                                                       EmptyShell);
@@ -6485,7 +6486,7 @@ public:
   /// \param AssociatedStmt Statement, associated with the directive.
   /// \param Exprs Helper expressions for CodeGen.
   ///
-  static OMPTargetParallelGenericLoopDirective *
+  CLANG_ABI static OMPTargetParallelGenericLoopDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
          unsigned CollapsedNum, ArrayRef<OMPClause *> Clauses,
          Stmt *AssociatedStmt, const HelperExprs &Exprs);
@@ -6497,7 +6498,7 @@ public:
   /// \param CollapsedNum Number of collapsed nested loops.
   /// \param NumClauses Number of clauses.
   ///
-  static OMPTargetParallelGenericLoopDirective *
+  CLANG_ABI static OMPTargetParallelGenericLoopDirective *
   CreateEmpty(const ASTContext &C, unsigned NumClauses, unsigned CollapsedNum,
               EmptyShell);
 
@@ -6535,7 +6536,7 @@ public:
   /// \param EndLoc Ending Location of the directive.
   /// \param Clauses List of clauses.
   ///
-  static OMPErrorDirective *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPErrorDirective *Create(const ASTContext &C, SourceLocation StartLoc,
                                    SourceLocation EndLoc,
                                    ArrayRef<OMPClause *> Clauses);
 
@@ -6543,7 +6544,7 @@ public:
   ///
   /// \param C AST context.
   ///
-  static OMPErrorDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPErrorDirective *CreateEmpty(const ASTContext &C,
                                         unsigned NumClauses, EmptyShell);
 
   static bool classof(const Stmt *T) {
@@ -6567,12 +6568,12 @@ private:
                                SourceLocation(), SourceLocation()) {}
 
 public:
-  static OMPAssumeDirective *Create(const ASTContext &Ctx,
+  CLANG_ABI static OMPAssumeDirective *Create(const ASTContext &Ctx,
                                     SourceLocation StartLoc,
                                     SourceLocation EndLoc,
                                     ArrayRef<OMPClause *> Clauses, Stmt *AStmt);
 
-  static OMPAssumeDirective *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPAssumeDirective *CreateEmpty(const ASTContext &C,
                                          unsigned NumClauses, EmptyShell);
 
   static bool classof(const Stmt *T) {

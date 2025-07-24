@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_LEX_DIRECTORYLOOKUP_H
 #define LLVM_CLANG_LEX_DIRECTORYLOOKUP_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/FileManager.h"
 #include "clang/Basic/SourceManager.h"
@@ -82,7 +83,7 @@ public:
 
   /// getName - Return the directory or filename corresponding to this lookup
   /// object.
-  StringRef getName() const;
+  CLANG_ABI StringRef getName() const;
 
   /// getDir - Return the directory that this entry refers to.
   ///
@@ -174,7 +175,7 @@ public:
   /// \param [out] MappedName if this is a headermap which maps the filename to
   /// a framework include ("Foo.h" -> "Foo/Foo.h"), set the new name to this
   /// vector and point Filename to it.
-  OptionalFileEntryRef
+  CLANG_ABI OptionalFileEntryRef
   LookupFile(StringRef &Filename, HeaderSearch &HS, SourceLocation IncludeLoc,
              SmallVectorImpl<char> *SearchPath,
              SmallVectorImpl<char> *RelativePath, Module *RequestingModule,

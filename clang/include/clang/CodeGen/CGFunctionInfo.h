@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_CODEGEN_CGFUNCTIONINFO_H
 #define LLVM_CLANG_CODEGEN_CGFUNCTIONINFO_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/CanonicalType.h"
 #include "clang/AST/CharUnits.h"
 #include "clang/AST/Decl.h"
@@ -490,7 +491,7 @@ public:
     CanBeFlattened = Flatten;
   }
 
-  void dump() const;
+  CLANG_ABI void dump() const;
 };
 
 /// A class for recording the number of arguments that a function
@@ -654,7 +655,7 @@ class CGFunctionInfo final
   CGFunctionInfo() : Required(RequiredArgs::All) {}
 
 public:
-  static CGFunctionInfo *
+  CLANG_ABI static CGFunctionInfo *
   create(unsigned llvmCC, bool instanceMethod, bool chainCall,
          bool delegateCall, const FunctionType::ExtInfo &extInfo,
          ArrayRef<ExtParameterInfo> paramInfos, CanQualType resultType,

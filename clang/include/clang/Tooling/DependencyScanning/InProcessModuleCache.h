@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_TOOLING_DEPENDENCYSCANNING_INPROCESSMODULECACHE_H
 #define LLVM_CLANG_TOOLING_DEPENDENCYSCANNING_INPROCESSMODULECACHE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Serialization/ModuleCache.h"
 #include "llvm/ADT/StringMap.h"
 
@@ -28,7 +29,7 @@ struct ModuleCacheEntries {
   llvm::StringMap<std::unique_ptr<ModuleCacheEntry>> Map;
 };
 
-IntrusiveRefCntPtr<ModuleCache>
+CLANG_ABI IntrusiveRefCntPtr<ModuleCache>
 makeInProcessModuleCache(ModuleCacheEntries &Entries);
 } // namespace dependencies
 } // namespace tooling

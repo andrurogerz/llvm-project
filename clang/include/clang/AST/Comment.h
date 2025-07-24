@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_COMMENT_H
 #define LLVM_CLANG_AST_COMMENT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/CommentCommandTraits.h"
 #include "clang/AST/DeclObjC.h"
 #include "clang/AST/Type.h"
@@ -234,11 +235,11 @@ public:
     return static_cast<CommentKind>(CommentBits.Kind);
   }
 
-  const char *getCommentKindName() const;
+  CLANG_ABI const char *getCommentKindName() const;
 
-  void dump() const;
-  void dumpColor() const;
-  void dump(raw_ostream &OS, const ASTContext &Context) const;
+  CLANG_ABI void dump() const;
+  CLANG_ABI void dumpColor() const;
+  CLANG_ABI void dump(raw_ostream &OS, const ASTContext &Context) const;
 
   SourceRange getSourceRange() const LLVM_READONLY { return Range; }
 
@@ -250,8 +251,8 @@ public:
 
   typedef Comment * const *child_iterator;
 
-  child_iterator child_begin() const;
-  child_iterator child_end() const;
+  CLANG_ABI child_iterator child_begin() const;
+  CLANG_ABI child_iterator child_end() const;
 
   // TODO: const child iterator
 
@@ -318,7 +319,7 @@ public:
   }
 
 private:
-  bool isWhitespaceNoCache() const;
+  CLANG_ABI bool isWhitespaceNoCache() const;
 };
 
 /// The most appropriate rendering mode for this command, chosen on command
@@ -595,7 +596,7 @@ public:
   }
 
 private:
-  bool isWhitespaceNoCache() const;
+  CLANG_ABI bool isWhitespaceNoCache() const;
 };
 
 /// A command that has zero or more word-like arguments (number of word-like
@@ -733,7 +734,7 @@ public:
     return C->getCommentKind() == CommentKind::ParamCommandComment;
   }
 
-  static const char *getDirectionAsString(ParamCommandPassDirection D);
+  CLANG_ABI static const char *getDirectionAsString(ParamCommandPassDirection D);
 
   ParamCommandPassDirection getDirection() const LLVM_READONLY {
     return static_cast<ParamCommandPassDirection>(
@@ -753,7 +754,7 @@ public:
     return getNumArgs() > 0;
   }
 
-  StringRef getParamName(const FullComment *FC) const;
+  CLANG_ABI StringRef getParamName(const FullComment *FC) const;
 
   StringRef getParamNameAsWritten() const {
     return Args[0].Text;
@@ -820,7 +821,7 @@ public:
     return getNumArgs() > 0;
   }
 
-  StringRef getParamName(const FullComment *FC) const;
+  CLANG_ABI StringRef getParamName(const FullComment *FC) const;
 
   StringRef getParamNameAsWritten() const {
     return Args[0].Text;
@@ -1066,7 +1067,7 @@ struct DeclInfo {
   LLVM_PREFERRED_TYPE(bool)
   unsigned IsVariadic : 1;
 
-  void fill();
+  CLANG_ABI void fill();
 
   DeclKind getKind() const LLVM_READONLY {
     return static_cast<DeclKind>(Kind);

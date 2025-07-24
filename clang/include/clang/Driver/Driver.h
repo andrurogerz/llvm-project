@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_DRIVER_DRIVER_H
 #define LLVM_CLANG_DRIVER_DRIVER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/HeaderInclude.h"
 #include "clang/Basic/LLVM.h"
@@ -79,10 +80,10 @@ public:
   enum class Kind { Hash, Random, Fixed, None, Invalid };
 
   CUIDOptions() = default;
-  CUIDOptions(llvm::opt::DerivedArgList &Args, const Driver &D);
+  CLANG_ABI CUIDOptions(llvm::opt::DerivedArgList &Args, const Driver &D);
 
   // Get the CUID for an input string
-  std::string getCUID(StringRef InputFile,
+  CLANG_ABI std::string getCUID(StringRef InputFile,
                       llvm::opt::DerivedArgList &Args) const;
 
   bool isEnabled() const {
@@ -356,10 +357,10 @@ public:
   // TODO: Much of what getFinalPhase returns are not actually true compiler
   //       modes. Fold this functionality into Types::getCompilationPhases and
   //       handleArguments.
-  phases::ID getFinalPhase(const llvm::opt::DerivedArgList &DAL,
+  CLANG_ABI phases::ID getFinalPhase(const llvm::opt::DerivedArgList &DAL,
                            llvm::opt::Arg **FinalPhaseArg = nullptr) const;
 
-  llvm::Expected<std::unique_ptr<llvm::MemoryBuffer>>
+  CLANG_ABI llvm::Expected<std::unique_ptr<llvm::MemoryBuffer>>
   executeProgram(llvm::ArrayRef<llvm::StringRef> Args) const;
 
 private:
@@ -409,9 +410,9 @@ public:
 
   /// Takes the path to a binary that's either in bin/ or lib/ and returns
   /// the path to clang's resource directory.
-  static std::string GetResourcesPath(StringRef BinaryPath);
+  CLANG_ABI static std::string GetResourcesPath(StringRef BinaryPath);
 
-  Driver(StringRef ClangExecutable, StringRef TargetTriple,
+  CLANG_ABI Driver(StringRef ClangExecutable, StringRef TargetTriple,
          DiagnosticsEngine &Diags, std::string Title = "clang LLVM compiler",
          IntrusiveRefCntPtr<llvm::vfs::FileSystem> VFS = nullptr);
 
@@ -474,7 +475,7 @@ public:
   StringRef getFlangF128MathLibrary() const { return FlangF128MathLibrary; }
 
   /// Compute the desired OpenMP runtime from the flags provided.
-  OpenMPRuntimeKind getOpenMPRuntime(const llvm::opt::ArgList &Args) const;
+  CLANG_ABI OpenMPRuntimeKind getOpenMPRuntime(const llvm::opt::ArgList &Args) const;
 
   /// @}
   /// @name Primary Functionality
@@ -483,7 +484,7 @@ public:
   /// CreateOffloadingDeviceToolChains - create all the toolchains required to
   /// support offloading devices given the programming models specified in the
   /// current compilation. Also, update the host tool chain kind accordingly.
-  void CreateOffloadingDeviceToolChains(Compilation &C, InputList &Inputs);
+  CLANG_ABI void CreateOffloadingDeviceToolChains(Compilation &C, InputList &Inputs);
 
   /// BuildCompilation - Construct a compilation object for a command
   /// line argument vector.
@@ -492,11 +493,11 @@ public:
   /// argument vector. A null return value does not necessarily
   /// indicate an error condition, the diagnostics should be queried
   /// to determine if an error occurred.
-  Compilation *BuildCompilation(ArrayRef<const char *> Args);
+  CLANG_ABI Compilation *BuildCompilation(ArrayRef<const char *> Args);
 
   /// ParseArgStrings - Parse the given list of strings into an
   /// ArgList.
-  llvm::opt::InputArgList ParseArgStrings(ArrayRef<const char *> Args,
+  CLANG_ABI llvm::opt::InputArgList ParseArgStrings(ArrayRef<const char *> Args,
                                           bool UseDriverMode,
                                           bool &ContainsError) const;
 
@@ -507,7 +508,7 @@ public:
   /// \param Args - The input arguments.
   /// \param Inputs - The list to store the resulting compilation
   /// inputs onto.
-  void BuildInputs(const ToolChain &TC, llvm::opt::DerivedArgList &Args,
+  CLANG_ABI void BuildInputs(const ToolChain &TC, llvm::opt::DerivedArgList &Args,
                    InputList &Inputs) const;
 
   /// BuildActions - Construct the list of actions to perform for the
@@ -516,7 +517,7 @@ public:
   /// \param C - The compilation that is being built.
   /// \param Args - The input arguments.
   /// \param Actions - The list to store the resulting actions onto.
-  void BuildActions(Compilation &C, llvm::opt::DerivedArgList &Args,
+  CLANG_ABI void BuildActions(Compilation &C, llvm::opt::DerivedArgList &Args,
                     const InputList &Inputs, ActionList &Actions) const;
 
   /// BuildUniversalActions - Construct the list of actions to perform
@@ -524,7 +525,7 @@ public:
   ///
   /// \param C - The compilation that is being built.
   /// \param TC - The default host tool chain.
-  void BuildUniversalActions(Compilation &C, const ToolChain &TC,
+  CLANG_ABI void BuildUniversalActions(Compilation &C, const ToolChain &TC,
                              const InputList &BAInputs) const;
 
   /// BuildOffloadingActions - Construct the list of actions to perform for the
@@ -535,7 +536,7 @@ public:
   /// \param Input - The input type and arguments
   /// \param CUID - The CUID for \p Input
   /// \param HostAction - The host action used in the offloading toolchain.
-  Action *BuildOffloadingActions(Compilation &C,
+  CLANG_ABI Action *BuildOffloadingActions(Compilation &C,
                                  llvm::opt::DerivedArgList &Args,
                                  const InputTy &Input, StringRef CUID,
                                  Action *HostAction) const;
@@ -543,7 +544,7 @@ public:
   /// Returns the set of bound architectures active for this offload kind.
   /// If there are no bound architctures we return a set containing only the
   /// empty string.
-  llvm::SmallVector<StringRef>
+  CLANG_ABI llvm::SmallVector<StringRef>
   getOffloadArchs(Compilation &C, const llvm::opt::DerivedArgList &Args,
                   Action::OffloadKind Kind, const ToolChain &TC) const;
 
@@ -551,7 +552,7 @@ public:
   /// issue a diagnostic and return false.
   /// If TypoCorrect is true and the file does not exist, see if it looks
   /// like a likely typo for a flag and if so print a "did you mean" blurb.
-  bool DiagnoseInputExistence(const llvm::opt::DerivedArgList &Args,
+  CLANG_ABI bool DiagnoseInputExistence(const llvm::opt::DerivedArgList &Args,
                               StringRef Value, types::ID Ty,
                               bool TypoCorrect) const;
 
@@ -559,7 +560,7 @@ public:
   /// arguments to form the list of jobs to run.
   ///
   /// \param C - The compilation that is being built.
-  void BuildJobs(Compilation &C) const;
+  CLANG_ABI void BuildJobs(Compilation &C) const;
 
   /// ExecuteCompilation - Execute the compilation according to the command line
   /// arguments and return an appropriate exit code.
@@ -567,7 +568,7 @@ public:
   /// This routine handles additional processing that must be done in addition
   /// to just running the subprocesses, for example reporting errors, setting
   /// up response files, removing temporary files, etc.
-  int ExecuteCompilation(Compilation &C,
+  CLANG_ABI int ExecuteCompilation(Compilation &C,
      SmallVectorImpl< std::pair<int, const Command *> > &FailingCommands);
 
   /// Contains the files in the compilation diagnostic report generated by
@@ -579,7 +580,7 @@ public:
   /// generateCompilationDiagnostics - Generate diagnostics information
   /// including preprocessed source file(s).
   ///
-  void generateCompilationDiagnostics(
+  CLANG_ABI void generateCompilationDiagnostics(
       Compilation &C, const Command &FailingCommand,
       StringRef AdditionalInformation = "",
       CompilationDiagnosticReport *GeneratedReport = nullptr);
@@ -618,15 +619,15 @@ public:
   /// @{
 
   /// PrintActions - Print the list of actions.
-  void PrintActions(const Compilation &C) const;
+  CLANG_ABI void PrintActions(const Compilation &C) const;
 
   /// PrintHelp - Print the help text.
   ///
   /// \param ShowHidden - Show hidden options.
-  void PrintHelp(bool ShowHidden) const;
+  CLANG_ABI void PrintHelp(bool ShowHidden) const;
 
   /// PrintVersion - Print the driver version.
-  void PrintVersion(const Compilation &C, raw_ostream &OS) const;
+  CLANG_ABI void PrintVersion(const Compilation &C, raw_ostream &OS) const;
 
   /// GetFilePath - Lookup \p Name in the list of file search paths.
   ///
@@ -634,7 +635,7 @@ public:
   /// directories to search.
   //
   // FIXME: This should be in CompilationInfo.
-  std::string GetFilePath(StringRef Name, const ToolChain &TC) const;
+  CLANG_ABI std::string GetFilePath(StringRef Name, const ToolChain &TC) const;
 
   /// GetProgramPath - Lookup \p Name in the list of program search paths.
   ///
@@ -642,7 +643,7 @@ public:
   /// directories to search.
   //
   // FIXME: This should be in CompilationInfo.
-  std::string GetProgramPath(StringRef Name, const ToolChain &TC) const;
+  CLANG_ABI std::string GetProgramPath(StringRef Name, const ToolChain &TC) const;
 
   /// Lookup the path to the Standard library module manifest.
   ///
@@ -651,12 +652,12 @@ public:
   /// directories to search.
   //
   // FIXME: This should be in CompilationInfo.
-  std::string GetStdModuleManifestPath(const Compilation &C,
+  CLANG_ABI std::string GetStdModuleManifestPath(const Compilation &C,
                                        const ToolChain &TC) const;
 
   /// HandleAutocompletions - Handle --autocomplete by searching and printing
   /// possible flags, descriptions, and its arguments.
-  void HandleAutocompletions(StringRef PassedFlags) const;
+  CLANG_ABI void HandleAutocompletions(StringRef PassedFlags) const;
 
   /// HandleImmediateArgs - Handle any arguments which should be
   /// treated before building actions or binding tools.
@@ -664,12 +665,12 @@ public:
   /// \return Whether any compilation should be built for this
   /// invocation. The compilation can only be modified when
   /// this function returns false.
-  bool HandleImmediateArgs(Compilation &C);
+  CLANG_ABI bool HandleImmediateArgs(Compilation &C);
 
   /// ConstructAction - Construct the appropriate action to do for
   /// \p Phase on the \p Input, taking in to account arguments
   /// like -fsyntax-only or --analyze.
-  Action *ConstructPhaseAction(
+  CLANG_ABI Action *ConstructPhaseAction(
       Compilation &C, const llvm::opt::ArgList &Args, phases::ID Phase,
       Action *Input,
       Action::OffloadKind TargetDeviceOffloadKind = Action::OFK_None) const;
@@ -677,7 +678,7 @@ public:
   /// BuildJobsForAction - Construct the jobs to perform for the action \p A and
   /// return an InputInfo for the result of running \p A.  Will only construct
   /// jobs for a given (Action, ToolChain, BoundArch, DeviceKind) tuple once.
-  InputInfoList BuildJobsForAction(
+  CLANG_ABI InputInfoList BuildJobsForAction(
       Compilation &C, const Action *A, const ToolChain *TC, StringRef BoundArch,
       bool AtTopLevel, bool MultipleArchs, const char *LinkingOutput,
       std::map<std::pair<const Action *, std::string>, InputInfoList>
@@ -685,7 +686,7 @@ public:
       Action::OffloadKind TargetDeviceOffloadKind) const;
 
   /// Returns the default name for linked images (e.g., "a.out").
-  const char *getDefaultImageName() const;
+  CLANG_ABI const char *getDefaultImageName() const;
 
   /// Creates a temp file.
   /// 1. If \p MultipleArch is false or \p BoundArch is empty, the temp file is
@@ -696,7 +697,7 @@ public:
   ///    2b. If \p NeedUniqueDirectory is true, the temp file is in a unique
   ///        subdiretory with random name under the temporary directory, and
   ///        the temp file itself has name $Prefix-$BoundArch.$Suffix.
-  const char *CreateTempFile(Compilation &C, StringRef Prefix, StringRef Suffix,
+  CLANG_ABI const char *CreateTempFile(Compilation &C, StringRef Prefix, StringRef Suffix,
                              bool MultipleArchs = false,
                              StringRef BoundArch = {},
                              bool NeedUniqueDirectory = false) const;
@@ -713,7 +714,7 @@ public:
   /// \param AtTopLevel - Whether this is a "top-level" action.
   /// \param MultipleArchs - Whether multiple -arch options were supplied.
   /// \param NormalizedTriple - The normalized triple of the relevant target.
-  const char *GetNamedOutputPath(Compilation &C, const JobAction &JA,
+  CLANG_ABI const char *GetNamedOutputPath(Compilation &C, const JobAction &JA,
                                  const char *BaseInput, StringRef BoundArch,
                                  bool AtTopLevel, bool MultipleArchs,
                                  StringRef NormalizedTriple) const;
@@ -722,25 +723,25 @@ public:
   /// as part of compilation; the file will have the given prefix and suffix.
   ///
   /// GCC goes to extra lengths here to be a bit more robust.
-  std::string GetTemporaryPath(StringRef Prefix, StringRef Suffix) const;
+  CLANG_ABI std::string GetTemporaryPath(StringRef Prefix, StringRef Suffix) const;
 
   /// GetTemporaryDirectory - Return the pathname of a temporary directory to
   /// use as part of compilation; the directory will have the given prefix.
-  std::string GetTemporaryDirectory(StringRef Prefix) const;
+  CLANG_ABI std::string GetTemporaryDirectory(StringRef Prefix) const;
 
   /// Return the pathname of the pch file in clang-cl mode.
-  std::string GetClPchPath(Compilation &C, StringRef BaseName) const;
+  CLANG_ABI std::string GetClPchPath(Compilation &C, StringRef BaseName) const;
 
   /// ShouldUseClangCompiler - Should the clang compiler be used to
   /// handle this action.
-  bool ShouldUseClangCompiler(const JobAction &JA) const;
+  CLANG_ABI bool ShouldUseClangCompiler(const JobAction &JA) const;
 
   /// ShouldUseFlangCompiler - Should the flang compiler be used to
   /// handle this action.
-  bool ShouldUseFlangCompiler(const JobAction &JA) const;
+  CLANG_ABI bool ShouldUseFlangCompiler(const JobAction &JA) const;
 
   /// ShouldEmitStaticLibrary - Should the linker emit a static library.
-  bool ShouldEmitStaticLibrary(const llvm::opt::ArgList &Args) const;
+  CLANG_ABI bool ShouldEmitStaticLibrary(const llvm::opt::ArgList &Args) const;
 
   /// Returns true if the user has indicated a C++20 header unit mode.
   bool hasHeaderMode() const { return CXX20HeaderType != HeaderMode_None; }
@@ -838,7 +839,7 @@ public:
   /// \return True if the entire string was parsed (9.2), or all
   /// groups were parsed (10.3.5extrastuff). HadExtra is true if all
   /// groups were parsed but extra characters remain at the end.
-  static bool GetReleaseVersion(StringRef Str, unsigned &Major, unsigned &Minor,
+  CLANG_ABI static bool GetReleaseVersion(StringRef Str, unsigned &Major, unsigned &Minor,
                                 unsigned &Micro, bool &HadExtra);
 
   /// Parse digits from a string \p Str and fulfill \p Digits with
@@ -847,29 +848,29 @@ public:
   ///
   /// \return True if the entire string was parsed and there are
   /// no extra characters remaining at the end.
-  static bool GetReleaseVersion(StringRef Str,
+  CLANG_ABI static bool GetReleaseVersion(StringRef Str,
                                 MutableArrayRef<unsigned> Digits);
   /// Compute the default -fmodule-cache-path.
   /// \return True if the system provides a default cache directory.
-  static bool getDefaultModuleCachePath(SmallVectorImpl<char> &Result);
+  CLANG_ABI static bool getDefaultModuleCachePath(SmallVectorImpl<char> &Result);
 };
 
 /// \return True if the last defined optimization level is -Ofast.
 /// And False otherwise.
-bool isOptimizationLevelFast(const llvm::opt::ArgList &Args);
+CLANG_ABI bool isOptimizationLevelFast(const llvm::opt::ArgList &Args);
 
 /// \return True if the argument combination will end up generating remarks.
-bool willEmitRemarks(const llvm::opt::ArgList &Args);
+CLANG_ABI bool willEmitRemarks(const llvm::opt::ArgList &Args);
 
 /// Returns the driver mode option's value, i.e. `X` in `--driver-mode=X`. If \p
 /// Args doesn't mention one explicitly, tries to deduce from `ProgName`.
 /// Returns empty on failure.
 /// Common values are "gcc", "g++", "cpp", "cl" and "flang". Returned value need
 /// not be one of these.
-llvm::StringRef getDriverMode(StringRef ProgName, ArrayRef<const char *> Args);
+CLANG_ABI llvm::StringRef getDriverMode(StringRef ProgName, ArrayRef<const char *> Args);
 
 /// Checks whether the value produced by getDriverMode is for CL mode.
-bool IsClangCL(StringRef DriverMode);
+CLANG_ABI bool IsClangCL(StringRef DriverMode);
 
 /// Expand response files from a clang driver or cc1 invocation.
 ///
@@ -877,13 +878,13 @@ bool IsClangCL(StringRef DriverMode);
 /// \param ClangCLMode Whether clang is in CL mode.
 /// \param Alloc Allocator for new arguments.
 /// \param FS Filesystem to use when expanding files.
-llvm::Error expandResponseFiles(SmallVectorImpl<const char *> &Args,
+CLANG_ABI llvm::Error expandResponseFiles(SmallVectorImpl<const char *> &Args,
                                 bool ClangCLMode, llvm::BumpPtrAllocator &Alloc,
                                 llvm::vfs::FileSystem *FS = nullptr);
 
 /// Apply a space separated list of edits to the input argument lists.
 /// See applyOneOverrideOption.
-void applyOverrideOptions(SmallVectorImpl<const char *> &Args,
+CLANG_ABI void applyOverrideOptions(SmallVectorImpl<const char *> &Args,
                           const char *OverrideOpts,
                           llvm::StringSet<> &SavedStrings, StringRef EnvVar,
                           raw_ostream *OS = nullptr);

@@ -166,13 +166,13 @@ public:
     return NotHandled;
   }
 
-  static const ParsedAttrInfo &get(const AttributeCommonInfo &A);
-  static ArrayRef<const ParsedAttrInfo *> getAllBuiltin();
+  CLANG_ABI static const ParsedAttrInfo &get(const AttributeCommonInfo &A);
+  CLANG_ABI static ArrayRef<const ParsedAttrInfo *> getAllBuiltin();
 };
 
 typedef llvm::Registry<ParsedAttrInfo> ParsedAttrInfoRegistry;
 
-const std::list<std::unique_ptr<ParsedAttrInfo>> &getAttributePluginInstances();
+CLANG_ABI const std::list<std::unique_ptr<ParsedAttrInfo>> &getAttributePluginInstances();
 
 } // namespace clang
 

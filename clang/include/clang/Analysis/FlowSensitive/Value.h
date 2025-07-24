@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_VALUE_H
 #define LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_VALUE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "clang/Analysis/FlowSensitive/Formula.h"
 #include "clang/Analysis/FlowSensitive/StorageLocation.h"
@@ -88,7 +89,7 @@ private:
 /// * TopBoolValue -- both are `TopBoolValue`s.
 ///
 /// Otherwise, falls back to pointer equality.
-bool areEquivalentValues(const Value &Val1, const Value &Val2);
+CLANG_ABI bool areEquivalentValues(const Value &Val1, const Value &Val2);
 
 /// Models a boolean.
 class BoolValue : public Value {
@@ -182,7 +183,7 @@ private:
   StorageLocation &PointeeLoc;
 };
 
-raw_ostream &operator<<(raw_ostream &OS, const Value &Val);
+CLANG_ABI raw_ostream &operator<<(raw_ostream &OS, const Value &Val);
 
 } // namespace dataflow
 } // namespace clang

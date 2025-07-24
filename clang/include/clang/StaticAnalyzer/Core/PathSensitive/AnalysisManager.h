@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_ANALYSISMANAGER_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_ANALYSISMANAGER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Analysis/AnalysisDeclContext.h"
 #include "clang/Analysis/PathDiagnostic.h"
 #include "clang/Lex/Preprocessor.h"
@@ -28,7 +29,7 @@ class CodeInjector;
 namespace ento {
   class CheckerManager;
 
-class AnalysisManager : public BugReporterData {
+class CLANG_ABI AnalysisManager : public BugReporterData {
   virtual void anchor();
   AnalysisDeclContextManager AnaCtxMgr;
 

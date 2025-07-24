@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_INTERP_PROGRAM_H
 #define LLVM_CLANG_AST_INTERP_PROGRAM_H
 
+#include "clang/Support/Compiler.h"
 #include "Function.h"
 #include "Pointer.h"
 #include "PrimType.h"
@@ -55,17 +56,17 @@ public:
   }
 
   /// Marshals a native pointer to an ID for embedding in bytecode.
-  unsigned getOrCreateNativePointer(const void *Ptr);
+  CLANG_ABI unsigned getOrCreateNativePointer(const void *Ptr);
 
   /// Returns the value of a marshalled native pointer.
-  const void *getNativePointer(unsigned Idx);
+  CLANG_ABI const void *getNativePointer(unsigned Idx);
 
   /// Emits a string literal among global data.
-  unsigned createGlobalString(const StringLiteral *S,
+  CLANG_ABI unsigned createGlobalString(const StringLiteral *S,
                               const Expr *Base = nullptr);
 
   /// Returns a pointer to a global.
-  Pointer getPtrGlobal(unsigned Idx) const;
+  CLANG_ABI Pointer getPtrGlobal(unsigned Idx) const;
 
   /// Returns the value of a global.
   Block *getGlobal(unsigned Idx) {
@@ -74,21 +75,21 @@ public:
   }
 
   /// Finds a global's index.
-  std::optional<unsigned> getGlobal(const ValueDecl *VD);
-  std::optional<unsigned> getGlobal(const Expr *E);
+  CLANG_ABI std::optional<unsigned> getGlobal(const ValueDecl *VD);
+  CLANG_ABI std::optional<unsigned> getGlobal(const Expr *E);
 
   /// Returns or creates a global an creates an index to it.
-  std::optional<unsigned> getOrCreateGlobal(const ValueDecl *VD,
+  CLANG_ABI std::optional<unsigned> getOrCreateGlobal(const ValueDecl *VD,
                                             const Expr *Init = nullptr);
 
   /// Returns or creates a dummy value for unknown declarations.
-  unsigned getOrCreateDummy(const DeclTy &D);
+  CLANG_ABI unsigned getOrCreateDummy(const DeclTy &D);
 
   /// Creates a global and returns its index.
-  std::optional<unsigned> createGlobal(const ValueDecl *VD, const Expr *Init);
+  CLANG_ABI std::optional<unsigned> createGlobal(const ValueDecl *VD, const Expr *Init);
 
   /// Creates a global from a lifetime-extended temporary.
-  std::optional<unsigned> createGlobal(const Expr *E);
+  CLANG_ABI std::optional<unsigned> createGlobal(const Expr *E);
 
   /// Creates a new function from a code range.
   template <typename... Ts>
@@ -106,10 +107,10 @@ public:
   }
 
   /// Returns a function.
-  Function *getFunction(const FunctionDecl *F);
+  CLANG_ABI Function *getFunction(const FunctionDecl *F);
 
   /// Returns a record or creates one if it does not exist.
-  Record *getOrCreateRecord(const RecordDecl *RD);
+  CLANG_ABI Record *getOrCreateRecord(const RecordDecl *RD);
 
   /// Creates a descriptor for a primitive type.
   Descriptor *createDescriptor(const DeclTy &D, PrimType T,
@@ -123,7 +124,7 @@ public:
   }
 
   /// Creates a descriptor for a composite type.
-  Descriptor *createDescriptor(const DeclTy &D, const Type *Ty,
+  CLANG_ABI Descriptor *createDescriptor(const DeclTy &D, const Type *Ty,
                                Descriptor::MetadataSize MDSize = std::nullopt,
                                bool IsConst = false, bool IsTemporary = false,
                                bool IsMutable = false, bool IsVolatile = false,
@@ -236,8 +237,8 @@ private:
 
 public:
   /// Dumps the disassembled bytecode to \c llvm::errs().
-  void dump() const;
-  void dump(llvm::raw_ostream &OS) const;
+  CLANG_ABI void dump() const;
+  CLANG_ABI void dump(llvm::raw_ostream &OS) const;
 };
 
 } // namespace interp

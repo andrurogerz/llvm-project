@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_ENVIRONMENT_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_ENVIRONMENT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Analysis/AnalysisDeclContext.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/ProgramState_Fwd.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/SVals.h"
@@ -35,7 +36,7 @@ class SymbolReaper;
 class EnvironmentEntry : public std::pair<const Stmt *,
                                           const StackFrameContext *> {
 public:
-  EnvironmentEntry(const Stmt *s, const LocationContext *L);
+  CLANG_ABI EnvironmentEntry(const Stmt *s, const LocationContext *L);
 
   const Stmt *getStmt() const { return first; }
   const LocationContext *getLocationContext() const { return second; }
@@ -73,7 +74,7 @@ public:
 
   /// Fetches the current binding of the expression in the
   /// Environment.
-  SVal getSVal(const EnvironmentEntry &E, SValBuilder &svalBuilder) const;
+  CLANG_ABI SVal getSVal(const EnvironmentEntry &E, SValBuilder &svalBuilder) const;
 
   /// Profile - Profile the contents of an Environment object for use
   ///  in a FoldingSet.
@@ -91,7 +92,7 @@ public:
     return ExprBindings == RHS.ExprBindings;
   }
 
-  void printJson(raw_ostream &Out, const ASTContext &Ctx,
+  CLANG_ABI void printJson(raw_ostream &Out, const ASTContext &Ctx,
                  const LocationContext *LCtx = nullptr, const char *NL = "\n",
                  unsigned int Space = 0, bool IsDot = false) const;
 };
@@ -110,10 +111,10 @@ public:
   }
 
   /// Bind a symbolic value to the given environment entry.
-  Environment bindExpr(Environment Env, const EnvironmentEntry &E, SVal V,
+  CLANG_ABI Environment bindExpr(Environment Env, const EnvironmentEntry &E, SVal V,
                        bool Invalidate);
 
-  Environment removeDeadBindings(Environment Env,
+  CLANG_ABI Environment removeDeadBindings(Environment Env,
                                  SymbolReaper &SymReaper,
                                  ProgramStateRef state);
 };

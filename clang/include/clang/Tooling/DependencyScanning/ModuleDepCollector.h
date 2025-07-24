@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_TOOLING_DEPENDENCYSCANNING_MODULEDEPCOLLECTOR_H
 #define LLVM_CLANG_TOOLING_DEPENDENCYSCANNING_MODULEDEPCOLLECTOR_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/Module.h"
 #include "clang/Basic/SourceManager.h"
@@ -54,7 +55,7 @@ class PrebuiltModuleASTAttrs {
 public:
   /// When a module is discovered to not be in stable directories, traverse &
   /// update all modules that depend on it.
-  void
+  CLANG_ABI void
   updateDependentsNotInStableDirs(PrebuiltModulesAttrsMap &PrebuiltModulesMap);
 
   /// Read-only access to whether the module is made up of dependencies in
@@ -191,11 +192,11 @@ struct ModuleDeps {
 
   /// Invokes \c Cb for all file dependencies of this module. Each provided
   /// \c StringRef is only valid within the individual callback invocation.
-  void forEachFileDep(llvm::function_ref<void(StringRef)> Cb) const;
+  CLANG_ABI void forEachFileDep(llvm::function_ref<void(StringRef)> Cb) const;
 
   /// Get (or compute) the compiler invocation that can be used to build this
   /// module. Does not include argv[0].
-  const std::vector<std::string> &getBuildArguments() const;
+  CLANG_ABI const std::vector<std::string> &getBuildArguments() const;
 
 private:
   friend class ModuleDepCollector;
@@ -219,7 +220,7 @@ class ModuleDepCollector;
 /// during preprocessing. At the end of the main file, it also collects
 /// transitive modular dependencies and passes everything to the
 /// \c DependencyConsumer of the parent \c ModuleDepCollector.
-class ModuleDepCollectorPP final : public PPCallbacks {
+class CLANG_ABI ModuleDepCollectorPP final : public PPCallbacks {
 public:
   ModuleDepCollectorPP(ModuleDepCollector &MDC) : MDC(MDC) {}
 
@@ -275,7 +276,7 @@ private:
 
 /// Collects modular and non-modular dependencies of the main file by attaching
 /// \c ModuleDepCollectorPP to the preprocessor.
-class ModuleDepCollector final : public DependencyCollector {
+class CLANG_ABI ModuleDepCollector final : public DependencyCollector {
 public:
   ModuleDepCollector(DependencyScanningService &Service,
                      std::unique_ptr<DependencyOutputOptions> Opts,
@@ -379,7 +380,7 @@ private:
 };
 
 /// Resets codegen options that don't affect modules/PCH.
-void resetBenignCodeGenOptions(frontend::ActionKind ProgramAction,
+CLANG_ABI void resetBenignCodeGenOptions(frontend::ActionKind ProgramAction,
                                const LangOptions &LangOpts,
                                CodeGenOptions &CGOpts);
 
@@ -387,7 +388,7 @@ void resetBenignCodeGenOptions(frontend::ActionKind ProgramAction,
 ///
 /// \param Directories Paths known to be in a stable location. e.g. Sysroot.
 /// \param Input Path to evaluate.
-bool isPathInStableDir(const ArrayRef<StringRef> Directories,
+CLANG_ABI bool isPathInStableDir(const ArrayRef<StringRef> Directories,
                        const StringRef Input);
 
 /// Determine if options collected from a module's
@@ -395,7 +396,7 @@ bool isPathInStableDir(const ArrayRef<StringRef> Directories,
 ///
 /// \param Directories Paths known to be in a stable location. e.g. Sysroot.
 /// \param HSOpts Header search options derived from the compiler invocation.
-bool areOptionsInStableDir(const ArrayRef<StringRef> Directories,
+CLANG_ABI bool areOptionsInStableDir(const ArrayRef<StringRef> Directories,
                            const HeaderSearchOptions &HSOpts);
 
 } // end namespace dependencies

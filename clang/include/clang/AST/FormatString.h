@@ -18,6 +18,7 @@
 #ifndef LLVM_CLANG_AST_FORMATSTRING_H
 #define LLVM_CLANG_AST_FORMATSTRING_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/CanonicalType.h"
 #include <optional>
 
@@ -112,7 +113,7 @@ public:
   Kind getKind() const { return kind; }
   void setKind(Kind k) { kind = k; }
 
-  const char *toString() const;
+  CLANG_ABI const char *toString() const;
 
 private:
   const char *Position;
@@ -249,11 +250,11 @@ public:
     return kind >= FixedPointArgBeg && kind <= FixedPointArgEnd;
   }
 
-  const char *toString() const;
+  CLANG_ABI const char *toString() const;
 
   bool isPrintfKind() const { return IsPrintf; }
 
-  std::optional<ConversionSpecifier> getStandardSpecifier() const;
+  CLANG_ABI std::optional<ConversionSpecifier> getStandardSpecifier() const;
 
 protected:
   bool IsPrintf;
@@ -337,14 +338,14 @@ public:
     return Res;
   }
 
-  MatchKind matchesType(ASTContext &C, QualType argTy) const;
-  MatchKind matchesArgType(ASTContext &C, const ArgType &other) const;
+  CLANG_ABI MatchKind matchesType(ASTContext &C, QualType argTy) const;
+  CLANG_ABI MatchKind matchesArgType(ASTContext &C, const ArgType &other) const;
 
-  QualType getRepresentativeType(ASTContext &C) const;
+  CLANG_ABI QualType getRepresentativeType(ASTContext &C) const;
 
-  ArgType makeVectorType(ASTContext &C, unsigned NumElts) const;
+  CLANG_ABI ArgType makeVectorType(ASTContext &C, unsigned NumElts) const;
 
-  std::string getRepresentativeTypeName(ASTContext &C) const;
+  CLANG_ABI std::string getRepresentativeTypeName(ASTContext &C) const;
 };
 
 class OptionalAmount {
@@ -396,9 +397,9 @@ public:
     return length + UsesDotPrefix;
   }
 
-  ArgType getArgType(ASTContext &Ctx) const;
+  CLANG_ABI ArgType getArgType(ASTContext &Ctx) const;
 
-  void toString(raw_ostream &os) const;
+  CLANG_ABI void toString(raw_ostream &os) const;
 
   bool usesPositionalArg() const { return (bool) UsesPositionalArg; }
   unsigned getPositionalArgIndex() const {
@@ -476,20 +477,20 @@ public:
 
   bool usesPositionalArg() const { return UsesPositionalArg; }
 
-  bool hasValidLengthModifier(const TargetInfo &Target,
+  CLANG_ABI bool hasValidLengthModifier(const TargetInfo &Target,
                               const LangOptions &LO) const;
 
-  bool hasStandardLengthModifier() const;
+  CLANG_ABI bool hasStandardLengthModifier() const;
 
-  std::optional<LengthModifier> getCorrectedLengthModifier() const;
+  CLANG_ABI std::optional<LengthModifier> getCorrectedLengthModifier() const;
 
-  bool hasStandardConversionSpecifier(const LangOptions &LangOpt) const;
+  CLANG_ABI bool hasStandardConversionSpecifier(const LangOptions &LangOpt) const;
 
-  bool hasStandardLengthConversionCombination() const;
+  CLANG_ABI bool hasStandardLengthConversionCombination() const;
 
   /// For a TypedefType QT, if it is a named integer type such as size_t,
   /// assign the appropriate value to LM and return true.
-  static bool namedTypeToLengthModifier(ASTContext &Ctx, QualType QT,
+  CLANG_ABI static bool namedTypeToLengthModifier(ASTContext &Ctx, QualType QT,
                                         LengthModifier &LM);
 };
 
@@ -547,7 +548,7 @@ public:
         HasObjCTechnicalTerm("tt"), IsPrivate("private"), IsPublic("public"),
         IsSensitive("sensitive") {}
 
-  static PrintfSpecifier Parse(const char *beg, const char *end);
+  CLANG_ABI static PrintfSpecifier Parse(const char *beg, const char *end);
 
     // Methods for incrementally constructing the PrintfSpecifier.
   void setConversionSpecifier(const PrintfConversionSpecifier &cs) {
@@ -605,7 +606,7 @@ public:
   /// will return null if the format specifier does not have
   /// a matching data argument or the matching argument matches
   /// more than one type.
-  ArgType getArgType(ASTContext &Ctx, bool IsObjCLiteral) const;
+  CLANG_ABI ArgType getArgType(ASTContext &Ctx, bool IsObjCLiteral) const;
 
   const OptionalFlag &hasThousandsGrouping() const {
       return HasThousandsGrouping;
@@ -627,21 +628,21 @@ public:
   /// Changes the specifier and length according to a QualType, retaining any
   /// flags or options. Returns true on success, or false when a conversion
   /// was not successful.
-  bool fixType(QualType QT, const LangOptions &LangOpt, ASTContext &Ctx,
+  CLANG_ABI bool fixType(QualType QT, const LangOptions &LangOpt, ASTContext &Ctx,
                bool IsObjCLiteral);
 
-  void toString(raw_ostream &os) const;
+  CLANG_ABI void toString(raw_ostream &os) const;
 
   // Validation methods - to check if any element results in undefined behavior
-  bool hasValidPlusPrefix() const;
-  bool hasValidAlternativeForm() const;
-  bool hasValidLeadingZeros() const;
-  bool hasValidSpacePrefix() const;
-  bool hasValidLeftJustified() const;
-  bool hasValidThousandsGroupingPrefix() const;
+  CLANG_ABI bool hasValidPlusPrefix() const;
+  CLANG_ABI bool hasValidAlternativeForm() const;
+  CLANG_ABI bool hasValidLeadingZeros() const;
+  CLANG_ABI bool hasValidSpacePrefix() const;
+  CLANG_ABI bool hasValidLeftJustified() const;
+  CLANG_ABI bool hasValidThousandsGroupingPrefix() const;
 
-  bool hasValidPrecision() const;
-  bool hasValidFieldWidth() const;
+  CLANG_ABI bool hasValidPrecision() const;
+  CLANG_ABI bool hasValidFieldWidth() const;
 };
 }  // end analyze_printf namespace
 
@@ -696,14 +697,14 @@ public:
     return CS.consumesDataArgument() && !SuppressAssignment;
   }
 
-  ArgType getArgType(ASTContext &Ctx) const;
+  CLANG_ABI ArgType getArgType(ASTContext &Ctx) const;
 
-  bool fixType(QualType QT, QualType RawQT, const LangOptions &LangOpt,
+  CLANG_ABI bool fixType(QualType QT, QualType RawQT, const LangOptions &LangOpt,
                ASTContext &Ctx);
 
-  void toString(raw_ostream &os) const;
+  CLANG_ABI void toString(raw_ostream &os) const;
 
-  static ScanfSpecifier Parse(const char *beg, const char *end);
+  CLANG_ABI static ScanfSpecifier Parse(const char *beg, const char *end);
 };
 
 } // end analyze_scanf namespace
@@ -715,7 +716,7 @@ namespace analyze_format_string {
 
 enum PositionContext { FieldWidthPos = 0, PrecisionPos = 1 };
 
-class FormatStringHandler {
+class CLANG_ABI FormatStringHandler {
 public:
   FormatStringHandler() {}
   virtual ~FormatStringHandler();
@@ -778,19 +779,19 @@ public:
   virtual void HandleIncompleteScanList(const char *start, const char *end) {}
 };
 
-bool ParsePrintfString(FormatStringHandler &H,
+CLANG_ABI bool ParsePrintfString(FormatStringHandler &H,
                        const char *beg, const char *end, const LangOptions &LO,
                        const TargetInfo &Target, bool isFreeBSDKPrintf);
 
-bool ParseFormatStringHasSArg(const char *beg, const char *end,
+CLANG_ABI bool ParseFormatStringHasSArg(const char *beg, const char *end,
                               const LangOptions &LO, const TargetInfo &Target);
 
-bool ParseScanfString(FormatStringHandler &H,
+CLANG_ABI bool ParseScanfString(FormatStringHandler &H,
                       const char *beg, const char *end, const LangOptions &LO,
                       const TargetInfo &Target);
 
 /// Return true if the given string has at least one formatting specifier.
-bool parseFormatStringHasFormattingSpecifiers(const char *Begin,
+CLANG_ABI bool parseFormatStringHasFormattingSpecifiers(const char *Begin,
                                               const char *End,
                                               const LangOptions &LO,
                                               const TargetInfo &Target);

@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_BASIC_FILEMANAGER_H
 #define LLVM_CLANG_BASIC_FILEMANAGER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/DirectoryEntry.h"
 #include "clang/Basic/FileEntry.h"
 #include "clang/Basic/FileSystemOptions.h"
@@ -139,9 +140,9 @@ public:
   ///
   /// \param FS if non-null, the VFS to use.  Otherwise uses
   /// llvm::vfs::getRealFileSystem().
-  FileManager(const FileSystemOptions &FileSystemOpts,
+  CLANG_ABI FileManager(const FileSystemOptions &FileSystemOpts,
               IntrusiveRefCntPtr<llvm::vfs::FileSystem> FS = nullptr);
-  ~FileManager();
+  CLANG_ABI ~FileManager();
 
   /// Installs the provided FileSystemStatCache object within
   /// the FileManager.
@@ -150,10 +151,10 @@ public:
   ///
   /// \param statCache the new stat cache to install. Ownership of this
   /// object is transferred to the FileManager.
-  void setStatCache(std::unique_ptr<FileSystemStatCache> statCache);
+  CLANG_ABI void setStatCache(std::unique_ptr<FileSystemStatCache> statCache);
 
   /// Removes the FileSystemStatCache object from the manager.
-  void clearStatCache();
+  CLANG_ABI void clearStatCache();
 
   /// Returns the number of unique real file entries cached by the file manager.
   size_t getNumUniqueRealFiles() const { return UniqueRealFiles.size(); }
@@ -168,7 +169,7 @@ public:
   ///
   /// \param CacheFailure If true and the file does not exist, we'll cache
   /// the failure to find this file.
-  llvm::Expected<DirectoryEntryRef> getDirectoryRef(StringRef DirName,
+  CLANG_ABI llvm::Expected<DirectoryEntryRef> getDirectoryRef(StringRef DirName,
                                                     bool CacheFailure = true);
 
   /// Get a \c DirectoryEntryRef if it exists, without doing anything on error.
@@ -191,7 +192,7 @@ public:
   ///
   /// \param CacheFailure If true and the file does not exist, we'll cache
   /// the failure to find this file.
-  llvm::Expected<FileEntryRef> getFileRef(StringRef Filename,
+  CLANG_ABI llvm::Expected<FileEntryRef> getFileRef(StringRef Filename,
                                           bool OpenFile = false,
                                           bool CacheFailure = true,
                                           bool IsText = true);
@@ -202,7 +203,7 @@ public:
   /// This reads and caches stdin before returning. Subsequent calls return the
   /// same file entry, and a reference to the cached input is returned by calls
   /// to getBufferForFile.
-  llvm::Expected<FileEntryRef> getSTDIN();
+  CLANG_ABI llvm::Expected<FileEntryRef> getSTDIN();
 
   /// Get a FileEntryRef if it exists, without doing anything on error.
   OptionalFileEntryRef getOptionalFileRef(StringRef Filename,
@@ -224,7 +225,7 @@ public:
 
   /// Enable or disable tracking of VFS usage. Used to not track full header
   /// search and implicit modulemap lookup.
-  void trackVFSUsage(bool Active);
+  CLANG_ABI void trackVFSUsage(bool Active);
 
   void setVirtualFileSystem(IntrusiveRefCntPtr<llvm::vfs::FileSystem> FS) {
     this->FS = std::move(FS);
@@ -234,12 +235,12 @@ public:
   /// if there were a file with the given name on disk.
   ///
   /// The file itself is not accessed.
-  FileEntryRef getVirtualFileRef(StringRef Filename, off_t Size,
+  CLANG_ABI FileEntryRef getVirtualFileRef(StringRef Filename, off_t Size,
                                  time_t ModificationTime);
 
   LLVM_DEPRECATED("Functions returning FileEntry are deprecated.",
                   "getVirtualFileRef()")
-  const FileEntry *getVirtualFile(StringRef Filename, off_t Size,
+  const CLANG_ABI FileEntry *getVirtualFile(StringRef Filename, off_t Size,
                                   time_t ModificationTime);
 
   /// Retrieve a FileEntry that bypasses VFE, which is expected to be a virtual
@@ -250,14 +251,14 @@ public:
   /// bypasses all mapping and uniquing, blindly creating a new FileEntry.
   /// There is no attempt to deduplicate these; if you bypass the same file
   /// twice, you get two new file entries.
-  OptionalFileEntryRef getBypassFile(FileEntryRef VFE);
+  CLANG_ABI OptionalFileEntryRef getBypassFile(FileEntryRef VFE);
 
   /// Open the specified file as a MemoryBuffer, returning a new
   /// MemoryBuffer if successful, otherwise returning null.
   /// The IsText parameter controls whether the file should be opened as a text
   /// or binary file, and should be set to false if the file contents should be
   /// treated as binary.
-  llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>>
+  CLANG_ABI llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>>
   getBufferForFile(FileEntryRef Entry, bool isVolatile = false,
                    bool RequiresNullTerminator = true,
                    std::optional<int64_t> MaybeLimit = std::nullopt,
@@ -273,7 +274,7 @@ public:
   }
 
 private:
-  llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>>
+  CLANG_ABI llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>>
   getBufferForFileImpl(StringRef Filename, int64_t FileSize, bool isVolatile,
                        bool RequiresNullTerminator, bool IsText) const;
 
@@ -286,23 +287,23 @@ public:
   /// FileManager's FileSystemOptions.
   ///
   /// \returns a \c std::error_code describing an error, if there was one
-  std::error_code getNoncachedStatValue(StringRef Path,
+  CLANG_ABI std::error_code getNoncachedStatValue(StringRef Path,
                                         llvm::vfs::Status &Result);
 
   /// If path is not absolute and FileSystemOptions set the working
   /// directory, the path is modified to be relative to the given
   /// working directory.
   /// \returns true if \c path changed.
-  bool FixupRelativePath(SmallVectorImpl<char> &path) const;
+  CLANG_ABI bool FixupRelativePath(SmallVectorImpl<char> &path) const;
 
   /// Makes \c Path absolute taking into account FileSystemOptions and the
   /// working directory option.
   /// \returns true if \c Path changed to absolute.
-  bool makeAbsolutePath(SmallVectorImpl<char> &Path) const;
+  CLANG_ABI bool makeAbsolutePath(SmallVectorImpl<char> &Path) const;
 
   /// Produce an array mapping from the unique IDs assigned to each
   /// file to the corresponding FileEntryRef.
-  void
+  CLANG_ABI void
   GetUniqueIDMapping(SmallVectorImpl<OptionalFileEntryRef> &UIDToFiles) const;
 
   /// Retrieve the canonical name for a given directory.
@@ -310,14 +311,14 @@ public:
   /// This is a very expensive operation, despite its results being cached,
   /// and should only be used when the physical layout of the file system is
   /// required, which is (almost) never.
-  StringRef getCanonicalName(DirectoryEntryRef Dir);
+  CLANG_ABI StringRef getCanonicalName(DirectoryEntryRef Dir);
 
   /// Retrieve the canonical name for a given file.
   ///
   /// This is a very expensive operation, despite its results being cached,
   /// and should only be used when the physical layout of the file system is
   /// required, which is (almost) never.
-  StringRef getCanonicalName(FileEntryRef File);
+  CLANG_ABI StringRef getCanonicalName(FileEntryRef File);
 
 private:
   /// Retrieve the canonical name for a given file or directory.
@@ -326,11 +327,11 @@ private:
   StringRef getCanonicalName(const void *Entry, StringRef Name);
 
 public:
-  void PrintStats() const;
+  CLANG_ABI void PrintStats() const;
 
   /// Import statistics from a child FileManager and add them to this current
   /// FileManager.
-  void AddStats(const FileManager &Other);
+  CLANG_ABI void AddStats(const FileManager &Other);
 };
 
 } // end namespace clang

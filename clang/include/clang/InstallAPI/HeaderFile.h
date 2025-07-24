@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_INSTALLAPI_HEADERFILE_H
 #define LLVM_CLANG_INSTALLAPI_HEADERFILE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/FileManager.h"
 #include "clang/Basic/LangStandard.h"
 #include "clang/InstallAPI/MachO.h"
@@ -73,7 +74,7 @@ public:
       : FullPath(FullPath), Type(Type), IncludeName(IncludeName),
         Language(Language) {}
 
-  static llvm::Regex getFrameworkIncludeRule();
+  CLANG_ABI static llvm::Regex getFrameworkIncludeRule();
 
   HeaderType getType() const { return Type; }
   StringRef getIncludeName() const { return IncludeName; }
@@ -121,14 +122,14 @@ private:
   bool FoundMatch{false};
 
 public:
-  HeaderGlob(StringRef GlobString, llvm::Regex &&, HeaderType Type);
+  CLANG_ABI HeaderGlob(StringRef GlobString, llvm::Regex &&, HeaderType Type);
 
   /// Create a header glob from string for the header access level.
-  static llvm::Expected<std::unique_ptr<HeaderGlob>>
+  CLANG_ABI static llvm::Expected<std::unique_ptr<HeaderGlob>>
   create(StringRef GlobString, HeaderType Type);
 
   /// Query if provided header matches glob.
-  bool match(const HeaderFile &Header);
+  CLANG_ABI bool match(const HeaderFile &Header);
 
   /// Query if a header was matched in the glob, used primarily for error
   /// reporting.
@@ -146,20 +147,20 @@ public:
 ///
 /// \param FullPath Path to the header file which includes the library
 /// structure.
-std::optional<std::string> createIncludeHeaderName(const StringRef FullPath);
+CLANG_ABI std::optional<std::string> createIncludeHeaderName(const StringRef FullPath);
 using HeaderSeq = std::vector<HeaderFile>;
 
 /// Determine if Path is a header file.
 /// It does not touch the file system.
 ///
 /// \param  Path File path to file.
-bool isHeaderFile(StringRef Path);
+CLANG_ABI bool isHeaderFile(StringRef Path);
 
 /// Given input directory, collect all header files.
 ///
 /// \param FM FileManager for finding input files.
 /// \param Directory Path to directory file.
-llvm::Expected<PathSeq> enumerateFiles(clang::FileManager &FM,
+CLANG_ABI llvm::Expected<PathSeq> enumerateFiles(clang::FileManager &FM,
                                        StringRef Directory);
 
 } // namespace clang::installapi

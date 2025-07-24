@@ -35,6 +35,7 @@
 #ifndef LLVM_CLANG_ASTMATCHERS_DYNAMIC_PARSER_H
 #define LLVM_CLANG_ASTMATCHERS_DYNAMIC_PARSER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/ASTMatchers/ASTMatchersInternal.h"
 #include "clang/ASTMatchers/Dynamic/Registry.h"
 #include "clang/ASTMatchers/Dynamic/VariantValue.h"
@@ -64,7 +65,7 @@ public:
   /// creation and do some extra work. For example, it could apply some
   /// transformation to the matcher by adding some id() nodes, or could detect
   /// specific matcher nodes for more efficient lookup.
-  class Sema {
+  class CLANG_ABI Sema {
   public:
     virtual ~Sema();
 
@@ -134,7 +135,7 @@ public:
 
   /// Sema implementation that uses the matcher registry to process the
   ///   tokens.
-  class RegistrySema : public Parser::Sema {
+  class CLANG_ABI RegistrySema : public Parser::Sema {
   public:
     ~RegistrySema() override;
 
@@ -180,7 +181,7 @@ public:
   ///   Optional if an error occurred. In that case, \c Error will contain a
   ///   description of the error.
   ///   The caller takes ownership of the DynTypedMatcher object returned.
-  static std::optional<DynTypedMatcher>
+  CLANG_ABI static std::optional<DynTypedMatcher>
   parseMatcherExpression(StringRef &MatcherCode, Sema *S,
                          const NamedValueMap *NamedValues, Diagnostics *Error);
   static std::optional<DynTypedMatcher>
@@ -204,7 +205,7 @@ public:
   /// \param NamedValues A map of precomputed named values.  This provides
   ///   the dictionary for the <NamedValue> rule of the grammar.
   ///   If null, it is ignored.
-  static bool parseExpression(StringRef &Code, Sema *S,
+  CLANG_ABI static bool parseExpression(StringRef &Code, Sema *S,
                               const NamedValueMap *NamedValues,
                               VariantValue *Value, Diagnostics *Error);
   static bool parseExpression(StringRef &Code, Sema *S, VariantValue *Value,
@@ -227,7 +228,7 @@ public:
   ///
   /// \return The list of completions, which may be empty if there are no
   /// available completions or if an error occurred.
-  static std::vector<MatcherCompletion>
+  CLANG_ABI static std::vector<MatcherCompletion>
   completeExpression(StringRef &Code, unsigned CompletionOffset, Sema *S,
                      const NamedValueMap *NamedValues);
   static std::vector<MatcherCompletion>

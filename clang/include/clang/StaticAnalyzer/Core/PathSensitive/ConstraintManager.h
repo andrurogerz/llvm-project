@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_CONSTRAINTMANAGER_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_CONSTRAINTMANAGER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/ProgramState_Fwd.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/SVals.h"
@@ -66,7 +67,7 @@ public:
   bool isUnderconstrained() const { return !Val.has_value(); }
 };
 
-class ConstraintManager {
+class CLANG_ABI ConstraintManager {
 public:
   ConstraintManager() = default;
   virtual ~ConstraintManager();
@@ -184,11 +185,11 @@ protected:
                                   AssumeFunction &Assume);
 };
 
-std::unique_ptr<ConstraintManager>
+CLANG_ABI std::unique_ptr<ConstraintManager>
 CreateRangeConstraintManager(ProgramStateManager &statemgr,
                              ExprEngine *exprengine);
 
-std::unique_ptr<ConstraintManager>
+CLANG_ABI std::unique_ptr<ConstraintManager>
 CreateZ3ConstraintManager(ProgramStateManager &statemgr,
                           ExprEngine *exprengine);
 

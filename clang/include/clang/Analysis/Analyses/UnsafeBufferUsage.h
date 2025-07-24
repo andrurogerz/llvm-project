@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_ANALYSES_UNSAFEBUFFERUSAGE_H
 #define LLVM_CLANG_ANALYSIS_ANALYSES_UNSAFEBUFFERUSAGE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/Expr.h"
 #include "clang/AST/Stmt.h"
@@ -178,17 +179,17 @@ public:
 
 // This function invokes the analysis and allows the caller to react to it
 // through the handler class.
-void checkUnsafeBufferUsage(const Decl *D, UnsafeBufferUsageHandler &Handler,
+CLANG_ABI void checkUnsafeBufferUsage(const Decl *D, UnsafeBufferUsageHandler &Handler,
                             bool EmitSuggestions);
 
 namespace internal {
 // Tests if any two `FixItHint`s in `FixIts` conflict.  Two `FixItHint`s
 // conflict if they have overlapping source ranges.
-bool anyConflict(const llvm::SmallVectorImpl<FixItHint> &FixIts,
+CLANG_ABI bool anyConflict(const llvm::SmallVectorImpl<FixItHint> &FixIts,
                  const SourceManager &SM);
 } // namespace internal
 
-std::set<const Expr *> findUnsafePointers(const FunctionDecl *FD);
+CLANG_ABI std::set<const Expr *> findUnsafePointers(const FunctionDecl *FD);
 } // end namespace clang
 
 #endif /* LLVM_CLANG_ANALYSIS_ANALYSES_UNSAFEBUFFERUSAGE_H */

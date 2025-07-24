@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_PARSE_PARSER_H
 #define LLVM_CLANG_PARSE_PARSER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/OpenACCKinds.h"
 #include "clang/Basic/OperatorPrecedence.h"
 #include "clang/Lex/CodeCompletionHandler.h"
@@ -168,7 +169,7 @@ enum class CXX11AttributeKind {
 /// been read.
 ///
 /// \nosubgrouping
-class Parser : public CodeCompletionHandler {
+class CLANG_ABI Parser : public CodeCompletionHandler {
   // Table of Contents
   // -----------------
   // 1. Parsing (Parser.cpp)
@@ -849,11 +850,11 @@ private:
   public:
     /// Set the flags for the current scope to ScopeFlags. If ManageFlags is
     /// false, this object does nothing.
-    ParseScopeFlags(Parser *Self, unsigned ScopeFlags, bool ManageFlags = true);
+    CLANG_ABI ParseScopeFlags(Parser *Self, unsigned ScopeFlags, bool ManageFlags = true);
 
     /// Restore the flags for the current scope to what they were before this
     /// object overrode them.
-    ~ParseScopeFlags();
+    CLANG_ABI ~ParseScopeFlags();
   };
 
   /// Emits a diagnostic suggesting parentheses surrounding a
@@ -1115,7 +1116,7 @@ private:
   /// (including such things in nested classes)."
   /// LateParsedDeclarations build the tree of those elements so they can
   /// be parsed after parsing the top-level class.
-  class LateParsedDeclaration {
+  class CLANG_ABI LateParsedDeclaration {
   public:
     virtual ~LateParsedDeclaration();
 
@@ -1128,7 +1129,7 @@ private:
 
   /// Inner node of the LateParsedDeclaration tree that parses
   /// all its members recursively.
-  class LateParsedClass : public LateParsedDeclaration {
+  class CLANG_ABI LateParsedClass : public LateParsedDeclaration {
   public:
     LateParsedClass(Parser *P, ParsingClass *C);
     ~LateParsedClass() override;
@@ -1154,7 +1155,7 @@ private:
   /// member declarations.
   /// FIXME: Perhaps we should change the name of LateParsedDeclaration to
   /// LateParsedTokens.
-  struct LateParsedAttribute : public LateParsedDeclaration {
+  struct CLANG_ABI LateParsedAttribute : public LateParsedDeclaration {
     Parser *Self;
     CachedTokens Toks;
     IdentifierInfo &AttrName;
@@ -1175,7 +1176,7 @@ private:
   /// may reference member variables and so need to be parsed at the
   /// end of the class declaration after parsing all other member
   /// member declarations.
-  class LateParsedPragma : public LateParsedDeclaration {
+  class CLANG_ABI LateParsedPragma : public LateParsedDeclaration {
     Parser *Self = nullptr;
     AccessSpecifier AS = AS_none;
     CachedTokens Toks;
@@ -1214,7 +1215,7 @@ private:
   /// Contains the lexed tokens of a member function definition
   /// which needs to be parsed at the end of the class declaration
   /// after parsing all other member declarations.
-  struct LexedMethod : public LateParsedDeclaration {
+  struct CLANG_ABI LexedMethod : public LateParsedDeclaration {
     Parser *Self;
     Decl *D;
     CachedTokens Toks;
@@ -1247,7 +1248,7 @@ private:
   /// contains at least one entity whose parsing needs to be delayed
   /// until the class itself is completely-defined, such as a default
   /// argument (C++ [class.mem]p2).
-  struct LateParsedMethodDeclaration : public LateParsedDeclaration {
+  struct CLANG_ABI LateParsedMethodDeclaration : public LateParsedDeclaration {
     explicit LateParsedMethodDeclaration(Parser *P, Decl *M)
         : Self(P), Method(M), ExceptionSpecTokens(nullptr) {}
 
@@ -1273,7 +1274,7 @@ private:
   /// LateParsedMemberInitializer - An initializer for a non-static class data
   /// member whose parsing must to be delayed until the class is completely
   /// defined (C++11 [class.mem]p2).
-  struct LateParsedMemberInitializer : public LateParsedDeclaration {
+  struct CLANG_ABI LateParsedMemberInitializer : public LateParsedDeclaration {
     LateParsedMemberInitializer(Parser *P, Decl *FD) : Self(P), Field(FD) {}
 
     void ParseLexedMemberInitializers() override;
@@ -5620,9 +5621,9 @@ private:
       P.CurParsedObjCImpl = this;
       Finished = false;
     }
-    ~ObjCImplParsingDataRAII();
+    CLANG_ABI ~ObjCImplParsingDataRAII();
 
-    void finish(SourceRange AtEnd);
+    CLANG_ABI void finish(SourceRange AtEnd);
     bool isFinished() const { return Finished; }
 
   private:
@@ -7707,8 +7708,8 @@ private:
       AQ_inline = 2,
       AQ_goto = 4,
     };
-    static const char *getQualifierName(AQ Qualifier);
-    bool setAsmQualifier(AQ Qualifier);
+    CLANG_ABI static const char *getQualifierName(AQ Qualifier);
+    CLANG_ABI bool setAsmQualifier(AQ Qualifier);
     inline bool isVolatile() const { return Qualifiers & AQ_volatile; };
     inline bool isInline() const { return Qualifiers & AQ_inline; };
     inline bool isGoto() const { return Qualifiers & AQ_goto; }
@@ -7954,7 +7955,7 @@ private:
     /// Whether the last template parameter list was empty.
     bool LastParameterListWasEmpty;
 
-    SourceRange getSourceRange() const LLVM_READONLY;
+    CLANG_ABI SourceRange getSourceRange() const LLVM_READONLY;
   };
 
   /// Lex a delayed template function for late parsing.

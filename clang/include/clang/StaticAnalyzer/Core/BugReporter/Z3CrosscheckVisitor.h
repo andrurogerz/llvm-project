@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_BUGREPORTER_Z3CROSSCHECKVISITOR_H
 #define LLVM_CLANG_STATICANALYZER_CORE_BUGREPORTER_Z3CROSSCHECKVISITOR_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/StaticAnalyzer/Core/BugReporter/BugReporterVisitors.h"
 
 namespace clang::ento {
@@ -21,7 +22,7 @@ namespace clang::ento {
 /// The bug visitor will walk all the nodes in a path and collect all the
 /// constraints. When it reaches the root node, will create a refutation
 /// manager and check if the constraints are satisfiable.
-class Z3CrosscheckVisitor final : public BugReporterVisitor {
+class CLANG_ABI Z3CrosscheckVisitor final : public BugReporterVisitor {
 public:
   struct Z3Result {
     std::optional<bool> IsSAT = std::nullopt;
@@ -80,7 +81,7 @@ public:
   /// Refer to
   /// https://discourse.llvm.org/t/analyzer-rfc-taming-z3-query-times/79520 to
   /// see why this heuristic was chosen.
-  Z3Decision interpretQueryResult(const Z3CrosscheckVisitor::Z3Result &Meta);
+  CLANG_ABI Z3Decision interpretQueryResult(const Z3CrosscheckVisitor::Z3Result &Meta);
 
 private:
   const AnalyzerOptions &Opts;

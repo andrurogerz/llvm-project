@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_REWRITE_CORE_REWRITER_H
 #define LLVM_CLANG_REWRITE_CORE_REWRITER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/SourceLocation.h"
 #include "llvm/ADT/RewriteBuffer.h"
@@ -86,9 +87,9 @@ public:
 
   /// getRangeSize - Return the size in bytes of the specified range if they
   /// are in the same file.  If not, this returns -1.
-  int getRangeSize(SourceRange Range,
+  CLANG_ABI int getRangeSize(SourceRange Range,
                    RewriteOptions opts = RewriteOptions()) const;
-  int getRangeSize(const CharSourceRange &Range,
+  CLANG_ABI int getRangeSize(const CharSourceRange &Range,
                    RewriteOptions opts = RewriteOptions()) const;
 
   /// getRewrittenText - Return the rewritten form of the text in the specified
@@ -96,7 +97,7 @@ public:
   /// in different buffers, this returns an empty string.
   ///
   /// Note that this method is not particularly efficient.
-  std::string getRewrittenText(CharSourceRange Range) const;
+  CLANG_ABI std::string getRewrittenText(CharSourceRange Range) const;
 
   /// getRewrittenText - Return the rewritten form of the text in the specified
   /// range.  If the start or end of the range was unrewritable or if they are
@@ -113,7 +114,7 @@ public:
   ///
   /// \param indentNewLines if true new lines in the string are indented
   /// using the indentation of the source line in position \p Loc.
-  bool InsertText(SourceLocation Loc, StringRef Str,
+  CLANG_ABI bool InsertText(SourceLocation Loc, StringRef Str,
                   bool InsertAfter = true, bool indentNewLines = false);
 
   /// InsertTextAfter - Insert the specified string at the specified location in
@@ -127,7 +128,7 @@ public:
 
   /// Insert the specified string after the token in the
   /// specified location.
-  bool InsertTextAfterToken(SourceLocation Loc, StringRef Str);
+  CLANG_ABI bool InsertTextAfterToken(SourceLocation Loc, StringRef Str);
 
   /// InsertText - Insert the specified string at the specified location in the
   /// original buffer.  This method returns true (and does nothing) if the input
@@ -139,7 +140,7 @@ public:
   }
 
   /// RemoveText - Remove the specified text region.
-  bool RemoveText(SourceLocation Start, unsigned Length,
+  CLANG_ABI bool RemoveText(SourceLocation Start, unsigned Length,
                   RewriteOptions opts = RewriteOptions());
 
   /// Remove the specified text region.
@@ -156,7 +157,7 @@ public:
   /// ReplaceText - This method replaces a range of characters in the input
   /// buffer with a new string.  This is effectively a combined "remove/insert"
   /// operation.
-  bool ReplaceText(SourceLocation Start, unsigned OrigLength,
+  CLANG_ABI bool ReplaceText(SourceLocation Start, unsigned OrigLength,
                    StringRef NewStr);
 
   /// ReplaceText - This method replaces a range of characters in the input
@@ -176,13 +177,13 @@ public:
   /// ReplaceText - This method replaces a range of characters in the input
   /// buffer with a new string.  This is effectively a combined "remove/insert"
   /// operation.
-  bool ReplaceText(SourceRange range, SourceRange replacementRange);
+  CLANG_ABI bool ReplaceText(SourceRange range, SourceRange replacementRange);
 
   /// Increase indentation for the lines between the given source range.
   /// To determine what the indentation should be, 'parentIndent' is used
   /// that should be at a source location with an indentation one degree
   /// lower than the given range.
-  bool IncreaseIndentation(CharSourceRange range, SourceLocation parentIndent);
+  CLANG_ABI bool IncreaseIndentation(CharSourceRange range, SourceLocation parentIndent);
   bool IncreaseIndentation(SourceRange range, SourceLocation parentIndent) {
     return IncreaseIndentation(CharSourceRange::getTokenRange(range),
                                parentIndent);
@@ -192,7 +193,7 @@ public:
   /// buffer, and allows you to write on it directly.  This is useful if you
   /// want efficient low-level access to apis for scribbling on one specific
   /// FileID's buffer.
-  llvm::RewriteBuffer &getEditBuffer(FileID FID);
+  CLANG_ABI llvm::RewriteBuffer &getEditBuffer(FileID FID);
 
   /// getRewriteBufferFor - Return the rewrite buffer for the specified FileID.
   /// If no modification has been made to it, return null.
@@ -213,7 +214,7 @@ public:
   /// Returns true if any files were not saved successfully.
   /// Outputs diagnostics via the source manager's diagnostic engine
   /// in case of an error.
-  bool overwriteChangedFiles();
+  CLANG_ABI bool overwriteChangedFiles();
 
 private:
   unsigned getLocationOffsetAndFileID(SourceLocation Loc, FileID &FID) const;

@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_MANGLE_H
 #define LLVM_CLANG_AST_MANGLE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/GlobalDecl.h"
 #include "clang/AST/Type.h"
@@ -42,14 +43,14 @@ class VarDecl;
 
 /// Extract mangling function name from MangleContext such that swift can call
 /// it to prepare for ObjCDirect in swift.
-void mangleObjCMethodName(raw_ostream &OS, bool includePrefixByte,
+CLANG_ABI void mangleObjCMethodName(raw_ostream &OS, bool includePrefixByte,
                           bool isInstanceMethod, StringRef ClassName,
                           std::optional<StringRef> CategoryName,
                           StringRef MethodName);
 
 /// MangleContext - Context for tracking state which persists across multiple
 /// calls to the C++ name mangler.
-class MangleContext {
+class CLANG_ABI MangleContext {
 public:
   enum ManglerKind { MK_Itanium, MK_Microsoft };
 
@@ -222,9 +223,9 @@ public:
     return C->getKind() == MK_Itanium;
   }
 
-  static ItaniumMangleContext *
+  CLANG_ABI static ItaniumMangleContext *
   create(ASTContext &Context, DiagnosticsEngine &Diags, bool IsAux = false);
-  static ItaniumMangleContext *create(ASTContext &Context,
+  CLANG_ABI static ItaniumMangleContext *create(ASTContext &Context,
                                       DiagnosticsEngine &Diags,
                                       DiscriminatorOverrideTy Discriminator,
                                       bool IsAux = false);
@@ -293,25 +294,25 @@ public:
     return C->getKind() == MK_Microsoft;
   }
 
-  static MicrosoftMangleContext *
+  CLANG_ABI static MicrosoftMangleContext *
   create(ASTContext &Context, DiagnosticsEngine &Diags, bool IsAux = false);
 };
 
 class ASTNameGenerator {
 public:
-  explicit ASTNameGenerator(ASTContext &Ctx);
-  ~ASTNameGenerator();
+  CLANG_ABI explicit ASTNameGenerator(ASTContext &Ctx);
+  CLANG_ABI ~ASTNameGenerator();
 
   /// Writes name for \p D to \p OS.
   /// \returns true on failure, false on success.
-  bool writeName(const Decl *D, raw_ostream &OS);
+  CLANG_ABI bool writeName(const Decl *D, raw_ostream &OS);
 
   /// \returns name for \p D
-  std::string getName(const Decl *D);
+  CLANG_ABI std::string getName(const Decl *D);
 
   /// \returns all applicable mangled names.
   /// For example C++ constructors/destructors can have multiple.
-  std::vector<std::string> getAllManglings(const Decl *D);
+  CLANG_ABI std::vector<std::string> getAllManglings(const Decl *D);
 
 private:
   class Implementation;

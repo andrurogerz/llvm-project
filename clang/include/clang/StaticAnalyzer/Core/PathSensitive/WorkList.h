@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_WORKLIST_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_WORKLIST_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/BlockCounter.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/ExplodedGraph.h"
 #include <cassert>
@@ -57,7 +58,7 @@ public:
   unsigned getIndex() const { return blockIdx; }
 };
 
-class WorkList {
+class CLANG_ABI WorkList {
   BlockCounter CurrentCounter;
 public:
   virtual ~WorkList();

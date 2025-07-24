@@ -18,6 +18,7 @@
 #ifndef LLVM_CLANG_TOOLING_CORE_REPLACEMENT_H
 #define LLVM_CLANG_TOOLING_CORE_REPLACEMENT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LangOptions.h"
 #include "clang/Basic/SourceLocation.h"
 #include "llvm/ADT/StringRef.h"
@@ -83,7 +84,7 @@ private:
 class Replacement {
 public:
   /// Creates an invalid (not applicable) replacement.
-  Replacement();
+  CLANG_ABI Replacement();
 
   /// Creates a replacement of the range [Offset, Offset+Length) in
   /// FilePath with ReplacementText.
@@ -91,16 +92,16 @@ public:
   /// \param FilePath A source file accessible via a SourceManager.
   /// \param Offset The byte offset of the start of the range in the file.
   /// \param Length The length of the range in bytes.
-  Replacement(StringRef FilePath, unsigned Offset, unsigned Length,
+  CLANG_ABI Replacement(StringRef FilePath, unsigned Offset, unsigned Length,
               StringRef ReplacementText);
 
   /// Creates a Replacement of the range [Start, Start+Length) with
   /// ReplacementText.
-  Replacement(const SourceManager &Sources, SourceLocation Start,
+  CLANG_ABI Replacement(const SourceManager &Sources, SourceLocation Start,
               unsigned Length, StringRef ReplacementText);
 
   /// Creates a Replacement of the given range with ReplacementText.
-  Replacement(const SourceManager &Sources, const CharSourceRange &Range,
+  CLANG_ABI Replacement(const SourceManager &Sources, const CharSourceRange &Range,
               StringRef ReplacementText,
               const LangOptions &LangOpts = LangOptions());
 
@@ -113,7 +114,7 @@ public:
   /// Returns whether this replacement can be applied to a file.
   ///
   /// Only replacements that are in a valid file can be applied.
-  bool isApplicable() const;
+  CLANG_ABI bool isApplicable() const;
 
   /// Accessors.
   /// @{
@@ -124,15 +125,15 @@ public:
   /// @}
 
   /// Applies the replacement on the Rewriter.
-  bool apply(Rewriter &Rewrite) const;
+  CLANG_ABI bool apply(Rewriter &Rewrite) const;
 
   /// Returns a human readable string representation.
-  std::string toString() const;
+  CLANG_ABI std::string toString() const;
 
 private:
   void setFromSourceLocation(const SourceManager &Sources, SourceLocation Start,
                              unsigned Length, StringRef ReplacementText);
-  void setFromSourceRange(const SourceManager &Sources,
+  CLANG_ABI void setFromSourceRange(const SourceManager &Sources,
                           const CharSourceRange &Range,
                           StringRef ReplacementText,
                           const LangOptions &LangOpts);
@@ -151,7 +152,7 @@ enum class replacement_error {
 
 /// Carries extra error information in replacement-related llvm::Error,
 /// e.g. fail applying replacements and replacements conflict.
-class ReplacementError : public llvm::ErrorInfo<ReplacementError> {
+class CLANG_ABI ReplacementError : public llvm::ErrorInfo<ReplacementError> {
 public:
   ReplacementError(replacement_error Err) : Err(Err) {}
 
@@ -198,10 +199,10 @@ private:
 };
 
 /// Less-than operator between two Replacements.
-bool operator<(const Replacement &LHS, const Replacement &RHS);
+CLANG_ABI bool operator<(const Replacement &LHS, const Replacement &RHS);
 
 /// Equal-to operator between two Replacements.
-bool operator==(const Replacement &LHS, const Replacement &RHS);
+CLANG_ABI bool operator==(const Replacement &LHS, const Replacement &RHS);
 inline bool operator!=(const Replacement &LHS, const Replacement &RHS) {
   return !(LHS == RHS);
 }
@@ -258,19 +259,19 @@ public:
   /// Replacements with offset UINT_MAX are special - we do not detect conflicts
   /// for such replacements since users may add them intentionally as a special
   /// category of replacements.
-  llvm::Error add(const Replacement &R);
+  CLANG_ABI llvm::Error add(const Replacement &R);
 
   /// Merges \p Replaces into the current replacements. \p Replaces
   /// refers to code after applying the current replacements.
-  [[nodiscard]] Replacements merge(const Replacements &Replaces) const;
+  [[nodiscard]] CLANG_ABI Replacements merge(const Replacements &Replaces) const;
 
   // Returns the affected ranges in the changed code.
-  std::vector<Range> getAffectedRanges() const;
+  CLANG_ABI std::vector<Range> getAffectedRanges() const;
 
   // Returns the new offset in the code after replacements being applied.
   // Note that if there is an insertion at Offset in the current replacements,
   // \p Offset will be shifted to Offset + Length in inserted text.
-  unsigned getShiftedCodePosition(unsigned Position) const;
+  CLANG_ABI unsigned getShiftedCodePosition(unsigned Position) const;
 
   unsigned size() const { return Replaces.size(); }
 
@@ -319,7 +320,7 @@ private:
 /// other applications.
 ///
 /// \returns true if all replacements apply. false otherwise.
-bool applyAllReplacements(const Replacements &Replaces, Rewriter &Rewrite);
+CLANG_ABI bool applyAllReplacements(const Replacements &Replaces, Rewriter &Rewrite);
 
 /// Applies all replacements in \p Replaces to \p Code.
 ///
@@ -328,7 +329,7 @@ bool applyAllReplacements(const Replacements &Replaces, Rewriter &Rewrite);
 /// replacements applied; otherwise, an llvm::Error carrying llvm::StringError
 /// is returned (the Error message can be converted to string using
 /// `llvm::toString()` and 'std::error_code` in the `Error` should be ignored).
-llvm::Expected<std::string> applyAllReplacements(StringRef Code,
+CLANG_ABI llvm::Expected<std::string> applyAllReplacements(StringRef Code,
                                                  const Replacements &Replaces);
 
 /// Collection of Replacements generated from a single translation unit.
@@ -347,14 +348,14 @@ struct TranslationUnitReplacements {
 ///
 /// \return The new ranges after \p Replaces are applied. The new ranges will be
 /// sorted and non-overlapping.
-std::vector<Range>
+CLANG_ABI std::vector<Range>
 calculateRangesAfterReplacements(const Replacements &Replaces,
                                  const std::vector<Range> &Ranges);
 
 /// If there are multiple <File, Replacements> pairs with the same file
 /// entry, we only keep one pair and discard the rest.
 /// If a file does not exist, its corresponding replacements will be ignored.
-std::map<std::string, Replacements> groupReplacementsByFile(
+CLANG_ABI std::map<std::string, Replacements> groupReplacementsByFile(
     FileManager &FileMgr,
     const std::map<std::string, Replacements> &FileToReplaces);
 

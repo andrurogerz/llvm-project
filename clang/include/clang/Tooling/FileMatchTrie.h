@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_TOOLING_FILEMATCHTRIE_H
 #define LLVM_CLANG_TOOLING_FILEMATCHTRIE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/StringRef.h"
 #include <memory>
@@ -55,17 +56,17 @@ struct PathComparator {
 /// >1 equivalent files: Match is ambiguous, return error.
 class FileMatchTrie {
 public:
-  FileMatchTrie();
+  CLANG_ABI FileMatchTrie();
 
   /// Construct a new \c FileMatchTrie with the given \c PathComparator.
   ///
   /// The \c FileMatchTrie takes ownership of 'Comparator'. Used for testing.
-  FileMatchTrie(PathComparator* Comparator);
+  CLANG_ABI FileMatchTrie(PathComparator* Comparator);
 
-  ~FileMatchTrie();
+  CLANG_ABI ~FileMatchTrie();
 
   /// Insert a new absolute path. Relative paths are ignored.
-  void insert(StringRef NewPath);
+  CLANG_ABI void insert(StringRef NewPath);
 
   /// Finds the corresponding file in this trie.
   ///
@@ -74,7 +75,7 @@ public:
   /// are no matches an empty \c StringRef is returned. If there are ambiguous
   /// matches, an empty \c StringRef is returned and a corresponding message
   /// written to 'Error'.
-  StringRef findEquivalent(StringRef FileName,
+  CLANG_ABI StringRef findEquivalent(StringRef FileName,
                            raw_ostream &Error) const;
 
 private:

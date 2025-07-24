@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_AST_INTERP_FUNCTION_H
 #define LLVM_CLANG_AST_INTERP_FUNCTION_H
 
+#include "clang/Support/Compiler.h"
 #include "Descriptor.h"
 #include "Source.h"
 #include "clang/AST/ASTLambda.h"
@@ -123,7 +124,7 @@ public:
   }
 
   /// Returns a parameter descriptor.
-  ParamDescriptor getParamDescriptor(unsigned Offset) const;
+  CLANG_ABI ParamDescriptor getParamDescriptor(unsigned Offset) const;
 
   /// Checks if the first argument is a RVO pointer.
   bool hasRVO() const { return HasRVO; }
@@ -148,7 +149,7 @@ public:
   const Scope &getScope(unsigned Idx) const { return Scopes[Idx]; }
 
   /// Returns the source information at a given PC.
-  SourceInfo getSource(CodePtr PC) const;
+  CLANG_ABI SourceInfo getSource(CodePtr PC) const;
 
   /// Checks if the function is valid to call.
   bool isValid() const { return IsValid || isLambdaStaticInvoker(); }
@@ -309,8 +310,8 @@ private:
 
 public:
   /// Dumps the disassembled bytecode to \c llvm::errs().
-  void dump() const;
-  void dump(llvm::raw_ostream &OS) const;
+  CLANG_ABI void dump() const;
+  CLANG_ABI void dump(llvm::raw_ostream &OS) const;
 };
 
 } // namespace interp

@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_FRONTEND_PRECOMPILEDPREAMBLE_H
 #define LLVM_CLANG_FRONTEND_PRECOMPILEDPREAMBLE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Lex/Lexer.h"
 #include "clang/Lex/Preprocessor.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
@@ -39,7 +40,7 @@ class DeclGroupRef;
 class PCHContainerOperations;
 
 /// Runs lexer to compute suggested preamble bounds.
-PreambleBounds ComputePreambleBounds(const LangOptions &LangOpts,
+CLANG_ABI PreambleBounds ComputePreambleBounds(const LangOptions &LangOpts,
                                      const llvm::MemoryBufferRef &Buffer,
                                      unsigned MaxLines);
 
@@ -81,7 +82,7 @@ public:
   ///
   /// \param Callbacks A set of callbacks to be executed when building
   /// the preamble.
-  static llvm::ErrorOr<PrecompiledPreamble>
+  CLANG_ABI static llvm::ErrorOr<PrecompiledPreamble>
   Build(const CompilerInvocation &Invocation,
         const llvm::MemoryBuffer *MainFileBuffer, PreambleBounds Bounds,
         DiagnosticsEngine &Diagnostics,
@@ -90,17 +91,17 @@ public:
         bool StoreInMemory, StringRef StoragePath,
         PreambleCallbacks &Callbacks);
 
-  PrecompiledPreamble(PrecompiledPreamble &&);
-  PrecompiledPreamble &operator=(PrecompiledPreamble &&);
-  ~PrecompiledPreamble();
+  CLANG_ABI PrecompiledPreamble(PrecompiledPreamble &&);
+  CLANG_ABI PrecompiledPreamble &operator=(PrecompiledPreamble &&);
+  CLANG_ABI ~PrecompiledPreamble();
 
   /// PreambleBounds used to build the preamble.
-  PreambleBounds getBounds() const;
+  CLANG_ABI PreambleBounds getBounds() const;
 
   /// Returns the size, in bytes, that preamble takes on disk or in memory.
   /// For on-disk preambles returns 0 if filesystem operations fail. Intended to
   /// be used for logging and debugging purposes only.
-  std::size_t getSize() const;
+  CLANG_ABI std::size_t getSize() const;
 
   /// Returned string is not null-terminated.
   llvm::StringRef getContents() const {
@@ -109,7 +110,7 @@ public:
 
   /// Check whether PrecompiledPreamble can be reused for the new contents(\p
   /// MainFileBuffer) of the main file.
-  bool CanReuse(const CompilerInvocation &Invocation,
+  CLANG_ABI bool CanReuse(const CompilerInvocation &Invocation,
                 const llvm::MemoryBufferRef &MainFileBuffer,
                 PreambleBounds Bounds, llvm::vfs::FileSystem &VFS) const;
 
@@ -121,14 +122,14 @@ public:
   /// MemoryBuffer with the Preamble after this method returns. The caller is
   /// responsible for making sure the PrecompiledPreamble instance outlives the
   /// compiler run and the AST that will be using the PCH.
-  void AddImplicitPreamble(CompilerInvocation &CI,
+  CLANG_ABI void AddImplicitPreamble(CompilerInvocation &CI,
                            IntrusiveRefCntPtr<llvm::vfs::FileSystem> &VFS,
                            llvm::MemoryBuffer *MainFileBuffer) const;
 
   /// Configure \p CI to use this preamble.
   /// Like AddImplicitPreamble, but doesn't assume CanReuse() is true.
   /// If this preamble does not match the file, it may parse differently.
-  void OverridePreamble(CompilerInvocation &CI,
+  CLANG_ABI void OverridePreamble(CompilerInvocation &CI,
                         IntrusiveRefCntPtr<llvm::vfs::FileSystem> &VFS,
                         llvm::MemoryBuffer *MainFileBuffer) const;
 
@@ -153,8 +154,8 @@ private:
     /// enough to tell if the file was changed.
     llvm::MD5::MD5Result MD5 = {};
 
-    static PreambleFileHash createForFile(off_t Size, time_t ModTime);
-    static PreambleFileHash
+    CLANG_ABI static PreambleFileHash createForFile(off_t Size, time_t ModTime);
+    CLANG_ABI static PreambleFileHash
     createForMemoryBuffer(const llvm::MemoryBufferRef &Buffer);
 
     friend bool operator==(const PreambleFileHash &LHS,
@@ -208,7 +209,7 @@ private:
 };
 
 /// A set of callbacks to gather useful information while building a preamble.
-class PreambleCallbacks {
+class CLANG_ABI PreambleCallbacks {
 public:
   virtual ~PreambleCallbacks() = default;
 
@@ -247,13 +248,13 @@ enum class BuildPreambleError {
   BadInputs
 };
 
-class BuildPreambleErrorCategory final : public std::error_category {
+class CLANG_ABI BuildPreambleErrorCategory final : public std::error_category {
 public:
   const char *name() const noexcept override;
   std::string message(int condition) const override;
 };
 
-std::error_code make_error_code(BuildPreambleError Error);
+CLANG_ABI std::error_code make_error_code(BuildPreambleError Error);
 } // namespace clang
 
 template <>

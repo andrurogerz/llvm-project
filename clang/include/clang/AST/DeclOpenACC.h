@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_DECLOPENACC_H
 #define LLVM_CLANG_AST_DECLOPENACC_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/OpenACCClause.h"
@@ -61,7 +62,7 @@ public:
 
   ArrayRef<const OpenACCClause *> clauses() const { return Clauses; }
   static bool classof(const Decl *D) { return classofKind(D->getKind()); }
-  static bool classofKind(Kind K);
+  CLANG_ABI static bool classofKind(Kind K);
 };
 
 class OpenACCDeclareDecl final
@@ -89,12 +90,12 @@ class OpenACCDeclareDecl final
   }
 
 public:
-  static OpenACCDeclareDecl *Create(ASTContext &Ctx, DeclContext *DC,
+  CLANG_ABI static OpenACCDeclareDecl *Create(ASTContext &Ctx, DeclContext *DC,
                                     SourceLocation StartLoc,
                                     SourceLocation DirLoc,
                                     SourceLocation EndLoc,
                                     ArrayRef<const OpenACCClause *> Clauses);
-  static OpenACCDeclareDecl *
+  CLANG_ABI static OpenACCDeclareDecl *
   CreateDeserialized(ASTContext &Ctx, GlobalDeclID ID, unsigned NumClauses);
   static bool classof(const Decl *D) { return classofKind(D->getKind()); }
   static bool classofKind(Kind K) { return K == OpenACCDeclare; }
@@ -134,12 +135,12 @@ class OpenACCRoutineDecl final
   }
 
 public:
-  static OpenACCRoutineDecl *
+  CLANG_ABI static OpenACCRoutineDecl *
   Create(ASTContext &Ctx, DeclContext *DC, SourceLocation StartLoc,
          SourceLocation DirLoc, SourceLocation LParenLoc, Expr *FuncRef,
          SourceLocation RParenLoc, SourceLocation EndLoc,
          ArrayRef<const OpenACCClause *> Clauses);
-  static OpenACCRoutineDecl *
+  CLANG_ABI static OpenACCRoutineDecl *
   CreateDeserialized(ASTContext &Ctx, GlobalDeclID ID, unsigned NumClauses);
   static bool classof(const Decl *D) { return classofKind(D->getKind()); }
   static bool classofKind(Kind K) { return K == OpenACCRoutine; }

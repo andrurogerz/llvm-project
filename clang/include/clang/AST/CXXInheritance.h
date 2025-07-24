@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_CXXINHERITANCE_H
 #define LLVM_CLANG_AST_CXXINHERITANCE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/DeclBase.h"
 #include "clang/AST/DeclCXX.h"
 #include "clang/AST/DeclarationName.h"
@@ -192,7 +193,7 @@ public:
   /// Determine whether the path from the most-derived type to the
   /// given base type is ambiguous (i.e., it refers to multiple subobjects of
   /// the same base type).
-  bool isAmbiguous(CanQualType BaseType);
+  CLANG_ABI bool isAmbiguous(CanQualType BaseType);
 
   /// Whether we are finding multiple paths to detect ambiguities.
   bool isFindingAmbiguities() const { return FindAmbiguities; }
@@ -218,11 +219,11 @@ public:
   void setOrigin(const CXXRecordDecl *Rec) { Origin = Rec; }
 
   /// Clear the base-paths results.
-  void clear();
+  CLANG_ABI void clear();
 
   /// Swap this data structure's contents with another CXXBasePaths
   /// object.
-  void swap(CXXBasePaths &Other);
+  CLANG_ABI void swap(CXXBasePaths &Other);
 };
 
 /// Uniquely identifies a virtual method within a class
@@ -291,16 +292,16 @@ public:
       SmallVectorImpl<UniqueVirtualMethod>::const_iterator;
 
   // Add a new overriding method for a particular subobject.
-  void add(unsigned OverriddenSubobject, UniqueVirtualMethod Overriding);
+  CLANG_ABI void add(unsigned OverriddenSubobject, UniqueVirtualMethod Overriding);
 
   // Add all of the overriding methods from "other" into overrides for
   // this method. Used when merging the overrides from multiple base
   // class subobjects.
-  void add(const OverridingMethods &Other);
+  CLANG_ABI void add(const OverridingMethods &Other);
 
   // Replace all overriding virtual methods in all subobjects with the
   // given virtual method.
-  void replaceAll(UniqueVirtualMethod Overriding);
+  CLANG_ABI void replaceAll(UniqueVirtualMethod Overriding);
 };
 
 /// A mapping from each virtual member function to its set of

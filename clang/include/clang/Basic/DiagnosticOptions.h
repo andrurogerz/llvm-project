@@ -68,7 +68,7 @@ CLANG_ABI raw_ostream& operator<<(raw_ostream& Out, DiagnosticLevelMask M);
 
 /// Options for controlling the compiler diagnostics engine.
 class DiagnosticOptions {
-  friend bool ParseDiagnosticArgs(DiagnosticOptions &, llvm::opt::ArgList &,
+  CLANG_ABI friend bool ParseDiagnosticArgs(DiagnosticOptions &, llvm::opt::ArgList &,
                                   clang::DiagnosticsEngine *, bool);
 
   friend class CompilerInvocation;

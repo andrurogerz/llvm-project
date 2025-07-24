@@ -18,6 +18,7 @@
 #ifndef LLVM_CLANG_TOOLING_REFACTORING_H
 #define LLVM_CLANG_TOOLING_REFACTORING_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Tooling/Core/Replacement.h"
 #include "clang/Tooling/Tooling.h"
 #include <map>
@@ -37,20 +38,20 @@ namespace tooling {
 class RefactoringTool : public ClangTool {
 public:
   /// \see ClangTool::ClangTool.
-  RefactoringTool(const CompilationDatabase &Compilations,
+  CLANG_ABI RefactoringTool(const CompilationDatabase &Compilations,
                   ArrayRef<std::string> SourcePaths,
                   std::shared_ptr<PCHContainerOperations> PCHContainerOps =
                       std::make_shared<PCHContainerOperations>());
 
   /// Returns the file path to replacements map to which replacements
   /// should be added during the run of the tool.
-  std::map<std::string, Replacements> &getReplacements();
+  CLANG_ABI std::map<std::string, Replacements> &getReplacements();
 
   /// Call run(), apply all generated replacements, and immediately save
   /// the results to disk.
   ///
   /// \returns 0 upon success. Non-zero upon failure.
-  int runAndSave(FrontendActionFactory *ActionFactory);
+  CLANG_ABI int runAndSave(FrontendActionFactory *ActionFactory);
 
   /// Apply all stored replacements to the given Rewriter.
   ///
@@ -61,7 +62,7 @@ public:
   /// applications.
   ///
   /// \returns true if all replacements apply. false otherwise.
-  bool applyAllReplacements(Rewriter &Rewrite);
+  CLANG_ABI bool applyAllReplacements(Rewriter &Rewrite);
 
 private:
   /// Write all refactored files to disk.
@@ -89,7 +90,7 @@ private:
 /// "include/clang/Format/Format.h" for all possible style forms.
 ///
 /// \returns true if all replacements applied and formatted. false otherwise.
-bool formatAndApplyAllReplacements(
+CLANG_ABI bool formatAndApplyAllReplacements(
     const std::map<std::string, Replacements> &FileToReplaces,
     Rewriter &Rewrite, StringRef Style = "file");
 

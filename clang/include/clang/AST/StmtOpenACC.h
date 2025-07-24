@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_STMTOPENACC_H
 #define LLVM_CLANG_AST_STMTOPENACC_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/OpenACCClause.h"
 #include "clang/AST/Stmt.h"
 #include "clang/Basic/OpenACCKinds.h"
@@ -169,9 +170,9 @@ public:
     return T->getStmtClass() == OpenACCComputeConstructClass;
   }
 
-  static OpenACCComputeConstruct *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OpenACCComputeConstruct *CreateEmpty(const ASTContext &C,
                                               unsigned NumClauses);
-  static OpenACCComputeConstruct *
+  CLANG_ABI static OpenACCComputeConstruct *
   Create(const ASTContext &C, OpenACCDirectiveKind K, SourceLocation BeginLoc,
          SourceLocation DirectiveLoc, SourceLocation EndLoc,
          ArrayRef<const OpenACCClause *> Clauses, Stmt *StructuredBlock);
@@ -212,10 +213,10 @@ public:
     return T->getStmtClass() == OpenACCLoopConstructClass;
   }
 
-  static OpenACCLoopConstruct *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OpenACCLoopConstruct *CreateEmpty(const ASTContext &C,
                                            unsigned NumClauses);
 
-  static OpenACCLoopConstruct *
+  CLANG_ABI static OpenACCLoopConstruct *
   Create(const ASTContext &C, OpenACCDirectiveKind ParentKind,
          SourceLocation BeginLoc, SourceLocation DirLoc, SourceLocation EndLoc,
          ArrayRef<const OpenACCClause *> Clauses, Stmt *Loop);
@@ -275,9 +276,9 @@ public:
     return T->getStmtClass() == OpenACCCombinedConstructClass;
   }
 
-  static OpenACCCombinedConstruct *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OpenACCCombinedConstruct *CreateEmpty(const ASTContext &C,
                                                unsigned NumClauses);
-  static OpenACCCombinedConstruct *
+  CLANG_ABI static OpenACCCombinedConstruct *
   Create(const ASTContext &C, OpenACCDirectiveKind K, SourceLocation Start,
          SourceLocation DirectiveLoc, SourceLocation End,
          ArrayRef<const OpenACCClause *> Clauses, Stmt *StructuredBlock);
@@ -320,9 +321,9 @@ public:
     return T->getStmtClass() == OpenACCDataConstructClass;
   }
 
-  static OpenACCDataConstruct *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OpenACCDataConstruct *CreateEmpty(const ASTContext &C,
                                            unsigned NumClauses);
-  static OpenACCDataConstruct *Create(const ASTContext &C, SourceLocation Start,
+  CLANG_ABI static OpenACCDataConstruct *Create(const ASTContext &C, SourceLocation Start,
                                       SourceLocation DirectiveLoc,
                                       SourceLocation End,
                                       ArrayRef<const OpenACCClause *> Clauses,
@@ -359,9 +360,9 @@ public:
   static bool classof(const Stmt *T) {
     return T->getStmtClass() == OpenACCEnterDataConstructClass;
   }
-  static OpenACCEnterDataConstruct *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OpenACCEnterDataConstruct *CreateEmpty(const ASTContext &C,
                                                 unsigned NumClauses);
-  static OpenACCEnterDataConstruct *
+  CLANG_ABI static OpenACCEnterDataConstruct *
   Create(const ASTContext &C, SourceLocation Start, SourceLocation DirectiveLoc,
          SourceLocation End, ArrayRef<const OpenACCClause *> Clauses);
 };
@@ -392,9 +393,9 @@ public:
   static bool classof(const Stmt *T) {
     return T->getStmtClass() == OpenACCExitDataConstructClass;
   }
-  static OpenACCExitDataConstruct *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OpenACCExitDataConstruct *CreateEmpty(const ASTContext &C,
                                                unsigned NumClauses);
-  static OpenACCExitDataConstruct *
+  CLANG_ABI static OpenACCExitDataConstruct *
   Create(const ASTContext &C, SourceLocation Start, SourceLocation DirectiveLoc,
          SourceLocation End, ArrayRef<const OpenACCClause *> Clauses);
 };
@@ -429,9 +430,9 @@ public:
   static bool classof(const Stmt *T) {
     return T->getStmtClass() == OpenACCHostDataConstructClass;
   }
-  static OpenACCHostDataConstruct *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OpenACCHostDataConstruct *CreateEmpty(const ASTContext &C,
                                                unsigned NumClauses);
-  static OpenACCHostDataConstruct *
+  CLANG_ABI static OpenACCHostDataConstruct *
   Create(const ASTContext &C, SourceLocation Start, SourceLocation DirectiveLoc,
          SourceLocation End, ArrayRef<const OpenACCClause *> Clauses,
          Stmt *StructuredBlock);
@@ -522,10 +523,10 @@ public:
     return T->getStmtClass() == OpenACCWaitConstructClass;
   }
 
-  static OpenACCWaitConstruct *
+  CLANG_ABI static OpenACCWaitConstruct *
   CreateEmpty(const ASTContext &C, unsigned NumExprs, unsigned NumClauses);
 
-  static OpenACCWaitConstruct *
+  CLANG_ABI static OpenACCWaitConstruct *
   Create(const ASTContext &C, SourceLocation Start, SourceLocation DirectiveLoc,
          SourceLocation LParenLoc, Expr *DevNumExpr, SourceLocation QueuesLoc,
          ArrayRef<Expr *> QueueIdExprs, SourceLocation RParenLoc,
@@ -595,9 +596,9 @@ public:
     return T->getStmtClass() == OpenACCCacheConstructClass;
   }
 
-  static OpenACCCacheConstruct *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OpenACCCacheConstruct *CreateEmpty(const ASTContext &C,
                                             unsigned NumVars);
-  static OpenACCCacheConstruct *
+  CLANG_ABI static OpenACCCacheConstruct *
   Create(const ASTContext &C, SourceLocation Start, SourceLocation DirectiveLoc,
          SourceLocation LParenLoc, SourceLocation ReadOnlyLoc,
          ArrayRef<Expr *> VarList, SourceLocation RParenLoc,
@@ -646,9 +647,9 @@ public:
   static bool classof(const Stmt *T) {
     return T->getStmtClass() == OpenACCInitConstructClass;
   }
-  static OpenACCInitConstruct *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OpenACCInitConstruct *CreateEmpty(const ASTContext &C,
                                            unsigned NumClauses);
-  static OpenACCInitConstruct *Create(const ASTContext &C, SourceLocation Start,
+  CLANG_ABI static OpenACCInitConstruct *Create(const ASTContext &C, SourceLocation Start,
                                       SourceLocation DirectiveLoc,
                                       SourceLocation End,
                                       ArrayRef<const OpenACCClause *> Clauses);
@@ -681,9 +682,9 @@ public:
   static bool classof(const Stmt *T) {
     return T->getStmtClass() == OpenACCShutdownConstructClass;
   }
-  static OpenACCShutdownConstruct *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OpenACCShutdownConstruct *CreateEmpty(const ASTContext &C,
                                                unsigned NumClauses);
-  static OpenACCShutdownConstruct *
+  CLANG_ABI static OpenACCShutdownConstruct *
   Create(const ASTContext &C, SourceLocation Start, SourceLocation DirectiveLoc,
          SourceLocation End, ArrayRef<const OpenACCClause *> Clauses);
 };
@@ -716,9 +717,9 @@ public:
   static bool classof(const Stmt *T) {
     return T->getStmtClass() == OpenACCSetConstructClass;
   }
-  static OpenACCSetConstruct *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OpenACCSetConstruct *CreateEmpty(const ASTContext &C,
                                           unsigned NumClauses);
-  static OpenACCSetConstruct *Create(const ASTContext &C, SourceLocation Start,
+  CLANG_ABI static OpenACCSetConstruct *Create(const ASTContext &C, SourceLocation Start,
                                      SourceLocation DirectiveLoc,
                                      SourceLocation End,
                                      ArrayRef<const OpenACCClause *> Clauses);
@@ -751,9 +752,9 @@ public:
   static bool classof(const Stmt *T) {
     return T->getStmtClass() == OpenACCUpdateConstructClass;
   }
-  static OpenACCUpdateConstruct *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OpenACCUpdateConstruct *CreateEmpty(const ASTContext &C,
                                              unsigned NumClauses);
-  static OpenACCUpdateConstruct *
+  CLANG_ABI static OpenACCUpdateConstruct *
   Create(const ASTContext &C, SourceLocation Start, SourceLocation DirectiveLoc,
          SourceLocation End, ArrayRef<const OpenACCClause *> Clauses);
 };
@@ -801,9 +802,9 @@ public:
     return T->getStmtClass() == OpenACCAtomicConstructClass;
   }
 
-  static OpenACCAtomicConstruct *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OpenACCAtomicConstruct *CreateEmpty(const ASTContext &C,
                                              unsigned NumClauses);
-  static OpenACCAtomicConstruct *
+  CLANG_ABI static OpenACCAtomicConstruct *
   Create(const ASTContext &C, SourceLocation Start, SourceLocation DirectiveLoc,
          OpenACCAtomicKind AtKind, SourceLocation End,
          ArrayRef<const OpenACCClause *> Clauses, Stmt *AssociatedStmt);

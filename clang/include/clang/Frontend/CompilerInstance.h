@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_FRONTEND_COMPILERINSTANCE_H_
 #define LLVM_CLANG_FRONTEND_COMPILERINSTANCE_H_
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTConsumer.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/SourceManager.h"
@@ -78,7 +79,7 @@ enum class DisableValidationForModuleKind;
 /// in to the compiler instance for everything. When possible, utility functions
 /// come in two forms; a short form that reuses the CompilerInstance objects,
 /// and a long form that takes explicit instances of any required objects.
-class CompilerInstance : public ModuleLoader {
+class CLANG_ABI CompilerInstance : public ModuleLoader {
   /// The options used in this compiler instance.
   std::shared_ptr<CompilerInvocation> Invocation;
 

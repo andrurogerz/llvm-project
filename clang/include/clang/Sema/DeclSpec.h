@@ -22,6 +22,7 @@
 #ifndef LLVM_CLANG_SEMA_DECLSPEC_H
 #define LLVM_CLANG_SEMA_DECLSPEC_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/DeclCXX.h"
 #include "clang/AST/DeclObjCCommon.h"
 #include "clang/AST/NestedNameSpecifier.h"
@@ -106,7 +107,7 @@ public:
   /// \param TL The TypeLoc that describes the type preceding the '::'.
   ///
   /// \param ColonColonLoc The location of the trailing '::'.
-  void Extend(ASTContext &Context, TypeLoc TL, SourceLocation ColonColonLoc);
+  CLANG_ABI void Extend(ASTContext &Context, TypeLoc TL, SourceLocation ColonColonLoc);
 
   /// Extend the current nested-name-specifier by another
   /// nested-name-specifier component of the form 'identifier::'.
@@ -119,7 +120,7 @@ public:
   /// \param IdentifierLoc The location of the identifier.
   ///
   /// \param ColonColonLoc The location of the trailing '::'.
-  void Extend(ASTContext &Context, IdentifierInfo *Identifier,
+  CLANG_ABI void Extend(ASTContext &Context, IdentifierInfo *Identifier,
               SourceLocation IdentifierLoc, SourceLocation ColonColonLoc);
 
   /// Extend the current nested-name-specifier by another
@@ -134,12 +135,12 @@ public:
   /// alias.
   ///
   /// \param ColonColonLoc The location of the trailing '::'.
-  void Extend(ASTContext &Context, NamespaceBaseDecl *Namespace,
+  CLANG_ABI void Extend(ASTContext &Context, NamespaceBaseDecl *Namespace,
               SourceLocation NamespaceLoc, SourceLocation ColonColonLoc);
 
   /// Turn this (empty) nested-name-specifier into the global
   /// nested-name-specifier '::'.
-  void MakeGlobal(ASTContext &Context, SourceLocation ColonColonLoc);
+  CLANG_ABI void MakeGlobal(ASTContext &Context, SourceLocation ColonColonLoc);
 
   /// Turns this (empty) nested-name-specifier into '__super'
   /// nested-name-specifier.
@@ -154,7 +155,7 @@ public:
   /// name.
   ///
   /// \param ColonColonLoc The location of the trailing '::'.
-  void MakeSuper(ASTContext &Context, CXXRecordDecl *RD,
+  CLANG_ABI void MakeSuper(ASTContext &Context, CXXRecordDecl *RD,
                  SourceLocation SuperLoc, SourceLocation ColonColonLoc);
 
   /// Make a new nested-name-specifier from incomplete source-location
@@ -163,19 +164,19 @@ public:
   /// FIXME: This routine should be used very, very rarely, in cases where we
   /// need to synthesize a nested-name-specifier. Most code should instead use
   /// \c Adopt() with a proper \c NestedNameSpecifierLoc.
-  void MakeTrivial(ASTContext &Context, NestedNameSpecifier *Qualifier,
+  CLANG_ABI void MakeTrivial(ASTContext &Context, NestedNameSpecifier *Qualifier,
                    SourceRange R);
 
   /// Adopt an existing nested-name-specifier (with source-range
   /// information).
-  void Adopt(NestedNameSpecifierLoc Other);
+  CLANG_ABI void Adopt(NestedNameSpecifierLoc Other);
 
   /// Retrieve a nested-name-specifier with location information, copied
   /// into the given AST context.
   ///
   /// \param Context The context into which this nested-name-specifier will be
   /// copied.
-  NestedNameSpecifierLoc getWithLocInContext(ASTContext &Context) const;
+  CLANG_ABI NestedNameSpecifierLoc getWithLocInContext(ASTContext &Context) const;
 
   /// Retrieve the location of the name in the last qualifier
   /// in this nested name specifier.
@@ -186,7 +187,7 @@ public:
   ///   \::foo::bar<0>::
   ///           ^~~
   /// \endverbatim
-  SourceLocation getLastQualifierNameLoc() const;
+  CLANG_ABI SourceLocation getLastQualifierNameLoc() const;
 
   /// No scope specifier.
   bool isEmpty() const { return Range.isInvalid() && getScopeRep() == nullptr; }
@@ -581,18 +582,18 @@ public:
             TypeSpecType == TST_decltype_auto);
   }
 
-  bool hasTagDefinition() const;
+  CLANG_ABI bool hasTagDefinition() const;
 
   /// Turn a type-specifier-type into a string like "_Bool" or "union".
-  static const char *getSpecifierName(DeclSpec::TST T,
+  CLANG_ABI static const char *getSpecifierName(DeclSpec::TST T,
                                       const PrintingPolicy &Policy);
-  static const char *getSpecifierName(DeclSpec::TQ Q);
-  static const char *getSpecifierName(TypeSpecifierSign S);
-  static const char *getSpecifierName(DeclSpec::TSC C);
-  static const char *getSpecifierName(TypeSpecifierWidth W);
-  static const char *getSpecifierName(DeclSpec::SCS S);
-  static const char *getSpecifierName(DeclSpec::TSCS S);
-  static const char *getSpecifierName(ConstexprSpecKind C);
+  CLANG_ABI static const char *getSpecifierName(DeclSpec::TQ Q);
+  CLANG_ABI static const char *getSpecifierName(TypeSpecifierSign S);
+  CLANG_ABI static const char *getSpecifierName(DeclSpec::TSC C);
+  CLANG_ABI static const char *getSpecifierName(TypeSpecifierWidth W);
+  CLANG_ABI static const char *getSpecifierName(DeclSpec::SCS S);
+  CLANG_ABI static const char *getSpecifierName(DeclSpec::TSCS S);
+  CLANG_ABI static const char *getSpecifierName(ConstexprSpecKind C);
 
   // type-qualifiers
 
@@ -662,13 +663,13 @@ public:
   /// This method calls the passed in handler on each CVRU qual being
   /// set.
   /// Handle - a handler to be invoked.
-  void forEachCVRUQualifier(
+  CLANG_ABI void forEachCVRUQualifier(
       llvm::function_ref<void(TQ, StringRef, SourceLocation)> Handle);
 
   /// This method calls the passed in handler on each qual being
   /// set.
   /// Handle - a handler to be invoked.
-  void forEachQualifier(
+  CLANG_ABI void forEachQualifier(
       llvm::function_ref<void(TQ, StringRef, SourceLocation)> Handle);
 
   /// Return true if any type-specifier has been found.
@@ -681,7 +682,7 @@ public:
 
   /// Return a bitmask of which flavors of specifiers this
   /// DeclSpec includes.
-  unsigned getParsedSpecifiers() const;
+  CLANG_ABI unsigned getParsedSpecifiers() const;
 
   /// isEmpty - Return true if this declaration specifier is completely empty:
   /// no tokens were parsed in the production of it.
@@ -702,21 +703,21 @@ public:
   ///
   /// TODO: use a more general approach that still allows these
   /// diagnostics to be ignored when desired.
-  bool SetStorageClassSpec(Sema &S, SCS SC, SourceLocation Loc,
+  CLANG_ABI bool SetStorageClassSpec(Sema &S, SCS SC, SourceLocation Loc,
                            const char *&PrevSpec, unsigned &DiagID,
                            const PrintingPolicy &Policy);
-  bool SetStorageClassSpecThread(TSCS TSC, SourceLocation Loc,
+  CLANG_ABI bool SetStorageClassSpecThread(TSCS TSC, SourceLocation Loc,
                                  const char *&PrevSpec, unsigned &DiagID);
-  bool SetTypeSpecWidth(TypeSpecifierWidth W, SourceLocation Loc,
+  CLANG_ABI bool SetTypeSpecWidth(TypeSpecifierWidth W, SourceLocation Loc,
                         const char *&PrevSpec, unsigned &DiagID,
                         const PrintingPolicy &Policy);
-  bool SetTypeSpecComplex(TSC C, SourceLocation Loc, const char *&PrevSpec,
+  CLANG_ABI bool SetTypeSpecComplex(TSC C, SourceLocation Loc, const char *&PrevSpec,
                           unsigned &DiagID);
-  bool SetTypeSpecSign(TypeSpecifierSign S, SourceLocation Loc,
+  CLANG_ABI bool SetTypeSpecSign(TypeSpecifierSign S, SourceLocation Loc,
                        const char *&PrevSpec, unsigned &DiagID);
-  bool SetTypeSpecType(TST T, SourceLocation Loc, const char *&PrevSpec,
+  CLANG_ABI bool SetTypeSpecType(TST T, SourceLocation Loc, const char *&PrevSpec,
                        unsigned &DiagID, const PrintingPolicy &Policy);
-  bool SetTypeSpecType(TST T, SourceLocation Loc, const char *&PrevSpec,
+  CLANG_ABI bool SetTypeSpecType(TST T, SourceLocation Loc, const char *&PrevSpec,
                        unsigned &DiagID, ParsedType Rep,
                        const PrintingPolicy &Policy);
   bool SetTypeSpecType(TST T, SourceLocation Loc, const char *&PrevSpec,
@@ -726,45 +727,45 @@ public:
       return SetTypeSpecError();
     return SetTypeSpecType(T, Loc, PrevSpec, DiagID, Rep.get(), Policy);
   }
-  bool SetTypeSpecType(TST T, SourceLocation Loc, const char *&PrevSpec,
+  CLANG_ABI bool SetTypeSpecType(TST T, SourceLocation Loc, const char *&PrevSpec,
                        unsigned &DiagID, Decl *Rep, bool Owned,
                        const PrintingPolicy &Policy);
-  bool SetTypeSpecType(TST T, SourceLocation TagKwLoc,
+  CLANG_ABI bool SetTypeSpecType(TST T, SourceLocation TagKwLoc,
                        SourceLocation TagNameLoc, const char *&PrevSpec,
                        unsigned &DiagID, ParsedType Rep,
                        const PrintingPolicy &Policy);
-  bool SetTypeSpecType(TST T, SourceLocation TagKwLoc,
+  CLANG_ABI bool SetTypeSpecType(TST T, SourceLocation TagKwLoc,
                        SourceLocation TagNameLoc, const char *&PrevSpec,
                        unsigned &DiagID, Decl *Rep, bool Owned,
                        const PrintingPolicy &Policy);
-  bool SetTypeSpecType(TST T, SourceLocation Loc, const char *&PrevSpec,
+  CLANG_ABI bool SetTypeSpecType(TST T, SourceLocation Loc, const char *&PrevSpec,
                        unsigned &DiagID, TemplateIdAnnotation *Rep,
                        const PrintingPolicy &Policy);
 
-  bool SetTypeSpecType(TST T, SourceLocation Loc, const char *&PrevSpec,
+  CLANG_ABI bool SetTypeSpecType(TST T, SourceLocation Loc, const char *&PrevSpec,
                        unsigned &DiagID, Expr *Rep,
                        const PrintingPolicy &policy);
-  bool SetTypeAltiVecVector(bool isAltiVecVector, SourceLocation Loc,
+  CLANG_ABI bool SetTypeAltiVecVector(bool isAltiVecVector, SourceLocation Loc,
                        const char *&PrevSpec, unsigned &DiagID,
                        const PrintingPolicy &Policy);
-  bool SetTypeAltiVecPixel(bool isAltiVecPixel, SourceLocation Loc,
+  CLANG_ABI bool SetTypeAltiVecPixel(bool isAltiVecPixel, SourceLocation Loc,
                        const char *&PrevSpec, unsigned &DiagID,
                        const PrintingPolicy &Policy);
-  bool SetTypeAltiVecBool(bool isAltiVecBool, SourceLocation Loc,
+  CLANG_ABI bool SetTypeAltiVecBool(bool isAltiVecBool, SourceLocation Loc,
                        const char *&PrevSpec, unsigned &DiagID,
                        const PrintingPolicy &Policy);
-  bool SetTypePipe(bool isPipe, SourceLocation Loc,
+  CLANG_ABI bool SetTypePipe(bool isPipe, SourceLocation Loc,
                        const char *&PrevSpec, unsigned &DiagID,
                        const PrintingPolicy &Policy);
-  bool SetBitIntType(SourceLocation KWLoc, Expr *BitWidth,
+  CLANG_ABI bool SetBitIntType(SourceLocation KWLoc, Expr *BitWidth,
                      const char *&PrevSpec, unsigned &DiagID,
                      const PrintingPolicy &Policy);
-  bool SetTypeSpecSat(SourceLocation Loc, const char *&PrevSpec,
+  CLANG_ABI bool SetTypeSpecSat(SourceLocation Loc, const char *&PrevSpec,
                       unsigned &DiagID);
 
-  void SetPackIndexingExpr(SourceLocation EllipsisLoc, Expr *Pack);
+  CLANG_ABI void SetPackIndexingExpr(SourceLocation EllipsisLoc, Expr *Pack);
 
-  bool SetTypeSpecError();
+  CLANG_ABI bool SetTypeSpecError();
   void UpdateDeclRep(Decl *Rep) {
     assert(isDeclRep((TST) TypeSpecType));
     DeclRep = Rep;
@@ -778,28 +779,28 @@ public:
     ExprRep = Rep;
   }
 
-  bool SetTypeQual(TQ T, SourceLocation Loc);
+  CLANG_ABI bool SetTypeQual(TQ T, SourceLocation Loc);
 
-  bool SetTypeQual(TQ T, SourceLocation Loc, const char *&PrevSpec,
+  CLANG_ABI bool SetTypeQual(TQ T, SourceLocation Loc, const char *&PrevSpec,
                    unsigned &DiagID, const LangOptions &Lang);
 
-  bool setFunctionSpecInline(SourceLocation Loc, const char *&PrevSpec,
+  CLANG_ABI bool setFunctionSpecInline(SourceLocation Loc, const char *&PrevSpec,
                              unsigned &DiagID);
-  bool setFunctionSpecForceInline(SourceLocation Loc, const char *&PrevSpec,
+  CLANG_ABI bool setFunctionSpecForceInline(SourceLocation Loc, const char *&PrevSpec,
                                   unsigned &DiagID);
-  bool setFunctionSpecVirtual(SourceLocation Loc, const char *&PrevSpec,
+  CLANG_ABI bool setFunctionSpecVirtual(SourceLocation Loc, const char *&PrevSpec,
                               unsigned &DiagID);
-  bool setFunctionSpecExplicit(SourceLocation Loc, const char *&PrevSpec,
+  CLANG_ABI bool setFunctionSpecExplicit(SourceLocation Loc, const char *&PrevSpec,
                                unsigned &DiagID, ExplicitSpecifier ExplicitSpec,
                                SourceLocation CloseParenLoc);
-  bool setFunctionSpecNoreturn(SourceLocation Loc, const char *&PrevSpec,
+  CLANG_ABI bool setFunctionSpecNoreturn(SourceLocation Loc, const char *&PrevSpec,
                                unsigned &DiagID);
 
-  bool SetFriendSpec(SourceLocation Loc, const char *&PrevSpec,
+  CLANG_ABI bool SetFriendSpec(SourceLocation Loc, const char *&PrevSpec,
                      unsigned &DiagID);
-  bool setModulePrivateSpec(SourceLocation Loc, const char *&PrevSpec,
+  CLANG_ABI bool setModulePrivateSpec(SourceLocation Loc, const char *&PrevSpec,
                             unsigned &DiagID);
-  bool SetConstexprSpec(ConstexprSpecKind ConstexprKind, SourceLocation Loc,
+  CLANG_ABI bool SetConstexprSpec(ConstexprSpecKind ConstexprKind, SourceLocation Loc,
                         const char *&PrevSpec, unsigned &DiagID);
 
   FriendSpecified isFriendSpecified() const {
@@ -864,7 +865,7 @@ public:
   /// Finish - This does final analysis of the declspec, issuing diagnostics for
   /// things like "_Complex" (lacking an FP type).  After calling this method,
   /// DeclSpec is guaranteed self-consistent, even if an error occurred.
-  void Finish(Sema &S, const PrintingPolicy &Policy);
+  CLANG_ABI void Finish(Sema &S, const PrintingPolicy &Policy);
 
   const WrittenBuiltinSpecs& getWrittenBuiltinSpecs() const {
     return writtenBS;
@@ -876,7 +877,7 @@ public:
   /// Checks if this DeclSpec can stand alone, without a Declarator.
   ///
   /// Only tag declspecs can stand alone.
-  bool isMissingDeclaratorOk();
+  CLANG_ABI bool isMissingDeclaratorOk();
 };
 
 /// Captures information about "declaration specifiers" specific to
@@ -1112,7 +1113,7 @@ public:
   ///
   /// \param SymbolLocations the locations of the individual operator symbols
   /// in the operator.
-  void setOperatorFunctionId(SourceLocation OperatorLoc,
+  CLANG_ABI void setOperatorFunctionId(SourceLocation OperatorLoc,
                              OverloadedOperatorKind Op,
                              SourceLocation SymbolLocations[3]);
 
@@ -1171,7 +1172,7 @@ public:
   /// \param TemplateId the template-id annotation that describes the parsed
   /// template-id. This UnqualifiedId instance will take ownership of the
   /// \p TemplateId and will free it on destruction.
-  void setConstructorTemplateId(TemplateIdAnnotation *TemplateId);
+  CLANG_ABI void setConstructorTemplateId(TemplateIdAnnotation *TemplateId);
 
   /// Specify that this unqualified-id was parsed as a destructor name.
   ///
@@ -1193,7 +1194,7 @@ public:
   /// \param TemplateId the template-id annotation that describes the parsed
   /// template-id. This UnqualifiedId instance will take ownership of the
   /// \p TemplateId and will free it on destruction.
-  void setTemplateId(TemplateIdAnnotation *TemplateId);
+  CLANG_ABI void setTemplateId(TemplateIdAnnotation *TemplateId);
 
   /// Specify that this unqualified-id was parsed as a template-name for
   /// a deduction-guide.
@@ -1695,7 +1696,7 @@ struct DeclaratorChunk {
 
   /// DeclaratorChunk::getFunction - Return a DeclaratorChunk for a function.
   /// "TheDeclarator" is the declarator that this will be added to.
-  static DeclaratorChunk getFunction(bool HasProto,
+  CLANG_ABI static DeclaratorChunk getFunction(bool HasProto,
                                      bool IsAmbiguous,
                                      SourceLocation LParenLoc,
                                      ParamInfo *Params, unsigned NumParams,
@@ -2329,7 +2330,7 @@ public:
   }
 
   /// Set the decomposition bindings for this declarator.
-  void setDecompositionBindings(
+  CLANG_ABI void setDecompositionBindings(
       SourceLocation LSquareLoc,
       MutableArrayRef<DecompositionDeclarator::Binding> Bindings,
       SourceLocation RSquareLoc);
@@ -2491,7 +2492,7 @@ public:
   /// A declaration can declare a function even if the declarator itself
   /// isn't a function declarator, if the type specifier refers to a function
   /// type. This routine checks for both cases.
-  bool isDeclarationOfFunction() const;
+  CLANG_ABI bool isDeclarationOfFunction() const;
 
   /// Return true if this declaration appears in a context where a
   /// function declarator would be a function declaration.
@@ -2742,12 +2743,12 @@ public:
   /// Returns true if this declares a static member.  This cannot be called on a
   /// declarator outside of a MemberContext because we won't know until
   /// redeclaration time if the decl is static.
-  bool isStaticMember();
+  CLANG_ABI bool isStaticMember();
 
-  bool isExplicitObjectMemberFunction();
+  CLANG_ABI bool isExplicitObjectMemberFunction();
 
   /// Returns true if this declares a constructor or a destructor.
-  bool isCtorOrDtor();
+  CLANG_ABI bool isCtorOrDtor();
 
   void setRedeclaration(bool Val) { Redeclaration = Val; }
   bool isRedeclaration() const { return Redeclaration; }
@@ -2779,7 +2780,7 @@ public:
 
   VirtSpecifiers() = default;
 
-  bool SetSpecifier(Specifier VS, SourceLocation Loc,
+  CLANG_ABI bool SetSpecifier(Specifier VS, SourceLocation Loc,
                     const char *&PrevSpec);
 
   bool isUnset() const { return Specifiers == 0; }
@@ -2794,7 +2795,7 @@ public:
 
   void clear() { Specifiers = 0; }
 
-  static const char *getSpecifierName(Specifier VS);
+  CLANG_ABI static const char *getSpecifierName(Specifier VS);
 
   SourceLocation getFirstLocation() const { return FirstLocation; }
   SourceLocation getLastLocation() const { return LastLocation; }

@@ -60,6 +60,7 @@
 #ifndef LLVM_CLANG_AST_QUALTYPENAMES_H
 #define LLVM_CLANG_AST_QUALTYPENAMES_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTContext.h"
 
 namespace clang {
@@ -72,7 +73,7 @@ namespace TypeName {
 /// \param[in] Ctx - the ASTContext to be used.
 /// \param[in] WithGlobalNsPrefix - If true, then the global namespace
 /// specifier "::" will be prepended to the fully qualified name.
-std::string getFullyQualifiedName(QualType QT, const ASTContext &Ctx,
+CLANG_ABI std::string getFullyQualifiedName(QualType QT, const ASTContext &Ctx,
                                   const PrintingPolicy &Policy,
                                   bool WithGlobalNsPrefix = false);
 
@@ -85,7 +86,7 @@ std::string getFullyQualifiedName(QualType QT, const ASTContext &Ctx,
 /// \param[in] Ctx - the ASTContext to be used.
 /// \param[in] WithGlobalNsPrefix - Indicate whether the global namespace
 /// specifier "::" should be prepended or not.
-QualType getFullyQualifiedType(QualType QT, const ASTContext &Ctx,
+CLANG_ABI QualType getFullyQualifiedType(QualType QT, const ASTContext &Ctx,
                                bool WithGlobalNsPrefix = false);
 } // end namespace TypeName
 } // end namespace clang

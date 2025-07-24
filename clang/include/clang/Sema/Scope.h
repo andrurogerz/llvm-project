@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_SEMA_SCOPE_H
 #define LLVM_CLANG_SEMA_SCOPE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "clang/Basic/Diagnostic.h"
 #include "llvm/ADT/PointerIntPair.h"
@@ -255,7 +256,7 @@ private:
   /// available for this variable in the current scope.
   llvm::SmallPtrSet<VarDecl *, 8> ReturnSlots;
 
-  void setFlags(Scope *Parent, unsigned F);
+  CLANG_ABI void setFlags(Scope *Parent, unsigned F);
 
 public:
   Scope(Scope *Parent, unsigned ScopeFlags, DiagnosticsEngine &Diag)
@@ -620,7 +621,7 @@ public:
 
   /// containedInPrototypeScope - Return true if this or a parent scope
   /// is a FunctionPrototypeScope.
-  bool containedInPrototypeScope() const;
+  CLANG_ABI bool containedInPrototypeScope() const;
 
   void PushUsingDirective(UsingDirectiveDecl *UDir) {
     UsingDirectives.push_back(UDir);
@@ -634,19 +635,19 @@ public:
                                   UsingDirectives.end());
   }
 
-  void updateNRVOCandidate(VarDecl *VD);
+  CLANG_ABI void updateNRVOCandidate(VarDecl *VD);
 
-  void applyNRVO();
+  CLANG_ABI void applyNRVO();
 
   /// Init - This is used by the parser to implement scope caching.
-  void Init(Scope *parent, unsigned flags);
+  CLANG_ABI void Init(Scope *parent, unsigned flags);
 
   /// Sets up the specified scope flags and adjusts the scope state
   /// variables accordingly.
-  void AddFlags(unsigned Flags);
+  CLANG_ABI void AddFlags(unsigned Flags);
 
-  void dumpImpl(raw_ostream &OS) const;
-  void dump() const;
+  CLANG_ABI void dumpImpl(raw_ostream &OS) const;
+  CLANG_ABI void dump() const;
 };
 
 } // namespace clang

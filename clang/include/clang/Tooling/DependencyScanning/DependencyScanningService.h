@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_TOOLING_DEPENDENCYSCANNING_DEPENDENCYSCANNINGSERVICE_H
 #define LLVM_CLANG_TOOLING_DEPENDENCYSCANNING_DEPENDENCYSCANNINGSERVICE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Tooling/DependencyScanning/DependencyScanningFilesystem.h"
 #include "clang/Tooling/DependencyScanning/InProcessModuleCache.h"
 #include "llvm/ADT/BitmaskEnum.h"
@@ -82,7 +83,7 @@ enum class ScanningOptimizations {
 /// is used by the individual dependency scanning workers.
 class DependencyScanningService {
 public:
-  DependencyScanningService(
+  CLANG_ABI DependencyScanningService(
       ScanningMode Mode, ScanningOutputFormat Format,
       ScanningOptimizations OptimizeArgs = ScanningOptimizations::Default,
       bool EagerLoadModules = false, bool TraceVFS = false,

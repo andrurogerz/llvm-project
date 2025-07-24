@@ -40,6 +40,7 @@
 #ifndef LLVM_CLANG_ASTMATCHERS_ASTMATCHFINDER_H
 #define LLVM_CLANG_ASTMATCHERS_ASTMATCHFINDER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 #include "llvm/ADT/SmallPtrSet.h"
 #include "llvm/ADT/StringMap.h"
@@ -73,7 +74,7 @@ public:
   /// Every time a match is found, the MatchFinder will invoke the registered
   /// MatchCallback with a MatchResult containing information about the match.
   struct MatchResult {
-    MatchResult(const BoundNodes &Nodes, clang::ASTContext *Context);
+    CLANG_ABI MatchResult(const BoundNodes &Nodes, clang::ASTContext *Context);
 
     /// Contains the nodes bound on the current match.
     ///
@@ -89,7 +90,7 @@ public:
 
   /// Called when the Match registered for it was successfully found
   /// in the AST.
-  class MatchCallback {
+  class CLANG_ABI MatchCallback {
   public:
     virtual ~MatchCallback();
 
@@ -120,7 +121,7 @@ public:
   };
 
   /// Called when parsing is finished. Intended for testing only.
-  class ParsingDoneTestCallback {
+  class CLANG_ABI ParsingDoneTestCallback {
   public:
     virtual ~ParsingDoneTestCallback();
     virtual void run() = 0;
@@ -141,8 +142,8 @@ public:
     std::optional<Profiling> CheckProfiling;
   };
 
-  MatchFinder(MatchFinderOptions Options = MatchFinderOptions());
-  ~MatchFinder();
+  CLANG_ABI MatchFinder(MatchFinderOptions Options = MatchFinderOptions());
+  CLANG_ABI ~MatchFinder();
 
   /// Adds a matcher to execute when running over the AST.
   ///
@@ -152,23 +153,23 @@ public:
   ///
   /// Does not take ownership of 'Action'.
   /// @{
-  void addMatcher(const DeclarationMatcher &NodeMatch,
+  CLANG_ABI void addMatcher(const DeclarationMatcher &NodeMatch,
                   MatchCallback *Action);
-  void addMatcher(const TypeMatcher &NodeMatch,
+  CLANG_ABI void addMatcher(const TypeMatcher &NodeMatch,
                   MatchCallback *Action);
-  void addMatcher(const StatementMatcher &NodeMatch,
+  CLANG_ABI void addMatcher(const StatementMatcher &NodeMatch,
                   MatchCallback *Action);
-  void addMatcher(const NestedNameSpecifierMatcher &NodeMatch,
+  CLANG_ABI void addMatcher(const NestedNameSpecifierMatcher &NodeMatch,
                   MatchCallback *Action);
-  void addMatcher(const NestedNameSpecifierLocMatcher &NodeMatch,
+  CLANG_ABI void addMatcher(const NestedNameSpecifierLocMatcher &NodeMatch,
                   MatchCallback *Action);
-  void addMatcher(const TypeLocMatcher &NodeMatch,
+  CLANG_ABI void addMatcher(const TypeLocMatcher &NodeMatch,
                   MatchCallback *Action);
-  void addMatcher(const CXXCtorInitializerMatcher &NodeMatch,
+  CLANG_ABI void addMatcher(const CXXCtorInitializerMatcher &NodeMatch,
                   MatchCallback *Action);
-  void addMatcher(const TemplateArgumentLocMatcher &NodeMatch,
+  CLANG_ABI void addMatcher(const TemplateArgumentLocMatcher &NodeMatch,
                   MatchCallback *Action);
-  void addMatcher(const AttrMatcher &NodeMatch, MatchCallback *Action);
+  CLANG_ABI void addMatcher(const AttrMatcher &NodeMatch, MatchCallback *Action);
   /// @}
 
   /// Adds a matcher to execute when running over the AST.
@@ -179,11 +180,11 @@ public:
   ///
   /// \returns \c true if the matcher is a valid top-level matcher, \c false
   ///   otherwise.
-  bool addDynamicMatcher(const internal::DynTypedMatcher &NodeMatch,
+  CLANG_ABI bool addDynamicMatcher(const internal::DynTypedMatcher &NodeMatch,
                          MatchCallback *Action);
 
   /// Creates a clang ASTConsumer that finds all matches.
-  std::unique_ptr<clang::ASTConsumer> newASTConsumer();
+  CLANG_ABI std::unique_ptr<clang::ASTConsumer> newASTConsumer();
 
   /// Calls the registered callbacks on all matches on the given \p Node.
   ///
@@ -194,18 +195,18 @@ public:
   template <typename T> void match(const T &Node, ASTContext &Context) {
     match(clang::DynTypedNode::create(Node), Context);
   }
-  void match(const clang::DynTypedNode &Node, ASTContext &Context);
+  CLANG_ABI void match(const clang::DynTypedNode &Node, ASTContext &Context);
   /// @}
 
   /// Finds all matches in the given AST.
-  void matchAST(ASTContext &Context);
+  CLANG_ABI void matchAST(ASTContext &Context);
 
   /// Registers a callback to notify the end of parsing.
   ///
   /// The provided closure is called after parsing is done, before the AST is
   /// traversed. Useful for benchmarking.
   /// Each call to FindAll(...) will call the closure once.
-  void registerTestCallbackAfterParsing(ParsingDoneTestCallback *ParsingDone);
+  CLANG_ABI void registerTestCallbackAfterParsing(ParsingDoneTestCallback *ParsingDone);
 
   /// For each \c Matcher<> a \c MatchCallback that will be called
   /// when it matches.

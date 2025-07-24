@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_CHECKERCONTEXT_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_CHECKERCONTEXT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/ExprEngine.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/ProgramStateTrait.h"
 #include <optional>
@@ -157,10 +158,10 @@ public:
 
   /// Returns true if the value of \p E is greater than or equal to \p
   /// Val under unsigned comparison.
-  bool isGreaterOrEqual(const Expr *E, unsigned long long Val);
+  CLANG_ABI bool isGreaterOrEqual(const Expr *E, unsigned long long Val);
 
   /// Returns true if the value of \p E is negative.
-  bool isNegative(const Expr *E);
+  CLANG_ABI bool isNegative(const Expr *E);
 
   /// Generates a new transition in the program state graph
   /// (ExplodedGraph). Uses the default CheckerContext predecessor node.
@@ -354,13 +355,13 @@ public:
 
   /// Returns the word that should be used to refer to the declaration
   /// in the report.
-  StringRef getDeclDescription(const Decl *D);
+  CLANG_ABI StringRef getDeclDescription(const Decl *D);
 
   /// Get the declaration of the called function (path-sensitive).
-  const FunctionDecl *getCalleeDecl(const CallExpr *CE) const;
+  CLANG_ABI const FunctionDecl *getCalleeDecl(const CallExpr *CE) const;
 
   /// Get the name of the called function (path-sensitive).
-  StringRef getCalleeName(const FunctionDecl *FunDecl) const;
+  CLANG_ABI StringRef getCalleeName(const FunctionDecl *FunDecl) const;
 
   /// Get the identifier of the called function (path-sensitive).
   const IdentifierInfo *getCalleeIdentifier(const CallExpr *CE) const {
@@ -386,7 +387,7 @@ public:
   /// Note that this also accepts functions from the \c std namespace (because
   /// headers like <cstdlib> declare them there) and does not check if the
   /// function is declared as 'extern "C"' or if it uses C++ name mangling.
-  static bool isCLibraryFunction(const FunctionDecl *FD,
+  CLANG_ABI static bool isCLibraryFunction(const FunctionDecl *FD,
                                  StringRef Name = StringRef());
 
   /// In builds that use source hardening (-D_FORTIFY_SOURCE), many standard
@@ -400,7 +401,7 @@ public:
   ///
   /// NOTE: This method relies on heuristics; extend it if you need to handle a
   /// hardened variant that's not yet covered by it.
-  static bool isHardenedVariantOf(const FunctionDecl *FD, StringRef Name);
+  CLANG_ABI static bool isHardenedVariantOf(const FunctionDecl *FD, StringRef Name);
 
   /// Depending on whether the location corresponds to a macro, return
   /// either the macro name or the token spelling.
@@ -411,7 +412,7 @@ public:
   /// If AF_INET is a macro, the result should be treated as a source of taint.
   ///
   /// \sa clang::Lexer::getSpelling(), clang::Lexer::getImmediateMacroName().
-  StringRef getMacroNameOrSpelling(SourceLocation &Loc);
+  CLANG_ABI StringRef getMacroNameOrSpelling(SourceLocation &Loc);
 
 private:
   ExplodedNode *addTransitionImpl(ProgramStateRef State,

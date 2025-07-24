@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_DATAFLOWENVIRONMENT_H
 #define LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_DATAFLOWENVIRONMENT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/DeclBase.h"
 #include "clang/AST/Expr.h"
@@ -192,7 +193,7 @@ public:
   /// passed to the constructor.
   ///
   /// If no `Stmt` or `FunctionDecl` was supplied, this function does nothing.
-  void initialize();
+  CLANG_ABI void initialize();
 
   /// Returns a new environment that is a copy of this one.
   ///
@@ -202,7 +203,7 @@ public:
   /// However the original should not be further mutated, as this may interfere
   /// with the fork. (In practice, values are stored independently, but the
   /// forked flow condition references the original).
-  Environment fork() const;
+  CLANG_ABI Environment fork() const;
 
   /// Creates and returns an environment to use for an inline analysis of the
   /// callee. Uses the storage location from each argument in the `Call` as the
@@ -215,13 +216,13 @@ public:
   ///  The body of the callee must not reference globals.
   ///
   ///  The arguments of `Call` must map 1:1 to the callee's parameters.
-  Environment pushCall(const CallExpr *Call) const;
-  Environment pushCall(const CXXConstructExpr *Call) const;
+  CLANG_ABI Environment pushCall(const CallExpr *Call) const;
+  CLANG_ABI Environment pushCall(const CXXConstructExpr *Call) const;
 
   /// Moves gathered information back into `this` from a `CalleeEnv` created via
   /// `pushCall`.
-  void popCall(const CallExpr *Call, const Environment &CalleeEnv);
-  void popCall(const CXXConstructExpr *Call, const Environment &CalleeEnv);
+  CLANG_ABI void popCall(const CallExpr *Call, const Environment &CalleeEnv);
+  CLANG_ABI void popCall(const CXXConstructExpr *Call, const Environment &CalleeEnv);
 
   /// Returns true if and only if the environment is equivalent to `Other`, i.e
   /// the two environments:
@@ -233,7 +234,7 @@ public:
   /// Requirements:
   ///
   ///  `Other` and `this` must use the same `DataflowAnalysisContext`.
-  bool equivalentTo(const Environment &Other,
+  CLANG_ABI bool equivalentTo(const Environment &Other,
                     Environment::ValueModel &Model) const;
 
   /// How to treat expression state (`ExprToLoc` and `ExprToVal`) in a join.
@@ -251,7 +252,7 @@ public:
   /// Requirements:
   ///
   ///  `EnvA` and `EnvB` must use the same `DataflowAnalysisContext`.
-  static Environment join(const Environment &EnvA, const Environment &EnvB,
+  CLANG_ABI static Environment join(const Environment &EnvA, const Environment &EnvB,
                           Environment::ValueModel &Model,
                           ExprJoinBehavior ExprBehavior);
 
@@ -265,7 +266,7 @@ public:
   /// Requirements:
   ///
   ///  `Val1` and `Val2` must model values of type `Type`.
-  static Value *joinValues(QualType Ty, Value *Val1, const Environment &Env1,
+  CLANG_ABI static Value *joinValues(QualType Ty, Value *Val1, const Environment &Env1,
                            Value *Val2, const Environment &Env2,
                            Environment &JoinedEnv,
                            Environment::ValueModel &Model);
@@ -277,7 +278,7 @@ public:
   ///
   ///  `PrevEnv` must be the immediate previous version of the environment.
   ///  `PrevEnv` and `this` must use the same `DataflowAnalysisContext`.
-  LatticeEffect widen(const Environment &PrevEnv,
+  CLANG_ABI LatticeEffect widen(const Environment &PrevEnv,
                       Environment::ValueModel &Model);
 
   // FIXME: Rename `createOrGetStorageLocation` to `getOrCreateStorageLocation`,
@@ -289,31 +290,31 @@ public:
   /// Requirements:
   ///
   ///  `Type` must not be null.
-  StorageLocation &createStorageLocation(QualType Type);
+  CLANG_ABI StorageLocation &createStorageLocation(QualType Type);
 
   /// Creates a storage location for `D`. Does not assign the returned storage
   /// location to `D` in the environment. Does not assign a value to the
   /// returned storage location in the environment.
-  StorageLocation &createStorageLocation(const ValueDecl &D);
+  CLANG_ABI StorageLocation &createStorageLocation(const ValueDecl &D);
 
   /// Creates a storage location for `E`. Does not assign the returned storage
   /// location to `E` in the environment. Does not assign a value to the
   /// returned storage location in the environment.
-  StorageLocation &createStorageLocation(const Expr &E);
+  CLANG_ABI StorageLocation &createStorageLocation(const Expr &E);
 
   /// Assigns `Loc` as the storage location of `D` in the environment.
   ///
   /// Requirements:
   ///
   ///  `D` must not already have a storage location in the environment.
-  void setStorageLocation(const ValueDecl &D, StorageLocation &Loc);
+  CLANG_ABI void setStorageLocation(const ValueDecl &D, StorageLocation &Loc);
 
   /// Returns the storage location assigned to `D` in the environment, or null
   /// if `D` isn't assigned a storage location in the environment.
-  StorageLocation *getStorageLocation(const ValueDecl &D) const;
+  CLANG_ABI StorageLocation *getStorageLocation(const ValueDecl &D) const;
 
   /// Removes the location assigned to `D` in the environment (if any).
-  void removeDecl(const ValueDecl &D);
+  CLANG_ABI void removeDecl(const ValueDecl &D);
 
   /// Assigns `Loc` as the storage location of the glvalue `E` in the
   /// environment.
@@ -322,7 +323,7 @@ public:
   ///
   ///  `E` must not be assigned a storage location in the environment.
   ///  `E` must be a glvalue or a `BuiltinType::BuiltinFn`
-  void setStorageLocation(const Expr &E, StorageLocation &Loc);
+  CLANG_ABI void setStorageLocation(const Expr &E, StorageLocation &Loc);
 
   /// Returns the storage location assigned to the glvalue `E` in the
   /// environment, or null if `E` isn't assigned a storage location in the
@@ -330,7 +331,7 @@ public:
   ///
   /// Requirements:
   ///  `E` must be a glvalue or a `BuiltinType::BuiltinFn`
-  StorageLocation *getStorageLocation(const Expr &E) const;
+  CLANG_ABI StorageLocation *getStorageLocation(const Expr &E) const;
 
   /// Returns the result of casting `getStorageLocation(...)` to a subclass of
   /// `StorageLocation` (using `cast_or_null<T>`).
@@ -373,7 +374,7 @@ public:
   ///
   /// Requirements:
   ///  `E` must be a prvalue of record type.
-  RecordStorageLocation &
+  CLANG_ABI RecordStorageLocation &
   getResultObjectLocation(const Expr &RecordPRValue) const;
 
   /// Returns the return value of the function currently being analyzed.
@@ -429,7 +430,7 @@ public:
 
   /// Returns a pointer value that represents a null pointer. Calls with
   /// `PointeeType` that are canonically equivalent will return the same result.
-  PointerValue &getOrCreateNullPointerValue(QualType PointeeType);
+  CLANG_ABI PointerValue &getOrCreateNullPointerValue(QualType PointeeType);
 
   /// Creates a value appropriate for `Type`, if `Type` is supported, otherwise
   /// returns null.
@@ -447,7 +448,7 @@ public:
   ///
   ///  - `Type` must not be null.
   ///  - `Type` must not be a reference type or record type.
-  Value *createValue(QualType Type);
+  CLANG_ABI Value *createValue(QualType Type);
 
   /// Creates an object (i.e. a storage location with an associated value) of
   /// type `Ty`. If `InitExpr` is non-null and has a value associated with it,
@@ -482,7 +483,7 @@ public:
   /// If `Type` is provided, initializes only those fields that are modeled for
   /// `Type`; this is intended for use in cases where `Loc` is a derived type
   /// and we only want to initialize the fields of a base type.
-  void initializeFieldsWithValues(RecordStorageLocation &Loc, QualType Type);
+  CLANG_ABI void initializeFieldsWithValues(RecordStorageLocation &Loc, QualType Type);
   void initializeFieldsWithValues(RecordStorageLocation &Loc) {
     initializeFieldsWithValues(Loc, Loc.getType());
   }
@@ -492,7 +493,7 @@ public:
   /// Requirements:
   ///
   ///  `Loc` must not be a `RecordStorageLocation`.
-  void setValue(const StorageLocation &Loc, Value &Val);
+  CLANG_ABI void setValue(const StorageLocation &Loc, Value &Val);
 
   /// Clears any association between `Loc` and a value in the environment.
   void clearValue(const StorageLocation &Loc) { LocToVal.erase(&Loc); }
@@ -503,7 +504,7 @@ public:
   ///
   ///  - `E` must be a prvalue.
   ///  - `E` must not have record type.
-  void setValue(const Expr &E, Value &Val);
+  CLANG_ABI void setValue(const Expr &E, Value &Val);
 
   /// Returns the value assigned to `Loc` in the environment or null if `Loc`
   /// isn't assigned a value in the environment.
@@ -511,7 +512,7 @@ public:
   /// Requirements:
   ///
   ///  `Loc` must not be a `RecordStorageLocation`.
-  Value *getValue(const StorageLocation &Loc) const;
+  CLANG_ABI Value *getValue(const StorageLocation &Loc) const;
 
   /// Equivalent to `getValue(getStorageLocation(D))` if `D` is assigned a
   /// storage location in the environment, otherwise returns null.
@@ -519,11 +520,11 @@ public:
   /// Requirements:
   ///
   ///  `D` must not have record type.
-  Value *getValue(const ValueDecl &D) const;
+  CLANG_ABI Value *getValue(const ValueDecl &D) const;
 
   /// Equivalent to `getValue(getStorageLocation(E, SP))` if `E` is assigned a
   /// storage location in the environment, otherwise returns null.
-  Value *getValue(const Expr &E) const;
+  CLANG_ABI Value *getValue(const Expr &E) const;
 
   /// Returns the result of casting `getValue(...)` to a subclass of `Value`
   /// (using `cast_or_null<T>`).
@@ -639,7 +640,7 @@ public:
   Atom getFlowConditionToken() const { return FlowConditionToken; }
 
   /// Record a fact that must be true if this point in the program is reached.
-  void assume(const Formula &);
+  CLANG_ABI void assume(const Formula &);
 
   /// Returns true if the formula is always true when this point is reached.
   /// Returns false if the formula may be false (or the flow condition isn't
@@ -650,12 +651,12 @@ public:
   /// that if `proves()` or `allows()` returns true, this will result in a
   /// diagnostic, and we want to bias towards false negatives in the case where
   /// the solver times out.
-  bool proves(const Formula &) const;
+  CLANG_ABI bool proves(const Formula &) const;
 
   /// Returns true if the formula may be true when this point is reached.
   /// Returns false if the formula is always false when this point is reached
   /// (or the flow condition is overly constraining) or if the solver times out.
-  bool allows(const Formula &) const;
+  CLANG_ABI bool allows(const Formula &) const;
 
   /// Returns the function currently being analyzed, or null if the code being
   /// analyzed isn't part of a function.
@@ -671,15 +672,15 @@ public:
   /// `Callee` (i.e. if `pushCall` can be used).
   /// Recursion is not allowed. `MaxDepth` is the maximum size of the call stack
   /// (i.e. the maximum value that `callStackSize()` may assume after the call).
-  bool canDescend(unsigned MaxDepth, const FunctionDecl *Callee) const;
+  CLANG_ABI bool canDescend(unsigned MaxDepth, const FunctionDecl *Callee) const;
 
   /// Returns the `DataflowAnalysisContext` used by the environment.
   DataflowAnalysisContext &getDataflowAnalysisContext() const { return *DACtx; }
 
   Arena &arena() const { return DACtx->arena(); }
 
-  LLVM_DUMP_METHOD void dump() const;
-  LLVM_DUMP_METHOD void dump(raw_ostream &OS) const;
+  LLVM_DUMP_METHOD CLANG_ABI void dump() const;
+  LLVM_DUMP_METHOD CLANG_ABI void dump(raw_ostream &OS) const;
 
 private:
   using PrValueToResultObject =
@@ -723,7 +724,7 @@ private:
 
   /// Shared implementation of `createObject()` overloads.
   /// `D` and `InitExpr` may be null.
-  StorageLocation &createObjectInternal(const ValueDecl *D, QualType Ty,
+  CLANG_ABI StorageLocation &createObjectInternal(const ValueDecl *D, QualType Ty,
                                         const Expr *InitExpr);
 
   /// Shared implementation of `pushCall` overloads. Note that unlike
@@ -813,13 +814,13 @@ private:
 /// `CXXMemberCallExpr`, or null if none is defined in the environment.
 /// Dereferences the pointer if the member call expression was written using
 /// `->`.
-RecordStorageLocation *getImplicitObjectLocation(const CXXMemberCallExpr &MCE,
+CLANG_ABI RecordStorageLocation *getImplicitObjectLocation(const CXXMemberCallExpr &MCE,
                                                  const Environment &Env);
 
 /// Returns the storage location for the base object of a `MemberExpr`, or null
 /// if none is defined in the environment. Dereferences the pointer if the
 /// member expression was written using `->`.
-RecordStorageLocation *getBaseObjectLocation(const MemberExpr &ME,
+CLANG_ABI RecordStorageLocation *getBaseObjectLocation(const MemberExpr &ME,
                                              const Environment &Env);
 
 } // namespace dataflow

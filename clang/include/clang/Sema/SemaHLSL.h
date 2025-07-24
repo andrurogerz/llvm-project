@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_SEMA_SEMAHLSL_H
 #define LLVM_CLANG_SEMA_SEMAHLSL_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTFwd.h"
 #include "clang/AST/Attr.h"
 #include "clang/AST/Type.h"
@@ -55,7 +56,7 @@ using llvm::dxil::ResourceClass;
 
 // FIXME: This can be hidden (as static function in SemaHLSL.cpp) once we no
 // longer need to create builtin buffer types in HLSLExternalSemaSource.
-bool CreateHLSLAttributedResourceType(
+CLANG_ABI bool CreateHLSLAttributedResourceType(
     Sema &S, QualType Wrapped, ArrayRef<const Attr *> AttrList,
     QualType &ResType, HLSLAttributedResourceLocInfo *LocInfo = nullptr);
 
@@ -87,11 +88,11 @@ struct DeclBindingInfo {
 // assigments.
 class ResourceBindings {
 public:
-  DeclBindingInfo *addDeclBindingInfo(const VarDecl *VD,
+  CLANG_ABI DeclBindingInfo *addDeclBindingInfo(const VarDecl *VD,
                                       ResourceClass ResClass);
-  DeclBindingInfo *getDeclBindingInfo(const VarDecl *VD,
+  CLANG_ABI DeclBindingInfo *getDeclBindingInfo(const VarDecl *VD,
                                       ResourceClass ResClass);
-  bool hasBindingInfoForDecl(const VarDecl *VD) const;
+  CLANG_ABI bool hasBindingInfoForDecl(const VarDecl *VD) const;
 
 private:
   // List of all resource bindings required by the shader.
@@ -105,100 +106,100 @@ private:
 
 class SemaHLSL : public SemaBase {
 public:
-  SemaHLSL(Sema &S);
+  CLANG_ABI SemaHLSL(Sema &S);
 
-  Decl *ActOnStartBuffer(Scope *BufferScope, bool CBuffer, SourceLocation KwLoc,
+  CLANG_ABI Decl *ActOnStartBuffer(Scope *BufferScope, bool CBuffer, SourceLocation KwLoc,
                          IdentifierInfo *Ident, SourceLocation IdentLoc,
                          SourceLocation LBrace);
-  void ActOnFinishBuffer(Decl *Dcl, SourceLocation RBrace);
-  HLSLNumThreadsAttr *mergeNumThreadsAttr(Decl *D,
+  CLANG_ABI void ActOnFinishBuffer(Decl *Dcl, SourceLocation RBrace);
+  CLANG_ABI HLSLNumThreadsAttr *mergeNumThreadsAttr(Decl *D,
                                           const AttributeCommonInfo &AL, int X,
                                           int Y, int Z);
-  HLSLWaveSizeAttr *mergeWaveSizeAttr(Decl *D, const AttributeCommonInfo &AL,
+  CLANG_ABI HLSLWaveSizeAttr *mergeWaveSizeAttr(Decl *D, const AttributeCommonInfo &AL,
                                       int Min, int Max, int Preferred,
                                       int SpelledArgsCount);
-  HLSLVkConstantIdAttr *
+  CLANG_ABI HLSLVkConstantIdAttr *
   mergeVkConstantIdAttr(Decl *D, const AttributeCommonInfo &AL, int Id);
-  HLSLShaderAttr *mergeShaderAttr(Decl *D, const AttributeCommonInfo &AL,
+  CLANG_ABI HLSLShaderAttr *mergeShaderAttr(Decl *D, const AttributeCommonInfo &AL,
                                   llvm::Triple::EnvironmentType ShaderType);
-  HLSLParamModifierAttr *
+  CLANG_ABI HLSLParamModifierAttr *
   mergeParamModifierAttr(Decl *D, const AttributeCommonInfo &AL,
                          HLSLParamModifierAttr::Spelling Spelling);
-  void ActOnTopLevelFunction(FunctionDecl *FD);
-  void ActOnVariableDeclarator(VarDecl *VD);
-  bool ActOnUninitializedVarDecl(VarDecl *D);
-  void ActOnEndOfTranslationUnit(TranslationUnitDecl *TU);
-  void CheckEntryPoint(FunctionDecl *FD);
-  void CheckSemanticAnnotation(FunctionDecl *EntryPoint, const Decl *Param,
+  CLANG_ABI void ActOnTopLevelFunction(FunctionDecl *FD);
+  CLANG_ABI void ActOnVariableDeclarator(VarDecl *VD);
+  CLANG_ABI bool ActOnUninitializedVarDecl(VarDecl *D);
+  CLANG_ABI void ActOnEndOfTranslationUnit(TranslationUnitDecl *TU);
+  CLANG_ABI void CheckEntryPoint(FunctionDecl *FD);
+  CLANG_ABI void CheckSemanticAnnotation(FunctionDecl *EntryPoint, const Decl *Param,
                                const HLSLAnnotationAttr *AnnotationAttr);
-  void DiagnoseAttrStageMismatch(
+  CLANG_ABI void DiagnoseAttrStageMismatch(
       const Attr *A, llvm::Triple::EnvironmentType Stage,
       std::initializer_list<llvm::Triple::EnvironmentType> AllowedStages);
 
-  QualType handleVectorBinOpConversion(ExprResult &LHS, ExprResult &RHS,
+  CLANG_ABI QualType handleVectorBinOpConversion(ExprResult &LHS, ExprResult &RHS,
                                        QualType LHSType, QualType RHSType,
                                        bool IsCompAssign);
-  void emitLogicalOperatorFixIt(Expr *LHS, Expr *RHS, BinaryOperatorKind Opc);
+  CLANG_ABI void emitLogicalOperatorFixIt(Expr *LHS, Expr *RHS, BinaryOperatorKind Opc);
 
   /// Computes the unique Root Signature identifier from the given signature,
   /// then lookup if there is a previousy created Root Signature decl.
   ///
   /// Returns the identifier and if it was found
-  std::pair<IdentifierInfo *, bool>
+  CLANG_ABI std::pair<IdentifierInfo *, bool>
   ActOnStartRootSignatureDecl(StringRef Signature);
 
   /// Creates the Root Signature decl of the parsed Root Signature elements
   /// onto the AST and push it onto current Scope
-  void
+  CLANG_ABI void
   ActOnFinishRootSignatureDecl(SourceLocation Loc, IdentifierInfo *DeclIdent,
                                ArrayRef<hlsl::RootSignatureElement> Elements);
 
   // Returns true if any RootSignatureElement is invalid and a diagnostic was
   // produced
-  bool
+  CLANG_ABI bool
   handleRootSignatureElements(ArrayRef<hlsl::RootSignatureElement> Elements);
-  void handleRootSignatureAttr(Decl *D, const ParsedAttr &AL);
-  void handleNumThreadsAttr(Decl *D, const ParsedAttr &AL);
-  void handleWaveSizeAttr(Decl *D, const ParsedAttr &AL);
-  void handleVkConstantIdAttr(Decl *D, const ParsedAttr &AL);
-  void handleSV_DispatchThreadIDAttr(Decl *D, const ParsedAttr &AL);
-  void handleSV_GroupThreadIDAttr(Decl *D, const ParsedAttr &AL);
-  void handleSV_GroupIDAttr(Decl *D, const ParsedAttr &AL);
-  void handleSV_PositionAttr(Decl *D, const ParsedAttr &AL);
-  void handlePackOffsetAttr(Decl *D, const ParsedAttr &AL);
-  void handleShaderAttr(Decl *D, const ParsedAttr &AL);
-  void handleResourceBindingAttr(Decl *D, const ParsedAttr &AL);
-  void handleParamModifierAttr(Decl *D, const ParsedAttr &AL);
-  bool handleResourceTypeAttr(QualType T, const ParsedAttr &AL);
+  CLANG_ABI void handleRootSignatureAttr(Decl *D, const ParsedAttr &AL);
+  CLANG_ABI void handleNumThreadsAttr(Decl *D, const ParsedAttr &AL);
+  CLANG_ABI void handleWaveSizeAttr(Decl *D, const ParsedAttr &AL);
+  CLANG_ABI void handleVkConstantIdAttr(Decl *D, const ParsedAttr &AL);
+  CLANG_ABI void handleSV_DispatchThreadIDAttr(Decl *D, const ParsedAttr &AL);
+  CLANG_ABI void handleSV_GroupThreadIDAttr(Decl *D, const ParsedAttr &AL);
+  CLANG_ABI void handleSV_GroupIDAttr(Decl *D, const ParsedAttr &AL);
+  CLANG_ABI void handleSV_PositionAttr(Decl *D, const ParsedAttr &AL);
+  CLANG_ABI void handlePackOffsetAttr(Decl *D, const ParsedAttr &AL);
+  CLANG_ABI void handleShaderAttr(Decl *D, const ParsedAttr &AL);
+  CLANG_ABI void handleResourceBindingAttr(Decl *D, const ParsedAttr &AL);
+  CLANG_ABI void handleParamModifierAttr(Decl *D, const ParsedAttr &AL);
+  CLANG_ABI bool handleResourceTypeAttr(QualType T, const ParsedAttr &AL);
 
-  void handleVkExtBuiltinInputAttr(Decl *D, const ParsedAttr &AL);
+  CLANG_ABI void handleVkExtBuiltinInputAttr(Decl *D, const ParsedAttr &AL);
 
-  bool CheckBuiltinFunctionCall(unsigned BuiltinID, CallExpr *TheCall);
-  QualType ProcessResourceTypeAttributes(QualType Wrapped);
-  HLSLAttributedResourceLocInfo
+  CLANG_ABI bool CheckBuiltinFunctionCall(unsigned BuiltinID, CallExpr *TheCall);
+  CLANG_ABI QualType ProcessResourceTypeAttributes(QualType Wrapped);
+  CLANG_ABI HLSLAttributedResourceLocInfo
   TakeLocForHLSLAttribute(const HLSLAttributedResourceType *RT);
 
   // HLSL Type trait implementations
-  bool IsScalarizedLayoutCompatible(QualType T1, QualType T2) const;
-  bool IsTypedResourceElementCompatible(QualType T1);
+  CLANG_ABI bool IsScalarizedLayoutCompatible(QualType T1, QualType T2) const;
+  CLANG_ABI bool IsTypedResourceElementCompatible(QualType T1);
 
-  bool CheckCompatibleParameterABI(FunctionDecl *New, FunctionDecl *Old);
+  CLANG_ABI bool CheckCompatibleParameterABI(FunctionDecl *New, FunctionDecl *Old);
 
   // Diagnose whether the input ID is uint/unit2/uint3 type.
-  bool diagnoseInputIDType(QualType T, const ParsedAttr &AL);
-  bool diagnosePositionType(QualType T, const ParsedAttr &AL);
+  CLANG_ABI bool diagnoseInputIDType(QualType T, const ParsedAttr &AL);
+  CLANG_ABI bool diagnosePositionType(QualType T, const ParsedAttr &AL);
 
-  bool CanPerformScalarCast(QualType SrcTy, QualType DestTy);
-  bool ContainsBitField(QualType BaseTy);
-  bool CanPerformElementwiseCast(Expr *Src, QualType DestType);
-  bool CanPerformAggregateSplatCast(Expr *Src, QualType DestType);
-  ExprResult ActOnOutParamExpr(ParmVarDecl *Param, Expr *Arg);
+  CLANG_ABI bool CanPerformScalarCast(QualType SrcTy, QualType DestTy);
+  CLANG_ABI bool ContainsBitField(QualType BaseTy);
+  CLANG_ABI bool CanPerformElementwiseCast(Expr *Src, QualType DestType);
+  CLANG_ABI bool CanPerformAggregateSplatCast(Expr *Src, QualType DestType);
+  CLANG_ABI ExprResult ActOnOutParamExpr(ParmVarDecl *Param, Expr *Arg);
 
-  QualType getInoutParameterType(QualType Ty);
+  CLANG_ABI QualType getInoutParameterType(QualType Ty);
 
-  bool transformInitList(const InitializedEntity &Entity, InitListExpr *Init);
-  bool handleInitialization(VarDecl *VDecl, Expr *&Init);
-  void deduceAddressSpace(VarDecl *Decl);
+  CLANG_ABI bool transformInitList(const InitializedEntity &Entity, InitListExpr *Init);
+  CLANG_ABI bool handleInitialization(VarDecl *VDecl, Expr *&Init);
+  CLANG_ABI void deduceAddressSpace(VarDecl *Decl);
 
 private:
   // HLSL resource type attributes need to be processed all at once.

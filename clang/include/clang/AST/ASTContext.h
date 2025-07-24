@@ -1575,7 +1575,7 @@ public:
   /// and bit count.
   CLANG_ABI QualType getDependentBitIntType(bool Unsigned, Expr *BitsExpr) const;
 
-  QualType getPredefinedSugarType(PredefinedSugarType::Kind KD) const;
+  CLANG_ABI QualType getPredefinedSugarType(PredefinedSugarType::Kind KD) const;
 
   /// Gets the struct used to keep track of the extended descriptor for
   /// pointer to blocks.
@@ -2312,7 +2312,7 @@ public:
     return getTypeDeclType(getObjCSelDecl());
   }
 
-  PointerAuthQualifier getObjCMemberSelTypePtrAuth();
+  CLANG_ABI PointerAuthQualifier getObjCMemberSelTypePtrAuth();
 
   /// Retrieve the typedef declaration corresponding to the predefined
   /// Objective-C 'Class' type.

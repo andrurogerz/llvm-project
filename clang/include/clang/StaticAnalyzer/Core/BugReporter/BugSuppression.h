@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_BUGREPORTER_SUPPRESSION_H
 #define LLVM_CLANG_STATICANALYZER_CORE_BUGREPORTER_SUPPRESSION_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/SourceLocation.h"
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/SmallVector.h"
@@ -33,11 +34,11 @@ public:
   using DiagnosticIdentifierList = llvm::ArrayRef<llvm::StringRef>;
 
   /// Return true if the given bug report was explicitly suppressed by the user.
-  bool isSuppressed(const BugReport &);
+  CLANG_ABI bool isSuppressed(const BugReport &);
 
   /// Return true if the bug reported at the given location was explicitly
   /// suppressed by the user.
-  bool isSuppressed(const PathDiagnosticLocation &Location,
+  CLANG_ABI bool isSuppressed(const PathDiagnosticLocation &Location,
                     const Decl *DeclWithIssue,
                     DiagnosticIdentifierList DiagnosticIdentification);
 

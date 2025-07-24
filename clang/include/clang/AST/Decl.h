@@ -575,7 +575,7 @@ protected:
   using NamedDecl::NamedDecl;
 
 public:
-  NamespaceDecl *getNamespace();
+  CLANG_ABI NamespaceDecl *getNamespace();
   const NamespaceDecl *getNamespace() const {
     return const_cast<NamespaceBaseDecl *>(this)->getNamespace();
   }

@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_SEMA_SEMA_H
 #define LLVM_CLANG_SEMA_SEMA_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/APINotes/APINotesManager.h"
 #include "clang/AST/ASTFwd.h"
 #include "clang/AST/ASTLambda.h"
@@ -223,7 +224,7 @@ enum class AssignmentAction {
 
 namespace threadSafety {
 class BeforeSet;
-void threadSafetyCleanup(BeforeSet *Cache);
+CLANG_ABI void threadSafetyCleanup(BeforeSet *Cache);
 } // namespace threadSafety
 
 // FIXME: No way to easily map from TemplateTypeParmTypes to
@@ -289,11 +290,11 @@ public:
   PreferredTypeBuilder(ASTContext *Ctx, bool Enabled)
       : Ctx(Ctx), Enabled(Enabled) {}
 
-  void enterCondition(Sema &S, SourceLocation Tok);
-  void enterReturn(Sema &S, SourceLocation Tok);
-  void enterVariableInit(SourceLocation Tok, Decl *D);
+  CLANG_ABI void enterCondition(Sema &S, SourceLocation Tok);
+  CLANG_ABI void enterReturn(Sema &S, SourceLocation Tok);
+  CLANG_ABI void enterVariableInit(SourceLocation Tok, Decl *D);
   /// Handles e.g. BaseType{ .D = Tok...
-  void enterDesignatedInitializer(SourceLocation Tok, QualType BaseType,
+  CLANG_ABI void enterDesignatedInitializer(SourceLocation Tok, QualType BaseType,
                                   const Designation &D);
   /// Computing a type for the function argument may require running
   /// overloading, so we postpone its computation until it is actually needed.
@@ -304,17 +305,17 @@ public:
   ///
   /// The callback should also emit signature help as a side-effect, but only
   /// if the completion point has been reached.
-  void enterFunctionArgument(SourceLocation Tok,
+  CLANG_ABI void enterFunctionArgument(SourceLocation Tok,
                              llvm::function_ref<QualType()> ComputeType);
 
-  void enterParenExpr(SourceLocation Tok, SourceLocation LParLoc);
-  void enterUnary(Sema &S, SourceLocation Tok, tok::TokenKind OpKind,
+  CLANG_ABI void enterParenExpr(SourceLocation Tok, SourceLocation LParLoc);
+  CLANG_ABI void enterUnary(Sema &S, SourceLocation Tok, tok::TokenKind OpKind,
                   SourceLocation OpLoc);
-  void enterBinary(Sema &S, SourceLocation Tok, Expr *LHS, tok::TokenKind Op);
-  void enterMemAccess(Sema &S, SourceLocation Tok, Expr *Base);
-  void enterSubscript(Sema &S, SourceLocation Tok, Expr *LHS);
+  CLANG_ABI void enterBinary(Sema &S, SourceLocation Tok, Expr *LHS, tok::TokenKind Op);
+  CLANG_ABI void enterMemAccess(Sema &S, SourceLocation Tok, Expr *Base);
+  CLANG_ABI void enterSubscript(Sema &S, SourceLocation Tok, Expr *LHS);
   /// Handles all type casts, including C-style cast, C++ casts, etc.
-  void enterTypeCast(SourceLocation Tok, QualType CastType);
+  CLANG_ABI void enterTypeCast(SourceLocation Tok, QualType CastType);
 
   /// Get the expected type associated with this location, if any.
   ///
@@ -841,11 +842,11 @@ enum Specifier { None, CPU, Tune };
 enum AttrName { Target, TargetClones, TargetVersion };
 } // end namespace DiagAttrParams
 
-void inferNoReturnAttr(Sema &S, const Decl *D);
+CLANG_ABI void inferNoReturnAttr(Sema &S, const Decl *D);
 
 /// Sema - This implements semantic analysis and AST building for C.
 /// \nosubgrouping
-class Sema final : public SemaBase {
+class CLANG_ABI Sema final : public SemaBase {
   // Table of Contents
   // -----------------
   // 1. Semantic Analysis (Sema.cpp)
@@ -1044,7 +1045,7 @@ public:
 
   public:
     explicit PoppedFunctionScopeDeleter(Sema *Self) : Self(Self) {}
-    void operator()(sema::FunctionScopeInfo *Scope) const;
+    CLANG_ABI void operator()(sema::FunctionScopeInfo *Scope) const;
   };
 
   using PoppedFunctionScopePtr =
@@ -1356,7 +1357,7 @@ public:
     DelayedDiagnostics() = default;
 
     /// Adds a delayed diagnostic.
-    void add(const sema::DelayedDiagnostic &diag); // in DelayedDiagnostic.h
+    CLANG_ABI void add(const sema::DelayedDiagnostic &diag); // in DelayedDiagnostic.h
 
     /// Determines whether diagnostics should be delayed.
     bool shouldDelayDiagnostics() { return CurPool != nullptr; }
@@ -2058,8 +2059,8 @@ public:
   // Actions should be performed only if we enter / exit a C++ method body.
   class PragmaStackSentinelRAII {
   public:
-    PragmaStackSentinelRAII(Sema &S, StringRef SlotLabel, bool ShouldAct);
-    ~PragmaStackSentinelRAII();
+    CLANG_ABI PragmaStackSentinelRAII(Sema &S, StringRef SlotLabel, bool ShouldAct);
+    CLANG_ABI ~PragmaStackSentinelRAII();
 
   private:
     Sema &S;
@@ -5441,13 +5442,13 @@ public:
     const QualType *data() const { return Exceptions.data(); }
 
     /// Integrate another called method into the collected data.
-    void CalledDecl(SourceLocation CallLoc, const CXXMethodDecl *Method);
+    CLANG_ABI void CalledDecl(SourceLocation CallLoc, const CXXMethodDecl *Method);
 
     /// Integrate an invoked expression into the collected data.
     void CalledExpr(Expr *E) { CalledStmt(E); }
 
     /// Integrate an invoked statement into the collected data.
-    void CalledStmt(Stmt *S);
+    CLANG_ABI void CalledStmt(Stmt *S);
 
     /// Overwrite an EPI's exception specification with this
     /// computed exception specification.
@@ -7655,7 +7656,7 @@ public:
 
   /// Abstract base class used for diagnosing integer constant
   /// expression violations.
-  class VerifyICEDiagnoser {
+  class CLANG_ABI VerifyICEDiagnoser {
   public:
     bool Suppress;
 
@@ -8390,10 +8391,10 @@ public:
     /// using the given declaration (which is either a class template or a
     /// class) along with the given qualifiers.
     /// along with the qualifiers placed on '*this'.
-    CXXThisScopeRAII(Sema &S, Decl *ContextDecl, Qualifiers CXXThisTypeQuals,
+    CLANG_ABI CXXThisScopeRAII(Sema &S, Decl *ContextDecl, Qualifiers CXXThisTypeQuals,
                      bool Enabled = true);
 
-    ~CXXThisScopeRAII();
+    CLANG_ABI ~CXXThisScopeRAII();
   };
 
   /// Make sure the value of 'this' is actually available in the current
@@ -9155,7 +9156,7 @@ public:
   class LambdaScopeForCallOperatorInstantiationRAII
       : private FunctionScopeRAII {
   public:
-    LambdaScopeForCallOperatorInstantiationRAII(
+    CLANG_ABI LambdaScopeForCallOperatorInstantiationRAII(
         Sema &SemasRef, FunctionDecl *FD, MultiLevelTemplateArgumentList MLTAL,
         LocalInstantiationScope &Scope,
         bool ShouldAddDeclsFromParentScope = true);
@@ -10294,7 +10295,7 @@ public:
     virtual ~ContextualImplicitConverter() {}
   };
 
-  class ICEConvertDiagnoser : public ContextualImplicitConverter {
+  class CLANG_ABI ICEConvertDiagnoser : public ContextualImplicitConverter {
     bool AllowScopedEnumerations;
 
   public:
@@ -13099,7 +13100,7 @@ public:
 
     /// Determines whether this template is an actual instantiation
     /// that should be counted toward the maximum instantiation depth.
-    bool isInstantiationRecord() const;
+    CLANG_ABI bool isInstantiationRecord() const;
   };
 
   /// A stack object to be created when performing template
@@ -13117,33 +13118,33 @@ public:
     /// Note that we are instantiating a class template,
     /// function template, variable template, alias template,
     /// or a member thereof.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           Decl *Entity,
                           SourceRange InstantiationRange = SourceRange());
 
     struct ExceptionSpecification {};
     /// Note that we are instantiating an exception specification
     /// of a function template.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           FunctionDecl *Entity, ExceptionSpecification,
                           SourceRange InstantiationRange = SourceRange());
 
     /// Note that we are instantiating a type alias template declaration.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           TypeAliasTemplateDecl *Entity,
                           ArrayRef<TemplateArgument> TemplateArgs,
                           SourceRange InstantiationRange = SourceRange());
 
     /// Note that we are instantiating a default argument in a
     /// template-id.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           TemplateParameter Param, TemplateDecl *Template,
                           ArrayRef<TemplateArgument> TemplateArgs,
                           SourceRange InstantiationRange = SourceRange());
 
     /// Note that we are substituting either explicitly-specified or
     /// deduced template arguments during function template argument deduction.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           FunctionTemplateDecl *FunctionTemplate,
                           ArrayRef<TemplateArgument> TemplateArgs,
                           CodeSynthesisContext::SynthesisKind Kind,
@@ -13152,7 +13153,7 @@ public:
 
     /// Note that we are instantiating as part of template
     /// argument deduction for a class template declaration.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           TemplateDecl *Template,
                           ArrayRef<TemplateArgument> TemplateArgs,
                           sema::TemplateDeductionInfo &DeductionInfo,
@@ -13161,7 +13162,7 @@ public:
     /// Note that we are instantiating as part of template
     /// argument deduction for a class template partial
     /// specialization.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           ClassTemplatePartialSpecializationDecl *PartialSpec,
                           ArrayRef<TemplateArgument> TemplateArgs,
                           sema::TemplateDeductionInfo &DeductionInfo,
@@ -13170,7 +13171,7 @@ public:
     /// Note that we are instantiating as part of template
     /// argument deduction for a variable template partial
     /// specialization.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           VarTemplatePartialSpecializationDecl *PartialSpec,
                           ArrayRef<TemplateArgument> TemplateArgs,
                           sema::TemplateDeductionInfo &DeductionInfo,
@@ -13178,28 +13179,28 @@ public:
 
     /// Note that we are instantiating a default argument for a function
     /// parameter.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           ParmVarDecl *Param,
                           ArrayRef<TemplateArgument> TemplateArgs,
                           SourceRange InstantiationRange = SourceRange());
 
     /// Note that we are substituting prior template arguments into a
     /// non-type parameter.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           NamedDecl *Template, NonTypeTemplateParmDecl *Param,
                           ArrayRef<TemplateArgument> TemplateArgs,
                           SourceRange InstantiationRange);
 
     /// Note that we are substituting prior template arguments into a
     /// template template parameter.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           NamedDecl *Template, TemplateTemplateParmDecl *Param,
                           ArrayRef<TemplateArgument> TemplateArgs,
                           SourceRange InstantiationRange);
 
     /// Note that we are checking the default template argument
     /// against the template parameter for a given template-id.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           TemplateDecl *Template, NamedDecl *Param,
                           ArrayRef<TemplateArgument> TemplateArgs,
                           SourceRange InstantiationRange);
@@ -13208,7 +13209,7 @@ public:
     /// \brief Note that we are checking the constraints associated with some
     /// constrained entity (a concept declaration or a template with associated
     /// constraints).
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           ConstraintsCheck, NamedDecl *Template,
                           ArrayRef<TemplateArgument> TemplateArgs,
                           SourceRange InstantiationRange);
@@ -13217,57 +13218,57 @@ public:
     /// \brief Note that we are checking a constraint expression associated
     /// with a template declaration or as part of the satisfaction check of a
     /// concept.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           ConstraintSubstitution, NamedDecl *Template,
                           sema::TemplateDeductionInfo &DeductionInfo,
                           SourceRange InstantiationRange);
 
     struct ConstraintNormalization {};
     /// \brief Note that we are normalizing a constraint expression.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           ConstraintNormalization, NamedDecl *Template,
                           SourceRange InstantiationRange);
 
     struct ParameterMappingSubstitution {};
     /// \brief Note that we are subtituting into the parameter mapping of an
     /// atomic constraint during constraint normalization.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           ParameterMappingSubstitution, NamedDecl *Template,
                           SourceRange InstantiationRange);
 
     /// \brief Note that we are substituting template arguments into a part of
     /// a requirement of a requires expression.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           concepts::Requirement *Req,
                           sema::TemplateDeductionInfo &DeductionInfo,
                           SourceRange InstantiationRange = SourceRange());
 
     /// \brief Note that we are checking the satisfaction of the constraint
     /// expression inside of a nested requirement.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           concepts::NestedRequirement *Req, ConstraintsCheck,
                           SourceRange InstantiationRange = SourceRange());
 
     /// \brief Note that we are checking a requires clause.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           const RequiresExpr *E,
                           sema::TemplateDeductionInfo &DeductionInfo,
                           SourceRange InstantiationRange);
 
     struct BuildingDeductionGuidesTag {};
     /// \brief Note that we are building deduction guides.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation PointOfInstantiation,
                           TemplateDecl *Entity, BuildingDeductionGuidesTag,
                           SourceRange InstantiationRange = SourceRange());
 
     struct PartialOrderingTTP {};
     /// \brief Note that we are partial ordering template template parameters.
-    InstantiatingTemplate(Sema &SemaRef, SourceLocation ArgLoc,
+    CLANG_ABI InstantiatingTemplate(Sema &SemaRef, SourceLocation ArgLoc,
                           PartialOrderingTTP, TemplateDecl *PArg,
                           SourceRange InstantiationRange = SourceRange());
 
     /// Note that we have finished instantiating this template.
-    void Clear();
+    CLANG_ABI void Clear();
 
     ~InstantiatingTemplate() { Clear(); }
 
@@ -13853,8 +13854,8 @@ public:
   /// statements.
   class FPFeaturesStateRAII {
   public:
-    FPFeaturesStateRAII(Sema &S);
-    ~FPFeaturesStateRAII();
+    CLANG_ABI FPFeaturesStateRAII(Sema &S);
+    CLANG_ABI ~FPFeaturesStateRAII();
     FPOptionsOverride getOverrides() { return OldOverrides; }
 
   private:
@@ -15412,28 +15413,28 @@ public:
 
     /// Return true if adding or removing the effect as part of a type
     /// conversion should generate a diagnostic.
-    bool shouldDiagnoseConversion(QualType SrcType,
+    CLANG_ABI bool shouldDiagnoseConversion(QualType SrcType,
                                   const FunctionEffectsRef &SrcFX,
                                   QualType DstType,
                                   const FunctionEffectsRef &DstFX) const;
 
     /// Return true if adding or removing the effect in a redeclaration should
     /// generate a diagnostic.
-    bool shouldDiagnoseRedeclaration(const FunctionDecl &OldFunction,
+    CLANG_ABI bool shouldDiagnoseRedeclaration(const FunctionDecl &OldFunction,
                                      const FunctionEffectsRef &OldFX,
                                      const FunctionDecl &NewFunction,
                                      const FunctionEffectsRef &NewFX) const;
 
     /// Return true if adding or removing the effect in a C++ virtual method
     /// override should generate a diagnostic.
-    OverrideResult shouldDiagnoseMethodOverride(
+    CLANG_ABI OverrideResult shouldDiagnoseMethodOverride(
         const CXXMethodDecl &OldMethod, const FunctionEffectsRef &OldFX,
         const CXXMethodDecl &NewMethod, const FunctionEffectsRef &NewFX) const;
   };
 
   struct FunctionEffectDiffVector : public SmallVector<FunctionEffectDiff> {
     /// Caller should short-circuit by checking for equality first.
-    FunctionEffectDiffVector(const FunctionEffectsRef &Old,
+    CLANG_ABI FunctionEffectDiffVector(const FunctionEffectsRef &Old,
                              const FunctionEffectsRef &New);
   };
 
@@ -15479,7 +15480,7 @@ public:
   ///@}
 };
 
-DeductionFailureInfo
+CLANG_ABI DeductionFailureInfo
 MakeDeductionFailureInfo(ASTContext &Context, TemplateDeductionResult TDK,
                          sema::TemplateDeductionInfo &Info);
 
@@ -15494,7 +15495,7 @@ struct LateParsedTemplate {
 };
 
 template <>
-void Sema::PragmaStack<Sema::AlignPackInfo>::Act(SourceLocation PragmaLocation,
+CLANG_ABI void Sema::PragmaStack<Sema::AlignPackInfo>::Act(SourceLocation PragmaLocation,
                                                  PragmaMsStackAction Action,
                                                  llvm::StringRef StackSlotLabel,
                                                  AlignPackInfo Value);

@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_INTERP_POINTER_H
 #define LLVM_CLANG_AST_INTERP_POINTER_H
 
+#include "clang/Support/Compiler.h"
 #include "Descriptor.h"
 #include "FunctionPointer.h"
 #include "InterpBlock.h"
@@ -45,8 +46,8 @@ struct IntPointer {
   const Descriptor *Desc;
   uint64_t Value;
 
-  IntPointer atOffset(const ASTContext &ASTCtx, unsigned Offset) const;
-  IntPointer baseCast(const ASTContext &ASTCtx, unsigned BaseOffset) const;
+  CLANG_ABI IntPointer atOffset(const ASTContext &ASTCtx, unsigned Offset) const;
+  CLANG_ABI IntPointer baseCast(const ASTContext &ASTCtx, unsigned BaseOffset) const;
 };
 
 struct TypeidPointer {
@@ -99,10 +100,10 @@ public:
   Pointer(IntPointer &&IntPtr) : StorageKind(Storage::Int) {
     PointeeStorage.Int = std::move(IntPtr);
   }
-  Pointer(Block *B);
-  Pointer(Block *B, uint64_t BaseAndOffset);
-  Pointer(const Pointer &P);
-  Pointer(Pointer &&P);
+  CLANG_ABI Pointer(Block *B);
+  CLANG_ABI Pointer(Block *B, uint64_t BaseAndOffset);
+  CLANG_ABI Pointer(const Pointer &P);
+  CLANG_ABI Pointer(Pointer &&P);
   Pointer(uint64_t Address, const Descriptor *Desc, uint64_t Offset = 0)
       : Offset(Offset), StorageKind(Storage::Int) {
     PointeeStorage.Int.Value = Address;
@@ -117,11 +118,11 @@ public:
     PointeeStorage.Typeid.TypePtr = TypePtr;
     PointeeStorage.Typeid.TypeInfoType = TypeInfoType;
   }
-  Pointer(Block *Pointee, unsigned Base, uint64_t Offset);
-  ~Pointer();
+  CLANG_ABI Pointer(Block *Pointee, unsigned Base, uint64_t Offset);
+  CLANG_ABI ~Pointer();
 
-  Pointer &operator=(const Pointer &P);
-  Pointer &operator=(Pointer &&P);
+  CLANG_ABI Pointer &operator=(const Pointer &P);
+  CLANG_ABI Pointer &operator=(Pointer &&P);
 
   /// Equality operators are just for tests.
   bool operator==(const Pointer &P) const {
@@ -145,10 +146,10 @@ public:
   bool operator!=(const Pointer &P) const { return !(P == *this); }
 
   /// Converts the pointer to an APValue.
-  APValue toAPValue(const ASTContext &ASTCtx) const;
+  CLANG_ABI APValue toAPValue(const ASTContext &ASTCtx) const;
 
   /// Converts the pointer to a string usable in diagnostics.
-  std::string toDiagnosticString(const ASTContext &Ctx) const;
+  CLANG_ABI std::string toDiagnosticString(const ASTContext &Ctx) const;
 
   uint64_t getIntegerRepresentation() const {
     if (isIntegralPointer())
@@ -159,7 +160,7 @@ public:
   }
 
   /// Converts the pointer to an APValue that is an rvalue.
-  std::optional<APValue> toRValue(const Context &Ctx,
+  CLANG_ABI std::optional<APValue> toRValue(const Context &Ctx,
                                   QualType ResultType) const;
 
   /// Offsets a pointer inside an array.
@@ -547,7 +548,7 @@ public:
     return asBlockPointer().Pointee->isWeak();
   }
   /// Checks if an object was initialized.
-  bool isInitialized() const;
+  CLANG_ABI bool isInitialized() const;
   /// Checks if the object is active.
   bool isActive() const {
     if (!isBlockPointer())
@@ -724,11 +725,11 @@ public:
   }
 
   /// Initializes a field.
-  void initialize() const;
+  CLANG_ABI void initialize() const;
   /// Activats a field.
-  void activate() const;
+  CLANG_ABI void activate() const;
   /// Deactivates an entire strurcutre.
-  void deactivate() const;
+  CLANG_ABI void deactivate() const;
 
   Lifetime getLifetime() const {
     if (!isBlockPointer())
@@ -768,27 +769,27 @@ public:
   }
 
   /// Checks if two pointers are comparable.
-  static bool hasSameBase(const Pointer &A, const Pointer &B);
+  CLANG_ABI static bool hasSameBase(const Pointer &A, const Pointer &B);
   /// Checks if two pointers can be subtracted.
-  static bool hasSameArray(const Pointer &A, const Pointer &B);
+  CLANG_ABI static bool hasSameArray(const Pointer &A, const Pointer &B);
   /// Checks if both given pointers point to the same block.
-  static bool pointToSameBlock(const Pointer &A, const Pointer &B);
+  CLANG_ABI static bool pointToSameBlock(const Pointer &A, const Pointer &B);
 
-  static std::optional<std::pair<Pointer, Pointer>>
+  CLANG_ABI static std::optional<std::pair<Pointer, Pointer>>
   computeSplitPoint(const Pointer &A, const Pointer &B);
 
   /// Whether this points to a block that's been created for a "literal lvalue",
   /// i.e. a non-MaterializeTemporaryExpr Expr.
-  bool pointsToLiteral() const;
-  bool pointsToStringLiteral() const;
+  CLANG_ABI bool pointsToLiteral() const;
+  CLANG_ABI bool pointsToStringLiteral() const;
 
   /// Prints the pointer.
-  void print(llvm::raw_ostream &OS) const;
+  CLANG_ABI void print(llvm::raw_ostream &OS) const;
 
   /// Compute an integer that can be used to compare this pointer to
   /// another one. This is usually NOT the same as the pointer offset
   /// regarding the AST record layout.
-  size_t computeOffsetForComparison() const;
+  CLANG_ABI size_t computeOffsetForComparison() const;
 
 private:
   friend class Block;

@@ -292,8 +292,8 @@ public:
 #include "clang/AST/TypeLocNodes.def"
 };
 
-extern template class DynamicRecursiveASTVisitorBase<false>;
-extern template class DynamicRecursiveASTVisitorBase<true>;
+extern template class CLANG_TEMPLATE_ABI DynamicRecursiveASTVisitorBase<false>;
+extern template class CLANG_TEMPLATE_ABI DynamicRecursiveASTVisitorBase<true>;
 
 using DynamicRecursiveASTVisitor =
     DynamicRecursiveASTVisitorBase</*Const=*/false>;

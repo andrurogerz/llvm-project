@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_LEX_HEADERMAP_H
 #define LLVM_CLANG_LEX_HEADERMAP_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/FileManager.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Lex/HeaderMapTypes.h"
@@ -38,7 +39,7 @@ public:
       : FileBuffer(std::move(File)), NeedsBSwap(NeedsBSwap) {}
 
   // Check for a valid header and extract the byte swap.
-  static bool checkHeader(const llvm::MemoryBuffer &File, bool &NeedsByteSwap);
+  CLANG_ABI static bool checkHeader(const llvm::MemoryBuffer &File, bool &NeedsByteSwap);
 
   // Make a call for every Key in the map.
   template <typename Func> void forEachKey(Func Callback) const {
@@ -55,26 +56,26 @@ public:
 
   /// If the specified relative filename is located in this HeaderMap return
   /// the filename it is mapped to, otherwise return an empty StringRef.
-  StringRef lookupFilename(StringRef Filename,
+  CLANG_ABI StringRef lookupFilename(StringRef Filename,
                            SmallVectorImpl<char> &DestPath) const;
 
   /// Return the filename of the headermap.
-  StringRef getFileName() const;
+  CLANG_ABI StringRef getFileName() const;
 
   /// Print the contents of this headermap to stderr.
-  void dump() const;
+  CLANG_ABI void dump() const;
 
   /// Return key for specifed path.
-  StringRef reverseLookupFilename(StringRef DestPath) const;
+  CLANG_ABI StringRef reverseLookupFilename(StringRef DestPath) const;
 
 private:
-  unsigned getEndianAdjustedWord(unsigned X) const;
-  const HMapHeader &getHeader() const;
-  HMapBucket getBucket(unsigned BucketNo) const;
+  CLANG_ABI unsigned getEndianAdjustedWord(unsigned X) const;
+  CLANG_ABI const HMapHeader &getHeader() const;
+  CLANG_ABI HMapBucket getBucket(unsigned BucketNo) const;
 
   /// Look up the specified string in the string table.  If the string index is
   /// not valid, return std::nullopt.
-  std::optional<StringRef> getString(unsigned StrTabIdx) const;
+  CLANG_ABI std::optional<StringRef> getString(unsigned StrTabIdx) const;
 };
 
 /// This class represents an Apple concept known as a 'header map'.  To the
@@ -88,7 +89,7 @@ class HeaderMap : private HeaderMapImpl {
 public:
   /// This attempts to load the specified file as a header map.  If it doesn't
   /// look like a HeaderMap, it gives up and returns null.
-  static std::unique_ptr<HeaderMap> Create(FileEntryRef FE, FileManager &FM);
+  CLANG_ABI static std::unique_ptr<HeaderMap> Create(FileEntryRef FE, FileManager &FM);
 
   using HeaderMapImpl::dump;
   using HeaderMapImpl::forEachKey;

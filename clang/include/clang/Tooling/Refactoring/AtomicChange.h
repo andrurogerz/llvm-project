@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_TOOLING_REFACTORING_ATOMICCHANGE_H
 #define LLVM_CLANG_TOOLING_REFACTORING_ATOMICCHANGE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/SourceManager.h"
 #include "clang/Format/Format.h"
 #include "clang/Tooling/Core/Replacement.h"
@@ -40,9 +41,9 @@ public:
   /// concatenation of the file name and the offset of \p KeyPosition.
   /// \p KeyPosition should be the location of the key syntactical element that
   /// is being changed, e.g. the call to a refactored method.
-  AtomicChange(const SourceManager &SM, SourceLocation KeyPosition);
+  CLANG_ABI AtomicChange(const SourceManager &SM, SourceLocation KeyPosition);
 
-  AtomicChange(const SourceManager &SM, SourceLocation KeyPosition,
+  CLANG_ABI AtomicChange(const SourceManager &SM, SourceLocation KeyPosition,
                llvm::Any Metadata);
 
   /// Creates an atomic change for \p FilePath with a customized key.
@@ -55,13 +56,13 @@ public:
   AtomicChange &operator=(AtomicChange &&) = default;
   AtomicChange &operator=(const AtomicChange &) = default;
 
-  bool operator==(const AtomicChange &Other) const;
+  CLANG_ABI bool operator==(const AtomicChange &Other) const;
 
   /// Returns the atomic change as a YAML string.
-  std::string toYAMLString();
+  CLANG_ABI std::string toYAMLString();
 
   /// Converts a YAML-encoded automic change to AtomicChange.
-  static AtomicChange convertFromYAML(llvm::StringRef YAMLContent);
+  CLANG_ABI static AtomicChange convertFromYAML(llvm::StringRef YAMLContent);
 
   /// Returns the key of this change, which is a concatenation of the
   /// file name and offset of the key position.
@@ -85,13 +86,13 @@ public:
   /// Adds a replacement that replaces the given Range with
   /// ReplacementText.
   /// \returns An llvm::Error carrying ReplacementError on error.
-  llvm::Error replace(const SourceManager &SM, const CharSourceRange &Range,
+  CLANG_ABI llvm::Error replace(const SourceManager &SM, const CharSourceRange &Range,
                       llvm::StringRef ReplacementText);
 
   /// Adds a replacement that replaces range [Loc, Loc+Length) with
   /// \p Text.
   /// \returns An llvm::Error carrying ReplacementError on error.
-  llvm::Error replace(const SourceManager &SM, SourceLocation Loc,
+  CLANG_ABI llvm::Error replace(const SourceManager &SM, SourceLocation Loc,
                       unsigned Length, llvm::StringRef Text);
 
   /// Adds a replacement that inserts \p Text at \p Loc. If this
@@ -102,16 +103,16 @@ public:
   /// is not an insertion, an error is returned.
   ///
   /// \returns An llvm::Error carrying ReplacementError on error.
-  llvm::Error insert(const SourceManager &SM, SourceLocation Loc,
+  CLANG_ABI llvm::Error insert(const SourceManager &SM, SourceLocation Loc,
                      llvm::StringRef Text, bool InsertAfter = true);
 
   /// Adds a header into the file that contains the key position.
   /// Header can be in angle brackets or double quotation marks. By default
   /// (header is not quoted), header will be surrounded with double quotes.
-  void addHeader(llvm::StringRef Header);
+  CLANG_ABI void addHeader(llvm::StringRef Header);
 
   /// Removes a header from the file that contains the key position.
-  void removeHeader(llvm::StringRef Header);
+  CLANG_ABI void removeHeader(llvm::StringRef Header);
 
   /// Returns a const reference to existing replacements.
   const Replacements &getReplacements() const { return Replaces; }
@@ -181,7 +182,7 @@ struct ApplyChangesSpec {
 /// otherwise, an llvm::Error carrying llvm::StringError is returned (the Error
 /// message can be converted to string with `llvm::toString()` and the
 /// error_code should be ignored).
-llvm::Expected<std::string>
+CLANG_ABI llvm::Expected<std::string>
 applyAtomicChanges(llvm::StringRef FilePath, llvm::StringRef Code,
                    llvm::ArrayRef<AtomicChange> Changes,
                    const ApplyChangesSpec &Spec);

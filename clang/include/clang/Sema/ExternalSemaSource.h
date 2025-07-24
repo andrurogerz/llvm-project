@@ -12,6 +12,7 @@
 #ifndef LLVM_CLANG_SEMA_EXTERNALSEMASOURCE_H
 #define LLVM_CLANG_SEMA_EXTERNALSEMASOURCE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ExternalASTSource.h"
 #include "clang/AST/Type.h"
 #include "clang/Sema/TypoCorrection.h"
@@ -47,7 +48,7 @@ struct ExternalVTableUse {
 /// An abstract interface that should be implemented by
 /// external AST sources that also provide information for semantic
 /// analysis.
-class ExternalSemaSource : public ExternalASTSource {
+class CLANG_ABI ExternalSemaSource : public ExternalASTSource {
   /// LLVM-style RTTI.
   static char ID;
 

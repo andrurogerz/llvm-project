@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_BUGREPORTER_BUGTYPE_H
 #define LLVM_CLANG_STATICANALYZER_CORE_BUGREPORTER_BUGTYPE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/StaticAnalyzer/Core/BugReporter/CommonBugCategories.h"
 #include "clang/StaticAnalyzer/Core/Checker.h"
@@ -25,7 +26,7 @@ namespace ento {
 
 class BugReporter;
 
-class BugType {
+class CLANG_ABI BugType {
 private:
   using CheckerNameInfo = std::variant<CheckerNameRef, const CheckerFrontend *>;
 

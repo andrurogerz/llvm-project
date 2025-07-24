@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_INTERP_DESCRIPTOR_H
 #define LLVM_CLANG_AST_INTERP_DESCRIPTOR_H
 
+#include "clang/Support/Compiler.h"
 #include "PrimType.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/Expr.h"
@@ -122,7 +123,7 @@ struct InlineDescriptor {
         Desc(D) {}
 
   void dump() const { dump(llvm::errs()); }
-  void dump(llvm::raw_ostream &OS) const;
+  CLANG_ABI void dump(llvm::raw_ostream &OS) const;
 };
 static_assert(sizeof(GlobalInlineDescriptor) != sizeof(InlineDescriptor), "");
 
@@ -184,42 +185,42 @@ public:
   const BlockMoveFn MoveFn = nullptr;
 
   /// Allocates a descriptor for a primitive.
-  Descriptor(const DeclTy &D, const Type *SourceTy, PrimType Type,
+  CLANG_ABI Descriptor(const DeclTy &D, const Type *SourceTy, PrimType Type,
              MetadataSize MD, bool IsConst, bool IsTemporary, bool IsMutable,
              bool IsVolatile);
 
   /// Allocates a descriptor for an array of primitives.
-  Descriptor(const DeclTy &D, PrimType Type, MetadataSize MD, size_t NumElems,
+  CLANG_ABI Descriptor(const DeclTy &D, PrimType Type, MetadataSize MD, size_t NumElems,
              bool IsConst, bool IsTemporary, bool IsMutable);
 
   /// Allocates a descriptor for an array of primitives of unknown size.
-  Descriptor(const DeclTy &D, PrimType Type, MetadataSize MDSize, bool IsConst,
+  CLANG_ABI Descriptor(const DeclTy &D, PrimType Type, MetadataSize MDSize, bool IsConst,
              bool IsTemporary, UnknownSize);
 
   /// Allocates a descriptor for an array of composites.
-  Descriptor(const DeclTy &D, const Type *SourceTy, const Descriptor *Elem,
+  CLANG_ABI Descriptor(const DeclTy &D, const Type *SourceTy, const Descriptor *Elem,
              MetadataSize MD, unsigned NumElems, bool IsConst, bool IsTemporary,
              bool IsMutable);
 
   /// Allocates a descriptor for an array of composites of unknown size.
-  Descriptor(const DeclTy &D, const Descriptor *Elem, MetadataSize MD,
+  CLANG_ABI Descriptor(const DeclTy &D, const Descriptor *Elem, MetadataSize MD,
              bool IsTemporary, UnknownSize);
 
   /// Allocates a descriptor for a record.
-  Descriptor(const DeclTy &D, const Record *R, MetadataSize MD, bool IsConst,
+  CLANG_ABI Descriptor(const DeclTy &D, const Record *R, MetadataSize MD, bool IsConst,
              bool IsTemporary, bool IsMutable, bool IsVolatile);
 
   /// Allocates a dummy descriptor.
-  Descriptor(const DeclTy &D, MetadataSize MD = std::nullopt);
+  CLANG_ABI Descriptor(const DeclTy &D, MetadataSize MD = std::nullopt);
 
   /// Make this descriptor a dummy descriptor.
   void makeDummy() { IsDummy = true; }
 
-  QualType getType() const;
-  QualType getElemQualType() const;
-  QualType getDataType(const ASTContext &Ctx) const;
-  SourceLocation getLocation() const;
-  SourceInfo getLoc() const;
+  CLANG_ABI QualType getType() const;
+  CLANG_ABI QualType getElemQualType() const;
+  CLANG_ABI QualType getDataType(const ASTContext &Ctx) const;
+  CLANG_ABI SourceLocation getLocation() const;
+  CLANG_ABI SourceInfo getLoc() const;
 
   const Decl *asDecl() const { return dyn_cast<const Decl *>(Source); }
   const Expr *asExpr() const { return dyn_cast<const Expr *>(Source); }
@@ -281,16 +282,16 @@ public:
   /// Checks if the descriptor is of a record.
   bool isRecord() const { return !IsArray && ElemRecord; }
   /// Checks if the descriptor is of a union.
-  bool isUnion() const;
+  CLANG_ABI bool isUnion() const;
   /// Checks if this is a dummy descriptor.
   bool isDummy() const { return IsDummy; }
 
   /// Whether variables of this descriptor need their destructor called or not.
-  bool hasTrivialDtor() const;
+  CLANG_ABI bool hasTrivialDtor() const;
 
-  void dump() const;
-  void dump(llvm::raw_ostream &OS) const;
-  void dumpFull(unsigned Offset = 0, unsigned Indent = 0) const;
+  CLANG_ABI void dump() const;
+  CLANG_ABI void dump(llvm::raw_ostream &OS) const;
+  CLANG_ABI void dumpFull(unsigned Offset = 0, unsigned Indent = 0) const;
 };
 
 /// Bitfield tracking the initialisation status of elements of primitive arrays.
@@ -303,7 +304,7 @@ private:
 
 public:
   /// Initializes the map with no fields set.
-  explicit InitMap(unsigned N);
+  CLANG_ABI explicit InitMap(unsigned N);
 
 private:
   friend class Pointer;

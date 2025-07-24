@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_LEX_LEXHLSLROOTSIGNATURE_H
 #define LLVM_CLANG_LEX_LEXHLSLROOTSIGNATURE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/SourceLocation.h"
 
@@ -65,10 +66,10 @@ public:
   RootSignatureLexer(StringRef Signature) : Buffer(Signature) {}
 
   /// Consumes and returns the next token.
-  RootSignatureToken consumeToken();
+  CLANG_ABI RootSignatureToken consumeToken();
 
   /// Returns the token that proceeds CurToken
-  RootSignatureToken peekNextToken();
+  CLANG_ABI RootSignatureToken peekNextToken();
 
   bool isEndOfBuffer() {
     advanceBuffer(Buffer.take_while(isspace).size());

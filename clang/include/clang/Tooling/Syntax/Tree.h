@@ -21,6 +21,7 @@
 #ifndef LLVM_CLANG_TOOLING_SYNTAX_TREE_H
 #define LLVM_CLANG_TOOLING_SYNTAX_TREE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/TokenKinds.h"
 #include "clang/Tooling/Syntax/TokenManager.h"
 #include "llvm/ADT/iterator.h"
@@ -55,7 +56,7 @@ class Node {
 protected:
   /// Newly created nodes are detached from a tree, parent and sibling links are
   /// set when the node is added as a child to another one.
-  Node(NodeKind Kind);
+  CLANG_ABI Node(NodeKind Kind);
   /// Nodes are allocated on Arenas; the destructor is never called.
   ~Node() = default;
 
@@ -71,7 +72,7 @@ public:
   NodeRole getRole() const { return static_cast<NodeRole>(Role); }
 
   /// Whether the node is detached from a tree, i.e. does not have a parent.
-  bool isDetached() const;
+  CLANG_ABI bool isDetached() const;
   /// Whether the node was created from the AST backed by the source code
   /// rather than added later through mutation APIs or created with factory
   /// functions.
@@ -96,15 +97,15 @@ public:
   Node *getPreviousSibling() { return PreviousSibling; }
 
   /// Dumps the structure of a subtree. For debugging and testing purposes.
-  std::string dump(const TokenManager &SM) const;
+  CLANG_ABI std::string dump(const TokenManager &SM) const;
   /// Dumps the tokens forming this subtree.
-  std::string dumpTokens(const TokenManager &SM) const;
+  CLANG_ABI std::string dumpTokens(const TokenManager &SM) const;
 
   /// Asserts invariants on this node of the tree and its immediate children.
   /// Will not recurse into the subtree. No-op if NDEBUG is set.
-  void assertInvariants() const;
+  CLANG_ABI void assertInvariants() const;
   /// Runs checkInvariants on all nodes in the subtree. No-op if NDEBUG is set.
-  void assertInvariantsRecursive() const;
+  CLANG_ABI void assertInvariantsRecursive() const;
 
 private:
   // Tree is allowed to change the Parent link and Role.
@@ -131,7 +132,7 @@ private:
 // FIXME: add TokenKind field (borrow some bits from the Node::kind).
 class Leaf final : public Node {
 public:
-  Leaf(TokenManager::Key K);
+  CLANG_ABI Leaf(TokenManager::Key K);
   static bool classof(const Node *N);
 
   TokenManager::Key getTokenKey() const { return K; }
@@ -181,12 +182,12 @@ public:
   Node *getLastChild() { return LastChild; }
   const Node *getLastChild() const { return LastChild; }
 
-  const Leaf *findFirstLeaf() const;
+  CLANG_ABI const Leaf *findFirstLeaf() const;
   Leaf *findFirstLeaf() {
     return const_cast<Leaf *>(const_cast<const Tree *>(this)->findFirstLeaf());
   }
 
-  const Leaf *findLastLeaf() const;
+  CLANG_ABI const Leaf *findLastLeaf() const;
   Leaf *findLastLeaf() {
     return const_cast<Leaf *>(const_cast<const Tree *>(this)->findLastLeaf());
   }
@@ -210,7 +211,7 @@ public:
   }
 
   /// Find the first node with a corresponding role.
-  const Node *findChild(NodeRole R) const;
+  CLANG_ABI const Node *findChild(NodeRole R) const;
   Node *findChild(NodeRole R) {
     return const_cast<Node *>(const_cast<const Tree *>(this)->findChild(R));
   }
@@ -280,12 +281,12 @@ public:
   /// "a;  ; c;" <=> [("a" , ";"), (null, ";" ), ("c" , ";" )]
   /// "a; b  c;" <=> [("a" , ";"), ("b" , null), ("c" , ";" )]
   /// "a; b; c"  <=> [("a" , ";"), ("b" , ";" ), ("c" , null)]
-  std::vector<ElementAndDelimiter<Node>> getElementsAsNodesAndDelimiters();
+  CLANG_ABI std::vector<ElementAndDelimiter<Node>> getElementsAsNodesAndDelimiters();
 
   /// Returns the elements of the list. Missing elements are represented
   /// as null pointers in the same way as in the return value of
   /// `getElementsAsNodesAndDelimiters()`.
-  std::vector<Node *> getElementsAsNodes();
+  CLANG_ABI std::vector<Node *> getElementsAsNodes();
 
   // These can't be implemented with the information we have!
 
@@ -293,16 +294,16 @@ public:
   ///
   /// Useful for discovering the correct delimiter to use when adding
   /// elements to empty or one-element lists.
-  clang::tok::TokenKind getDelimiterTokenKind() const;
+  CLANG_ABI clang::tok::TokenKind getDelimiterTokenKind() const;
 
-  TerminationKind getTerminationKind() const;
+  CLANG_ABI TerminationKind getTerminationKind() const;
 
   /// Whether this list can be empty in syntactically and semantically correct
   /// code.
   ///
   /// This list may be empty when the source code has errors even if
   /// canBeEmpty() returns false.
-  bool canBeEmpty() const;
+  CLANG_ABI bool canBeEmpty() const;
 };
 
 } // namespace syntax

@@ -312,7 +312,7 @@ public:
   /// The maximum distance betweenthe returned pointer and \p Start is
   /// limited by a constant value, but also an implementation detail.
   /// If no such check point exists, \c nullptr is returned.
-  const char *getCheckPoint(FileID FID, const char *Start) const;
+  CLANG_ABI const char *getCheckPoint(FileID FID, const char *Start) const;
 
 private:
   /// The code-completion handler.
@@ -1177,17 +1177,17 @@ private:
   /// skipped.
   llvm::DenseMap<const char *, unsigned> RecordedSkippedRanges;
 
-  void updateOutOfDateIdentifier(const IdentifierInfo &II) const;
+  CLANG_ABI void updateOutOfDateIdentifier(const IdentifierInfo &II) const;
 
 public:
-  Preprocessor(const PreprocessorOptions &PPOpts, DiagnosticsEngine &diags,
+  CLANG_ABI Preprocessor(const PreprocessorOptions &PPOpts, DiagnosticsEngine &diags,
                const LangOptions &LangOpts, SourceManager &SM,
                HeaderSearch &Headers, ModuleLoader &TheModuleLoader,
                IdentifierInfoLookup *IILookup = nullptr,
                bool OwnsHeaderSearch = false,
                TranslationUnitKind TUKind = TU_Complete);
 
-  ~Preprocessor();
+  CLANG_ABI ~Preprocessor();
 
   /// Initialize the preprocessor using information about the target.
   ///
@@ -1195,7 +1195,7 @@ public:
   /// lifetime of the preprocessor.
   /// \param AuxTarget is owned by the caller and must remain valid for
   /// the lifetime of the preprocessor.
-  void Initialize(const TargetInfo &Target,
+  CLANG_ABI void Initialize(const TargetInfo &Target,
                   const TargetInfo *AuxTarget = nullptr);
 
   /// Initialize the preprocessor to parse a model file
@@ -1204,10 +1204,10 @@ public:
   /// preserver the identifier table. However to avoid some duplicate
   /// information in the preprocessor some cleanup is needed before it is used
   /// to parse model files. This method does that cleanup.
-  void InitializeForModelFile();
+  CLANG_ABI void InitializeForModelFile();
 
   /// Cleanup after model file parsing
-  void FinalizeForModelFile();
+  CLANG_ABI void FinalizeForModelFile();
 
   /// Retrieve the preprocessor options used to initialize this preprocessor.
   const PreprocessorOptions &getPreprocessorOpts() const { return PPOpts; }
@@ -1298,7 +1298,7 @@ public:
   ///
   /// Note that this ignores any potentially active macro expansions and _Pragma
   /// expansions going on at the time.
-  PreprocessorLexer *getCurrentFileLexer() const;
+  CLANG_ABI PreprocessorLexer *getCurrentFileLexer() const;
 
   /// Return the submodule owning the file being lexed. This may not be
   /// the current module if we have changed modules since entering the file.
@@ -1429,10 +1429,10 @@ public:
   ///
   /// One can iterate over all previous macro directives from the most recent
   /// one.
-  MacroDirective *getLocalMacroDirectiveHistory(const IdentifierInfo *II) const;
+  CLANG_ABI MacroDirective *getLocalMacroDirectiveHistory(const IdentifierInfo *II) const;
 
   /// Add a directive to the macro directive history for this identifier.
-  void appendMacroDirective(IdentifierInfo *II, MacroDirective *MD);
+  CLANG_ABI void appendMacroDirective(IdentifierInfo *II, MacroDirective *MD);
   DefMacroDirective *appendDefMacroDirective(IdentifierInfo *II, MacroInfo *MI,
                                              SourceLocation Loc) {
     DefMacroDirective *MD = AllocateDefMacroDirective(MI, Loc);
@@ -1445,14 +1445,14 @@ public:
   }
 
   /// Set a MacroDirective that was loaded from a PCH file.
-  void setLoadedMacroDirective(IdentifierInfo *II, MacroDirective *ED,
+  CLANG_ABI void setLoadedMacroDirective(IdentifierInfo *II, MacroDirective *ED,
                                MacroDirective *MD);
 
   /// Register an exported macro for a module and identifier.
-  ModuleMacro *addModuleMacro(Module *Mod, IdentifierInfo *II,
+  CLANG_ABI ModuleMacro *addModuleMacro(Module *Mod, IdentifierInfo *II,
                               MacroInfo *Macro,
                               ArrayRef<ModuleMacro *> Overrides, bool &IsNew);
-  ModuleMacro *getModuleMacro(Module *Mod, const IdentifierInfo *II);
+  CLANG_ABI ModuleMacro *getModuleMacro(Module *Mod, const IdentifierInfo *II);
 
   /// Get the list of leaf (non-overridden) module macros for a name.
   ArrayRef<ModuleMacro*> getLeafModuleMacros(const IdentifierInfo *II) const {
@@ -1475,8 +1475,8 @@ public:
   /// MacroInfo::getUndefLoc() at the head of the list.
   using macro_iterator = MacroMap::const_iterator;
 
-  macro_iterator macro_begin(bool IncludeExternalMacros = true) const;
-  macro_iterator macro_end(bool IncludeExternalMacros = true) const;
+  CLANG_ABI macro_iterator macro_begin(bool IncludeExternalMacros = true) const;
+  CLANG_ABI macro_iterator macro_end(bool IncludeExternalMacros = true) const;
 
   llvm::iterator_range<macro_iterator>
   macros(bool IncludeExternalMacros = true) const {
@@ -1524,7 +1524,7 @@ public:
   /// Return the name of the macro defined before \p Loc that has
   /// spelling \p Tokens.  If there are multiple macros with same spelling,
   /// return the last one defined.
-  StringRef getLastMacroWithSpelling(SourceLocation Loc,
+  CLANG_ABI StringRef getLastMacroWithSpelling(SourceLocation Loc,
                                      ArrayRef<TokenValue> Tokens) const;
 
   /// Get the predefines for this processor.
@@ -1547,7 +1547,7 @@ public:
   ///
   /// If \p Namespace is non-null, then it is a token required to exist on the
   /// pragma line before the pragma string starts, e.g. "STDC" or "GCC".
-  void AddPragmaHandler(StringRef Namespace, PragmaHandler *Handler);
+  CLANG_ABI void AddPragmaHandler(StringRef Namespace, PragmaHandler *Handler);
   void AddPragmaHandler(PragmaHandler *Handler) {
     AddPragmaHandler(StringRef(), Handler);
   }
@@ -1557,13 +1557,13 @@ public:
   /// If \p Namespace is non-null, then it should be the namespace that
   /// \p Handler was added to. It is an error to remove a handler that
   /// has not been registered.
-  void RemovePragmaHandler(StringRef Namespace, PragmaHandler *Handler);
+  CLANG_ABI void RemovePragmaHandler(StringRef Namespace, PragmaHandler *Handler);
   void RemovePragmaHandler(PragmaHandler *Handler) {
     RemovePragmaHandler(StringRef(), Handler);
   }
 
   /// Install empty handlers for all pragmas (making them ignored).
-  void IgnorePragmas();
+  CLANG_ABI void IgnorePragmas();
 
   /// Set empty line handler.
   void setEmptylineHandler(EmptylineHandler *Handler) { Emptyline = Handler; }
@@ -1571,12 +1571,12 @@ public:
   EmptylineHandler *getEmptylineHandler() const { return Emptyline; }
 
   /// Add the specified comment handler to the preprocessor.
-  void addCommentHandler(CommentHandler *Handler);
+  CLANG_ABI void addCommentHandler(CommentHandler *Handler);
 
   /// Remove the specified comment handler.
   ///
   /// It is an error to remove a handler that has not been registered.
-  void removeCommentHandler(CommentHandler *Handler);
+  CLANG_ABI void removeCommentHandler(CommentHandler *Handler);
 
   /// Set the code completion handler to the given object.
   void setCodeCompletionHandler(CodeCompletionHandler &Handler) {
@@ -1595,11 +1595,11 @@ public:
 
   /// Hook used by the lexer to invoke the "included file" code
   /// completion point.
-  void CodeCompleteIncludedFile(llvm::StringRef Dir, bool IsAngled);
+  CLANG_ABI void CodeCompleteIncludedFile(llvm::StringRef Dir, bool IsAngled);
 
   /// Hook used by the lexer to invoke the "natural language" code
   /// completion point.
-  void CodeCompleteNaturalLanguage();
+  CLANG_ABI void CodeCompleteNaturalLanguage();
 
   /// Set the code completion token for filtering purposes.
   void setCodeCompletionIdentifierInfo(IdentifierInfo *Filter) {
@@ -1629,44 +1629,44 @@ public:
 
   /// Create a new preprocessing record, which will keep track of
   /// all macro expansions, macro definitions, etc.
-  void createPreprocessingRecord();
+  CLANG_ABI void createPreprocessingRecord();
 
   /// Returns true if the FileEntry is the PCH through header.
-  bool isPCHThroughHeader(const FileEntry *FE);
+  CLANG_ABI bool isPCHThroughHeader(const FileEntry *FE);
 
   /// True if creating a PCH with a through header.
-  bool creatingPCHWithThroughHeader();
+  CLANG_ABI bool creatingPCHWithThroughHeader();
 
   /// True if using a PCH with a through header.
-  bool usingPCHWithThroughHeader();
+  CLANG_ABI bool usingPCHWithThroughHeader();
 
   /// True if creating a PCH with a #pragma hdrstop.
-  bool creatingPCHWithPragmaHdrStop();
+  CLANG_ABI bool creatingPCHWithPragmaHdrStop();
 
   /// True if using a PCH with a #pragma hdrstop.
-  bool usingPCHWithPragmaHdrStop();
+  CLANG_ABI bool usingPCHWithPragmaHdrStop();
 
   /// Skip tokens until after the #include of the through header or
   /// until after a #pragma hdrstop.
-  void SkipTokensWhileUsingPCH();
+  CLANG_ABI void SkipTokensWhileUsingPCH();
 
   /// Process directives while skipping until the through header or
   /// #pragma hdrstop is found.
-  void HandleSkippedDirectiveWhileUsingPCH(Token &Result,
+  CLANG_ABI void HandleSkippedDirectiveWhileUsingPCH(Token &Result,
                                            SourceLocation HashLoc);
 
   /// Enter the specified FileID as the main source file,
   /// which implicitly adds the builtin defines etc.
-  void EnterMainSourceFile();
+  CLANG_ABI void EnterMainSourceFile();
 
   /// Inform the preprocessor callbacks that processing is complete.
-  void EndSourceFile();
+  CLANG_ABI void EndSourceFile();
 
   /// Add a source file to the top of the include stack and
   /// start lexing tokens from it instead of the current buffer.
   ///
   /// Emits a diagnostic, doesn't enter the file, and returns true on error.
-  bool EnterSourceFile(FileID FID, ConstSearchDirIterator Dir,
+  CLANG_ABI bool EnterSourceFile(FileID FID, ConstSearchDirIterator Dir,
                        SourceLocation Loc, bool IsFirstIncludeOfFile = true);
 
   /// Add a Macro to the top of the include stack and start lexing
@@ -1675,7 +1675,7 @@ public:
   /// \param Args specifies the tokens input to a function-like macro.
   /// \param ILEnd specifies the location of the ')' for a function-like macro
   /// or the identifier for an object-like macro.
-  void EnterMacro(Token &Tok, SourceLocation ILEnd, MacroInfo *Macro,
+  CLANG_ABI void EnterMacro(Token &Tok, SourceLocation ILEnd, MacroInfo *Macro,
                   MacroArgs *Args);
 
 private:
@@ -1693,7 +1693,7 @@ private:
   ///
   /// If \p IsReinject the resulting tokens will have Token::IsReinjected flag
   /// set, see the flag documentation for details.
-  void EnterTokenStream(const Token *Toks, unsigned NumToks,
+  CLANG_ABI void EnterTokenStream(const Token *Toks, unsigned NumToks,
                         bool DisableMacroExpansion, bool OwnsTokens,
                         bool IsReinject);
 
@@ -1714,7 +1714,7 @@ public:
   ///
   /// This should only be used in situations where the current state of the
   /// top-of-stack lexer is known.
-  void RemoveTopOfLexerStack();
+  CLANG_ABI void RemoveTopOfLexerStack();
 
   /// From the point that this method is called, and until
   /// CommitBacktrackedTokens() or Backtrack() is called, the Preprocessor
@@ -1731,7 +1731,7 @@ public:
   ///
   /// \param Unannotated Whether token annotations are reverted upon calling
   /// Backtrack().
-  void EnableBacktrackAtThisPos(bool Unannotated = false);
+  CLANG_ABI void EnableBacktrackAtThisPos(bool Unannotated = false);
 
 private:
   std::pair<CachedTokensTy::size_type, bool> LastBacktrackPos();
@@ -1740,11 +1740,11 @@ private:
 
 public:
   /// Disable the last EnableBacktrackAtThisPos call.
-  void CommitBacktrackedTokens();
+  CLANG_ABI void CommitBacktrackedTokens();
 
   /// Make Preprocessor re-lex the tokens that were lexed since
   /// EnableBacktrackAtThisPos() was previously called.
-  void Backtrack();
+  CLANG_ABI void Backtrack();
 
   /// True if EnableBacktrackAtThisPos() was called and
   /// caching of tokens is on.
@@ -1757,16 +1757,16 @@ public:
   }
 
   /// Lex the next token for this preprocessor.
-  void Lex(Token &Result);
+  CLANG_ABI void Lex(Token &Result);
 
   /// Lex all tokens for this preprocessor until (and excluding) end of file.
-  void LexTokensUntilEOF(std::vector<Token> *Tokens = nullptr);
+  CLANG_ABI void LexTokensUntilEOF(std::vector<Token> *Tokens = nullptr);
 
   /// Lex a token, forming a header-name token if possible.
-  bool LexHeaderName(Token &Result, bool AllowMacroExpansion = true);
+  CLANG_ABI bool LexHeaderName(Token &Result, bool AllowMacroExpansion = true);
 
   /// Lex the parameters for an #embed directive, returns nullopt on error.
-  std::optional<LexEmbedParametersResult> LexEmbedParameters(Token &Current,
+  CLANG_ABI std::optional<LexEmbedParametersResult> LexEmbedParameters(Token &Current,
                                                              bool ForHasEmbed);
 
   /// Get the start location of the first pp-token in main file.
@@ -1776,10 +1776,10 @@ public:
     return FirstPPTokenLoc;
   }
 
-  bool LexAfterModuleImport(Token &Result);
-  void CollectPpImportSuffix(SmallVectorImpl<Token> &Toks);
+  CLANG_ABI bool LexAfterModuleImport(Token &Result);
+  CLANG_ABI void CollectPpImportSuffix(SmallVectorImpl<Token> &Toks);
 
-  void makeModuleVisible(Module *M, SourceLocation Loc,
+  CLANG_ABI void makeModuleVisible(Module *M, SourceLocation Loc,
                          bool IncludeExports = true);
 
   SourceLocation getModuleImportLoc(Module *M) const {
@@ -1801,7 +1801,7 @@ public:
 
   /// Complete the lexing of a string literal where the first token has
   /// already been lexed (see LexStringLiteral).
-  bool FinishLexStringLiteral(Token &Result, std::string &String,
+  CLANG_ABI bool FinishLexStringLiteral(Token &Result, std::string &String,
                               const char *DiagnosticTag,
                               bool AllowMacroExpansion);
 
@@ -1839,7 +1839,7 @@ public:
   /// Parses a simple integer literal to get its numeric value.  Floating
   /// point literals and user defined literals are rejected.  Used primarily to
   /// handle pragmas that accept integer arguments.
-  bool parseSimpleIntegerLiteral(Token &Tok, uint64_t &Value);
+  CLANG_ABI bool parseSimpleIntegerLiteral(Token &Tok, uint64_t &Value);
 
   /// Disables macro expansion everywhere except for preprocessor directives.
   void SetMacroExpansionOnlyInDirectives() {
@@ -1921,14 +1921,14 @@ public:
 
   /// Whether \p Tok is the most recent token (`CachedLexPos - 1`) in
   /// CachedTokens.
-  bool IsPreviousCachedToken(const Token &Tok) const;
+  CLANG_ABI bool IsPreviousCachedToken(const Token &Tok) const;
 
   /// Replace token in `CachedLexPos - 1` in CachedTokens by the tokens
   /// in \p NewToks.
   ///
   /// Useful when a token needs to be split in smaller ones and CachedTokens
   /// most recent token must to be updated to reflect that.
-  void ReplacePreviousCachedToken(ArrayRef<Token> NewToks);
+  CLANG_ABI void ReplacePreviousCachedToken(ArrayRef<Token> NewToks);
 
   /// Replace the last token with an annotation token.
   ///
@@ -1945,7 +1945,7 @@ public:
   }
 
   /// Enter an annotation token into the token stream.
-  void EnterAnnotationToken(SourceRange Range, tok::TokenKind Kind,
+  CLANG_ABI void EnterAnnotationToken(SourceRange Range, tok::TokenKind Kind,
                             void *AnnotationVal);
 
   /// Determine whether it's possible for a future call to Lex to produce an
@@ -1964,7 +1964,7 @@ public:
 
   /// Recompute the current lexer kind based on the CurLexer/
   /// CurTokenLexer pointers.
-  void recomputeCurLexerKind();
+  CLANG_ABI void recomputeCurLexerKind();
 
   /// Returns true if incremental processing is enabled
   bool isIncrementalProcessingEnabled() const { return IncrementalProcessing; }
@@ -1988,7 +1988,7 @@ public:
   /// (1-based).
   ///
   /// \returns true if an error occurred, false otherwise.
-  bool SetCodeCompletionPoint(FileEntryRef File, unsigned Line,
+  CLANG_ABI bool SetCodeCompletionPoint(FileEntryRef File, unsigned Line,
                               unsigned Column);
 
   /// Determine if we are performing code completion.
@@ -2136,7 +2136,7 @@ public:
   ///
   /// Note that the returned StringRef may not point to the
   /// supplied buffer if a copy can be avoided.
-  StringRef getSpelling(const Token &Tok,
+  CLANG_ABI StringRef getSpelling(const Token &Tok,
                         SmallVectorImpl<char> &Buffer,
                         bool *Invalid = nullptr) const;
 
@@ -2183,14 +2183,14 @@ public:
   ///
   /// If specified, the source location provides a location of the expansion
   /// point of the token.
-  void CreateString(StringRef Str, Token &Tok,
+  CLANG_ABI void CreateString(StringRef Str, Token &Tok,
                     SourceLocation ExpansionLocStart = SourceLocation(),
                     SourceLocation ExpansionLocEnd = SourceLocation());
 
   /// Split the first Length characters out of the token starting at TokLoc
   /// and return a location pointing to the split token. Re-lexing from the
   /// split token will return the split token rather than the original.
-  SourceLocation SplitToken(SourceLocation TokLoc, unsigned Length);
+  CLANG_ABI SourceLocation SplitToken(SourceLocation TokLoc, unsigned Length);
 
   /// Computes the source location just past the end of the
   /// token at this source location.
@@ -2233,10 +2233,10 @@ public:
   }
 
   /// Print the token to stderr, used for debugging.
-  void DumpToken(const Token &Tok, bool DumpFlags = false) const;
-  void DumpLocation(SourceLocation Loc) const;
-  void DumpMacro(const MacroInfo &MI) const;
-  void dumpMacroInfo(const IdentifierInfo *II);
+  CLANG_ABI void DumpToken(const Token &Tok, bool DumpFlags = false) const;
+  CLANG_ABI void DumpLocation(SourceLocation Loc) const;
+  CLANG_ABI void DumpMacro(const MacroInfo &MI) const;
+  CLANG_ABI void dumpMacroInfo(const IdentifierInfo *II);
 
   /// Given a location that specifies the start of a
   /// token, return a new location that specifies a character within the token.
@@ -2256,14 +2256,14 @@ public:
       ++NumTokenPaste;
   }
 
-  void PrintStats();
+  CLANG_ABI void PrintStats();
 
-  size_t getTotalMemory() const;
+  CLANG_ABI size_t getTotalMemory() const;
 
   /// When the macro expander pastes together a comment (/##/) in Microsoft
   /// mode, this method handles updating the current state, returning the
   /// token on the next source line.
-  void HandleMicrosoftCommentPaste(Token &Tok);
+  CLANG_ABI void HandleMicrosoftCommentPaste(Token &Tok);
 
   //===--------------------------------------------------------------------===//
   // Preprocessor callback methods.  These are invoked by a lexer as various
@@ -2272,7 +2272,7 @@ public:
   /// Given a tok::raw_identifier token, look up the
   /// identifier information for the token and install it into the token,
   /// updating the token kind accordingly.
-  IdentifierInfo *LookUpIdentifierInfo(Token &Identifier) const;
+  CLANG_ABI IdentifierInfo *LookUpIdentifierInfo(Token &Identifier) const;
 
 private:
   llvm::DenseMap<IdentifierInfo*,unsigned> PoisonReasons;
@@ -2282,10 +2282,10 @@ public:
   ///
   /// If that identifier is accessed while poisoned, then this reason will be
   /// used instead of the default "poisoned" diagnostic.
-  void SetPoisonReason(IdentifierInfo *II, unsigned DiagID);
+  CLANG_ABI void SetPoisonReason(IdentifierInfo *II, unsigned DiagID);
 
   /// Display reason for poisoned identifier.
-  void HandlePoisonedIdentifier(Token & Identifier);
+  CLANG_ABI void HandlePoisonedIdentifier(Token & Identifier);
 
   void MaybeHandlePoisonedIdentifier(Token & Identifier) {
     if(IdentifierInfo * II = Identifier.getIdentifierInfo()) {
@@ -2353,7 +2353,7 @@ private:
   void diagnoseMissingHeaderInUmbrellaDir(const Module &Mod);
 
 public:
-  void PoisonSEHIdentifiers(bool Poison = true); // Borland
+  CLANG_ABI void PoisonSEHIdentifiers(bool Poison = true); // Borland
 
   /// Callback invoked when the lexer reads an identifier and has
   /// filled in the tokens IdentifierInfo member.
@@ -2363,25 +2363,25 @@ public:
   ///
   /// \returns true if we actually computed a token, false if we need to
   /// lex again.
-  bool HandleIdentifier(Token &Identifier);
+  CLANG_ABI bool HandleIdentifier(Token &Identifier);
 
   /// Callback invoked when the lexer hits the end of the current file.
   ///
   /// This either returns the EOF token and returns true, or
   /// pops a level off the include stack and returns false, at which point the
   /// client should call lex again.
-  bool HandleEndOfFile(Token &Result, bool isEndOfMacro = false);
+  CLANG_ABI bool HandleEndOfFile(Token &Result, bool isEndOfMacro = false);
 
   /// Callback invoked when the current TokenLexer hits the end of its
   /// token stream.
-  bool HandleEndOfTokenLexer(Token &Result);
+  CLANG_ABI bool HandleEndOfTokenLexer(Token &Result);
 
   /// Callback invoked when the lexer sees a # token at the start of a
   /// line.
   ///
   /// This consumes the directive, modifies the lexer/preprocessor state, and
   /// advances the lexer(s) so that the next token read is the correct one.
-  void HandleDirective(Token &Result);
+  CLANG_ABI void HandleDirective(Token &Result);
 
   /// Ensure that the next token is a tok::eod token.
   ///
@@ -2391,7 +2391,7 @@ public:
   ///
   /// \return The location of the end of the directive (the terminating
   /// newline).
-  SourceLocation CheckEndOfDirective(const char *DirType,
+  CLANG_ABI SourceLocation CheckEndOfDirective(const char *DirType,
                                      bool EnableMacros = false);
 
   /// Read and discard all tokens remaining on the current line until
@@ -2402,7 +2402,7 @@ public:
   }
 
   /// Same as above except retains the token that was found.
-  SourceRange DiscardUntilEndOfDirective(Token &Tok);
+  CLANG_ABI SourceRange DiscardUntilEndOfDirective(Token &Tok);
 
   /// Returns true if the preprocessor has seen a use of
   /// __DATE__ or __TIME__ in the file so far.
@@ -2445,10 +2445,10 @@ public:
   }
 
   /// Retrieves the module that we're currently building, if any.
-  Module *getCurrentModule();
+  CLANG_ABI Module *getCurrentModule();
 
   /// Retrieves the module whose implementation we're current compiling, if any.
-  Module *getCurrentModuleImplementation();
+  CLANG_ABI Module *getCurrentModuleImplementation();
 
   /// If we are preprocessing a named module.
   bool isInNamedModule() const { return ModuleDeclState.isNamedModule(); }
@@ -2481,7 +2481,7 @@ public:
   }
 
   /// Allocate a new MacroInfo object with the provided SourceLocation.
-  MacroInfo *AllocateMacroInfo(SourceLocation L);
+  CLANG_ABI MacroInfo *AllocateMacroInfo(SourceLocation L);
 
   /// Turn the specified lexer token into a fully checked and spelled
   /// filename, e.g. as an operand of \#include.
@@ -2492,13 +2492,13 @@ public:
   ///
   /// \returns true if the input filename was in <>'s or false if it was
   /// in ""'s.
-  bool GetIncludeFilenameSpelling(SourceLocation Loc,StringRef &Buffer);
+  CLANG_ABI bool GetIncludeFilenameSpelling(SourceLocation Loc,StringRef &Buffer);
 
   /// Given a "foo" or \<foo> reference, look up the indicated file.
   ///
   /// Returns std::nullopt on failure.  \p isAngled indicates whether the file
   /// reference is for system \#include's or not (i.e. using <> instead of "").
-  OptionalFileEntryRef
+  CLANG_ABI OptionalFileEntryRef
   LookupFile(SourceLocation FilenameLoc, StringRef Filename, bool isAngled,
              ConstSearchDirIterator FromDir, const FileEntry *FromFile,
              ConstSearchDirIterator *CurDir, SmallVectorImpl<char> *SearchPath,
@@ -2515,22 +2515,22 @@ public:
   /// to \p LookupFromFile if it is nonnull.
   ///
   /// Returns std::nullopt on failure.
-  OptionalFileEntryRef
+  CLANG_ABI OptionalFileEntryRef
   LookupEmbedFile(StringRef Filename, bool isAngled, bool OpenFile,
                   const FileEntry *LookupFromFile = nullptr);
 
   /// Return true if we're in the top-level file, not in a \#include.
-  bool isInPrimaryFile() const;
+  CLANG_ABI bool isInPrimaryFile() const;
 
   /// Lex an on-off-switch (C99 6.10.6p2) and verify that it is
   /// followed by EOD.  Return true if the token is not a valid on-off-switch.
-  bool LexOnOffSwitch(tok::OnOffSwitch &Result);
+  CLANG_ABI bool LexOnOffSwitch(tok::OnOffSwitch &Result);
 
-  bool CheckMacroName(Token &MacroNameTok, MacroUse isDefineUndef,
+  CLANG_ABI bool CheckMacroName(Token &MacroNameTok, MacroUse isDefineUndef,
                       bool *ShadowFlag = nullptr);
 
-  void EnterSubmodule(Module *M, SourceLocation ImportLoc, bool ForPragma);
-  Module *LeaveSubmodule(bool ForPragma);
+  CLANG_ABI void EnterSubmodule(Module *M, SourceLocation ImportLoc, bool ForPragma);
+  CLANG_ABI Module *LeaveSubmodule(bool ForPragma);
 
 private:
   friend void TokenLexer::ExpandFunctionArguments();
@@ -2562,9 +2562,9 @@ private:
 
   /// Update the set of active module macros and ambiguity flag for a module
   /// macro name.
-  void updateModuleMacroInfo(const IdentifierInfo *II, ModuleMacroInfo &Info);
+  CLANG_ABI void updateModuleMacroInfo(const IdentifierInfo *II, ModuleMacroInfo &Info);
 
-  DefMacroDirective *AllocateDefMacroDirective(MacroInfo *MI,
+  CLANG_ABI DefMacroDirective *AllocateDefMacroDirective(MacroInfo *MI,
                                                SourceLocation Loc);
   UndefMacroDirective *AllocateUndefMacroDirective(SourceLocation UndefLoc);
   VisibilityMacroDirective *AllocateVisibilityMacroDirective(SourceLocation Loc,
@@ -2760,13 +2760,13 @@ private:
   std::optional<CXXStandardLibraryVersionInfo> CXXStandardLibraryVersion;
 
 public:
-  std::optional<std::uint64_t> getStdLibCxxVersion();
-  bool NeedsStdLibCxxWorkaroundBefore(std::uint64_t FixedVersion);
+  CLANG_ABI std::optional<std::uint64_t> getStdLibCxxVersion();
+  CLANG_ABI bool NeedsStdLibCxxWorkaroundBefore(std::uint64_t FixedVersion);
 
 private:
   //===--------------------------------------------------------------------===//
   // Caching stuff.
-  void CachingLex(Token &Result);
+  CLANG_ABI void CachingLex(Token &Result);
 
   bool InCachingLexMode() const {
     // If the Lexer pointers are 0 and IncludeMacroStack is empty, it means
@@ -2774,7 +2774,7 @@ private:
     return !CurPPLexer && !CurTokenLexer && !IncludeMacroStack.empty();
   }
 
-  void EnterCachingLexMode();
+  CLANG_ABI void EnterCachingLexMode();
   void EnterCachingLexModeUnchecked();
 
   void ExitCachingLexMode() {
@@ -2782,8 +2782,8 @@ private:
       RemoveTopOfLexerStack();
   }
 
-  const Token &PeekAhead(unsigned N);
-  void AnnotatePreviousCachedTokens(const Token &Tok);
+  CLANG_ABI const Token &PeekAhead(unsigned N);
+  CLANG_ABI void AnnotatePreviousCachedTokens(const Token &Tok);
 
   //===--------------------------------------------------------------------===//
   /// Handle*Directive - implement the various preprocessor directives.  These
@@ -2849,7 +2849,7 @@ public:
   /// Check that the given module is available, producing a diagnostic if not.
   /// \return \c true if the check failed (because the module is not available).
   ///         \c false if the module appears to be usable.
-  static bool checkModuleIsAvailable(const LangOptions &LangOpts,
+  CLANG_ABI static bool checkModuleIsAvailable(const LangOptions &LangOpts,
                                      const TargetInfo &TargetInfo,
                                      const Module &M, DiagnosticsEngine &Diags);
 
@@ -2857,7 +2857,7 @@ public:
   /// Find the module that owns the source or header file that
   /// \p Loc points to. If the location is in a file that was included
   /// into a module, or is outside any module, returns nullptr.
-  Module *getModuleForLocation(SourceLocation Loc, bool AllowTextual);
+  CLANG_ABI Module *getModuleForLocation(SourceLocation Loc, bool AllowTextual);
 
   /// We want to produce a diagnostic at location IncLoc concerning an
   /// unreachable effect at location MLoc (eg, where a desired entity was
@@ -2873,7 +2873,7 @@ public:
   /// \return A file that can be #included to provide the desired effect. Null
   ///         if no such file could be determined or if a #include is not
   ///         appropriate (eg, if a module should be imported instead).
-  OptionalFileEntryRef getHeaderToIncludeForDiagnostics(SourceLocation IncLoc,
+  CLANG_ABI OptionalFileEntryRef getHeaderToIncludeForDiagnostics(SourceLocation IncLoc,
                                                         SourceLocation MLoc);
 
   bool isRecordingPreamble() const {
@@ -2926,25 +2926,25 @@ private:
   void HandlePragmaDirective(PragmaIntroducer Introducer);
 
 public:
-  void HandlePragmaOnce(Token &OnceTok);
-  void HandlePragmaMark(Token &MarkTok);
-  void HandlePragmaPoison();
-  void HandlePragmaSystemHeader(Token &SysHeaderTok);
-  void HandlePragmaDependency(Token &DependencyTok);
-  void HandlePragmaPushMacro(Token &Tok);
-  void HandlePragmaPopMacro(Token &Tok);
-  void HandlePragmaIncludeAlias(Token &Tok);
-  void HandlePragmaModuleBuild(Token &Tok);
-  void HandlePragmaHdrstop(Token &Tok);
-  IdentifierInfo *ParsePragmaPushOrPopMacro(Token &Tok);
+  CLANG_ABI void HandlePragmaOnce(Token &OnceTok);
+  CLANG_ABI void HandlePragmaMark(Token &MarkTok);
+  CLANG_ABI void HandlePragmaPoison();
+  CLANG_ABI void HandlePragmaSystemHeader(Token &SysHeaderTok);
+  CLANG_ABI void HandlePragmaDependency(Token &DependencyTok);
+  CLANG_ABI void HandlePragmaPushMacro(Token &Tok);
+  CLANG_ABI void HandlePragmaPopMacro(Token &Tok);
+  CLANG_ABI void HandlePragmaIncludeAlias(Token &Tok);
+  CLANG_ABI void HandlePragmaModuleBuild(Token &Tok);
+  CLANG_ABI void HandlePragmaHdrstop(Token &Tok);
+  CLANG_ABI IdentifierInfo *ParsePragmaPushOrPopMacro(Token &Tok);
 
   // Return true and store the first token only if any CommentHandler
   // has inserted some tokens and getCommentRetentionState() is false.
-  bool HandleComment(Token &result, SourceRange Comment);
+  CLANG_ABI bool HandleComment(Token &result, SourceRange Comment);
 
   /// A macro is used, update information about macros that need unused
   /// warnings.
-  void markMacroAsUsed(MacroInfo *MI);
+  CLANG_ABI void markMacroAsUsed(MacroInfo *MI);
 
   void addMacroDeprecationMsg(const IdentifierInfo *II, std::string Msg,
                               SourceLocation AnnotationLoc) {
@@ -2984,20 +2984,20 @@ public:
     }
   }
 
-  static void processPathForFileMacro(SmallVectorImpl<char> &Path,
+  CLANG_ABI static void processPathForFileMacro(SmallVectorImpl<char> &Path,
                                       const LangOptions &LangOpts,
                                       const TargetInfo &TI);
 
-  static void processPathToFileName(SmallVectorImpl<char> &FileName,
+  CLANG_ABI static void processPathToFileName(SmallVectorImpl<char> &FileName,
                                     const PresumedLoc &PLoc,
                                     const LangOptions &LangOpts,
                                     const TargetInfo &TI);
 
 private:
-  void emitMacroDeprecationWarning(const Token &Identifier) const;
-  void emitRestrictExpansionWarning(const Token &Identifier) const;
+  CLANG_ABI void emitMacroDeprecationWarning(const Token &Identifier) const;
+  CLANG_ABI void emitRestrictExpansionWarning(const Token &Identifier) const;
   void emitFinalMacroWarning(const Token &Identifier, bool IsUndef) const;
-  void emitRestrictInfNaNWarning(const Token &Identifier,
+  CLANG_ABI void emitRestrictInfNaNWarning(const Token &Identifier,
                                  unsigned DiagSelection) const;
 
   /// This boolean state keeps track if the current scanned token (by this PP)
@@ -3049,7 +3049,7 @@ private:
 public:
   /// \return true iff the given `Loc` is in a "-Wunsafe-buffer-usage" opt-out
   /// region.  This `Loc` must be a source location that has been pre-processed.
-  bool isSafeBufferOptOut(const SourceManager&SourceMgr, const SourceLocation &Loc) const;
+  CLANG_ABI bool isSafeBufferOptOut(const SourceManager&SourceMgr, const SourceLocation &Loc) const;
 
   /// Alter the state of whether this PP currently is in a
   /// "-Wunsafe-buffer-usage" opt-out region.
@@ -3061,30 +3061,30 @@ public:
   /// \return true iff it is INVALID to enter or exit a region, i.e.,
   /// attempt to enter a region before exiting a previous region, or exiting a
   /// region that PP is not currently in.
-  bool enterOrExitSafeBufferOptOutRegion(bool isEnter,
+  CLANG_ABI bool enterOrExitSafeBufferOptOutRegion(bool isEnter,
                                          const SourceLocation &Loc);
 
   /// \return true iff this PP is currently in a "-Wunsafe-buffer-usage"
   ///          opt-out region
-  bool isPPInSafeBufferOptOutRegion();
+  CLANG_ABI bool isPPInSafeBufferOptOutRegion();
 
   /// \param StartLoc output argument. It will be set to the start location of
   /// the current "-Wunsafe-buffer-usage" opt-out region iff this function
   /// returns true.
   /// \return true iff this PP is currently in a "-Wunsafe-buffer-usage"
   ///          opt-out region
-  bool isPPInSafeBufferOptOutRegion(SourceLocation &StartLoc);
+  CLANG_ABI bool isPPInSafeBufferOptOutRegion(SourceLocation &StartLoc);
 
   /// \return a sequence of SourceLocations representing ordered opt-out regions
   /// specified by
   /// `\#pragma clang unsafe_buffer_usage begin/end`s of this translation unit.
-  SmallVector<SourceLocation, 64> serializeSafeBufferOptOutMap() const;
+  CLANG_ABI SmallVector<SourceLocation, 64> serializeSafeBufferOptOutMap() const;
 
   /// \param SrcLocSeqs a sequence of SourceLocations deserialized from a
   /// record of code `PP_UNSAFE_BUFFER_USAGE`.
   /// \return true iff the `Preprocessor` has been updated; false `Preprocessor`
   /// is same as itself before the call.
-  bool setDeserializedSafeBufferOptOutMap(
+  CLANG_ABI bool setDeserializedSafeBufferOptOutMap(
       const SmallVectorImpl<SourceLocation> &SrcLocSeqs);
 
 private:
@@ -3110,7 +3110,7 @@ private:
 
 /// Abstract base class that describes a handler that will receive
 /// source ranges for each of the comments encountered in the source file.
-class CommentHandler {
+class CLANG_ABI CommentHandler {
 public:
   virtual ~CommentHandler();
 
@@ -3121,7 +3121,7 @@ public:
 
 /// Abstract base class that describes a handler that will receive
 /// source ranges for empty lines encountered in the source file.
-class EmptylineHandler {
+class CLANG_ABI EmptylineHandler {
 public:
   virtual ~EmptylineHandler();
 

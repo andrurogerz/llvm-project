@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_FORMAT_FORMAT_H
 #define LLVM_CLANG_FORMAT_FORMAT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LangOptions.h"
 #include "clang/Tooling/Core/Replacement.h"
 #include "clang/Tooling/Inclusions/IncludeStyle.h"
@@ -42,13 +43,13 @@ enum class ParseError {
   MissingQualifierType,
   MissingQualifierOrder
 };
-class ParseErrorCategory final : public std::error_category {
+class CLANG_ABI ParseErrorCategory final : public std::error_category {
 public:
   const char *name() const noexcept override;
   std::string message(int EV) const override;
 };
-const std::error_category &getParseCategory();
-std::error_code make_error_code(ParseError e);
+CLANG_ABI const std::error_category &getParseCategory();
+CLANG_ABI std::error_code make_error_code(ParseError e);
 
 /// The ``FormatStyle`` is used to configure the formatting to follow
 /// specific guidelines.
@@ -5520,7 +5521,7 @@ struct FormatStyle {
            WrapNamespaceBodyWithEmptyLines == R.WrapNamespaceBodyWithEmptyLines;
   }
 
-  std::optional<FormatStyle> GetLanguageStyle(LanguageKind Language) const;
+  CLANG_ABI std::optional<FormatStyle> GetLanguageStyle(LanguageKind Language) const;
 
   // Stores per-language styles. A FormatStyle instance inside has an empty
   // StyleSet. A FormatStyle instance returned by the Get method has its
@@ -5532,30 +5533,30 @@ struct FormatStyle {
   struct FormatStyleSet {
     typedef std::map<LanguageKind, FormatStyle> MapType;
 
-    std::optional<FormatStyle> Get(LanguageKind Language) const;
+    CLANG_ABI std::optional<FormatStyle> Get(LanguageKind Language) const;
 
     // Adds \p Style to this FormatStyleSet. Style must not have an associated
     // FormatStyleSet.
     // Style.Language should be different than LK_None. If this FormatStyleSet
     // already contains an entry for Style.Language, that gets replaced with the
     // passed Style.
-    void Add(FormatStyle Style);
+    CLANG_ABI void Add(FormatStyle Style);
 
     // Clears this FormatStyleSet.
-    void Clear();
+    CLANG_ABI void Clear();
 
   private:
     std::shared_ptr<MapType> Styles;
   };
 
-  static FormatStyleSet BuildStyleSetFromConfiguration(
+  CLANG_ABI static FormatStyleSet BuildStyleSetFromConfiguration(
       const FormatStyle &MainStyle,
       const std::vector<FormatStyle> &ConfigurationStyles);
 
 private:
   FormatStyleSet StyleSet;
 
-  friend std::error_code
+  CLANG_ABI friend std::error_code
   parseConfiguration(llvm::MemoryBufferRef Config, FormatStyle *Style,
                      bool AllowUnknownOptions,
                      llvm::SourceMgr::DiagHandlerTy DiagHandler,
@@ -5564,39 +5565,39 @@ private:
 
 /// Returns a format style complying with the LLVM coding standards:
 /// http://llvm.org/docs/CodingStandards.html.
-FormatStyle
+CLANG_ABI FormatStyle
 getLLVMStyle(FormatStyle::LanguageKind Language = FormatStyle::LK_Cpp);
 
 /// Returns a format style complying with one of Google's style guides:
 /// http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml.
 /// http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml.
 /// https://developers.google.com/protocol-buffers/docs/style.
-FormatStyle getGoogleStyle(FormatStyle::LanguageKind Language);
+CLANG_ABI FormatStyle getGoogleStyle(FormatStyle::LanguageKind Language);
 
 /// Returns a format style complying with Chromium's style guide:
 /// http://www.chromium.org/developers/coding-style.
-FormatStyle getChromiumStyle(FormatStyle::LanguageKind Language);
+CLANG_ABI FormatStyle getChromiumStyle(FormatStyle::LanguageKind Language);
 
 /// Returns a format style complying with Mozilla's style guide:
 /// https://firefox-source-docs.mozilla.org/code-quality/coding-style/index.html.
-FormatStyle getMozillaStyle();
+CLANG_ABI FormatStyle getMozillaStyle();
 
 /// Returns a format style complying with Webkit's style guide:
 /// http://www.webkit.org/coding/coding-style.html
-FormatStyle getWebKitStyle();
+CLANG_ABI FormatStyle getWebKitStyle();
 
 /// Returns a format style complying with GNU Coding Standards:
 /// http://www.gnu.org/prep/standards/standards.html
-FormatStyle getGNUStyle();
+CLANG_ABI FormatStyle getGNUStyle();
 
 /// Returns a format style complying with Microsoft style guide:
 /// https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference?view=vs-2017
-FormatStyle getMicrosoftStyle(FormatStyle::LanguageKind Language);
+CLANG_ABI FormatStyle getMicrosoftStyle(FormatStyle::LanguageKind Language);
 
-FormatStyle getClangFormatStyle();
+CLANG_ABI FormatStyle getClangFormatStyle();
 
 /// Returns style indicating formatting should be not applied at all.
-FormatStyle getNoStyle();
+CLANG_ABI FormatStyle getNoStyle();
 
 /// Gets a predefined style for the specified language by name.
 ///
@@ -5604,7 +5605,7 @@ FormatStyle getNoStyle();
 /// compared case-insensitively.
 ///
 /// Returns ``true`` if the Style has been set.
-bool getPredefinedStyle(StringRef Name, FormatStyle::LanguageKind Language,
+CLANG_ABI bool getPredefinedStyle(StringRef Name, FormatStyle::LanguageKind Language,
                         FormatStyle *Style);
 
 /// Parse configuration from YAML-formatted text.
@@ -5621,7 +5622,7 @@ bool getPredefinedStyle(StringRef Name, FormatStyle::LanguageKind Language,
 /// format options are occurred.
 ///
 /// If set all diagnostics are emitted through the DiagHandler.
-std::error_code
+CLANG_ABI std::error_code
 parseConfiguration(llvm::MemoryBufferRef Config, FormatStyle *Style,
                    bool AllowUnknownOptions = false,
                    llvm::SourceMgr::DiagHandlerTy DiagHandler = nullptr,
@@ -5637,11 +5638,11 @@ inline std::error_code parseConfiguration(StringRef Config, FormatStyle *Style,
 }
 
 /// Gets configuration in a YAML string.
-std::string configurationAsText(const FormatStyle &Style);
+CLANG_ABI std::string configurationAsText(const FormatStyle &Style);
 
 /// Returns the replacements necessary to sort all ``#include`` blocks
 /// that are affected by ``Ranges``.
-tooling::Replacements sortIncludes(const FormatStyle &Style, StringRef Code,
+CLANG_ABI tooling::Replacements sortIncludes(const FormatStyle &Style, StringRef Code,
                                    ArrayRef<tooling::Range> Ranges,
                                    StringRef FileName,
                                    unsigned *Cursor = nullptr);
@@ -5649,7 +5650,7 @@ tooling::Replacements sortIncludes(const FormatStyle &Style, StringRef Code,
 /// Returns the replacements corresponding to applying and formatting
 /// \p Replaces on success; otheriwse, return an llvm::Error carrying
 /// llvm::StringError.
-Expected<tooling::Replacements>
+CLANG_ABI Expected<tooling::Replacements>
 formatReplacements(StringRef Code, const tooling::Replacements &Replaces,
                    const FormatStyle &Style);
 
@@ -5666,7 +5667,7 @@ formatReplacements(StringRef Code, const tooling::Replacements &Replaces,
 /// The include manipulation is done via ``tooling::HeaderInclude``, see its
 /// documentation for more details on how include insertion points are found and
 /// what edits are produced.
-Expected<tooling::Replacements>
+CLANG_ABI Expected<tooling::Replacements>
 cleanupAroundReplacements(StringRef Code, const tooling::Replacements &Replaces,
                           const FormatStyle &Style);
 
@@ -5693,7 +5694,7 @@ struct FormattingAttemptStatus {
 ///
 /// If ``Status`` is non-null, its value will be populated with the status of
 /// this formatting attempt. See \c FormattingAttemptStatus.
-tooling::Replacements reformat(const FormatStyle &Style, StringRef Code,
+CLANG_ABI tooling::Replacements reformat(const FormatStyle &Style, StringRef Code,
                                ArrayRef<tooling::Range> Ranges,
                                StringRef FileName = "<stdin>",
                                FormattingAttemptStatus *Status = nullptr);
@@ -5701,7 +5702,7 @@ tooling::Replacements reformat(const FormatStyle &Style, StringRef Code,
 /// Same as above, except if ``IncompleteFormat`` is non-null, its value
 /// will be set to true if any of the affected ranges were not formatted due to
 /// a non-recoverable syntax error.
-tooling::Replacements reformat(const FormatStyle &Style, StringRef Code,
+CLANG_ABI tooling::Replacements reformat(const FormatStyle &Style, StringRef Code,
                                ArrayRef<tooling::Range> Ranges,
                                StringRef FileName, bool *IncompleteFormat);
 
@@ -5709,7 +5710,7 @@ tooling::Replacements reformat(const FormatStyle &Style, StringRef Code,
 /// Code.
 ///
 /// Returns the ``Replacements`` that clean up all \p Ranges in \p Code.
-tooling::Replacements cleanup(const FormatStyle &Style, StringRef Code,
+CLANG_ABI tooling::Replacements cleanup(const FormatStyle &Style, StringRef Code,
                               ArrayRef<tooling::Range> Ranges,
                               StringRef FileName = "<stdin>");
 
@@ -5717,7 +5718,7 @@ tooling::Replacements cleanup(const FormatStyle &Style, StringRef Code,
 ///
 /// Returns the ``Replacements`` that fix the namespace comments in all
 /// \p Ranges in \p Code.
-tooling::Replacements fixNamespaceEndComments(const FormatStyle &Style,
+CLANG_ABI tooling::Replacements fixNamespaceEndComments(const FormatStyle &Style,
                                               StringRef Code,
                                               ArrayRef<tooling::Range> Ranges,
                                               StringRef FileName = "<stdin>");
@@ -5728,7 +5729,7 @@ tooling::Replacements fixNamespaceEndComments(const FormatStyle &Style,
 ///
 /// Returns the ``Replacements`` that inserts or removes empty lines separating
 /// definition blocks in all \p Ranges in \p Code.
-tooling::Replacements separateDefinitionBlocks(const FormatStyle &Style,
+CLANG_ABI tooling::Replacements separateDefinitionBlocks(const FormatStyle &Style,
                                                StringRef Code,
                                                ArrayRef<tooling::Range> Ranges,
                                                StringRef FileName = "<stdin>");
@@ -5738,7 +5739,7 @@ tooling::Replacements separateDefinitionBlocks(const FormatStyle &Style,
 ///
 /// Returns the ``Replacements`` that sort the using declarations in all
 /// \p Ranges in \p Code.
-tooling::Replacements sortUsingDeclarations(const FormatStyle &Style,
+CLANG_ABI tooling::Replacements sortUsingDeclarations(const FormatStyle &Style,
                                             StringRef Code,
                                             ArrayRef<tooling::Range> Ranges,
                                             StringRef FileName = "<stdin>");
@@ -5746,21 +5747,21 @@ tooling::Replacements sortUsingDeclarations(const FormatStyle &Style,
 /// Returns the ``LangOpts`` that the formatter expects you to set.
 ///
 /// \param Style determines specific settings for lexing mode.
-LangOptions getFormattingLangOpts(const FormatStyle &Style = getLLVMStyle());
+CLANG_ABI LangOptions getFormattingLangOpts(const FormatStyle &Style = getLLVMStyle());
 
 /// Description to be used for help text for a ``llvm::cl`` option for
 /// specifying format style. The description is closely related to the operation
 /// of ``getStyle()``.
-extern const char *StyleOptionHelpDescription;
+extern const CLANG_ABI char *StyleOptionHelpDescription;
 
 /// The suggested format style to use by default. This allows tools using
 /// ``getStyle`` to have a consistent default style.
 /// Different builds can modify the value to the preferred styles.
-extern const char *DefaultFormatStyle;
+extern const CLANG_ABI char *DefaultFormatStyle;
 
 /// The suggested predefined style to use as the fallback style in ``getStyle``.
 /// Different builds can modify the value to the preferred styles.
-extern const char *DefaultFallbackStyle;
+extern const CLANG_ABI char *DefaultFallbackStyle;
 
 /// Construct a FormatStyle based on ``StyleName``.
 ///
@@ -5790,7 +5791,7 @@ extern const char *DefaultFallbackStyle;
 /// \returns FormatStyle as specified by ``StyleName``. If ``StyleName`` is
 /// "file" and no file is found, returns ``FallbackStyle``. If no style could be
 /// determined, returns an Error.
-Expected<FormatStyle>
+CLANG_ABI Expected<FormatStyle>
 getStyle(StringRef StyleName, StringRef FileName, StringRef FallbackStyle,
          StringRef Code = "", llvm::vfs::FileSystem *FS = nullptr,
          bool AllowUnknownOptions = false,
@@ -5798,7 +5799,7 @@ getStyle(StringRef StyleName, StringRef FileName, StringRef FallbackStyle,
 
 // Guesses the language from the ``FileName`` and ``Code`` to be formatted.
 // Defaults to FormatStyle::LK_Cpp.
-FormatStyle::LanguageKind guessLanguage(StringRef FileName, StringRef Code);
+CLANG_ABI FormatStyle::LanguageKind guessLanguage(StringRef FileName, StringRef Code);
 
 // Returns a string representation of ``Language``.
 inline StringRef getLanguageName(FormatStyle::LanguageKind Language) {
@@ -5830,8 +5831,8 @@ inline StringRef getLanguageName(FormatStyle::LanguageKind Language) {
   }
 }
 
-bool isClangFormatOn(StringRef Comment);
-bool isClangFormatOff(StringRef Comment);
+CLANG_ABI bool isClangFormatOn(StringRef Comment);
+CLANG_ABI bool isClangFormatOff(StringRef Comment);
 
 } // end namespace format
 } // end namespace clang

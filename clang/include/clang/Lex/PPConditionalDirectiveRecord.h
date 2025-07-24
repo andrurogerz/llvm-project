@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_LEX_PPCONDITIONALDIRECTIVERECORD_H
 #define LLVM_CLANG_LEX_PPCONDITIONALDIRECTIVERECORD_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/SourceLocation.h"
 #include "clang/Lex/PPCallbacks.h"
 #include "llvm/ADT/SmallVector.h"
@@ -22,7 +23,7 @@ namespace clang {
 
 /// Records preprocessor conditional directive regions and allows
 /// querying in which region source locations belong to.
-class PPConditionalDirectiveRecord : public PPCallbacks {
+class CLANG_ABI PPConditionalDirectiveRecord : public PPCallbacks {
   SourceManager &SourceMgr;
 
   SmallVector<SourceLocation, 6> CondDirectiveStack;

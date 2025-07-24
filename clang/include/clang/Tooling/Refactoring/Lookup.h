@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_TOOLING_REFACTORING_LOOKUP_H
 #define LLVM_CLANG_TOOLING_REFACTORING_LOOKUP_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/SourceLocation.h"
 #include <string>
@@ -38,7 +39,7 @@ namespace tooling {
 /// \param ReplacementString The replacement nested name. Must be fully
 ///                          qualified including a leading "::".
 /// \returns The new name to be inserted in place of the current nested name.
-std::string replaceNestedName(const NestedNameSpecifier *Use,
+CLANG_ABI std::string replaceNestedName(const NestedNameSpecifier *Use,
                               SourceLocation UseLoc,
                               const DeclContext *UseContext,
                               const NamedDecl *FromDecl,

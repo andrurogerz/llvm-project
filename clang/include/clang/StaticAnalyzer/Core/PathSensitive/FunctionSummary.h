@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_FUNCTIONSUMMARY_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_FUNCTIONSUMMARY_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/DenseMap.h"
@@ -127,8 +128,8 @@ public:
     return 0;
   }
 
-  unsigned getTotalNumBasicBlocks();
-  unsigned getTotalNumVisitedBasicBlocks();
+  CLANG_ABI unsigned getTotalNumBasicBlocks();
+  CLANG_ABI unsigned getTotalNumVisitedBasicBlocks();
 };
 
 } // namespace ento

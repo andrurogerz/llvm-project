@@ -3578,8 +3578,8 @@ public:
   }
 
   bool hasStaticStorage() const { return isFileScope() && isGLValue(); }
-  APValue &getOrCreateStaticValue(ASTContext &Ctx) const;
-  APValue &getStaticValue() const;
+  CLANG_ABI APValue &getOrCreateStaticValue(ASTContext &Ctx) const;
+  CLANG_ABI APValue &getStaticValue() const;
 
   SourceLocation getBeginLoc() const LLVM_READONLY {
     // FIXME: Init should never be null.

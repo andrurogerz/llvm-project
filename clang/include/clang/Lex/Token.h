@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_LEX_TOKEN_H
 #define LLVM_CLANG_LEX_TOKEN_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/SourceLocation.h"
 #include "clang/Basic/TokenKinds.h"
 #include "llvm/ADT/ArrayRef.h"
@@ -286,12 +287,12 @@ public:
   bool isExpandDisabled() const { return getFlag(DisableExpand); }
 
   /// Return true if we have an ObjC keyword identifier.
-  bool isObjCAtKeyword(tok::ObjCKeywordKind objcKey) const;
+  CLANG_ABI bool isObjCAtKeyword(tok::ObjCKeywordKind objcKey) const;
 
   /// Return the ObjC keyword kind.
-  tok::ObjCKeywordKind getObjCKeywordID() const;
+  CLANG_ABI tok::ObjCKeywordKind getObjCKeywordID() const;
 
-  bool isSimpleTypeSpecifier(const LangOptions &LangOpts) const;
+  CLANG_ABI bool isSimpleTypeSpecifier(const LangOptions &LangOpts) const;
 
   /// Return true if this token has trigraphs or escaped newlines in it.
   bool needsCleaning() const { return getFlag(NeedsCleaning); }

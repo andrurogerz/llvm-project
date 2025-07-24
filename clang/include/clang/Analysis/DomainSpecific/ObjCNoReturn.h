@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_DOMAINSPECIFIC_OBJCNORETURN_H
 #define LLVM_CLANG_ANALYSIS_DOMAINSPECIFIC_OBJCNORETURN_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/IdentifierTable.h"
 
 namespace clang {
@@ -34,11 +35,11 @@ class ObjCNoReturn {
   Selector NSExceptionInstanceRaiseSelectors[NUM_RAISE_SELECTORS];
 
 public:
-  ObjCNoReturn(ASTContext &C);
+  CLANG_ABI ObjCNoReturn(ASTContext &C);
 
   /// Return true if the given message expression is known to never
   /// return.
-  bool isImplicitNoReturn(const ObjCMessageExpr *ME);
+  CLANG_ABI bool isImplicitNoReturn(const ObjCMessageExpr *ME);
 };
 }
 

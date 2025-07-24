@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_LEX_HEADERSEARCH_H
 #define LLVM_CLANG_LEX_HEADERSEARCH_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/SourceLocation.h"
 #include "clang/Basic/SourceManager.h"
 #include "clang/Lex/DirectoryLookup.h"
@@ -130,21 +131,21 @@ struct HeaderFileInfo {
 
   /// Retrieve the controlling macro for this header file, if
   /// any.
-  const IdentifierInfo *
+  CLANG_ABI const IdentifierInfo *
   getControllingMacro(ExternalPreprocessorSource *External);
 
   /// Update the module membership bits based on the header role.
   ///
   /// isModuleHeader will potentially be set, but not cleared.
   /// isTextualModuleHeader will be set or cleared based on the role update.
-  void mergeModuleMembership(ModuleMap::ModuleHeaderRole Role);
+  CLANG_ABI void mergeModuleMembership(ModuleMap::ModuleHeaderRole Role);
 };
 
 static_assert(sizeof(HeaderFileInfo) <= 16);
 
 /// An external source of header file information, which may supply
 /// information about header files already included.
-class ExternalHeaderFileInfoSource {
+class CLANG_ABI ExternalHeaderFileInfoSource {
 public:
   virtual ~ExternalHeaderFileInfoSource();
 
@@ -373,7 +374,7 @@ class HeaderSearch {
   void indexInitialHeaderMaps();
 
 public:
-  HeaderSearch(const HeaderSearchOptions &HSOpts, SourceManager &SourceMgr,
+  CLANG_ABI HeaderSearch(const HeaderSearchOptions &HSOpts, SourceManager &SourceMgr,
                DiagnosticsEngine &Diags, const LangOptions &LangOpts,
                const TargetInfo *Target);
   HeaderSearch(const HeaderSearch &) = delete;
@@ -388,12 +389,12 @@ public:
   DiagnosticsEngine &getDiags() const { return Diags; }
 
   /// Interface for setting the file search paths.
-  void SetSearchPaths(std::vector<DirectoryLookup> dirs, unsigned angledDirIdx,
+  CLANG_ABI void SetSearchPaths(std::vector<DirectoryLookup> dirs, unsigned angledDirIdx,
                       unsigned systemDirIdx,
                       llvm::DenseMap<unsigned, unsigned> searchDirToHSEntry);
 
   /// Add an additional search path.
-  void AddSearchPath(const DirectoryLookup &dir, bool isAngled);
+  CLANG_ABI void AddSearchPath(const DirectoryLookup &dir, bool isAngled);
 
   /// Add an additional system search path.
   void AddSystemSearchPath(const DirectoryLookup &dir) {
@@ -467,7 +468,7 @@ public:
 
   /// Set the target information for the header search, if not
   /// already known.
-  void setTarget(const TargetInfo &Target);
+  CLANG_ABI void setTarget(const TargetInfo &Target);
 
   /// Given a "foo" or \<foo> reference, look up the indicated file,
   /// return null on failure.
@@ -504,7 +505,7 @@ public:
   /// found in any of searched SearchDirs. Will be set to false if a framework
   /// is found only through header maps. Doesn't guarantee the requested file is
   /// found.
-  OptionalFileEntryRef LookupFile(
+  CLANG_ABI OptionalFileEntryRef LookupFile(
       StringRef Filename, SourceLocation IncludeLoc, bool isAngled,
       ConstSearchDirIterator FromDir, ConstSearchDirIterator *CurDir,
       ArrayRef<std::pair<OptionalFileEntryRef, DirectoryEntryRef>> Includers,
@@ -520,7 +521,7 @@ public:
   /// within ".../Carbon.framework/Headers/Carbon.h", check to see if
   /// HIToolbox is a subframework within Carbon.framework.  If so, return
   /// the FileEntry for the designated file, otherwise return null.
-  OptionalFileEntryRef LookupSubframeworkHeader(
+  CLANG_ABI OptionalFileEntryRef LookupSubframeworkHeader(
       StringRef Filename, FileEntryRef ContextFileEnt,
       SmallVectorImpl<char> *SearchPath, SmallVectorImpl<char> *RelativePath,
       Module *RequestingModule, ModuleMap::KnownHeader *SuggestedModule);
@@ -539,7 +540,7 @@ public:
   ///
   /// \param M The module to which `File` belongs (this should usually be the
   /// SuggestedModule returned by LookupFile/LookupSubframeworkHeader)
-  bool ShouldEnterIncludeFile(Preprocessor &PP, FileEntryRef File,
+  CLANG_ABI bool ShouldEnterIncludeFile(Preprocessor &PP, FileEntryRef File,
                               bool isImport, bool ModulesEnabled, Module *M,
                               bool &IsFirstIncludeOfFile);
 
@@ -564,7 +565,7 @@ public:
   }
 
   /// Mark the specified file as part of a module.
-  void MarkFileModuleHeader(FileEntryRef FE, ModuleMap::ModuleHeaderRole Role,
+  CLANG_ABI void MarkFileModuleHeader(FileEntryRef FE, ModuleMap::ModuleHeaderRole Role,
                             bool isCompilingModuleHeader);
 
   /// Mark the specified file as having a controlling macro.
@@ -581,7 +582,7 @@ public:
   /// macro.
   ///
   /// This routine does not consider the effect of \#import
-  bool isFileMultipleIncludeGuarded(FileEntryRef File) const;
+  CLANG_ABI bool isFileMultipleIncludeGuarded(FileEntryRef File) const;
 
   /// Determine whether the given file is known to have ever been \#imported.
   bool hasFileBeenImported(FileEntryRef File) const {
@@ -592,21 +593,21 @@ public:
   /// Determine which HeaderSearchOptions::UserEntries have been successfully
   /// used so far and mark their index with 'true' in the resulting bit vector.
   /// Note: implicit module maps don't contribute to entry usage.
-  std::vector<bool> computeUserEntryUsage() const;
+  CLANG_ABI std::vector<bool> computeUserEntryUsage() const;
 
   /// Collect which HeaderSearchOptions::VFSOverlayFiles have been meaningfully
   /// used so far and mark their index with 'true' in the resulting bit vector.
   ///
   /// Note: this ignores VFSs that redirect non-affecting files such as unused
   /// modulemaps.
-  std::vector<bool> collectVFSUsageAndClear() const;
+  CLANG_ABI std::vector<bool> collectVFSUsageAndClear() const;
 
   /// This method returns a HeaderMap for the specified
   /// FileEntry, uniquing them through the 'HeaderMaps' datastructure.
-  const HeaderMap *CreateHeaderMap(FileEntryRef FE);
+  CLANG_ABI const HeaderMap *CreateHeaderMap(FileEntryRef FE);
 
   /// Get filenames for all registered header maps.
-  void getHeaderMapFileNames(SmallVectorImpl<std::string> &Names) const;
+  CLANG_ABI void getHeaderMapFileNames(SmallVectorImpl<std::string> &Names) const;
 
   /// Retrieve the name of the cached module file that should be used
   /// to load the given module.
@@ -615,7 +616,7 @@ public:
   ///
   /// \returns The name of the module file that corresponds to this module,
   /// or an empty string if this module does not correspond to any module file.
-  std::string getCachedModuleFileName(Module *Module);
+  CLANG_ABI std::string getCachedModuleFileName(Module *Module);
 
   /// Retrieve the name of the prebuilt module file that should be used
   /// to load a module with the given name.
@@ -627,7 +628,7 @@ public:
   ///
   /// \returns The name of the module file that corresponds to this module,
   /// or an empty string if this module does not correspond to any module file.
-  std::string getPrebuiltModuleFileName(StringRef ModuleName,
+  CLANG_ABI std::string getPrebuiltModuleFileName(StringRef ModuleName,
                                         bool FileMapOnly = false);
 
   /// Retrieve the name of the prebuilt module file that should be used
@@ -637,7 +638,7 @@ public:
   ///
   /// \returns The name of the module file that corresponds to this module,
   /// or an empty string if this module does not correspond to any module file.
-  std::string getPrebuiltImplicitModuleFileName(Module *Module);
+  CLANG_ABI std::string getPrebuiltImplicitModuleFileName(Module *Module);
 
   /// Retrieve the name of the (to-be-)cached module file that should
   /// be used to load a module with the given name.
@@ -649,7 +650,7 @@ public:
   ///
   /// \returns The name of the module file that corresponds to this module,
   /// or an empty string if this module does not correspond to any module file.
-  std::string getCachedModuleFileName(StringRef ModuleName,
+  CLANG_ABI std::string getCachedModuleFileName(StringRef ModuleName,
                                       StringRef ModuleMapPath);
 
   /// Lookup a module Search for a module with the given name.
@@ -666,14 +667,14 @@ public:
   /// in subdirectories.
   ///
   /// \returns The module with the given name.
-  Module *lookupModule(StringRef ModuleName,
+  CLANG_ABI Module *lookupModule(StringRef ModuleName,
                        SourceLocation ImportLoc = SourceLocation(),
                        bool AllowSearch = true,
                        bool AllowExtraModuleMapSearch = false);
 
   /// Try to find a module map file in the given directory, returning
   /// \c nullopt if none is found.
-  OptionalFileEntryRef lookupModuleMapFile(DirectoryEntryRef Dir,
+  CLANG_ABI OptionalFileEntryRef lookupModuleMapFile(DirectoryEntryRef Dir,
                                            bool IsFramework);
 
   /// Determine whether there is a module map that may map the header
@@ -687,26 +688,26 @@ public:
   ///
   /// \param IsSystem Whether the directories we're looking at are system
   /// header directories.
-  bool hasModuleMap(StringRef Filename, const DirectoryEntry *Root,
+  CLANG_ABI bool hasModuleMap(StringRef Filename, const DirectoryEntry *Root,
                     bool IsSystem);
 
   /// Retrieve the module that corresponds to the given file, if any.
   ///
   /// \param File The header that we wish to map to a module.
   /// \param AllowTextual Whether we want to find textual headers too.
-  ModuleMap::KnownHeader findModuleForHeader(FileEntryRef File,
+  CLANG_ABI ModuleMap::KnownHeader findModuleForHeader(FileEntryRef File,
                                              bool AllowTextual = false,
                                              bool AllowExcluded = false) const;
 
   /// Retrieve all the modules corresponding to the given file.
   ///
   /// \ref findModuleForHeader should typically be used instead of this.
-  ArrayRef<ModuleMap::KnownHeader>
+  CLANG_ABI ArrayRef<ModuleMap::KnownHeader>
   findAllModulesForHeader(FileEntryRef File) const;
 
   /// Like \ref findAllModulesForHeader, but do not attempt to infer module
   /// ownership from umbrella headers if we've not already done so.
-  ArrayRef<ModuleMap::KnownHeader>
+  CLANG_ABI ArrayRef<ModuleMap::KnownHeader>
   findResolvedModulesForHeader(FileEntryRef File) const;
 
   /// Read the contents of the given module map file.
@@ -722,7 +723,7 @@ public:
   ///        used to resolve paths within the module (this is required when
   ///        building the module from preprocessed source).
   /// \returns true if an error occurred, false otherwise.
-  bool parseAndLoadModuleMapFile(FileEntryRef File, bool IsSystem,
+  CLANG_ABI bool parseAndLoadModuleMapFile(FileEntryRef File, bool IsSystem,
                                  FileID ID = FileID(),
                                  unsigned *Offset = nullptr,
                                  StringRef OriginalModuleMapFile = StringRef());
@@ -730,10 +731,10 @@ public:
   /// Collect the set of all known, top-level modules.
   ///
   /// \param Modules Will be filled with the set of known, top-level modules.
-  void collectAllModules(SmallVectorImpl<Module *> &Modules);
+  CLANG_ABI void collectAllModules(SmallVectorImpl<Module *> &Modules);
 
   /// Load all known, top-level system modules.
-  void loadTopLevelSystemModules();
+  CLANG_ABI void loadTopLevelSystemModules();
 
 private:
   /// Lookup a module with the given module name and search-name.
@@ -837,15 +838,15 @@ public:
 
   /// Return the HeaderFileInfo structure for the specified FileEntry, in
   /// preparation for updating it in some way.
-  HeaderFileInfo &getFileInfo(FileEntryRef FE);
+  CLANG_ABI HeaderFileInfo &getFileInfo(FileEntryRef FE);
 
   /// Return the HeaderFileInfo structure for the specified FileEntry, if it has
   /// ever been filled in (either locally or externally).
-  const HeaderFileInfo *getExistingFileInfo(FileEntryRef FE) const;
+  CLANG_ABI const HeaderFileInfo *getExistingFileInfo(FileEntryRef FE) const;
 
   /// Return the headerFileInfo structure for the specified FileEntry, if it has
   /// ever been filled in locally.
-  const HeaderFileInfo *getExistingLocalFileInfo(FileEntryRef FE) const;
+  CLANG_ABI const HeaderFileInfo *getExistingLocalFileInfo(FileEntryRef FE) const;
 
   SearchDirIterator search_dir_begin() { return {*this, 0}; }
   SearchDirIterator search_dir_end() { return {*this, SearchDirs.size()}; }
@@ -881,17 +882,17 @@ public:
   }
 
   /// Get the index of the given search directory.
-  unsigned searchDirIdx(const DirectoryLookup &DL) const;
+  CLANG_ABI unsigned searchDirIdx(const DirectoryLookup &DL) const;
 
   /// Retrieve a uniqued framework name.
-  StringRef getUniqueFrameworkName(StringRef Framework);
+  CLANG_ABI StringRef getUniqueFrameworkName(StringRef Framework);
 
   /// Retrieve the include name for the header.
   ///
   /// \param File The entry for a given header.
   /// \returns The name of how the file was included when the header's location
   /// was resolved.
-  StringRef getIncludeNameForHeader(const FileEntry *File) const;
+  CLANG_ABI StringRef getIncludeNameForHeader(const FileEntry *File) const;
 
   /// Suggest a path by which the specified file could be found, for use in
   /// diagnostics to suggest a #include. Returned path will only contain forward
@@ -902,7 +903,7 @@ public:
   ///
   /// \param IsAngled If non-null, filled in to indicate whether the suggested
   ///        path should be referenced as <Header.h> instead of "Header.h".
-  std::string suggestPathToFileForDiagnostics(FileEntryRef File,
+  CLANG_ABI std::string suggestPathToFileForDiagnostics(FileEntryRef File,
                                               llvm::StringRef MainFile,
                                               bool *IsAngled = nullptr) const;
 
@@ -915,14 +916,14 @@ public:
   ///
   /// \param WorkingDir If non-empty, this will be prepended to search directory
   /// paths that are relative.
-  std::string suggestPathToFileForDiagnostics(llvm::StringRef File,
+  CLANG_ABI std::string suggestPathToFileForDiagnostics(llvm::StringRef File,
                                               llvm::StringRef WorkingDir,
                                               llvm::StringRef MainFile,
                                               bool *IsAngled = nullptr) const;
 
-  void PrintStats();
+  CLANG_ABI void PrintStats();
 
-  size_t getTotalMemory() const;
+  CLANG_ABI size_t getTotalMemory() const;
 
 private:
   /// Describes what happened when we tried to load or parse a module map file.
@@ -981,7 +982,7 @@ private:
 };
 
 /// Apply the header search options to get given HeaderSearch object.
-void ApplyHeaderSearchOptions(HeaderSearch &HS,
+CLANG_ABI void ApplyHeaderSearchOptions(HeaderSearch &HS,
                               const HeaderSearchOptions &HSOpts,
                               const LangOptions &Lang,
                               const llvm::Triple &triple);

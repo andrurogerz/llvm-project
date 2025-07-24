@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_ANALYZEROPTIONS_H
 #define LLVM_CLANG_STATICANALYZER_CORE_ANALYZEROPTIONS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Analysis/PathDiagnostic.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
@@ -208,7 +209,7 @@ public:
   ///   ^~~~~~~~~InitialPad
   ///            ^~~~~~~~~~~~~~~~~~EntryWidth
   ///   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~MinLineWidth
-  static void printFormattedEntry(llvm::raw_ostream &Out,
+  CLANG_ABI static void printFormattedEntry(llvm::raw_ostream &Out,
                                   std::pair<StringRef, StringRef> EntryDescPair,
                                   size_t InitialPad, size_t EntryWidth,
                                   size_t MinLineWidth = 0);
@@ -341,10 +342,10 @@ public:
   /// specified for the given checker the options for the parent packages will
   /// be searched as well. The inner packages take precedence over the outer
   /// ones.
-  bool getCheckerBooleanOption(StringRef CheckerName, StringRef OptionName,
+  CLANG_ABI bool getCheckerBooleanOption(StringRef CheckerName, StringRef OptionName,
                                bool SearchInParents = false) const;
 
-  bool getCheckerBooleanOption(const ento::CheckerBase *C, StringRef OptionName,
+  CLANG_ABI bool getCheckerBooleanOption(const ento::CheckerBase *C, StringRef OptionName,
                                bool SearchInParents = false) const;
 
   /// Interprets an option's string value as an integer value.
@@ -361,10 +362,10 @@ public:
   /// specified for the given checker the options for the parent packages will
   /// be searched as well. The inner packages take precedence over the outer
   /// ones.
-  int getCheckerIntegerOption(StringRef CheckerName, StringRef OptionName,
+  CLANG_ABI int getCheckerIntegerOption(StringRef CheckerName, StringRef OptionName,
                               bool SearchInParents = false) const;
 
-  int getCheckerIntegerOption(const ento::CheckerBase *C, StringRef OptionName,
+  CLANG_ABI int getCheckerIntegerOption(const ento::CheckerBase *C, StringRef OptionName,
                               bool SearchInParents = false) const;
 
   /// Query an option's string value.
@@ -381,18 +382,18 @@ public:
   /// specified for the given checker the options for the parent packages will
   /// be searched as well. The inner packages take precedence over the outer
   /// ones.
-  StringRef getCheckerStringOption(StringRef CheckerName, StringRef OptionName,
+  CLANG_ABI StringRef getCheckerStringOption(StringRef CheckerName, StringRef OptionName,
                                    bool SearchInParents = false) const;
 
-  StringRef getCheckerStringOption(const ento::CheckerBase *C,
+  CLANG_ABI StringRef getCheckerStringOption(const ento::CheckerBase *C,
                                    StringRef OptionName,
                                    bool SearchInParents = false) const;
 
-  ExplorationStrategyKind getExplorationStrategy() const;
-  CTUPhase1InliningKind getCTUPhase1Inlining() const;
+  CLANG_ABI ExplorationStrategyKind getExplorationStrategy() const;
+  CLANG_ABI CTUPhase1InliningKind getCTUPhase1Inlining() const;
 
   /// Returns the inter-procedural analysis mode.
-  IPAKind getIPAMode() const;
+  CLANG_ABI IPAKind getIPAMode() const;
 
   /// Returns the option controlling which C++ member functions will be
   /// considered for inlining.
@@ -400,7 +401,7 @@ public:
   /// This is controlled by the 'c++-inlining' config option.
   ///
   /// \sa CXXMemberInliningMode
-  bool mayInlineCXXMemberFunction(CXXInlineableMemberKind K) const;
+  CLANG_ABI bool mayInlineCXXMemberFunction(CXXInlineableMemberKind K) const;
 
   ento::PathDiagnosticConsumerOptions getDiagOpts() const {
     return {FullCompilerInvocation,

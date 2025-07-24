@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_DECLOPENMP_H
 #define LLVM_CLANG_AST_DECLOPENMP_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/Expr.h"
@@ -107,7 +108,7 @@ public:
 /// };
 /// \endcode
 ///
-class OMPThreadPrivateDecl final : public OMPDeclarativeDirective<Decl> {
+class CLANG_ABI OMPThreadPrivateDecl final : public OMPDeclarativeDirective<Decl> {
   friend class OMPDeclarativeDirective<Decl>;
 
   LLVM_DECLARE_VIRTUAL_ANCHOR_FUNCTION();
@@ -174,7 +175,7 @@ enum class OMPDeclareReductionInitKind {
 /// \endcode
 ///
 /// Here 'omp_out += omp_in' is a combiner and 'omp_priv = 0' is an initializer.
-class OMPDeclareReductionDecl final : public ValueDecl, public DeclContext {
+class CLANG_ABI OMPDeclareReductionDecl final : public ValueDecl, public DeclContext {
   // This class stores some data in DeclContext::OMPDeclareReductionDeclBits
   // to save some space. Use the provided accessors to access it.
 
@@ -283,7 +284,7 @@ public:
 /// \code
 /// #pragma omp declare mapper(mid: struct vec v) map(v.len, v.data[0:N])
 /// \endcode
-class OMPDeclareMapperDecl final : public OMPDeclarativeDirective<ValueDecl>,
+class CLANG_ABI OMPDeclareMapperDecl final : public OMPDeclarativeDirective<ValueDecl>,
                                    public DeclContext {
   friend class OMPDeclarativeDirective<ValueDecl>;
   friend class ASTDeclReader;
@@ -380,7 +381,7 @@ public:
 /// privatize non-static members of current class in non-static member
 /// functions. This pseudo-declaration allows properly handle this kind of
 /// capture by wrapping captured expression into a variable-like declaration.
-class OMPCapturedExprDecl final : public VarDecl {
+class CLANG_ABI OMPCapturedExprDecl final : public VarDecl {
   friend class ASTDeclReader;
   void anchor() override;
 
@@ -414,7 +415,7 @@ public:
 /// #pragma omp requires unified_address
 /// \endcode
 ///
-class OMPRequiresDecl final : public OMPDeclarativeDirective<Decl> {
+class CLANG_ABI OMPRequiresDecl final : public OMPDeclarativeDirective<Decl> {
   friend class OMPDeclarativeDirective<Decl>;
   friend class ASTDeclReader;
 
@@ -471,7 +472,7 @@ public:
 /// };
 /// \endcode
 ///
-class OMPAllocateDecl final : public OMPDeclarativeDirective<Decl> {
+class CLANG_ABI OMPAllocateDecl final : public OMPDeclarativeDirective<Decl> {
   friend class OMPDeclarativeDirective<Decl>;
   friend class ASTDeclReader;
 

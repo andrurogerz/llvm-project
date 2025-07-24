@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_LEX_PREPROCESSORLEXER_H
 #define LLVM_CLANG_LEX_PREPROCESSORLEXER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/FileEntry.h"
 #include "clang/Basic/SourceLocation.h"
 #include "clang/Lex/MultipleIncludeOpt.h"
@@ -27,7 +28,7 @@ namespace clang {
 class FileEntry;
 class Preprocessor;
 
-class PreprocessorLexer {
+class CLANG_ABI PreprocessorLexer {
   virtual void anchor();
 
 protected:

@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_BASIC_TARGETINFO_H
 #define LLVM_CLANG_BASIC_TARGETINFO_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/AddressSpaces.h"
 #include "clang/Basic/BitmaskEnum.h"
 #include "clang/Basic/Builtins.h"
@@ -222,7 +223,7 @@ enum OpenCLTypeKind : uint8_t {
 
 /// Exposes information about the current target.
 ///
-class TargetInfo : public TransferrableTargetInfo,
+class CLANG_ABI TargetInfo : public TransferrableTargetInfo,
                    public RefCountedBase<TargetInfo> {
   TargetOptions *TargetOpts;
   llvm::Triple Triple;
@@ -1902,7 +1903,7 @@ private:
 };
 
 namespace targets {
-std::unique_ptr<clang::TargetInfo>
+CLANG_ABI std::unique_ptr<clang::TargetInfo>
 AllocateTarget(const llvm::Triple &Triple, const clang::TargetOptions &Opts);
 } // namespace targets
 

@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_BASIC_STACK_EXHAUSTION_HANDLER_H
 #define LLVM_CLANG_BASIC_STACK_EXHAUSTION_HANDLER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/Diagnostic.h"
 
 namespace clang {
@@ -26,12 +27,12 @@ public:
   /// is guaranteed). Produces a warning if we're low on stack space and
   /// allocates more in that case. Use this in code that may recurse deeply to
   /// avoid stack overflow.
-  void runWithSufficientStackSpace(SourceLocation Loc,
+  CLANG_ABI void runWithSufficientStackSpace(SourceLocation Loc,
                                    llvm::function_ref<void()> Fn);
 
   /// Check to see if we're low on stack space and produce a warning if we're
   /// low on stack space (Currently, at least 256Kis guaranteed).
-  void warnOnStackNearlyExhausted(SourceLocation Loc);
+  CLANG_ABI void warnOnStackNearlyExhausted(SourceLocation Loc);
 
 private:
   /// Warn that the stack is nearly exhausted.

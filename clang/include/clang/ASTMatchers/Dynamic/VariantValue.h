@@ -17,6 +17,7 @@
 #ifndef LLVM_CLANG_ASTMATCHERS_DYNAMIC_VARIANTVALUE_H
 #define LLVM_CLANG_ASTMATCHERS_DYNAMIC_VARIANTVALUE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 #include "clang/ASTMatchers/ASTMatchersInternal.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
@@ -69,7 +70,7 @@ class ArgKind {
   ///
   /// \param Specificity value corresponding to the "specificity" of the
   ///   conversion.
-  bool isConvertibleTo(ArgKind To, unsigned *Specificity) const;
+  CLANG_ABI bool isConvertibleTo(ArgKind To, unsigned *Specificity) const;
 
   bool operator<(const ArgKind &Other) const {
     if ((K == AK_Matcher && Other.K == AK_Matcher) ||
@@ -79,7 +80,7 @@ class ArgKind {
   }
 
   /// String representation of the type.
-  std::string asString() const;
+  CLANG_ABI std::string asString() const;
 
 private:
   ArgKind(Kind K, ASTNodeKind NK) : K(K), NodeKind(NK) {}
@@ -108,17 +109,17 @@ class VariantMatcher {
   public:
     MatcherOps(ASTNodeKind NodeKind) : NodeKind(NodeKind) {}
 
-    bool canConstructFrom(const DynTypedMatcher &Matcher,
+    CLANG_ABI bool canConstructFrom(const DynTypedMatcher &Matcher,
                           bool &IsExactMatch) const;
 
     /// Convert \p Matcher the destination type and return it as a new
     /// DynTypedMatcher.
-    DynTypedMatcher convertMatcher(const DynTypedMatcher &Matcher) const;
+    CLANG_ABI DynTypedMatcher convertMatcher(const DynTypedMatcher &Matcher) const;
 
     /// Constructs a variadic typed matcher from \p InnerMatchers.
     /// Will try to convert each inner matcher to the destination type and
     /// return std::nullopt if it fails to do so.
-    std::optional<DynTypedMatcher>
+    CLANG_ABI std::optional<DynTypedMatcher>
     constructVariadicOperator(DynTypedMatcher::VariadicOperator Op,
                               ArrayRef<VariantMatcher> InnerMatchers) const;
 
@@ -129,7 +130,7 @@ class VariantMatcher {
   /// Payload interface to be specialized by each matcher type.
   ///
   /// It follows a similar interface as VariantMatcher itself.
-  class Payload {
+  class CLANG_ABI Payload {
   public:
     virtual ~Payload();
     virtual std::optional<DynTypedMatcher> getSingleMatcher() const = 0;
@@ -142,26 +143,26 @@ class VariantMatcher {
 
 public:
   /// A null matcher.
-  VariantMatcher();
+  CLANG_ABI VariantMatcher();
 
   /// Clones the provided matcher.
-  static VariantMatcher SingleMatcher(const DynTypedMatcher &Matcher);
+  CLANG_ABI static VariantMatcher SingleMatcher(const DynTypedMatcher &Matcher);
 
   /// Clones the provided matchers.
   ///
   /// They should be the result of a polymorphic matcher.
-  static VariantMatcher
+  CLANG_ABI static VariantMatcher
   PolymorphicMatcher(std::vector<DynTypedMatcher> Matchers);
 
   /// Creates a 'variadic' operator matcher.
   ///
   /// It will bind to the appropriate type on getTypedMatcher<T>().
-  static VariantMatcher
+  CLANG_ABI static VariantMatcher
   VariadicOperatorMatcher(DynTypedMatcher::VariadicOperator Op,
                           std::vector<VariantMatcher> Args);
 
   /// Makes the matcher the "null" matcher.
-  void reset();
+  CLANG_ABI void reset();
 
   /// Whether the matcher is null.
   bool isNull() const { return !Value; }
@@ -171,7 +172,7 @@ public:
   /// \returns the matcher, if there is only one matcher. An empty Optional, if
   /// the underlying matcher is a polymorphic matcher with more than one
   /// representation.
-  std::optional<DynTypedMatcher> getSingleMatcher() const;
+  CLANG_ABI std::optional<DynTypedMatcher> getSingleMatcher() const;
 
   /// Determines if the contained matcher can be converted to
   ///   \c Matcher<T>.
@@ -223,7 +224,7 @@ public:
   ///
   /// If the underlying matcher is a polymorphic one, the string will show all
   /// the types.
-  std::string getTypeAsString() const;
+  CLANG_ABI std::string getTypeAsString() const;
 
 private:
   explicit VariantMatcher(std::shared_ptr<Payload> Value)
@@ -255,17 +256,17 @@ class VariantValue {
 public:
   VariantValue() : Type(VT_Nothing) {}
 
-  VariantValue(const VariantValue &Other);
-  ~VariantValue();
-  VariantValue &operator=(const VariantValue &Other);
+  CLANG_ABI VariantValue(const VariantValue &Other);
+  CLANG_ABI ~VariantValue();
+  CLANG_ABI VariantValue &operator=(const VariantValue &Other);
 
   /// Specific constructors for each supported type.
-  VariantValue(bool Boolean);
-  VariantValue(double Double);
-  VariantValue(unsigned Unsigned);
-  VariantValue(StringRef String);
-  VariantValue(ASTNodeKind NodeKind);
-  VariantValue(const VariantMatcher &Matchers);
+  CLANG_ABI VariantValue(bool Boolean);
+  CLANG_ABI VariantValue(double Double);
+  CLANG_ABI VariantValue(unsigned Unsigned);
+  CLANG_ABI VariantValue(StringRef String);
+  CLANG_ABI VariantValue(ASTNodeKind NodeKind);
+  CLANG_ABI VariantValue(const VariantMatcher &Matchers);
 
   /// Constructs an \c unsigned value (disambiguation from bool).
   VariantValue(int Signed) : VariantValue(static_cast<unsigned>(Signed)) {}
@@ -275,33 +276,33 @@ public:
   bool hasValue() const { return Type != VT_Nothing; }
 
   /// Boolean value functions.
-  bool isBoolean() const;
-  bool getBoolean() const;
-  void setBoolean(bool Boolean);
+  CLANG_ABI bool isBoolean() const;
+  CLANG_ABI bool getBoolean() const;
+  CLANG_ABI void setBoolean(bool Boolean);
 
   /// Double value functions.
-  bool isDouble() const;
-  double getDouble() const;
-  void setDouble(double Double);
+  CLANG_ABI bool isDouble() const;
+  CLANG_ABI double getDouble() const;
+  CLANG_ABI void setDouble(double Double);
 
   /// Unsigned value functions.
-  bool isUnsigned() const;
-  unsigned getUnsigned() const;
-  void setUnsigned(unsigned Unsigned);
+  CLANG_ABI bool isUnsigned() const;
+  CLANG_ABI unsigned getUnsigned() const;
+  CLANG_ABI void setUnsigned(unsigned Unsigned);
 
   /// String value functions.
-  bool isString() const;
-  const std::string &getString() const;
-  void setString(StringRef String);
+  CLANG_ABI bool isString() const;
+  CLANG_ABI const std::string &getString() const;
+  CLANG_ABI void setString(StringRef String);
 
-  bool isNodeKind() const;
-  const ASTNodeKind &getNodeKind() const;
-  void setNodeKind(ASTNodeKind NodeKind);
+  CLANG_ABI bool isNodeKind() const;
+  CLANG_ABI const ASTNodeKind &getNodeKind() const;
+  CLANG_ABI void setNodeKind(ASTNodeKind NodeKind);
 
   /// Matcher value functions.
-  bool isMatcher() const;
-  const VariantMatcher &getMatcher() const;
-  void setMatcher(const VariantMatcher &Matcher);
+  CLANG_ABI bool isMatcher() const;
+  CLANG_ABI const VariantMatcher &getMatcher() const;
+  CLANG_ABI void setMatcher(const VariantMatcher &Matcher);
 
   /// Determines if the contained value can be converted to \p Kind.
   ///
@@ -309,7 +310,7 @@ public:
   ///
   /// \param Specificity value corresponding to the "specificity" of the
   ///   conversion.
-  bool isConvertibleTo(ArgKind Kind, unsigned* Specificity) const;
+  CLANG_ABI bool isConvertibleTo(ArgKind Kind, unsigned* Specificity) const;
 
   /// Determines if the contained value can be converted to any kind
   /// in \p Kinds.
@@ -319,10 +320,10 @@ public:
   /// \param Specificity value corresponding to the "specificity" of the
   ///   conversion. It is the maximum specificity of all the possible
   ///   conversions.
-  bool isConvertibleTo(ArrayRef<ArgKind> Kinds, unsigned *Specificity) const;
+  CLANG_ABI bool isConvertibleTo(ArrayRef<ArgKind> Kinds, unsigned *Specificity) const;
 
   /// String representation of the type of the value.
-  std::string getTypeAsString() const;
+  CLANG_ABI std::string getTypeAsString() const;
 
 private:
   void reset();

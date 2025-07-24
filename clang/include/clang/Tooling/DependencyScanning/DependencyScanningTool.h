@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_TOOLING_DEPENDENCYSCANNING_DEPENDENCYSCANNINGTOOL_H
 #define LLVM_CLANG_TOOLING_DEPENDENCYSCANNING_DEPENDENCYSCANNINGTOOL_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Tooling/DependencyScanning/DependencyScanningService.h"
 #include "clang/Tooling/DependencyScanning/DependencyScanningWorker.h"
 #include "clang/Tooling/DependencyScanning/ModuleDepCollector.h"
@@ -90,7 +91,7 @@ public:
   ///
   /// @param Service  The parent service. Must outlive the tool.
   /// @param FS The filesystem for the tool to use. Defaults to the physical FS.
-  DependencyScanningTool(DependencyScanningService &Service,
+  CLANG_ABI DependencyScanningTool(DependencyScanningService &Service,
                          llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem> FS =
                              llvm::vfs::createPhysicalFileSystem());
 
@@ -100,7 +101,7 @@ public:
   ///
   /// \returns A \c StringError with the diagnostic output if clang errors
   /// occurred, dependency file contents otherwise.
-  llvm::Expected<std::string>
+  CLANG_ABI llvm::Expected<std::string>
   getDependencyFile(const std::vector<std::string> &CommandLine, StringRef CWD);
 
   /// Collect the module dependency in P1689 format for C++20 named modules.
@@ -114,7 +115,7 @@ public:
   ///
   /// \returns A \c StringError with the diagnostic output if clang errors
   /// occurred, P1689 dependency format rules otherwise.
-  llvm::Expected<P1689Rule>
+  CLANG_ABI llvm::Expected<P1689Rule>
   getP1689ModuleDependencyFile(const clang::tooling::CompileCommand &Command,
                                StringRef CWD, std::string &MakeformatOutput,
                                std::string &MakeformatOutputPath);
@@ -145,7 +146,7 @@ public:
   ///
   /// \returns a \c StringError with the diagnostic output if clang errors
   /// occurred, \c TranslationUnitDeps otherwise.
-  llvm::Expected<TranslationUnitDeps> getTranslationUnitDependencies(
+  CLANG_ABI llvm::Expected<TranslationUnitDeps> getTranslationUnitDependencies(
       const std::vector<std::string> &CommandLine, StringRef CWD,
       const llvm::DenseSet<ModuleID> &AlreadySeen,
       LookupModuleOutputCallback LookupModuleOutput,
@@ -154,7 +155,7 @@ public:
   /// Given a compilation context specified via the Clang driver command-line,
   /// gather modular dependencies of module with the given name, and return the
   /// information needed for explicit build.
-  llvm::Expected<TranslationUnitDeps> getModuleDependencies(
+  CLANG_ABI llvm::Expected<TranslationUnitDeps> getModuleDependencies(
       StringRef ModuleName, const std::vector<std::string> &CommandLine,
       StringRef CWD, const llvm::DenseSet<ModuleID> &AlreadySeen,
       LookupModuleOutputCallback LookupModuleOutput);
@@ -208,7 +209,7 @@ public:
                     [](const auto &Module) { return Module.ModuleName; });
   }
 
-  TranslationUnitDeps takeTranslationUnitDeps();
+  CLANG_ABI TranslationUnitDeps takeTranslationUnitDeps();
 
 private:
   std::vector<std::string> Dependencies;
@@ -226,7 +227,7 @@ private:
 
 /// A simple dependency action controller that uses a callback. If no callback
 /// is provided, it is assumed that looking up module outputs is unreachable.
-class CallbackActionController : public DependencyActionController {
+class CLANG_ABI CallbackActionController : public DependencyActionController {
 public:
   virtual ~CallbackActionController();
 

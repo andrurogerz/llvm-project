@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_BASIC_OPENCLOPTIONS_H
 #define LLVM_CLANG_BASIC_OPENCLOPTIONS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LangOptions.h"
 #include "llvm/ADT/StringMap.h"
 
@@ -129,57 +130,57 @@ public:
     }
   };
 
-  bool isKnown(llvm::StringRef Ext) const;
+  CLANG_ABI bool isKnown(llvm::StringRef Ext) const;
 
   // For core or optional core feature check that it is supported
   // by a target, for any other option (extension) check that it is
   // enabled via pragma
-  bool isAvailableOption(llvm::StringRef Ext, const LangOptions &LO) const;
+  CLANG_ABI bool isAvailableOption(llvm::StringRef Ext, const LangOptions &LO) const;
 
-  bool isWithPragma(llvm::StringRef Ext) const;
+  CLANG_ABI bool isWithPragma(llvm::StringRef Ext) const;
 
   // Is supported as either an extension or an (optional) core feature for
   // OpenCL version \p LO.
-  bool isSupported(llvm::StringRef Ext, const LangOptions &LO) const;
+  CLANG_ABI bool isSupported(llvm::StringRef Ext, const LangOptions &LO) const;
 
   // Is supported OpenCL core feature for OpenCL version \p LO.
   // For supported extension, return false.
-  bool isSupportedCore(llvm::StringRef Ext, const LangOptions &LO) const;
+  CLANG_ABI bool isSupportedCore(llvm::StringRef Ext, const LangOptions &LO) const;
 
   // Is supported optional core OpenCL feature for OpenCL version \p LO.
   // For supported extension, return false.
-  bool isSupportedOptionalCore(llvm::StringRef Ext,
+  CLANG_ABI bool isSupportedOptionalCore(llvm::StringRef Ext,
                                const LangOptions &LO) const;
 
   // Is supported optional core or core OpenCL feature for OpenCL version \p
   // LO. For supported extension, return false.
-  bool isSupportedCoreOrOptionalCore(llvm::StringRef Ext,
+  CLANG_ABI bool isSupportedCoreOrOptionalCore(llvm::StringRef Ext,
                                      const LangOptions &LO) const;
 
   // Is supported OpenCL extension for OpenCL version \p LO.
   // For supported core or optional core feature, return false.
-  bool isSupportedExtension(llvm::StringRef Ext, const LangOptions &LO) const;
+  CLANG_ABI bool isSupportedExtension(llvm::StringRef Ext, const LangOptions &LO) const;
 
   // FIXME: Whether extension should accept pragma should not
   // be reset dynamically. But it currently required when
   // registering new extensions via pragmas.
-  void acceptsPragma(llvm::StringRef Ext, bool V = true);
+  CLANG_ABI void acceptsPragma(llvm::StringRef Ext, bool V = true);
 
-  void enable(llvm::StringRef Ext, bool V = true);
+  CLANG_ABI void enable(llvm::StringRef Ext, bool V = true);
 
   /// Enable or disable support for OpenCL extensions
   /// \param Ext name of the extension (not prefixed with '+' or '-')
   /// \param V value to set for a extension
-  void support(llvm::StringRef Ext, bool V = true);
+  CLANG_ABI void support(llvm::StringRef Ext, bool V = true);
 
-  OpenCLOptions();
+  CLANG_ABI OpenCLOptions();
 
   // Set supported options based on target settings and language version
-  void addSupport(const llvm::StringMap<bool> &FeaturesMap,
+  CLANG_ABI void addSupport(const llvm::StringMap<bool> &FeaturesMap,
                   const LangOptions &Opts);
 
   // Disable all extensions
-  void disableAll();
+  CLANG_ABI void disableAll();
 
   friend class ASTWriter;
   friend class ASTReader;
@@ -199,12 +200,12 @@ public:
 
   // Diagnose feature dependencies for OpenCL C 3.0. Return false if target
   // doesn't follow these requirements.
-  static bool diagnoseUnsupportedFeatureDependencies(const TargetInfo &TI,
+  CLANG_ABI static bool diagnoseUnsupportedFeatureDependencies(const TargetInfo &TI,
                                                      DiagnosticsEngine &Diags);
 
   // Diagnose that features and equivalent extension are set to same values.
   // Return false if target doesn't follow these requirements.
-  static bool diagnoseFeatureExtensionDifferences(const TargetInfo &TI,
+  CLANG_ABI static bool diagnoseFeatureExtensionDifferences(const TargetInfo &TI,
                                                   DiagnosticsEngine &Diags);
 
 private:

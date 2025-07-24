@@ -19,6 +19,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_ANALYSES_INTERVALPARTITION_H
 #define LLVM_CLANG_ANALYSIS_ANALYSES_INTERVALPARTITION_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Analysis/CFG.h"
 #include "llvm/ADT/DenseSet.h"
 #include <deque>
@@ -47,10 +48,10 @@ namespace clang {
 ///
 /// This WTO construction is described in Section 4.2 of [Bourdoncle1993].
 using WeakTopologicalOrdering = std::vector<const CFGBlock *>;
-std::optional<WeakTopologicalOrdering> getIntervalWTO(const CFG &Cfg);
+CLANG_ABI std::optional<WeakTopologicalOrdering> getIntervalWTO(const CFG &Cfg);
 
 struct WTOCompare {
-  WTOCompare(const WeakTopologicalOrdering &WTO);
+  CLANG_ABI WTOCompare(const WeakTopologicalOrdering &WTO);
 
   bool operator()(const CFGBlock *B1, const CFGBlock *B2) const {
     auto ID1 = B1->getBlockID();
@@ -107,16 +108,16 @@ struct CFGIntervalNode {
 // pointer stability.
 using CFGIntervalGraph = std::deque<CFGIntervalNode>;
 
-std::vector<const CFGBlock *> buildInterval(const CFGBlock *Header);
+CLANG_ABI std::vector<const CFGBlock *> buildInterval(const CFGBlock *Header);
 
 // Partitions `Cfg` into intervals and constructs the graph of the intervals
 // based on the edges between nodes in these intervals.
-CFGIntervalGraph partitionIntoIntervals(const CFG &Cfg);
+CLANG_ABI CFGIntervalGraph partitionIntoIntervals(const CFG &Cfg);
 
 // (Further) partitions `Graph` into intervals and constructs the graph of the
 // intervals based on the edges between nodes (themselves intervals) in these
 // intervals.
-CFGIntervalGraph partitionIntoIntervals(const CFGIntervalGraph &Graph);
+CLANG_ABI CFGIntervalGraph partitionIntoIntervals(const CFGIntervalGraph &Graph);
 } // namespace internal
 } // namespace clang
 

@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_SERIALIZATION_INMEMORYMODULECACHE_H
 #define LLVM_CLANG_SERIALIZATION_INMEMORYMODULECACHE_H
 
+#include "clang/Support/Compiler.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
 #include "llvm/ADT/StringMap.h"
 #include "llvm/Support/MemoryBuffer.h"
@@ -56,14 +57,14 @@ public:
   enum State { Unknown, Tentative, ToBuild, Final };
 
   /// Get the state of the PCM.
-  State getPCMState(llvm::StringRef Filename) const;
+  CLANG_ABI State getPCMState(llvm::StringRef Filename) const;
 
   /// Store the PCM under the Filename.
   ///
   /// \pre state is Unknown
   /// \post state is Tentative
   /// \return a reference to the buffer as a convenience.
-  llvm::MemoryBuffer &addPCM(llvm::StringRef Filename,
+  CLANG_ABI llvm::MemoryBuffer &addPCM(llvm::StringRef Filename,
                              std::unique_ptr<llvm::MemoryBuffer> Buffer);
 
   /// Store a just-built PCM under the Filename.
@@ -71,7 +72,7 @@ public:
   /// \pre state is Unknown or ToBuild.
   /// \pre state is not Tentative.
   /// \return a reference to the buffer as a convenience.
-  llvm::MemoryBuffer &addBuiltPCM(llvm::StringRef Filename,
+  CLANG_ABI llvm::MemoryBuffer &addBuiltPCM(llvm::StringRef Filename,
                                   std::unique_ptr<llvm::MemoryBuffer> Buffer);
 
   /// Try to remove a buffer from the cache.  No effect if state is Final.
@@ -79,26 +80,26 @@ public:
   /// \pre state is Tentative/Final.
   /// \post Tentative => ToBuild or Final => Final.
   /// \return false on success, i.e. if Tentative => ToBuild.
-  bool tryToDropPCM(llvm::StringRef Filename);
+  CLANG_ABI bool tryToDropPCM(llvm::StringRef Filename);
 
   /// Mark a PCM as final.
   ///
   /// \pre state is Tentative or Final.
   /// \post state is Final.
-  void finalizePCM(llvm::StringRef Filename);
+  CLANG_ABI void finalizePCM(llvm::StringRef Filename);
 
   /// Get a pointer to the pCM if it exists; else nullptr.
-  llvm::MemoryBuffer *lookupPCM(llvm::StringRef Filename) const;
+  CLANG_ABI llvm::MemoryBuffer *lookupPCM(llvm::StringRef Filename) const;
 
   /// Check whether the PCM is final and has been shown to work.
   ///
   /// \return true iff state is Final.
-  bool isPCMFinal(llvm::StringRef Filename) const;
+  CLANG_ABI bool isPCMFinal(llvm::StringRef Filename) const;
 
   /// Check whether the PCM is waiting to be built.
   ///
   /// \return true iff state is ToBuild.
-  bool shouldBuildPCM(llvm::StringRef Filename) const;
+  CLANG_ABI bool shouldBuildPCM(llvm::StringRef Filename) const;
 };
 
 } // end namespace clang

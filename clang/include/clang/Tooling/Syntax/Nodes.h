@@ -21,6 +21,7 @@
 #ifndef LLVM_CLANG_TOOLING_SYNTAX_NODES_H
 #define LLVM_CLANG_TOOLING_SYNTAX_NODES_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Tooling/Syntax/Tree.h"
 namespace clang {
@@ -34,7 +35,7 @@ enum class NodeKind : uint16_t {
 #include "clang/Tooling/Syntax/Nodes.inc"
 };
 /// For debugging purposes.
-raw_ostream &operator<<(raw_ostream &OS, NodeKind K);
+CLANG_ABI raw_ostream &operator<<(raw_ostream &OS, NodeKind K);
 
 /// A relation between a parent and child node, e.g. 'left-hand-side of
 /// a binary expression'. Used for implementing accessors.
@@ -107,7 +108,7 @@ enum class NodeRole : uint8_t {
   Declarators
 };
 /// For debugging purposes.
-raw_ostream &operator<<(raw_ostream &OS, NodeRole R);
+CLANG_ABI raw_ostream &operator<<(raw_ostream &OS, NodeRole R);
 
 #include "clang/Tooling/Syntax/NodeClasses.inc"
 
@@ -117,8 +118,8 @@ class NestedNameSpecifier final : public List {
 public:
   NestedNameSpecifier() : List(NodeKind::NestedNameSpecifier) {}
   static bool classof(const Node *N);
-  std::vector<NameSpecifier *> getSpecifiers();
-  std::vector<List::ElementAndDelimiter<syntax::NameSpecifier>>
+  CLANG_ABI std::vector<NameSpecifier *> getSpecifiers();
+  CLANG_ABI std::vector<List::ElementAndDelimiter<syntax::NameSpecifier>>
   getSpecifiersAndDoubleColons();
 };
 
@@ -147,8 +148,8 @@ class CallArguments final : public List {
 public:
   CallArguments() : List(NodeKind::CallArguments) {}
   static bool classof(const Node *N);
-  std::vector<Expression *> getArguments();
-  std::vector<List::ElementAndDelimiter<Expression>> getArgumentsAndCommas();
+  CLANG_ABI std::vector<Expression *> getArguments();
+  CLANG_ABI std::vector<List::ElementAndDelimiter<Expression>> getArgumentsAndCommas();
 };
 
 /// An abstract class for prefix and postfix unary operators.
@@ -156,8 +157,8 @@ class UnaryOperatorExpression : public Expression {
 public:
   UnaryOperatorExpression(NodeKind K) : Expression(K) {}
   static bool classof(const Node *N);
-  Leaf *getOperatorToken();
-  Expression *getOperand();
+  CLANG_ABI Leaf *getOperatorToken();
+  CLANG_ABI Expression *getOperand();
 };
 
 /// <operator> <operand>
@@ -199,9 +200,9 @@ class BinaryOperatorExpression final : public Expression {
 public:
   BinaryOperatorExpression() : Expression(NodeKind::BinaryOperatorExpression) {}
   static bool classof(const Node *N);
-  Expression *getLhs();
-  Leaf *getOperatorToken();
-  Expression *getRhs();
+  CLANG_ABI Expression *getLhs();
+  CLANG_ABI Leaf *getOperatorToken();
+  CLANG_ABI Expression *getRhs();
 };
 
 /// An abstract node for C++ statements, e.g. 'while', 'if', etc.
@@ -239,8 +240,8 @@ class SwitchStatement final : public Statement {
 public:
   SwitchStatement() : Statement(NodeKind::SwitchStatement) {}
   static bool classof(const Node *N);
-  Leaf *getSwitchKeyword();
-  Statement *getBody();
+  CLANG_ABI Leaf *getSwitchKeyword();
+  CLANG_ABI Statement *getBody();
 };
 
 /// case <value>: <body>
@@ -248,9 +249,9 @@ class CaseStatement final : public Statement {
 public:
   CaseStatement() : Statement(NodeKind::CaseStatement) {}
   static bool classof(const Node *N);
-  Leaf *getCaseKeyword();
-  Expression *getCaseValue();
-  Statement *getBody();
+  CLANG_ABI Leaf *getCaseKeyword();
+  CLANG_ABI Expression *getCaseValue();
+  CLANG_ABI Statement *getBody();
 };
 
 /// default: <body>
@@ -258,8 +259,8 @@ class DefaultStatement final : public Statement {
 public:
   DefaultStatement() : Statement(NodeKind::DefaultStatement) {}
   static bool classof(const Node *N);
-  Leaf *getDefaultKeyword();
-  Statement *getBody();
+  CLANG_ABI Leaf *getDefaultKeyword();
+  CLANG_ABI Statement *getBody();
 };
 
 /// if (cond) <then-statement> else <else-statement>
@@ -268,10 +269,10 @@ class IfStatement final : public Statement {
 public:
   IfStatement() : Statement(NodeKind::IfStatement) {}
   static bool classof(const Node *N);
-  Leaf *getIfKeyword();
-  Statement *getThenStatement();
-  Leaf *getElseKeyword();
-  Statement *getElseStatement();
+  CLANG_ABI Leaf *getIfKeyword();
+  CLANG_ABI Statement *getThenStatement();
+  CLANG_ABI Leaf *getElseKeyword();
+  CLANG_ABI Statement *getElseStatement();
 };
 
 /// for (<init>; <cond>; <increment>) <body>
@@ -279,8 +280,8 @@ class ForStatement final : public Statement {
 public:
   ForStatement() : Statement(NodeKind::ForStatement) {}
   static bool classof(const Node *N);
-  Leaf *getForKeyword();
-  Statement *getBody();
+  CLANG_ABI Leaf *getForKeyword();
+  CLANG_ABI Statement *getBody();
 };
 
 /// while (<cond>) <body>
@@ -288,8 +289,8 @@ class WhileStatement final : public Statement {
 public:
   WhileStatement() : Statement(NodeKind::WhileStatement) {}
   static bool classof(const Node *N);
-  Leaf *getWhileKeyword();
-  Statement *getBody();
+  CLANG_ABI Leaf *getWhileKeyword();
+  CLANG_ABI Statement *getBody();
 };
 
 /// continue;
@@ -297,7 +298,7 @@ class ContinueStatement final : public Statement {
 public:
   ContinueStatement() : Statement(NodeKind::ContinueStatement) {}
   static bool classof(const Node *N);
-  Leaf *getContinueKeyword();
+  CLANG_ABI Leaf *getContinueKeyword();
 };
 
 /// break;
@@ -305,7 +306,7 @@ class BreakStatement final : public Statement {
 public:
   BreakStatement() : Statement(NodeKind::BreakStatement) {}
   static bool classof(const Node *N);
-  Leaf *getBreakKeyword();
+  CLANG_ABI Leaf *getBreakKeyword();
 };
 
 /// return <expr>;
@@ -314,8 +315,8 @@ class ReturnStatement final : public Statement {
 public:
   ReturnStatement() : Statement(NodeKind::ReturnStatement) {}
   static bool classof(const Node *N);
-  Leaf *getReturnKeyword();
-  Expression *getReturnValue();
+  CLANG_ABI Leaf *getReturnKeyword();
+  CLANG_ABI Expression *getReturnValue();
 };
 
 /// for (<decl> : <init>) <body>
@@ -323,8 +324,8 @@ class RangeBasedForStatement final : public Statement {
 public:
   RangeBasedForStatement() : Statement(NodeKind::RangeBasedForStatement) {}
   static bool classof(const Node *N);
-  Leaf *getForKeyword();
-  Statement *getBody();
+  CLANG_ABI Leaf *getForKeyword();
+  CLANG_ABI Statement *getBody();
 };
 
 /// Expression in a statement position, e.g. functions calls inside compound
@@ -333,7 +334,7 @@ class ExpressionStatement final : public Statement {
 public:
   ExpressionStatement() : Statement(NodeKind::ExpressionStatement) {}
   static bool classof(const Node *N);
-  Expression *getExpression();
+  CLANG_ABI Expression *getExpression();
 };
 
 /// { statement1; statement2; … }
@@ -341,10 +342,10 @@ class CompoundStatement final : public Statement {
 public:
   CompoundStatement() : Statement(NodeKind::CompoundStatement) {}
   static bool classof(const Node *N);
-  Leaf *getLbrace();
+  CLANG_ABI Leaf *getLbrace();
   /// FIXME: use custom iterator instead of 'vector'.
-  std::vector<Statement *> getStatements();
-  Leaf *getRbrace();
+  CLANG_ABI std::vector<Statement *> getStatements();
+  CLANG_ABI Leaf *getRbrace();
 };
 
 /// A declaration that can appear at the top-level. Note that this does *not*
@@ -377,8 +378,8 @@ class StaticAssertDeclaration final : public Declaration {
 public:
   StaticAssertDeclaration() : Declaration(NodeKind::StaticAssertDeclaration) {}
   static bool classof(const Node *N);
-  Expression *getCondition();
-  Expression *getMessage();
+  CLANG_ABI Expression *getCondition();
+  CLANG_ABI Expression *getMessage();
 };
 
 /// extern <string-literal> declaration
@@ -394,8 +395,8 @@ class DeclaratorList final : public List {
 public:
   DeclaratorList() : List(NodeKind::DeclaratorList) {}
   static bool classof(const Node *N);
-  std::vector<SimpleDeclarator *> getDeclarators();
-  std::vector<List::ElementAndDelimiter<syntax::SimpleDeclarator>>
+  CLANG_ABI std::vector<SimpleDeclarator *> getDeclarators();
+  CLANG_ABI std::vector<List::ElementAndDelimiter<syntax::SimpleDeclarator>>
   getDeclaratorsAndCommas();
 };
 
@@ -407,7 +408,7 @@ public:
   SimpleDeclaration() : Declaration(NodeKind::SimpleDeclaration) {}
   static bool classof(const Node *N);
   /// FIXME: use custom iterator instead of 'vector'.
-  std::vector<SimpleDeclarator *> getDeclarators();
+  CLANG_ABI std::vector<SimpleDeclarator *> getDeclarators();
 };
 
 /// template <template-parameters> <declaration>
@@ -415,8 +416,8 @@ class TemplateDeclaration final : public Declaration {
 public:
   TemplateDeclaration() : Declaration(NodeKind::TemplateDeclaration) {}
   static bool classof(const Node *N);
-  Leaf *getTemplateKeyword();
-  Declaration *getDeclaration();
+  CLANG_ABI Leaf *getTemplateKeyword();
+  CLANG_ABI Declaration *getDeclaration();
 };
 
 /// template <declaration>
@@ -429,9 +430,9 @@ public:
   ExplicitTemplateInstantiation()
       : Declaration(NodeKind::ExplicitTemplateInstantiation) {}
   static bool classof(const Node *N);
-  Leaf *getTemplateKeyword();
-  Leaf *getExternKeyword();
-  Declaration *getDeclaration();
+  CLANG_ABI Leaf *getTemplateKeyword();
+  CLANG_ABI Leaf *getExternKeyword();
+  CLANG_ABI Declaration *getDeclaration();
 };
 
 /// namespace <name> { <decls> }
@@ -504,8 +505,8 @@ class ParenDeclarator final : public Declarator {
 public:
   ParenDeclarator() : Declarator(NodeKind::ParenDeclarator) {}
   static bool classof(const Node *N);
-  Leaf *getLparen();
-  Leaf *getRparen();
+  CLANG_ABI Leaf *getLparen();
+  CLANG_ABI Leaf *getRparen();
 };
 
 /// Array size specified inside a declarator.
@@ -517,9 +518,9 @@ public:
   ArraySubscript() : Tree(NodeKind::ArraySubscript) {}
   static bool classof(const Node *N);
   // TODO: add an accessor for the "static" keyword.
-  Leaf *getLbracket();
-  Expression *getSize();
-  Leaf *getRbracket();
+  CLANG_ABI Leaf *getLbracket();
+  CLANG_ABI Expression *getSize();
+  CLANG_ABI Leaf *getRbracket();
 };
 
 /// Trailing return type after the parameter list, including the arrow token.
@@ -529,10 +530,10 @@ public:
   TrailingReturnType() : Tree(NodeKind::TrailingReturnType) {}
   static bool classof(const Node *N);
   // TODO: add accessors for specifiers.
-  Leaf *getArrowToken();
+  CLANG_ABI Leaf *getArrowToken();
   // FIXME: This should be a `type-id` following the grammar. Fix this once we
   // have a representation of `type-id`s.
-  SimpleDeclarator *getDeclarator();
+  CLANG_ABI SimpleDeclarator *getDeclarator();
 };
 
 /// Models a `parameter-declaration-list` which appears within
@@ -541,8 +542,8 @@ class ParameterDeclarationList final : public List {
 public:
   ParameterDeclarationList() : List(NodeKind::ParameterDeclarationList) {}
   static bool classof(const Node *N);
-  std::vector<SimpleDeclaration *> getParameterDeclarations();
-  std::vector<List::ElementAndDelimiter<syntax::SimpleDeclaration>>
+  CLANG_ABI std::vector<SimpleDeclaration *> getParameterDeclarations();
+  CLANG_ABI std::vector<List::ElementAndDelimiter<syntax::SimpleDeclaration>>
   getParametersAndCommas();
 };
 
@@ -561,10 +562,10 @@ class ParametersAndQualifiers final : public Tree {
 public:
   ParametersAndQualifiers() : Tree(NodeKind::ParametersAndQualifiers) {}
   static bool classof(const Node *N);
-  Leaf *getLparen();
-  ParameterDeclarationList *getParameters();
-  Leaf *getRparen();
-  TrailingReturnType *getTrailingReturn();
+  CLANG_ABI Leaf *getLparen();
+  CLANG_ABI ParameterDeclarationList *getParameters();
+  CLANG_ABI Leaf *getRparen();
+  CLANG_ABI TrailingReturnType *getTrailingReturn();
 };
 
 /// Member pointer inside a declarator

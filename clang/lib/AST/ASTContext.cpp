@@ -14724,7 +14724,7 @@ LangAS ASTContext::getLangASForBuiltinAddressSpace(unsigned AS) const {
 
 // Explicitly instantiate this in case a Redeclarable<T> is used from a TU that
 // doesn't include ASTContext.h
-template
+template CLANG_ABI
 clang::LazyGenerationalUpdatePtr<
     const Decl *, Decl *, &ExternalASTSource::CompleteRedeclChain>::ValueType
 clang::LazyGenerationalUpdatePtr<

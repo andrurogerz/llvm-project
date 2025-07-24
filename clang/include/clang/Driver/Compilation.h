@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_DRIVER_COMPILATION_H
 #define LLVM_CLANG_DRIVER_COMPILATION_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Driver/Action.h"
 #include "clang/Driver/Job.h"
@@ -127,10 +128,10 @@ class Compilation {
   bool ForceKeepTempFiles = false;
 
 public:
-  Compilation(const Driver &D, const ToolChain &DefaultToolChain,
+  CLANG_ABI Compilation(const Driver &D, const ToolChain &DefaultToolChain,
               llvm::opt::InputArgList *Args,
               llvm::opt::DerivedArgList *TranslatedArgs, bool ContainsError);
-  ~Compilation();
+  CLANG_ABI ~Compilation();
 
   const Driver &getDriver() const { return TheDriver; }
 
@@ -231,7 +232,7 @@ public:
   }
 
   /// Returns the sysroot path.
-  StringRef getSysRoot() const;
+  CLANG_ABI StringRef getSysRoot() const;
 
   /// getArgsForToolChain - Return the derived argument list for the
   /// tool chain \p TC (or the default tool chain, if TC is not specified).
@@ -241,7 +242,7 @@ public:
   /// \param BoundArch - The bound architecture name, or 0.
   /// \param DeviceOffloadKind - The offload device kind that should be used in
   /// the translation, if any.
-  const llvm::opt::DerivedArgList &
+  CLANG_ABI const llvm::opt::DerivedArgList &
   getArgsForToolChain(const ToolChain *TC, StringRef BoundArch,
                       Action::OffloadKind DeviceOffloadKind);
 
@@ -278,13 +279,13 @@ public:
   ///
   /// \param IssueErrors - Report failures as errors.
   /// \return Whether the file was removed successfully.
-  bool CleanupFile(const char *File, bool IssueErrors = false) const;
+  CLANG_ABI bool CleanupFile(const char *File, bool IssueErrors = false) const;
 
   /// CleanupFileList - Remove the files in the given list.
   ///
   /// \param IssueErrors - Report failures as errors.
   /// \return Whether all files were removed successfully.
-  bool CleanupFileList(const llvm::opt::ArgStringList &Files,
+  CLANG_ABI bool CleanupFileList(const llvm::opt::ArgStringList &Files,
                        bool IssueErrors = false) const;
 
   /// CleanupFileMap - Remove the files in the given map.
@@ -293,7 +294,7 @@ public:
   /// JobAction.  Otherwise, delete all files in the map.
   /// \param IssueErrors - Report failures as errors.
   /// \return Whether all files were removed successfully.
-  bool CleanupFileMap(const ArgStringMap &Files,
+  CLANG_ABI bool CleanupFileMap(const ArgStringMap &Files,
                       const JobAction *JA,
                       bool IssueErrors = false) const;
 
@@ -304,7 +305,7 @@ public:
   /// \param LogOnly - When true, only tries to log the command, not actually
   /// execute it.
   /// \return The result code of the subprocess.
-  int ExecuteCommand(const Command &C, const Command *&FailingCommand,
+  CLANG_ABI int ExecuteCommand(const Command &C, const Command *&FailingCommand,
                      bool LogOnly = false) const;
 
   /// ExecuteJob - Execute a single job.
@@ -313,7 +314,7 @@ public:
   /// failing commands and their associated result code.
   /// \param LogOnly - When true, only tries to log the command, not actually
   /// execute it.
-  void
+  CLANG_ABI void
   ExecuteJobs(const JobList &Jobs,
               SmallVectorImpl<std::pair<int, const Command *>> &FailingCommands,
               bool LogOnly = false) const;
@@ -321,7 +322,7 @@ public:
   /// initCompilationForDiagnostics - Remove stale state and suppress output
   /// so compilation can be reexecuted to generate additional diagnostic
   /// information (e.g., preprocessed source(s)).
-  void initCompilationForDiagnostics();
+  CLANG_ABI void initCompilationForDiagnostics();
 
   /// Return true if we're compiling for diagnostics.
   bool isForDiagnostics() const { return ForDiagnostics; }
@@ -338,7 +339,7 @@ public:
   /// \param Redirects - array of optional paths. The array should have a size
   /// of three. The inferior process's stdin(0), stdout(1), and stderr(2) will
   /// be redirected to the corresponding paths, if provided (not std::nullopt).
-  void Redirect(ArrayRef<std::optional<StringRef>> Redirects);
+  CLANG_ABI void Redirect(ArrayRef<std::optional<StringRef>> Redirects);
 };
 
 } // namespace driver

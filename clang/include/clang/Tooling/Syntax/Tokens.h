@@ -27,6 +27,7 @@
 #ifndef LLVM_CLANG_TOOLING_SYNTAX_TOKENS_H
 #define LLVM_CLANG_TOOLING_SYNTAX_TOKENS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LangOptions.h"
 #include "clang/Basic/SourceLocation.h"
 #include "clang/Basic/SourceManager.h"
@@ -49,12 +50,12 @@ namespace syntax {
 /// included and the end offset is excluded from the range.
 struct FileRange {
   /// EXPECTS: File.isValid() && Begin <= End.
-  FileRange(FileID File, unsigned BeginOffset, unsigned EndOffset);
+  CLANG_ABI FileRange(FileID File, unsigned BeginOffset, unsigned EndOffset);
   /// EXPECTS: BeginLoc.isValid() && BeginLoc.isFileID().
-  FileRange(const SourceManager &SM, SourceLocation BeginLoc, unsigned Length);
+  CLANG_ABI FileRange(const SourceManager &SM, SourceLocation BeginLoc, unsigned Length);
   /// EXPECTS: BeginLoc.isValid() && BeginLoc.isFileID(), Begin <= End and files
   ///          are the same.
-  FileRange(const SourceManager &SM, SourceLocation BeginLoc,
+  CLANG_ABI FileRange(const SourceManager &SM, SourceLocation BeginLoc,
             SourceLocation EndLoc);
 
   FileID file() const { return File; }
@@ -75,11 +76,11 @@ struct FileRange {
   }
 
   /// Gets the substring that this FileRange refers to.
-  llvm::StringRef text(const SourceManager &SM) const;
+  CLANG_ABI llvm::StringRef text(const SourceManager &SM) const;
 
   /// Convert to the clang range. The returned range is always a char range,
   /// never a token range.
-  CharSourceRange toCharRange(const SourceManager &SM) const;
+  CLANG_ABI CharSourceRange toCharRange(const SourceManager &SM) const;
 
   friend bool operator==(const FileRange &L, const FileRange &R) {
     return std::tie(L.File, L.Begin, L.End) == std::tie(R.File, R.Begin, R.End);
@@ -95,16 +96,16 @@ private:
 };
 
 /// For debugging purposes.
-llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const FileRange &R);
+CLANG_ABI llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const FileRange &R);
 
 /// A token coming directly from a file or from a macro invocation. Has just
 /// enough information to locate the token in the source code.
 /// Can represent both expanded and spelled tokens.
 class Token {
 public:
-  Token(SourceLocation Location, unsigned Length, tok::TokenKind Kind);
+  CLANG_ABI Token(SourceLocation Location, unsigned Length, tok::TokenKind Kind);
   /// EXPECTS: clang::Token is not an annotation token.
-  explicit Token(const clang::Token &T);
+  CLANG_ABI explicit Token(const clang::Token &T);
 
   tok::TokenKind kind() const { return Kind; }
   /// Location of the first character of a token.
@@ -120,22 +121,22 @@ public:
   ///    in\
   ///    t
   /// both have the same kind tok::kw_int, but results of text() are different.
-  llvm::StringRef text(const SourceManager &SM) const;
+  CLANG_ABI llvm::StringRef text(const SourceManager &SM) const;
 
   /// Gets a range of this token.
   /// EXPECTS: token comes from a file, not from a macro expansion.
-  FileRange range(const SourceManager &SM) const;
+  CLANG_ABI FileRange range(const SourceManager &SM) const;
 
   /// Given two tokens inside the same file, returns a file range that starts at
   /// \p First and ends at \p Last.
   /// EXPECTS: First and Last are file tokens from the same file, Last starts
   ///          after First.
-  static FileRange range(const SourceManager &SM, const syntax::Token &First,
+  CLANG_ABI static FileRange range(const SourceManager &SM, const syntax::Token &First,
                          const syntax::Token &Last);
 
-  std::string dumpForTests(const SourceManager &SM) const;
+  CLANG_ABI std::string dumpForTests(const SourceManager &SM) const;
   /// For debugging purposes.
-  std::string str() const;
+  CLANG_ABI std::string str() const;
 
 private:
   SourceLocation Location;
@@ -143,7 +144,7 @@ private:
   tok::TokenKind Kind;
 };
 /// For debugging purposes. Equivalent to a call to Token::str().
-llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const Token &T);
+CLANG_ABI llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const Token &T);
 
 /// A list of tokens obtained by preprocessing a text buffer and operations to
 /// map between the expanded and spelled tokens, i.e. TokenBuffer has
@@ -193,12 +194,12 @@ public:
 
   /// Builds a cache to make future calls to expandedToken(SourceRange) faster.
   /// Creates an index only once. Further calls to it will be no-op.
-  void indexExpandedTokens();
+  CLANG_ABI void indexExpandedTokens();
 
   /// Returns the subrange of expandedTokens() corresponding to the closed
   /// token range R.
   /// Consider calling indexExpandedTokens() before for faster lookups.
-  llvm::ArrayRef<syntax::Token> expandedTokens(SourceRange R) const;
+  CLANG_ABI llvm::ArrayRef<syntax::Token> expandedTokens(SourceRange R) const;
 
   /// Returns the subrange of spelled tokens corresponding to AST node spanning
   /// \p Expanded. This is the text that should be replaced if a refactoring
@@ -228,7 +229,7 @@ public:
   ///
   /// EXPECTS: \p Expanded is a subrange of expandedTokens().
   /// Complexity is logarithmic.
-  std::optional<llvm::ArrayRef<syntax::Token>>
+  CLANG_ABI std::optional<llvm::ArrayRef<syntax::Token>>
   spelledForExpanded(llvm::ArrayRef<syntax::Token> Expanded) const;
 
   /// Find the subranges of expanded tokens, corresponding to \p Spelled.
@@ -258,7 +259,7 @@ public:
   ///   a FIRST(arg)      => {a f1 arg = arg f2}
   ///   arg               => {arg, arg} // arg #1 is before `=` and arg #2 is
   ///                                   // after `=` in the expanded tokens.
-  llvm::SmallVector<llvm::ArrayRef<syntax::Token>, 1>
+  CLANG_ABI llvm::SmallVector<llvm::ArrayRef<syntax::Token>, 1>
   expandedForSpelled(llvm::ArrayRef<syntax::Token> Spelled) const;
 
   /// An expansion produced by the preprocessor, includes macro expansions and
@@ -277,11 +278,11 @@ public:
   /// If \p Spelled starts a mapping (e.g. if it's a macro name or '#' starting
   /// a preprocessor directive) return the subrange of expanded tokens that the
   /// macro expands to.
-  std::optional<Expansion>
+  CLANG_ABI std::optional<Expansion>
   expansionStartingAt(const syntax::Token *Spelled) const;
   /// Returns all expansions (partially) expanded from the specified tokens.
   /// This is the expansions whose Spelled range intersects \p Spelled.
-  std::vector<Expansion>
+  CLANG_ABI std::vector<Expansion>
   expansionsOverlapping(llvm::ArrayRef<syntax::Token> Spelled) const;
 
   /// Lexed tokens of a file before preprocessing. E.g. for the following input
@@ -290,11 +291,11 @@ public:
   /// spelledTokens() returns
   ///    {"#", "define", "DECL", "(", "name", ")", "int", "name", "=", "10",
   ///     "DECL", "(", "a", ")", ";"}
-  llvm::ArrayRef<syntax::Token> spelledTokens(FileID FID) const;
+  CLANG_ABI llvm::ArrayRef<syntax::Token> spelledTokens(FileID FID) const;
 
   /// Returns the spelled Token containing the Loc, if there are no such tokens
   /// returns nullptr.
-  const syntax::Token *spelledTokenContaining(SourceLocation Loc) const;
+  CLANG_ABI const syntax::Token *spelledTokenContaining(SourceLocation Loc) const;
 
   /// Get all tokens that expand a macro in \p FID. For the following input
   ///     #define FOO B
@@ -304,11 +305,11 @@ public:
   ///     FOO;
   /// macroExpansions() returns {"FOO2", "FOO"} (from line 3 and 5
   /// respecitvely).
-  std::vector<const syntax::Token *> macroExpansions(FileID FID) const;
+  CLANG_ABI std::vector<const syntax::Token *> macroExpansions(FileID FID) const;
 
   const SourceManager &sourceManager() const { return *SourceMgr; }
 
-  std::string dumpForTests() const;
+  CLANG_ABI std::string dumpForTests() const;
 
 private:
   /// Describes a mapping between a continuous subrange of spelled tokens and
@@ -330,7 +331,7 @@ private:
     unsigned EndExpanded = 0;
 
     /// For debugging purposes.
-    std::string str() const;
+    CLANG_ABI std::string str() const;
   };
   /// Spelled tokens of the file with information about the subranges.
   struct MarkedFile {
@@ -380,17 +381,17 @@ private:
 
 /// The spelled tokens that overlap or touch a spelling location Loc.
 /// This always returns 0-2 tokens.
-llvm::ArrayRef<syntax::Token>
+CLANG_ABI llvm::ArrayRef<syntax::Token>
 spelledTokensTouching(SourceLocation Loc, const syntax::TokenBuffer &Tokens);
-llvm::ArrayRef<syntax::Token>
+CLANG_ABI llvm::ArrayRef<syntax::Token>
 spelledTokensTouching(SourceLocation Loc, llvm::ArrayRef<syntax::Token> Tokens);
 
 /// The identifier token that overlaps or touches a spelling location Loc.
 /// If there is none, returns nullptr.
-const syntax::Token *
+CLANG_ABI const syntax::Token *
 spelledIdentifierTouching(SourceLocation Loc,
                           llvm::ArrayRef<syntax::Token> Tokens);
-const syntax::Token *
+CLANG_ABI const syntax::Token *
 spelledIdentifierTouching(SourceLocation Loc,
                           const syntax::TokenBuffer &Tokens);
 
@@ -402,13 +403,13 @@ spelledIdentifierTouching(SourceLocation Loc,
 /// results from what one might expect when running a C++ frontend, e.g.
 /// preprocessor does not run at all.
 /// The result will *not* have a 'eof' token at the end.
-std::vector<syntax::Token> tokenize(FileID FID, const SourceManager &SM,
+CLANG_ABI std::vector<syntax::Token> tokenize(FileID FID, const SourceManager &SM,
                                     const LangOptions &LO);
 /// Similar to one above, instead of whole file tokenizes a part of it. Note
 /// that, the first token might be incomplete if FR.startOffset is not at the
 /// beginning of a token, and the last token returned will start before the
 /// FR.endOffset but might end after it.
-std::vector<syntax::Token>
+CLANG_ABI std::vector<syntax::Token>
 tokenize(const FileRange &FR, const SourceManager &SM, const LangOptions &LO);
 
 /// Collects tokens for the main file while running the frontend action. An
@@ -420,11 +421,11 @@ public:
   /// Adds the hooks to collect the tokens. Should be called before the
   /// preprocessing starts, i.e. as a part of BeginSourceFile() or
   /// CreateASTConsumer().
-  TokenCollector(Preprocessor &P);
+  CLANG_ABI TokenCollector(Preprocessor &P);
 
   /// Finalizes token collection. Should be called after preprocessing is
   /// finished, i.e. after running Execute().
-  [[nodiscard]] TokenBuffer consume() &&;
+  [[nodiscard]] CLANG_ABI TokenBuffer consume() &&;
 
 private:
   /// Maps from a start to an end spelling location of transformations

@@ -16,6 +16,7 @@
 #ifndef LLVM_CLANG_TOOLING_CORE_DIAGNOSTIC_H
 #define LLVM_CLANG_TOOLING_CORE_DIAGNOSTIC_H
 
+#include "clang/Support/Compiler.h"
 #include "Replacement.h"
 #include "clang/Basic/Diagnostic.h"
 #include "llvm/ADT/SmallVector.h"
@@ -30,7 +31,7 @@ namespace tooling {
 struct FileByteRange {
   FileByteRange() = default;
 
-  FileByteRange(const SourceManager &Sources, CharSourceRange Range);
+  CLANG_ABI FileByteRange(const SourceManager &Sources, CharSourceRange Range);
 
   std::string FilePath;
   unsigned FileOffset;
@@ -40,7 +41,7 @@ struct FileByteRange {
 /// Represents the diagnostic message with the error message associated
 /// and the information on the location of the problem.
 struct DiagnosticMessage {
-  DiagnosticMessage(llvm::StringRef Message = "");
+  CLANG_ABI DiagnosticMessage(llvm::StringRef Message = "");
 
   /// Constructs a diagnostic message with anoffset to the diagnostic
   /// within the file where the problem occurred.
@@ -48,7 +49,7 @@ struct DiagnosticMessage {
   /// \param Loc Should be a file location, it is not meaningful for a macro
   /// location.
   ///
-  DiagnosticMessage(llvm::StringRef Message, const SourceManager &Sources,
+  CLANG_ABI DiagnosticMessage(llvm::StringRef Message, const SourceManager &Sources,
                     SourceLocation Loc);
 
   std::string Message;
@@ -74,10 +75,10 @@ struct Diagnostic {
 
   Diagnostic() = default;
 
-  Diagnostic(llvm::StringRef DiagnosticName, Level DiagLevel,
+  CLANG_ABI Diagnostic(llvm::StringRef DiagnosticName, Level DiagLevel,
              StringRef BuildDirectory);
 
-  Diagnostic(llvm::StringRef DiagnosticName, const DiagnosticMessage &Message,
+  CLANG_ABI Diagnostic(llvm::StringRef DiagnosticName, const DiagnosticMessage &Message,
              const SmallVector<DiagnosticMessage, 1> &Notes, Level DiagLevel,
              llvm::StringRef BuildDirectory);
 
@@ -112,7 +113,7 @@ struct TranslationUnitDiagnostics {
 
 /// Get the first fix to apply for this diagnostic.
 /// \returns nullptr if no fixes are attached to the diagnostic.
-const llvm::StringMap<Replacements> *selectFirstFix(const Diagnostic& D);
+CLANG_ABI const llvm::StringMap<Replacements> *selectFirstFix(const Diagnostic& D);
 
 } // end namespace tooling
 } // end namespace clang

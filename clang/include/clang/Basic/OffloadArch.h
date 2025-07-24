@@ -9,6 +9,8 @@
 #ifndef LLVM_CLANG_BASIC_OFFLOADARCH_H
 #define LLVM_CLANG_BASIC_OFFLOADARCH_H
 
+#include "clang/Support/Compiler.h"
+
 namespace llvm {
 class StringRef;
 } // namespace llvm
@@ -133,12 +135,12 @@ static inline bool IsIntelOffloadArch(OffloadArch Arch) {
   return IsIntelCPUOffloadArch(Arch) || IsIntelGPUOffloadArch(Arch);
 }
 
-const char *OffloadArchToString(OffloadArch A);
-const char *OffloadArchToVirtualArchString(OffloadArch A);
+CLANG_ABI const char *OffloadArchToString(OffloadArch A);
+CLANG_ABI const char *OffloadArchToVirtualArchString(OffloadArch A);
 
 // Convert a string to an OffloadArch enum value. Returns
 // OffloadArch::UNKNOWN if the string is not recognized.
-OffloadArch StringToOffloadArch(llvm::StringRef S);
+CLANG_ABI OffloadArch StringToOffloadArch(llvm::StringRef S);
 
 } // namespace clang
 

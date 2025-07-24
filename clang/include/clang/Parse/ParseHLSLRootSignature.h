@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_PARSE_PARSEHLSLROOTSIGNATURE_H
 #define LLVM_CLANG_PARSE_PARSEHLSLROOTSIGNATURE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Expr.h"
 #include "clang/Basic/DiagnosticParse.h"
 #include "clang/Lex/LexHLSLRootSignature.h"
@@ -29,7 +30,7 @@ namespace hlsl {
 
 class RootSignatureParser {
 public:
-  RootSignatureParser(llvm::dxbc::RootSignatureVersion Version,
+  CLANG_ABI RootSignatureParser(llvm::dxbc::RootSignatureVersion Version,
                       StringLiteral *Signature, Preprocessor &PP);
 
   /// Consumes tokens from the Lexer and constructs the in-memory
@@ -37,7 +38,7 @@ public:
   /// error is encountered or the end of the buffer.
   ///
   /// Returns true if a parsing error is encountered.
-  bool parse();
+  CLANG_ABI bool parse();
 
   /// Return all elements that have been parsed.
   ArrayRef<RootSignatureElement> getElements() { return Elements; }
@@ -219,7 +220,7 @@ private:
   ///
   /// This allows to currently retrieve the location for multi-token
   /// StringLiterals
-  SourceLocation getTokenLocation(RootSignatureToken Tok);
+  CLANG_ABI SourceLocation getTokenLocation(RootSignatureToken Tok);
 
   /// Construct a diagnostics at the location of the current token
   DiagnosticBuilder reportDiag(unsigned DiagID) {

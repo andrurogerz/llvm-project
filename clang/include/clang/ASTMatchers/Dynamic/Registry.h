@@ -16,6 +16,7 @@
 #ifndef LLVM_CLANG_ASTMATCHERS_DYNAMIC_REGISTRY_H
 #define LLVM_CLANG_ASTMATCHERS_DYNAMIC_REGISTRY_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/ASTMatchers/Dynamic/Diagnostics.h"
 #include "clang/ASTMatchers/Dynamic/VariantValue.h"
 #include "llvm/ADT/ArrayRef.h"
@@ -37,8 +38,8 @@ class MatcherDescriptor;
 /// because MatcherDescriptor is forward declared
 class MatcherDescriptorPtr {
 public:
-  explicit MatcherDescriptorPtr(MatcherDescriptor *);
-  ~MatcherDescriptorPtr();
+  CLANG_ABI explicit MatcherDescriptorPtr(MatcherDescriptor *);
+  CLANG_ABI ~MatcherDescriptorPtr();
   MatcherDescriptorPtr(MatcherDescriptorPtr &&) = default;
   MatcherDescriptorPtr &operator=(MatcherDescriptorPtr &&) = default;
   MatcherDescriptorPtr(const MatcherDescriptorPtr &) = delete;
@@ -83,11 +84,11 @@ class Registry {
 public:
   Registry() = delete;
 
-  static ASTNodeKind nodeMatcherType(MatcherCtor);
+  CLANG_ABI static ASTNodeKind nodeMatcherType(MatcherCtor);
 
-  static bool isBuilderMatcher(MatcherCtor Ctor);
+  CLANG_ABI static bool isBuilderMatcher(MatcherCtor Ctor);
 
-  static internal::MatcherDescriptorPtr
+  CLANG_ABI static internal::MatcherDescriptorPtr
   buildMatcherCtor(MatcherCtor, SourceRange NameRange,
                    ArrayRef<ParserValue> Args, Diagnostics *Error);
 
@@ -95,7 +96,7 @@ public:
   ///
   /// \return An opaque value which may be used to refer to the matcher
   /// constructor, or std::optional<MatcherCtor>() if not found.
-  static std::optional<MatcherCtor> lookupMatcherCtor(StringRef MatcherName);
+  CLANG_ABI static std::optional<MatcherCtor> lookupMatcherCtor(StringRef MatcherName);
 
   /// Compute the list of completion types for \p Context.
   ///
@@ -105,7 +106,7 @@ public:
   /// argument list of that matcher (or for the last element, the index of
   /// the completion point in the argument list). An empty list requests
   /// completion for the root matcher.
-  static std::vector<ArgKind> getAcceptedCompletionTypes(
+  CLANG_ABI static std::vector<ArgKind> getAcceptedCompletionTypes(
       llvm::ArrayRef<std::pair<MatcherCtor, unsigned>> Context);
 
   /// Compute the list of completions that match any of
@@ -117,7 +118,7 @@ public:
   /// Completions should be valid when used in \c lookupMatcherCtor().
   /// The matcher constructed from the return of \c lookupMatcherCtor()
   /// should be convertible to some type in \p AcceptedTypes.
-  static std::vector<MatcherCompletion>
+  CLANG_ABI static std::vector<MatcherCompletion>
   getMatcherCompletions(ArrayRef<ArgKind> AcceptedTypes);
 
   /// Construct a matcher from the registry.
@@ -135,7 +136,7 @@ public:
   ///   A null matcher if the number of arguments or argument types do not match
   ///   the signature.  In that case \c Error will contain the description of
   ///   the error.
-  static VariantMatcher constructMatcher(MatcherCtor Ctor,
+  CLANG_ABI static VariantMatcher constructMatcher(MatcherCtor Ctor,
                                          SourceRange NameRange,
                                          ArrayRef<ParserValue> Args,
                                          Diagnostics *Error);
@@ -146,7 +147,7 @@ public:
   /// matcher to the specified \c BindID.
   /// If the matcher is not bindable, it sets an error in \c Error and returns
   /// a null matcher.
-  static VariantMatcher constructBoundMatcher(MatcherCtor Ctor,
+  CLANG_ABI static VariantMatcher constructBoundMatcher(MatcherCtor Ctor,
                                               SourceRange NameRange,
                                               StringRef BindID,
                                               ArrayRef<ParserValue> Args,

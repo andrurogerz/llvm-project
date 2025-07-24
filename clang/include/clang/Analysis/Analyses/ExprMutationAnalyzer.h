@@ -8,6 +8,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_ANALYSES_EXPRMUTATIONANALYZER_H
 #define LLVM_CLANG_ANALYSIS_ANALYSES_EXPRMUTATIONANALYZER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/ASTMatchers/ASTMatchers.h"
 #include "llvm/ADT/DenseMap.h"
 #include <memory>
@@ -42,11 +43,11 @@ public:
     Analyzer(const Stmt &Stm, ASTContext &Context, Memoized &Memorized)
         : Stm(Stm), Context(Context), Memorized(Memorized) {}
 
-    const Stmt *findMutation(const Expr *Exp);
-    const Stmt *findMutation(const Decl *Dec);
+    CLANG_ABI const Stmt *findMutation(const Expr *Exp);
+    CLANG_ABI const Stmt *findMutation(const Decl *Dec);
 
-    const Stmt *findPointeeMutation(const Expr *Exp);
-    const Stmt *findPointeeMutation(const Decl *Dec);
+    CLANG_ABI const Stmt *findPointeeMutation(const Expr *Exp);
+    CLANG_ABI const Stmt *findPointeeMutation(const Decl *Dec);
 
   private:
     using MutationFinder = const Stmt *(Analyzer::*)(const Expr *);
@@ -85,7 +86,7 @@ public:
 
   /// check whether stmt is unevaluated. mutation analyzer will ignore the
   /// content in unevaluated stmt.
-  static bool isUnevaluated(const Stmt *Stm, ASTContext &Context);
+  CLANG_ABI static bool isUnevaluated(const Stmt *Stm, ASTContext &Context);
 
   bool isMutated(const Expr *Exp) { return findMutation(Exp) != nullptr; }
   bool isMutated(const Decl *Dec) { return findMutation(Dec) != nullptr; }
@@ -136,13 +137,13 @@ public:
   bool isMutated(const ParmVarDecl *Parm) {
     return findMutation(Parm) != nullptr;
   }
-  const Stmt *findMutation(const ParmVarDecl *Parm);
+  CLANG_ABI const Stmt *findMutation(const ParmVarDecl *Parm);
 
 private:
   ExprMutationAnalyzer::Analyzer BodyAnalyzer;
   llvm::DenseMap<const ParmVarDecl *, const Stmt *> Results;
 
-  FunctionParmMutationAnalyzer(const FunctionDecl &Func, ASTContext &Context,
+  CLANG_ABI FunctionParmMutationAnalyzer(const FunctionDecl &Func, ASTContext &Context,
                                ExprMutationAnalyzer::Memoized &Memorized);
 };
 

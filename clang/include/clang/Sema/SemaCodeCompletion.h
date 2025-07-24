@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_SEMA_SEMACODECOMPLETION_H
 #define LLVM_CLANG_SEMA_SEMACODECOMPLETION_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTFwd.h"
 #include "clang/AST/Type.h"
 #include "clang/Basic/AttributeCommonInfo.h"
@@ -37,7 +38,7 @@ class TemplateName;
 
 class SemaCodeCompletion : public SemaBase {
 public:
-  SemaCodeCompletion(Sema &S, CodeCompleteConsumer *CompletionConsumer);
+  CLANG_ABI SemaCodeCompletion(Sema &S, CodeCompleteConsumer *CompletionConsumer);
 
   using TemplateTy = OpaquePtr<TemplateName>;
   using DeclGroupPtrTy = OpaquePtr<DeclGroupRef>;
@@ -94,34 +95,34 @@ public:
     PCC_TopLevelOrExpression,
   };
 
-  void CodeCompleteModuleImport(SourceLocation ImportLoc, ModuleIdPath Path);
-  void CodeCompleteOrdinaryName(Scope *S,
+  CLANG_ABI void CodeCompleteModuleImport(SourceLocation ImportLoc, ModuleIdPath Path);
+  CLANG_ABI void CodeCompleteOrdinaryName(Scope *S,
                                 ParserCompletionContext CompletionContext);
-  void CodeCompleteDeclSpec(Scope *S, DeclSpec &DS, bool AllowNonIdentifiers,
+  CLANG_ABI void CodeCompleteDeclSpec(Scope *S, DeclSpec &DS, bool AllowNonIdentifiers,
                             bool AllowNestedNameSpecifiers);
 
   struct CodeCompleteExpressionData;
-  void CodeCompleteExpression(Scope *S, const CodeCompleteExpressionData &Data);
-  void CodeCompleteExpression(Scope *S, QualType PreferredType,
+  CLANG_ABI void CodeCompleteExpression(Scope *S, const CodeCompleteExpressionData &Data);
+  CLANG_ABI void CodeCompleteExpression(Scope *S, QualType PreferredType,
                               bool IsParenthesized = false);
-  void CodeCompleteMemberReferenceExpr(Scope *S, Expr *Base, Expr *OtherOpBase,
+  CLANG_ABI void CodeCompleteMemberReferenceExpr(Scope *S, Expr *Base, Expr *OtherOpBase,
                                        SourceLocation OpLoc, bool IsArrow,
                                        bool IsBaseExprStatement,
                                        QualType PreferredType);
-  void CodeCompletePostfixExpression(Scope *S, ExprResult LHS,
+  CLANG_ABI void CodeCompletePostfixExpression(Scope *S, ExprResult LHS,
                                      QualType PreferredType);
-  void CodeCompleteTag(Scope *S, unsigned TagSpec);
-  void CodeCompleteTypeQualifiers(DeclSpec &DS);
-  void CodeCompleteFunctionQualifiers(DeclSpec &DS, Declarator &D,
+  CLANG_ABI void CodeCompleteTag(Scope *S, unsigned TagSpec);
+  CLANG_ABI void CodeCompleteTypeQualifiers(DeclSpec &DS);
+  CLANG_ABI void CodeCompleteFunctionQualifiers(DeclSpec &DS, Declarator &D,
                                       const VirtSpecifiers *VS = nullptr);
-  void CodeCompleteBracketDeclarator(Scope *S);
-  void CodeCompleteCase(Scope *S);
+  CLANG_ABI void CodeCompleteBracketDeclarator(Scope *S);
+  CLANG_ABI void CodeCompleteCase(Scope *S);
   enum class AttributeCompletion {
     Attribute,
     Scope,
     None,
   };
-  void CodeCompleteAttribute(
+  CLANG_ABI void CodeCompleteAttribute(
       AttributeCommonInfo::Syntax Syntax,
       AttributeCompletion Completion = AttributeCompletion::Attribute,
       const IdentifierInfo *Scope = nullptr);
@@ -133,102 +134,102 @@ public:
   /// signatures that were considered.
   ///
   /// FIXME: rename to GuessCallArgumentType to reduce confusion.
-  QualType ProduceCallSignatureHelp(Expr *Fn, ArrayRef<Expr *> Args,
+  CLANG_ABI QualType ProduceCallSignatureHelp(Expr *Fn, ArrayRef<Expr *> Args,
                                     SourceLocation OpenParLoc);
-  QualType ProduceConstructorSignatureHelp(QualType Type, SourceLocation Loc,
+  CLANG_ABI QualType ProduceConstructorSignatureHelp(QualType Type, SourceLocation Loc,
                                            ArrayRef<Expr *> Args,
                                            SourceLocation OpenParLoc,
                                            bool Braced);
-  QualType ProduceCtorInitMemberSignatureHelp(
+  CLANG_ABI QualType ProduceCtorInitMemberSignatureHelp(
       Decl *ConstructorDecl, CXXScopeSpec SS, ParsedType TemplateTypeTy,
       ArrayRef<Expr *> ArgExprs, IdentifierInfo *II, SourceLocation OpenParLoc,
       bool Braced);
-  QualType ProduceTemplateArgumentSignatureHelp(
+  CLANG_ABI QualType ProduceTemplateArgumentSignatureHelp(
       TemplateTy, ArrayRef<ParsedTemplateArgument>, SourceLocation LAngleLoc);
-  void CodeCompleteInitializer(Scope *S, Decl *D);
+  CLANG_ABI void CodeCompleteInitializer(Scope *S, Decl *D);
   /// Trigger code completion for a record of \p BaseType. \p InitExprs are
   /// expressions in the initializer list seen so far and \p D is the current
   /// Designation being parsed.
-  void CodeCompleteDesignator(const QualType BaseType,
+  CLANG_ABI void CodeCompleteDesignator(const QualType BaseType,
                               llvm::ArrayRef<Expr *> InitExprs,
                               const Designation &D);
-  void CodeCompleteKeywordAfterIf(bool AfterExclaim) const;
-  void CodeCompleteAfterIf(Scope *S, bool IsBracedThen);
+  CLANG_ABI void CodeCompleteKeywordAfterIf(bool AfterExclaim) const;
+  CLANG_ABI void CodeCompleteAfterIf(Scope *S, bool IsBracedThen);
 
-  void CodeCompleteQualifiedId(Scope *S, CXXScopeSpec &SS, bool EnteringContext,
+  CLANG_ABI void CodeCompleteQualifiedId(Scope *S, CXXScopeSpec &SS, bool EnteringContext,
                                bool IsUsingDeclaration, QualType BaseType,
                                QualType PreferredType);
-  void CodeCompleteUsing(Scope *S);
-  void CodeCompleteUsingDirective(Scope *S);
-  void CodeCompleteNamespaceDecl(Scope *S);
-  void CodeCompleteNamespaceAliasDecl(Scope *S);
-  void CodeCompleteOperatorName(Scope *S);
-  void CodeCompleteConstructorInitializer(
+  CLANG_ABI void CodeCompleteUsing(Scope *S);
+  CLANG_ABI void CodeCompleteUsingDirective(Scope *S);
+  CLANG_ABI void CodeCompleteNamespaceDecl(Scope *S);
+  CLANG_ABI void CodeCompleteNamespaceAliasDecl(Scope *S);
+  CLANG_ABI void CodeCompleteOperatorName(Scope *S);
+  CLANG_ABI void CodeCompleteConstructorInitializer(
       Decl *Constructor, ArrayRef<CXXCtorInitializer *> Initializers);
 
-  void CodeCompleteLambdaIntroducer(Scope *S, LambdaIntroducer &Intro,
+  CLANG_ABI void CodeCompleteLambdaIntroducer(Scope *S, LambdaIntroducer &Intro,
                                     bool AfterAmpersand);
-  void CodeCompleteAfterFunctionEquals(Declarator &D);
+  CLANG_ABI void CodeCompleteAfterFunctionEquals(Declarator &D);
 
-  void CodeCompleteObjCAtDirective(Scope *S);
-  void CodeCompleteObjCAtVisibility(Scope *S);
-  void CodeCompleteObjCAtStatement(Scope *S);
-  void CodeCompleteObjCAtExpression(Scope *S);
-  void CodeCompleteObjCPropertyFlags(Scope *S, ObjCDeclSpec &ODS);
-  void CodeCompleteObjCPropertyGetter(Scope *S);
-  void CodeCompleteObjCPropertySetter(Scope *S);
-  void CodeCompleteObjCPassingType(Scope *S, ObjCDeclSpec &DS,
+  CLANG_ABI void CodeCompleteObjCAtDirective(Scope *S);
+  CLANG_ABI void CodeCompleteObjCAtVisibility(Scope *S);
+  CLANG_ABI void CodeCompleteObjCAtStatement(Scope *S);
+  CLANG_ABI void CodeCompleteObjCAtExpression(Scope *S);
+  CLANG_ABI void CodeCompleteObjCPropertyFlags(Scope *S, ObjCDeclSpec &ODS);
+  CLANG_ABI void CodeCompleteObjCPropertyGetter(Scope *S);
+  CLANG_ABI void CodeCompleteObjCPropertySetter(Scope *S);
+  CLANG_ABI void CodeCompleteObjCPassingType(Scope *S, ObjCDeclSpec &DS,
                                    bool IsParameter);
-  void CodeCompleteObjCMessageReceiver(Scope *S);
-  void CodeCompleteObjCSuperMessage(Scope *S, SourceLocation SuperLoc,
+  CLANG_ABI void CodeCompleteObjCMessageReceiver(Scope *S);
+  CLANG_ABI void CodeCompleteObjCSuperMessage(Scope *S, SourceLocation SuperLoc,
                                     ArrayRef<const IdentifierInfo *> SelIdents,
                                     bool AtArgumentExpression);
-  void CodeCompleteObjCClassMessage(Scope *S, ParsedType Receiver,
+  CLANG_ABI void CodeCompleteObjCClassMessage(Scope *S, ParsedType Receiver,
                                     ArrayRef<const IdentifierInfo *> SelIdents,
                                     bool AtArgumentExpression,
                                     bool IsSuper = false);
-  void CodeCompleteObjCInstanceMessage(
+  CLANG_ABI void CodeCompleteObjCInstanceMessage(
       Scope *S, Expr *Receiver, ArrayRef<const IdentifierInfo *> SelIdents,
       bool AtArgumentExpression, ObjCInterfaceDecl *Super = nullptr);
-  void CodeCompleteObjCForCollection(Scope *S, DeclGroupPtrTy IterationVar);
-  void CodeCompleteObjCSelector(Scope *S,
+  CLANG_ABI void CodeCompleteObjCForCollection(Scope *S, DeclGroupPtrTy IterationVar);
+  CLANG_ABI void CodeCompleteObjCSelector(Scope *S,
                                 ArrayRef<const IdentifierInfo *> SelIdents);
-  void CodeCompleteObjCProtocolReferences(ArrayRef<IdentifierLoc> Protocols);
-  void CodeCompleteObjCProtocolDecl(Scope *S);
-  void CodeCompleteObjCInterfaceDecl(Scope *S);
-  void CodeCompleteObjCClassForwardDecl(Scope *S);
-  void CodeCompleteObjCSuperclass(Scope *S, IdentifierInfo *ClassName,
+  CLANG_ABI void CodeCompleteObjCProtocolReferences(ArrayRef<IdentifierLoc> Protocols);
+  CLANG_ABI void CodeCompleteObjCProtocolDecl(Scope *S);
+  CLANG_ABI void CodeCompleteObjCInterfaceDecl(Scope *S);
+  CLANG_ABI void CodeCompleteObjCClassForwardDecl(Scope *S);
+  CLANG_ABI void CodeCompleteObjCSuperclass(Scope *S, IdentifierInfo *ClassName,
                                   SourceLocation ClassNameLoc);
-  void CodeCompleteObjCImplementationDecl(Scope *S);
-  void CodeCompleteObjCInterfaceCategory(Scope *S, IdentifierInfo *ClassName,
+  CLANG_ABI void CodeCompleteObjCImplementationDecl(Scope *S);
+  CLANG_ABI void CodeCompleteObjCInterfaceCategory(Scope *S, IdentifierInfo *ClassName,
                                          SourceLocation ClassNameLoc);
-  void CodeCompleteObjCImplementationCategory(Scope *S,
+  CLANG_ABI void CodeCompleteObjCImplementationCategory(Scope *S,
                                               IdentifierInfo *ClassName,
                                               SourceLocation ClassNameLoc);
-  void CodeCompleteObjCPropertyDefinition(Scope *S);
-  void CodeCompleteObjCPropertySynthesizeIvar(Scope *S,
+  CLANG_ABI void CodeCompleteObjCPropertyDefinition(Scope *S);
+  CLANG_ABI void CodeCompleteObjCPropertySynthesizeIvar(Scope *S,
                                               IdentifierInfo *PropertyName);
-  void CodeCompleteObjCMethodDecl(Scope *S,
+  CLANG_ABI void CodeCompleteObjCMethodDecl(Scope *S,
                                   std::optional<bool> IsInstanceMethod,
                                   ParsedType ReturnType);
-  void CodeCompleteObjCMethodDeclSelector(
+  CLANG_ABI void CodeCompleteObjCMethodDeclSelector(
       Scope *S, bool IsInstanceMethod, bool AtParameterName,
       ParsedType ReturnType, ArrayRef<const IdentifierInfo *> SelIdents);
-  void CodeCompleteObjCClassPropertyRefExpr(Scope *S,
+  CLANG_ABI void CodeCompleteObjCClassPropertyRefExpr(Scope *S,
                                             const IdentifierInfo &ClassName,
                                             SourceLocation ClassNameLoc,
                                             bool IsBaseExprStatement);
-  void CodeCompletePreprocessorDirective(bool InConditional);
-  void CodeCompleteInPreprocessorConditionalExclusion(Scope *S);
-  void CodeCompletePreprocessorMacroName(bool IsDefinition);
-  void CodeCompletePreprocessorExpression();
-  void CodeCompletePreprocessorMacroArgument(Scope *S, IdentifierInfo *Macro,
+  CLANG_ABI void CodeCompletePreprocessorDirective(bool InConditional);
+  CLANG_ABI void CodeCompleteInPreprocessorConditionalExclusion(Scope *S);
+  CLANG_ABI void CodeCompletePreprocessorMacroName(bool IsDefinition);
+  CLANG_ABI void CodeCompletePreprocessorExpression();
+  CLANG_ABI void CodeCompletePreprocessorMacroArgument(Scope *S, IdentifierInfo *Macro,
                                              MacroInfo *MacroInfo,
                                              unsigned Argument);
-  void CodeCompleteIncludedFile(llvm::StringRef Dir, bool IsAngled);
-  void CodeCompleteNaturalLanguage();
-  void CodeCompleteAvailabilityPlatformName();
-  void
+  CLANG_ABI void CodeCompleteIncludedFile(llvm::StringRef Dir, bool IsAngled);
+  CLANG_ABI void CodeCompleteNaturalLanguage();
+  CLANG_ABI void CodeCompleteAvailabilityPlatformName();
+  CLANG_ABI void
   GatherGlobalCodeCompletions(CodeCompletionAllocator &Allocator,
                               CodeCompletionTUInfo &CCTUInfo,
                               SmallVectorImpl<CodeCompletionResult> &Results);

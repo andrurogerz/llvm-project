@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_FRONTEND_CHAINEDDIAGNOSTICCONSUMER_H
 #define LLVM_CLANG_FRONTEND_CHAINEDDIAGNOSTICCONSUMER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/Diagnostic.h"
 #include <memory>
 
@@ -19,7 +20,7 @@ class LangOptions;
 /// go to the first client and then the second. The first diagnostic client
 /// should be the "primary" client, and will be used for computing whether the
 /// diagnostics should be included in counts.
-class ChainedDiagnosticConsumer : public DiagnosticConsumer {
+class CLANG_ABI ChainedDiagnosticConsumer : public DiagnosticConsumer {
   virtual void anchor();
   std::unique_ptr<DiagnosticConsumer> OwningPrimary;
   DiagnosticConsumer *Primary;

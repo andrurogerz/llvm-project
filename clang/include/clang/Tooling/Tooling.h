@@ -29,6 +29,7 @@
 #ifndef LLVM_CLANG_TOOLING_TOOLING_H
 #define LLVM_CLANG_TOOLING_TOOLING_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTConsumer.h"
 #include "clang/Basic/FileManager.h"
 #include "clang/Basic/LLVM.h"
@@ -69,7 +70,7 @@ class CompilationDatabase;
 /// files as its inputs.
 /// Returns nullptr if there are no such jobs or multiple of them. Note that
 /// offloading jobs are ignored.
-const llvm::opt::ArgStringList *
+CLANG_ABI const llvm::opt::ArgStringList *
 getCC1Arguments(DiagnosticsEngine *Diagnostics,
                 driver::Compilation *Compilation);
 
@@ -77,7 +78,7 @@ getCC1Arguments(DiagnosticsEngine *Diagnostics,
 ///
 /// If your tool is based on FrontendAction, you should be deriving from
 /// FrontendActionFactory instead.
-class ToolAction {
+class CLANG_ABI ToolAction {
 public:
   virtual ~ToolAction();
 
@@ -95,7 +96,7 @@ public:
 /// created for each translation unit processed by ClangTool.  This class is
 /// also a ToolAction which uses the FrontendActions created by create() to
 /// process each translation unit.
-class FrontendActionFactory : public ToolAction {
+class CLANG_ABI FrontendActionFactory : public ToolAction {
 public:
   ~FrontendActionFactory() override;
 
@@ -161,7 +162,7 @@ inline std::unique_ptr<FrontendActionFactory> newFrontendActionFactory(
 ///                         clang modules.
 ///
 /// \return - True if 'ToolAction' was successfully executed.
-bool runToolOnCode(std::unique_ptr<FrontendAction> ToolAction, const Twine &Code,
+CLANG_ABI bool runToolOnCode(std::unique_ptr<FrontendAction> ToolAction, const Twine &Code,
                    const Twine &FileName = "input.cc",
                    std::shared_ptr<PCHContainerOperations> PCHContainerOps =
                        std::make_shared<PCHContainerOperations>());
@@ -183,7 +184,7 @@ using FileContentMappings = std::vector<std::pair<std::string, std::string>>;
 ///                          clang modules.
 ///
 /// \return - True if 'ToolAction' was successfully executed.
-bool runToolOnCodeWithArgs(
+CLANG_ABI bool runToolOnCodeWithArgs(
     std::unique_ptr<FrontendAction> ToolAction, const Twine &Code,
     const std::vector<std::string> &Args, const Twine &FileName = "input.cc",
     const Twine &ToolName = "clang-tool",
@@ -192,7 +193,7 @@ bool runToolOnCodeWithArgs(
     const FileContentMappings &VirtualMappedFiles = FileContentMappings());
 
 // Similar to the overload except this takes a VFS.
-bool runToolOnCodeWithArgs(
+CLANG_ABI bool runToolOnCodeWithArgs(
     std::unique_ptr<FrontendAction> ToolAction, const Twine &Code,
     llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem> VFS,
     const std::vector<std::string> &Args, const Twine &FileName = "input.cc",
@@ -208,7 +209,7 @@ bool runToolOnCodeWithArgs(
 /// clang modules.
 ///
 /// \return The resulting AST or null if an error occurred.
-std::unique_ptr<ASTUnit>
+CLANG_ABI std::unique_ptr<ASTUnit>
 buildASTFromCode(StringRef Code, StringRef FileName = "input.cc",
                  std::shared_ptr<PCHContainerOperations> PCHContainerOps =
                      std::make_shared<PCHContainerOperations>());
@@ -230,7 +231,7 @@ buildASTFromCode(StringRef Code, StringRef FileName = "input.cc",
 /// VirtualMappedFiles takes precedence.
 ///
 /// \return The resulting AST or null if an error occurred.
-std::unique_ptr<ASTUnit> buildASTFromCodeWithArgs(
+CLANG_ABI std::unique_ptr<ASTUnit> buildASTFromCodeWithArgs(
     StringRef Code, const std::vector<std::string> &Args,
     StringRef FileName = "input.cc", StringRef ToolName = "clang-tool",
     std::shared_ptr<PCHContainerOperations> PCHContainerOps =
@@ -255,7 +256,7 @@ public:
   /// ownership.
   /// \param PCHContainerOps The PCHContainerOperations for loading and creating
   /// clang modules.
-  ToolInvocation(std::vector<std::string> CommandLine,
+  CLANG_ABI ToolInvocation(std::vector<std::string> CommandLine,
                  std::unique_ptr<FrontendAction> FAction, FileManager *Files,
                  std::shared_ptr<PCHContainerOperations> PCHContainerOps =
                      std::make_shared<PCHContainerOperations>());
@@ -267,11 +268,11 @@ public:
   /// \param Files The FileManager used for the execution.
   /// \param PCHContainerOps The PCHContainerOperations for loading and creating
   /// clang modules.
-  ToolInvocation(std::vector<std::string> CommandLine, ToolAction *Action,
+  CLANG_ABI ToolInvocation(std::vector<std::string> CommandLine, ToolAction *Action,
                  FileManager *Files,
                  std::shared_ptr<PCHContainerOperations> PCHContainerOps);
 
-  ~ToolInvocation();
+  CLANG_ABI ~ToolInvocation();
 
   ToolInvocation(const ToolInvocation &) = delete;
   ToolInvocation &operator=(const ToolInvocation &) = delete;
@@ -290,7 +291,7 @@ public:
   /// Run the clang invocation.
   ///
   /// \returns True if there were no errors during execution.
-  bool run();
+  CLANG_ABI bool run();
 
  private:
   bool runInvocation(const char *BinaryName,
@@ -328,7 +329,7 @@ public:
   /// tool.
   /// \param Files The file manager to use for underlying file operations when
   /// running the tool.
-  ClangTool(const CompilationDatabase &Compilations,
+  CLANG_ABI ClangTool(const CompilationDatabase &Compilations,
             ArrayRef<std::string> SourcePaths,
             std::shared_ptr<PCHContainerOperations> PCHContainerOps =
                 std::make_shared<PCHContainerOperations>(),
@@ -336,7 +337,7 @@ public:
                 llvm::vfs::getRealFileSystem(),
             IntrusiveRefCntPtr<FileManager> Files = nullptr);
 
-  ~ClangTool();
+  CLANG_ABI ~ClangTool();
 
   /// Set a \c DiagnosticConsumer to use during parsing.
   void setDiagnosticConsumer(DiagnosticConsumer *DiagConsumer) {
@@ -347,16 +348,16 @@ public:
   ///
   /// \param FilePath The path at which the content will be mapped.
   /// \param Content A null terminated buffer of the file's content.
-  void mapVirtualFile(StringRef FilePath, StringRef Content);
+  CLANG_ABI void mapVirtualFile(StringRef FilePath, StringRef Content);
 
   /// Append a command line arguments adjuster to the adjuster chain.
   ///
   /// \param Adjuster An argument adjuster, which will be run on the output of
   ///        previous argument adjusters.
-  void appendArgumentsAdjuster(ArgumentsAdjuster Adjuster);
+  CLANG_ABI void appendArgumentsAdjuster(ArgumentsAdjuster Adjuster);
 
   /// Clear the command line arguments adjuster chain.
-  void clearArgumentsAdjusters();
+  CLANG_ABI void clearArgumentsAdjusters();
 
   /// Runs an action over all files specified in the command line.
   ///
@@ -364,15 +365,15 @@ public:
   ///
   /// \returns 0 on success; 1 if any error occurred; 2 if there is no error but
   /// some files are skipped due to missing compile commands.
-  int run(ToolAction *Action);
+  CLANG_ABI int run(ToolAction *Action);
 
   /// Create an AST for each file specified in the command line and
   /// append them to ASTs.
-  int buildASTs(std::vector<std::unique_ptr<ASTUnit>> &ASTs);
+  CLANG_ABI int buildASTs(std::vector<std::unique_ptr<ASTUnit>> &ASTs);
 
   /// Sets whether an error message should be printed out if an action fails. By
   /// default, if an action fails, a message is printed out to stderr.
-  void setPrintErrorMessage(bool PrintErrorMessage);
+  CLANG_ABI void setPrintErrorMessage(bool PrintErrorMessage);
 
   /// Returns the file manager used in the tool.
   ///
@@ -480,10 +481,10 @@ inline std::unique_ptr<FrontendActionFactory> newFrontendActionFactory(
 /// does by removing "./" and computing native paths.
 ///
 /// \param File Either an absolute or relative path.
-std::string getAbsolutePath(StringRef File);
+CLANG_ABI std::string getAbsolutePath(StringRef File);
 
 /// An overload of getAbsolutePath that works over the provided \p FS.
-llvm::Expected<std::string> getAbsolutePath(llvm::vfs::FileSystem &FS,
+CLANG_ABI llvm::Expected<std::string> getAbsolutePath(llvm::vfs::FileSystem &FS,
                                             StringRef File);
 
 /// Changes CommandLine to contain implicit flags that would have been
@@ -506,17 +507,17 @@ llvm::Expected<std::string> getAbsolutePath(llvm::vfs::FileSystem &FS,
 /// \note This will not set \c CommandLine[0] to \c InvokedAs. The tooling
 /// infrastructure expects that CommandLine[0] is a tool path relative to which
 /// the builtin headers can be found.
-void addTargetAndModeForProgramName(std::vector<std::string> &CommandLine,
+CLANG_ABI void addTargetAndModeForProgramName(std::vector<std::string> &CommandLine,
                                     StringRef InvokedAs);
 
 /// Helper function that expands response files in command line.
-void addExpandedResponseFiles(std::vector<std::string> &CommandLine,
+CLANG_ABI void addExpandedResponseFiles(std::vector<std::string> &CommandLine,
                               llvm::StringRef WorkingDir,
                               llvm::cl::TokenizerCallback Tokenizer,
                               llvm::vfs::FileSystem &FS);
 
 /// Creates a \c CompilerInvocation.
-CompilerInvocation *newInvocation(DiagnosticsEngine *Diagnostics,
+CLANG_ABI CompilerInvocation *newInvocation(DiagnosticsEngine *Diagnostics,
                                   ArrayRef<const char *> CC1Args,
                                   const char *const BinaryName);
 

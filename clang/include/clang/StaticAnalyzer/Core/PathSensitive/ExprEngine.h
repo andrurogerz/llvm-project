@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_EXPRENGINE_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_EXPRENGINE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Expr.h"
 #include "clang/AST/Type.h"
 #include "clang/Analysis/CFG.h"
@@ -179,7 +180,7 @@ private:
   InliningModes HowToInline;
 
 public:
-  ExprEngine(cross_tu::CrossTranslationUnitContext &CTU, AnalysisManager &mgr,
+  CLANG_ABI ExprEngine(cross_tu::CrossTranslationUnitContext &CTU, AnalysisManager &mgr,
              SetOfConstDecls *VisitedCalleesIn,
              FunctionSummariesTy *FS, InliningModes HowToInlineIn);
 
@@ -219,7 +220,7 @@ public:
     return *currBldrCtx;
   }
 
-  const Stmt *getStmt() const;
+  CLANG_ABI const Stmt *getStmt() const;
 
   const LocationContext *getRootLocationContext() const {
     assert(G.getRoot());
@@ -234,24 +235,24 @@ public:
   /// Dump graph to the specified filename.
   /// If filename is empty, generate a temporary one.
   /// \return The filename the graph is written into.
-  std::string DumpGraph(bool trim = false, StringRef Filename="");
+  CLANG_ABI std::string DumpGraph(bool trim = false, StringRef Filename="");
 
   /// Dump the graph consisting of the given nodes to a specified filename.
   /// Generate a temporary filename if it's not provided.
   /// \return The filename the graph is written into.
-  std::string DumpGraph(ArrayRef<const ExplodedNode *> Nodes,
+  CLANG_ABI std::string DumpGraph(ArrayRef<const ExplodedNode *> Nodes,
                         StringRef Filename = "");
 
   /// Visualize the ExplodedGraph created by executing the simulation.
-  void ViewGraph(bool trim = false);
+  CLANG_ABI void ViewGraph(bool trim = false);
 
   /// Visualize a trimmed ExplodedGraph that only contains paths to the given
   /// nodes.
-  void ViewGraph(ArrayRef<const ExplodedNode *> Nodes);
+  CLANG_ABI void ViewGraph(ArrayRef<const ExplodedNode *> Nodes);
 
   /// getInitialState - Return the initial state used for the root vertex
   ///  in the ExplodedGraph.
-  ProgramStateRef getInitialState(const LocationContext *InitLoc);
+  CLANG_ABI ProgramStateRef getInitialState(const LocationContext *InitLoc);
 
   ExplodedGraph &getGraph() { return G; }
   const ExplodedGraph &getGraph() const { return G; }
@@ -281,47 +282,47 @@ public:
   ///        \p ReferenceStmt must either be a ReturnStmt or \c NULL. Otherwise,
   ///        it must be ProgramPoint::PreStmtPurgeDeadSymbolsKind (the default)
   ///        and \p ReferenceStmt must be valid (non-null).
-  void removeDead(ExplodedNode *Node, ExplodedNodeSet &Out,
+  CLANG_ABI void removeDead(ExplodedNode *Node, ExplodedNodeSet &Out,
             const Stmt *ReferenceStmt, const LocationContext *LC,
             const Stmt *DiagnosticStmt = nullptr,
             ProgramPoint::Kind K = ProgramPoint::PreStmtPurgeDeadSymbolsKind);
 
   /// A tag to track convenience transitions, which can be removed at cleanup.
   /// This tag applies to a node created after removeDead.
-  static const ProgramPointTag *cleanupNodeTag();
+  CLANG_ABI static const ProgramPointTag *cleanupNodeTag();
 
   /// processCFGElement - Called by CoreEngine. Used to generate new successor
   ///  nodes by processing the 'effects' of a CFG element.
-  void processCFGElement(const CFGElement E, ExplodedNode *Pred,
+  CLANG_ABI void processCFGElement(const CFGElement E, ExplodedNode *Pred,
                          unsigned StmtIdx, NodeBuilderContext *Ctx);
 
-  void ProcessStmt(const Stmt *S, ExplodedNode *Pred);
+  CLANG_ABI void ProcessStmt(const Stmt *S, ExplodedNode *Pred);
 
-  void ProcessLoopExit(const Stmt* S, ExplodedNode *Pred);
+  CLANG_ABI void ProcessLoopExit(const Stmt* S, ExplodedNode *Pred);
 
-  void ProcessInitializer(const CFGInitializer I, ExplodedNode *Pred);
+  CLANG_ABI void ProcessInitializer(const CFGInitializer I, ExplodedNode *Pred);
 
-  void ProcessImplicitDtor(const CFGImplicitDtor D, ExplodedNode *Pred);
+  CLANG_ABI void ProcessImplicitDtor(const CFGImplicitDtor D, ExplodedNode *Pred);
 
-  void ProcessNewAllocator(const CXXNewExpr *NE, ExplodedNode *Pred);
+  CLANG_ABI void ProcessNewAllocator(const CXXNewExpr *NE, ExplodedNode *Pred);
 
-  void ProcessAutomaticObjDtor(const CFGAutomaticObjDtor D,
+  CLANG_ABI void ProcessAutomaticObjDtor(const CFGAutomaticObjDtor D,
                                ExplodedNode *Pred, ExplodedNodeSet &Dst);
-  void ProcessDeleteDtor(const CFGDeleteDtor D,
+  CLANG_ABI void ProcessDeleteDtor(const CFGDeleteDtor D,
                          ExplodedNode *Pred, ExplodedNodeSet &Dst);
-  void ProcessBaseDtor(const CFGBaseDtor D,
+  CLANG_ABI void ProcessBaseDtor(const CFGBaseDtor D,
                        ExplodedNode *Pred, ExplodedNodeSet &Dst);
-  void ProcessMemberDtor(const CFGMemberDtor D,
+  CLANG_ABI void ProcessMemberDtor(const CFGMemberDtor D,
                          ExplodedNode *Pred, ExplodedNodeSet &Dst);
-  void ProcessTemporaryDtor(const CFGTemporaryDtor D,
+  CLANG_ABI void ProcessTemporaryDtor(const CFGTemporaryDtor D,
                             ExplodedNode *Pred, ExplodedNodeSet &Dst);
 
   /// Called by CoreEngine when processing the entrance of a CFGBlock.
-  void processCFGBlockEntrance(const BlockEdge &L,
+  CLANG_ABI void processCFGBlockEntrance(const BlockEdge &L,
                                NodeBuilderWithSinks &nodeBuilder,
                                ExplodedNode *Pred);
 
-  void runCheckersForBlockEntrance(const NodeBuilderContext &BldCtx,
+  CLANG_ABI void runCheckersForBlockEntrance(const NodeBuilderContext &BldCtx,
                                    const BlockEntrance &Entrance,
                                    ExplodedNode *Pred, ExplodedNodeSet &Dst);
 
@@ -329,7 +330,7 @@ public:
   /// processing the 'effects' of a branch condition. If the branch condition
   /// is a loop condition, IterationsCompletedInLoop is the number of completed
   /// iterations (otherwise it's std::nullopt).
-  void processBranch(const Stmt *Condition, NodeBuilderContext &BuilderCtx,
+  CLANG_ABI void processBranch(const Stmt *Condition, NodeBuilderContext &BuilderCtx,
                      ExplodedNode *Pred, ExplodedNodeSet &Dst,
                      const CFGBlock *DstT, const CFGBlock *DstF,
                      std::optional<unsigned> IterationsCompletedInLoop);
@@ -337,7 +338,7 @@ public:
   /// Called by CoreEngine.
   /// Used to generate successor nodes for temporary destructors depending
   /// on whether the corresponding constructor was visited.
-  void processCleanupTemporaryBranch(const CXXBindTemporaryExpr *BTE,
+  CLANG_ABI void processCleanupTemporaryBranch(const CXXBindTemporaryExpr *BTE,
                                      NodeBuilderContext &BldCtx,
                                      ExplodedNode *Pred, ExplodedNodeSet &Dst,
                                      const CFGBlock *DstT,
@@ -345,7 +346,7 @@ public:
 
   /// Called by CoreEngine.  Used to processing branching behavior
   /// at static initializers.
-  void processStaticInitializer(const DeclStmt *DS,
+  CLANG_ABI void processStaticInitializer(const DeclStmt *DS,
                                 NodeBuilderContext& BuilderCtx,
                                 ExplodedNode *Pred,
                                 ExplodedNodeSet &Dst,
@@ -354,48 +355,48 @@ public:
 
   /// processIndirectGoto - Called by CoreEngine.  Used to generate successor
   ///  nodes by processing the 'effects' of a computed goto jump.
-  void processIndirectGoto(IndirectGotoNodeBuilder& builder);
+  CLANG_ABI void processIndirectGoto(IndirectGotoNodeBuilder& builder);
 
   /// ProcessSwitch - Called by CoreEngine.  Used to generate successor
   ///  nodes by processing the 'effects' of a switch statement.
-  void processSwitch(SwitchNodeBuilder& builder);
+  CLANG_ABI void processSwitch(SwitchNodeBuilder& builder);
 
   /// Called by CoreEngine.  Used to notify checkers that processing a
   /// function has begun. Called for both inlined and top-level functions.
-  void processBeginOfFunction(NodeBuilderContext &BC,
+  CLANG_ABI void processBeginOfFunction(NodeBuilderContext &BC,
                               ExplodedNode *Pred, ExplodedNodeSet &Dst,
                               const BlockEdge &L);
 
   /// Called by CoreEngine.  Used to notify checkers that processing a
   /// function has ended. Called for both inlined and top-level functions.
-  void processEndOfFunction(NodeBuilderContext& BC,
+  CLANG_ABI void processEndOfFunction(NodeBuilderContext& BC,
                             ExplodedNode *Pred,
                             const ReturnStmt *RS = nullptr);
 
   /// Remove dead bindings/symbols before exiting a function.
-  void removeDeadOnEndOfFunction(NodeBuilderContext& BC,
+  CLANG_ABI void removeDeadOnEndOfFunction(NodeBuilderContext& BC,
                                  ExplodedNode *Pred,
                                  ExplodedNodeSet &Dst);
 
   /// Generate the entry node of the callee.
-  void processCallEnter(NodeBuilderContext& BC, CallEnter CE,
+  CLANG_ABI void processCallEnter(NodeBuilderContext& BC, CallEnter CE,
                         ExplodedNode *Pred);
 
   /// Generate the sequence of nodes that simulate the call exit and the post
   /// visit for CallExpr.
-  void processCallExit(ExplodedNode *Pred);
+  CLANG_ABI void processCallExit(ExplodedNode *Pred);
 
   /// Called by CoreEngine when the analysis worklist has terminated.
-  void processEndWorklist();
+  CLANG_ABI void processEndWorklist();
 
   /// evalAssume - Callback function invoked by the ConstraintManager when
   ///  making assumptions about state values.
-  ProgramStateRef processAssume(ProgramStateRef state, SVal cond,
+  CLANG_ABI ProgramStateRef processAssume(ProgramStateRef state, SVal cond,
                                 bool assumption);
 
   /// processRegionChanges - Called by ProgramStateManager whenever a change is made
   ///  to the store. Used to update checkers that track region values.
-  ProgramStateRef
+  CLANG_ABI ProgramStateRef
   processRegionChanges(ProgramStateRef state,
                        const InvalidatedSymbols *invalidated,
                        ArrayRef<const MemRegion *> ExplicitRegions,
@@ -411,7 +412,7 @@ public:
   }
 
   /// printJson - Called by ProgramStateManager to print checker-specific data.
-  void printJson(raw_ostream &Out, ProgramStateRef State,
+  CLANG_ABI void printJson(raw_ostream &Out, ProgramStateRef State,
                  const LocationContext *LCtx, const char *NL,
                  unsigned int Space, bool IsDot) const;
 
@@ -443,172 +444,172 @@ public:
 public:
   /// Visit - Transfer function logic for all statements.  Dispatches to
   ///  other functions that handle specific kinds of statements.
-  void Visit(const Stmt *S, ExplodedNode *Pred, ExplodedNodeSet &Dst);
+  CLANG_ABI void Visit(const Stmt *S, ExplodedNode *Pred, ExplodedNodeSet &Dst);
 
   /// VisitArrayInitLoopExpr - Transfer function for array init loop.
-  void VisitArrayInitLoopExpr(const ArrayInitLoopExpr *Ex, ExplodedNode *Pred,
+  CLANG_ABI void VisitArrayInitLoopExpr(const ArrayInitLoopExpr *Ex, ExplodedNode *Pred,
                               ExplodedNodeSet &Dst);
 
   /// VisitArraySubscriptExpr - Transfer function for array accesses.
-  void VisitArraySubscriptExpr(const ArraySubscriptExpr *Ex,
+  CLANG_ABI void VisitArraySubscriptExpr(const ArraySubscriptExpr *Ex,
                                ExplodedNode *Pred,
                                ExplodedNodeSet &Dst);
 
   /// VisitGCCAsmStmt - Transfer function logic for inline asm.
-  void VisitGCCAsmStmt(const GCCAsmStmt *A, ExplodedNode *Pred,
+  CLANG_ABI void VisitGCCAsmStmt(const GCCAsmStmt *A, ExplodedNode *Pred,
                        ExplodedNodeSet &Dst);
 
   /// VisitMSAsmStmt - Transfer function logic for MS inline asm.
-  void VisitMSAsmStmt(const MSAsmStmt *A, ExplodedNode *Pred,
+  CLANG_ABI void VisitMSAsmStmt(const MSAsmStmt *A, ExplodedNode *Pred,
                       ExplodedNodeSet &Dst);
 
   /// VisitBlockExpr - Transfer function logic for BlockExprs.
-  void VisitBlockExpr(const BlockExpr *BE, ExplodedNode *Pred,
+  CLANG_ABI void VisitBlockExpr(const BlockExpr *BE, ExplodedNode *Pred,
                       ExplodedNodeSet &Dst);
 
   /// VisitLambdaExpr - Transfer function logic for LambdaExprs.
-  void VisitLambdaExpr(const LambdaExpr *LE, ExplodedNode *Pred,
+  CLANG_ABI void VisitLambdaExpr(const LambdaExpr *LE, ExplodedNode *Pred,
                        ExplodedNodeSet &Dst);
 
   /// VisitBinaryOperator - Transfer function logic for binary operators.
-  void VisitBinaryOperator(const BinaryOperator* B, ExplodedNode *Pred,
+  CLANG_ABI void VisitBinaryOperator(const BinaryOperator* B, ExplodedNode *Pred,
                            ExplodedNodeSet &Dst);
 
 
   /// VisitCall - Transfer function for function calls.
-  void VisitCallExpr(const CallExpr *CE, ExplodedNode *Pred,
+  CLANG_ABI void VisitCallExpr(const CallExpr *CE, ExplodedNode *Pred,
                      ExplodedNodeSet &Dst);
 
   /// VisitCast - Transfer function logic for all casts (implicit and explicit).
-  void VisitCast(const CastExpr *CastE, const Expr *Ex, ExplodedNode *Pred,
+  CLANG_ABI void VisitCast(const CastExpr *CastE, const Expr *Ex, ExplodedNode *Pred,
                  ExplodedNodeSet &Dst);
 
   /// VisitCompoundLiteralExpr - Transfer function logic for compound literals.
-  void VisitCompoundLiteralExpr(const CompoundLiteralExpr *CL,
+  CLANG_ABI void VisitCompoundLiteralExpr(const CompoundLiteralExpr *CL,
                                 ExplodedNode *Pred, ExplodedNodeSet &Dst);
 
   /// Transfer function logic for DeclRefExprs and BlockDeclRefExprs.
-  void VisitCommonDeclRefExpr(const Expr *DR, const NamedDecl *D,
+  CLANG_ABI void VisitCommonDeclRefExpr(const Expr *DR, const NamedDecl *D,
                               ExplodedNode *Pred, ExplodedNodeSet &Dst);
 
   /// VisitDeclStmt - Transfer function logic for DeclStmts.
-  void VisitDeclStmt(const DeclStmt *DS, ExplodedNode *Pred,
+  CLANG_ABI void VisitDeclStmt(const DeclStmt *DS, ExplodedNode *Pred,
                      ExplodedNodeSet &Dst);
 
   /// VisitGuardedExpr - Transfer function logic for ?, __builtin_choose
-  void VisitGuardedExpr(const Expr *Ex, const Expr *L, const Expr *R,
+  CLANG_ABI void VisitGuardedExpr(const Expr *Ex, const Expr *L, const Expr *R,
                         ExplodedNode *Pred, ExplodedNodeSet &Dst);
 
   /// VisitAttributedStmt - Transfer function logic for AttributedStmt.
-  void VisitAttributedStmt(const AttributedStmt *A, ExplodedNode *Pred,
+  CLANG_ABI void VisitAttributedStmt(const AttributedStmt *A, ExplodedNode *Pred,
                            ExplodedNodeSet &Dst);
 
   /// VisitLogicalExpr - Transfer function logic for '&&', '||'.
-  void VisitLogicalExpr(const BinaryOperator* B, ExplodedNode *Pred,
+  CLANG_ABI void VisitLogicalExpr(const BinaryOperator* B, ExplodedNode *Pred,
                         ExplodedNodeSet &Dst);
 
   /// VisitMemberExpr - Transfer function for member expressions.
-  void VisitMemberExpr(const MemberExpr *M, ExplodedNode *Pred,
+  CLANG_ABI void VisitMemberExpr(const MemberExpr *M, ExplodedNode *Pred,
                        ExplodedNodeSet &Dst);
 
   /// VisitAtomicExpr - Transfer function for builtin atomic expressions.
-  void VisitAtomicExpr(const AtomicExpr *E, ExplodedNode *Pred,
+  CLANG_ABI void VisitAtomicExpr(const AtomicExpr *E, ExplodedNode *Pred,
                        ExplodedNodeSet &Dst);
 
   /// Transfer function logic for ObjCAtSynchronizedStmts.
-  void VisitObjCAtSynchronizedStmt(const ObjCAtSynchronizedStmt *S,
+  CLANG_ABI void VisitObjCAtSynchronizedStmt(const ObjCAtSynchronizedStmt *S,
                                    ExplodedNode *Pred, ExplodedNodeSet &Dst);
 
   /// Transfer function logic for computing the lvalue of an Objective-C ivar.
-  void VisitLvalObjCIvarRefExpr(const ObjCIvarRefExpr *DR, ExplodedNode *Pred,
+  CLANG_ABI void VisitLvalObjCIvarRefExpr(const ObjCIvarRefExpr *DR, ExplodedNode *Pred,
                                 ExplodedNodeSet &Dst);
 
   /// VisitObjCForCollectionStmt - Transfer function logic for
   ///  ObjCForCollectionStmt.
-  void VisitObjCForCollectionStmt(const ObjCForCollectionStmt *S,
+  CLANG_ABI void VisitObjCForCollectionStmt(const ObjCForCollectionStmt *S,
                                   ExplodedNode *Pred, ExplodedNodeSet &Dst);
 
-  void VisitObjCMessage(const ObjCMessageExpr *ME, ExplodedNode *Pred,
+  CLANG_ABI void VisitObjCMessage(const ObjCMessageExpr *ME, ExplodedNode *Pred,
                         ExplodedNodeSet &Dst);
 
   /// VisitReturnStmt - Transfer function logic for return statements.
-  void VisitReturnStmt(const ReturnStmt *R, ExplodedNode *Pred,
+  CLANG_ABI void VisitReturnStmt(const ReturnStmt *R, ExplodedNode *Pred,
                        ExplodedNodeSet &Dst);
 
   /// VisitOffsetOfExpr - Transfer function for offsetof.
-  void VisitOffsetOfExpr(const OffsetOfExpr *Ex, ExplodedNode *Pred,
+  CLANG_ABI void VisitOffsetOfExpr(const OffsetOfExpr *Ex, ExplodedNode *Pred,
                          ExplodedNodeSet &Dst);
 
   /// VisitUnaryExprOrTypeTraitExpr - Transfer function for sizeof.
-  void VisitUnaryExprOrTypeTraitExpr(const UnaryExprOrTypeTraitExpr *Ex,
+  CLANG_ABI void VisitUnaryExprOrTypeTraitExpr(const UnaryExprOrTypeTraitExpr *Ex,
                                      ExplodedNode *Pred, ExplodedNodeSet &Dst);
 
   /// VisitUnaryOperator - Transfer function logic for unary operators.
-  void VisitUnaryOperator(const UnaryOperator* B, ExplodedNode *Pred,
+  CLANG_ABI void VisitUnaryOperator(const UnaryOperator* B, ExplodedNode *Pred,
                           ExplodedNodeSet &Dst);
 
   /// Handle ++ and -- (both pre- and post-increment).
-  void VisitIncrementDecrementOperator(const UnaryOperator* U,
+  CLANG_ABI void VisitIncrementDecrementOperator(const UnaryOperator* U,
                                        ExplodedNode *Pred,
                                        ExplodedNodeSet &Dst);
 
-  void VisitCXXBindTemporaryExpr(const CXXBindTemporaryExpr *BTE,
+  CLANG_ABI void VisitCXXBindTemporaryExpr(const CXXBindTemporaryExpr *BTE,
                                  ExplodedNodeSet &PreVisit,
                                  ExplodedNodeSet &Dst);
 
-  void VisitCXXCatchStmt(const CXXCatchStmt *CS, ExplodedNode *Pred,
+  CLANG_ABI void VisitCXXCatchStmt(const CXXCatchStmt *CS, ExplodedNode *Pred,
                          ExplodedNodeSet &Dst);
 
-  void VisitCXXThisExpr(const CXXThisExpr *TE, ExplodedNode *Pred,
+  CLANG_ABI void VisitCXXThisExpr(const CXXThisExpr *TE, ExplodedNode *Pred,
                         ExplodedNodeSet & Dst);
 
-  void VisitCXXConstructExpr(const CXXConstructExpr *E, ExplodedNode *Pred,
+  CLANG_ABI void VisitCXXConstructExpr(const CXXConstructExpr *E, ExplodedNode *Pred,
                              ExplodedNodeSet &Dst);
 
-  void VisitCXXInheritedCtorInitExpr(const CXXInheritedCtorInitExpr *E,
+  CLANG_ABI void VisitCXXInheritedCtorInitExpr(const CXXInheritedCtorInitExpr *E,
                                      ExplodedNode *Pred, ExplodedNodeSet &Dst);
 
-  void VisitCXXDestructor(QualType ObjectType, const MemRegion *Dest,
+  CLANG_ABI void VisitCXXDestructor(QualType ObjectType, const MemRegion *Dest,
                           const Stmt *S, bool IsBaseDtor,
                           ExplodedNode *Pred, ExplodedNodeSet &Dst,
                           EvalCallOptions &Options);
 
-  void VisitCXXNewAllocatorCall(const CXXNewExpr *CNE,
+  CLANG_ABI void VisitCXXNewAllocatorCall(const CXXNewExpr *CNE,
                                 ExplodedNode *Pred,
                                 ExplodedNodeSet &Dst);
 
-  void VisitCXXNewExpr(const CXXNewExpr *CNE, ExplodedNode *Pred,
+  CLANG_ABI void VisitCXXNewExpr(const CXXNewExpr *CNE, ExplodedNode *Pred,
                        ExplodedNodeSet &Dst);
 
-  void VisitCXXDeleteExpr(const CXXDeleteExpr *CDE, ExplodedNode *Pred,
+  CLANG_ABI void VisitCXXDeleteExpr(const CXXDeleteExpr *CDE, ExplodedNode *Pred,
                           ExplodedNodeSet &Dst);
 
   /// Create a C++ temporary object for an rvalue.
-  void CreateCXXTemporaryObject(const MaterializeTemporaryExpr *ME,
+  CLANG_ABI void CreateCXXTemporaryObject(const MaterializeTemporaryExpr *ME,
                                 ExplodedNode *Pred,
                                 ExplodedNodeSet &Dst);
 
-  void ConstructInitList(const Expr *Source, ArrayRef<Expr *> Args,
+  CLANG_ABI void ConstructInitList(const Expr *Source, ArrayRef<Expr *> Args,
                          bool IsTransparent, ExplodedNode *Pred,
                          ExplodedNodeSet &Dst);
 
   /// evalEagerlyAssumeBifurcation - Given the nodes in 'Src', eagerly assume
   /// concrete boolean values for 'Ex', storing the resulting nodes in 'Dst'.
-  void evalEagerlyAssumeBifurcation(ExplodedNodeSet &Dst, ExplodedNodeSet &Src,
+  CLANG_ABI void evalEagerlyAssumeBifurcation(ExplodedNodeSet &Dst, ExplodedNodeSet &Src,
                                     const Expr *Ex);
 
-  bool didEagerlyAssumeBifurcateAt(ProgramStateRef State, const Expr *Ex) const;
+  CLANG_ABI bool didEagerlyAssumeBifurcateAt(ProgramStateRef State, const Expr *Ex) const;
 
-  static std::pair<const ProgramPointTag *, const ProgramPointTag *>
+  CLANG_ABI static std::pair<const ProgramPointTag *, const ProgramPointTag *>
   getEagerlyAssumeBifurcationTags();
 
-  ProgramStateRef handleLValueBitCast(ProgramStateRef state, const Expr *Ex,
+  CLANG_ABI ProgramStateRef handleLValueBitCast(ProgramStateRef state, const Expr *Ex,
                                       const LocationContext *LCtx, QualType T,
                                       QualType ExTy, const CastExpr *CastE,
                                       StmtNodeBuilder &Bldr,
                                       ExplodedNode *Pred);
 
-  void handleUOExtension(ExplodedNode *N, const UnaryOperator *U,
+  CLANG_ABI void handleUOExtension(ExplodedNode *N, const UnaryOperator *U,
                          StmtNodeBuilder &Bldr);
 
 public:
@@ -618,30 +619,30 @@ public:
   }
 
   /// Retreives which element is being constructed in a non-POD type array.
-  static std::optional<unsigned>
+  CLANG_ABI static std::optional<unsigned>
   getIndexOfElementToConstruct(ProgramStateRef State, const CXXConstructExpr *E,
                                const LocationContext *LCtx);
 
   /// Retreives which element is being destructed in a non-POD type array.
-  static std::optional<unsigned>
+  CLANG_ABI static std::optional<unsigned>
   getPendingArrayDestruction(ProgramStateRef State,
                              const LocationContext *LCtx);
 
   /// Retreives the size of the array in the pending ArrayInitLoopExpr.
-  static std::optional<unsigned>
+  CLANG_ABI static std::optional<unsigned>
   getPendingInitLoop(ProgramStateRef State, const CXXConstructExpr *E,
                      const LocationContext *LCtx);
 
   /// By looking at a certain item that may be potentially part of an object's
   /// ConstructionContext, retrieve such object's location. A particular
   /// statement can be transparently passed as \p Item in most cases.
-  static std::optional<SVal>
+  CLANG_ABI static std::optional<SVal>
   getObjectUnderConstruction(ProgramStateRef State,
                              const ConstructionContextItem &Item,
                              const LocationContext *LC);
 
   /// Call PointerEscape callback when a value escapes as a result of bind.
-  ProgramStateRef processPointerEscapedOnBind(
+  CLANG_ABI ProgramStateRef processPointerEscapedOnBind(
       ProgramStateRef State, ArrayRef<std::pair<SVal, SVal>> LocAndVals,
       const LocationContext *LCtx, PointerEscapeKind Kind,
       const CallEvent *Call);
@@ -649,7 +650,7 @@ public:
   /// Call PointerEscape callback when a value escapes as a result of
   /// region invalidation.
   /// \param[in] ITraits Specifies invalidation traits for regions/symbols.
-  ProgramStateRef notifyCheckersOfPointerEscape(
+  CLANG_ABI ProgramStateRef notifyCheckersOfPointerEscape(
                            ProgramStateRef State,
                            const InvalidatedSymbols *Invalidated,
                            ArrayRef<const MemRegion *> ExplicitRegions,
@@ -671,7 +672,7 @@ private:
 public:
   /// A simple wrapper when you only need to notify checkers of pointer-escape
   /// of some values.
-  ProgramStateRef escapeValues(ProgramStateRef State, ArrayRef<SVal> Vs,
+  CLANG_ABI ProgramStateRef escapeValues(ProgramStateRef State, ArrayRef<SVal> Vs,
                                PointerEscapeKind K,
                                const CallEvent *Call = nullptr) const;
 
@@ -681,7 +682,7 @@ public:
   // be the same as Pred->state, and when 'location' may not be the
   // same as state->getLValue(Ex).
   /// Simulate a read of the result of Ex.
-  void evalLoad(ExplodedNodeSet &Dst,
+  CLANG_ABI void evalLoad(ExplodedNodeSet &Dst,
                 const Expr *NodeEx,  /* Eventually will be a CFGStmt */
                 const Expr *BoundExpr,
                 ExplodedNode *Pred,
@@ -692,7 +693,7 @@ public:
 
   // FIXME: 'tag' should be removed, and a LocationContext should be used
   // instead.
-  void evalStore(ExplodedNodeSet &Dst, const Expr *AssignE, const Expr *StoreE,
+  CLANG_ABI void evalStore(ExplodedNodeSet &Dst, const Expr *AssignE, const Expr *StoreE,
                  ExplodedNode *Pred, ProgramStateRef St, SVal TargetLV, SVal Val,
                  const ProgramPointTag *tag = nullptr);
 
@@ -704,17 +705,17 @@ public:
 
   /// Create a new state in which the call return value is binded to the
   /// call origin expression.
-  ProgramStateRef bindReturnValue(const CallEvent &Call,
+  CLANG_ABI ProgramStateRef bindReturnValue(const CallEvent &Call,
                                   const LocationContext *LCtx,
                                   ProgramStateRef State);
 
   /// Evaluate a call, running pre- and post-call checkers and allowing checkers
   /// to be responsible for handling the evaluation of the call itself.
-  void evalCall(ExplodedNodeSet &Dst, ExplodedNode *Pred,
+  CLANG_ABI void evalCall(ExplodedNodeSet &Dst, ExplodedNode *Pred,
                 const CallEvent &Call);
 
   /// Default implementation of call evaluation.
-  void defaultEvalCall(NodeBuilder &B, ExplodedNode *Pred,
+  CLANG_ABI void defaultEvalCall(NodeBuilder &B, ExplodedNode *Pred,
                        const CallEvent &Call,
                        const EvalCallOptions &CallOpts = {});
 
@@ -731,7 +732,7 @@ public:
   /// For `int arr2[3][3]` this index can be 0,1,...,7,8.
   /// A multi-dimensional array is also a continuous memory location in a
   /// row major order, so for arr[0][0] Idx is 0 and for arr[3][3] Idx is 8.
-  SVal computeObjectUnderConstruction(const Expr *E, ProgramStateRef State,
+  CLANG_ABI SVal computeObjectUnderConstruction(const Expr *E, ProgramStateRef State,
                                       const NodeBuilderContext *BldrCtx,
                                       const LocationContext *LCtx,
                                       const ConstructionContext *CC,
@@ -743,7 +744,7 @@ public:
   /// syntactic construction context. V and CallOpts have to be obtained from
   /// computeObjectUnderConstruction() invoked with the same set of
   /// the remaining arguments (E, State, LCtx, CC).
-  ProgramStateRef updateObjectsUnderConstruction(
+  CLANG_ABI ProgramStateRef updateObjectsUnderConstruction(
       SVal V, const Expr *E, ProgramStateRef State, const LocationContext *LCtx,
       const ConstructionContext *CC, const EvalCallOptions &CallOpts);
 
@@ -910,16 +911,16 @@ public:
   /// Note whether this loop has any more iterations to model. These methods
   //  are essentially an interface for a GDM trait. Further reading in
   /// ExprEngine::VisitObjCForCollectionStmt().
-  [[nodiscard]] static ProgramStateRef
+  [[nodiscard]] static CLANG_ABI ProgramStateRef
   setWhetherHasMoreIteration(ProgramStateRef State,
                              const ObjCForCollectionStmt *O,
                              const LocationContext *LC, bool HasMoreIteraton);
 
-  [[nodiscard]] static ProgramStateRef
+  [[nodiscard]] static CLANG_ABI ProgramStateRef
   removeIterationState(ProgramStateRef State, const ObjCForCollectionStmt *O,
                        const LocationContext *LC);
 
-  [[nodiscard]] static bool hasMoreIteration(ProgramStateRef State,
+  [[nodiscard]] static CLANG_ABI bool hasMoreIteration(ProgramStateRef State,
                                              const ObjCForCollectionStmt *O,
                                              const LocationContext *LC);
 
@@ -1016,7 +1017,7 @@ struct ReplayWithoutInlining{};
 template <>
 struct ProgramStateTrait<ReplayWithoutInlining> :
   public ProgramStatePartialTrait<const void*> {
-  static void *GDMIndex();
+  CLANG_ABI static void *GDMIndex();
 };
 
 } // namespace ento

@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_EXPRCONCEPTS_H
 #define LLVM_CLANG_AST_EXPRCONCEPTS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTConcept.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/Decl.h"
@@ -67,12 +68,12 @@ private:
   ConceptSpecializationExpr(EmptyShell Empty);
 
 public:
-  static ConceptSpecializationExpr *
+  CLANG_ABI static ConceptSpecializationExpr *
   Create(const ASTContext &C, ConceptReference *ConceptRef,
          ImplicitConceptSpecializationDecl *SpecDecl,
          const ConstraintSatisfaction *Satisfaction);
 
-  static ConceptSpecializationExpr *
+  CLANG_ABI static ConceptSpecializationExpr *
   Create(const ASTContext &C, ConceptReference *ConceptRef,
          ImplicitConceptSpecializationDecl *SpecDecl,
          const ConstraintSatisfaction *Satisfaction, bool Dependent,
@@ -240,7 +241,7 @@ public:
   /// dependent, this indicates that the type exists and the requirement will be
   /// satisfied. Otherwise, the SubstitutionDiagnostic constructor is to be
   /// used.
-  TypeRequirement(TypeSourceInfo *T);
+  CLANG_ABI TypeRequirement(TypeSourceInfo *T);
 
   /// \brief Construct a type requirement when the nested name specifier is
   /// invalid due to a bad substitution. The requirement is unsatisfied.
@@ -310,8 +311,8 @@ public:
       // TODO: Can we maybe not save the whole template parameter list and just
       //  the type constraint? Saving the whole TPL makes it easier to handle in
       //  serialization but is less elegant.
-      ReturnTypeRequirement(TemplateParameterList *TPL, bool IsDependent);
-      ReturnTypeRequirement(TemplateParameterList *TPL);
+      CLANG_ABI ReturnTypeRequirement(TemplateParameterList *TPL, bool IsDependent);
+      CLANG_ABI ReturnTypeRequirement(TemplateParameterList *TPL);
 
       bool isDependent() const {
         return TypeConstraintInfo.getInt();
@@ -343,7 +344,7 @@ public:
         return cast<SubstitutionDiagnostic *>(TypeConstraintInfo.getPointer());
       }
 
-      const TypeConstraint *getTypeConstraint() const;
+      CLANG_ABI const TypeConstraint *getTypeConstraint() const;
 
       TemplateParameterList *getTypeConstraintTemplateParameterList() const {
         assert(isTypeConstraint());
@@ -367,7 +368,7 @@ public:
   /// specified, otherwise an empty location.
   /// \param Req the requirement for the type of the checked expression.
   /// \param Status the satisfaction status of this requirement.
-  ExprRequirement(
+  CLANG_ABI ExprRequirement(
       Expr *E, bool IsSimple, SourceLocation NoexceptLoc,
       ReturnTypeRequirement Req, SatisfactionStatus Status,
       ConceptSpecializationExpr *SubstitutedConstraintExpr = nullptr);
@@ -381,7 +382,7 @@ public:
   /// specified, otherwise an empty location.
   /// \param Req the requirement for the type of the checked expression (omit
   /// if no requirement was specified).
-  ExprRequirement(SubstitutionDiagnostic *E, bool IsSimple,
+  CLANG_ABI ExprRequirement(SubstitutionDiagnostic *E, bool IsSimple,
                   SourceLocation NoexceptLoc, ReturnTypeRequirement Req = {});
 
   bool isSimple() const { return getKind() == RK_Simple; }
@@ -525,14 +526,14 @@ class RequiresExpr final : public Expr,
                unsigned NumRequirements);
 
 public:
-  static RequiresExpr *Create(ASTContext &C, SourceLocation RequiresKWLoc,
+  CLANG_ABI static RequiresExpr *Create(ASTContext &C, SourceLocation RequiresKWLoc,
                               RequiresExprBodyDecl *Body,
                               SourceLocation LParenLoc,
                               ArrayRef<ParmVarDecl *> LocalParameters,
                               SourceLocation RParenLoc,
                               ArrayRef<concepts::Requirement *> Requirements,
                               SourceLocation RBraceLoc);
-  static RequiresExpr *
+  CLANG_ABI static RequiresExpr *
   Create(ASTContext &C, EmptyShell Empty, unsigned NumLocalParameters,
          unsigned NumRequirements);
 

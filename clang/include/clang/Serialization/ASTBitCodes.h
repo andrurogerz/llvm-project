@@ -17,6 +17,7 @@
 #ifndef LLVM_CLANG_SERIALIZATION_ASTBITCODES_H
 #define LLVM_CLANG_SERIALIZATION_ASTBITCODES_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/DeclID.h"
 #include "clang/AST/DeclarationName.h"
 #include "clang/AST/Type.h"
@@ -2144,7 +2145,7 @@ class DeclarationNameKey {
 
 public:
   DeclarationNameKey() = default;
-  DeclarationNameKey(DeclarationName Name);
+  CLANG_ABI DeclarationNameKey(DeclarationName Name);
   DeclarationNameKey(NameKind Kind, uint64_t Data) : Kind(Kind), Data(Data) {}
 
   NameKind getKind() const { return Kind; }
@@ -2169,7 +2170,7 @@ public:
   }
 
   /// Compute a fingerprint of this key for use in on-disk hash table.
-  unsigned getHash() const;
+  CLANG_ABI unsigned getHash() const;
 
   friend bool operator==(const DeclarationNameKey &A,
                          const DeclarationNameKey &B) {

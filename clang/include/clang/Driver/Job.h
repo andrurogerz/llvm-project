@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_DRIVER_JOB_H
 #define LLVM_CLANG_DRIVER_JOB_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Driver/InputInfo.h"
 #include "llvm/ADT/ArrayRef.h"
@@ -103,7 +104,7 @@ struct ResponseFileSupport {
 
 /// Command - An executable path/name and argument vector to
 /// execute.
-class Command {
+class CLANG_ABI Command {
   /// Source - The action which caused the creation of this job.
   const Action &Source;
 
@@ -239,7 +240,7 @@ protected:
 };
 
 /// Use the CC1 tool callback when available, to avoid creating a new process
-class CC1Command : public Command {
+class CLANG_ABI CC1Command : public Command {
 public:
   CC1Command(const Action &Source, const Tool &Creator,
              ResponseFileSupport ResponseSupport, const char *Executable,
@@ -268,14 +269,14 @@ private:
   list_type Jobs;
 
 public:
-  void Print(llvm::raw_ostream &OS, const char *Terminator,
+  CLANG_ABI void Print(llvm::raw_ostream &OS, const char *Terminator,
              bool Quote, CrashReportInfo *CrashInfo = nullptr) const;
 
   /// Add a job to the list (taking ownership).
   void addJob(std::unique_ptr<Command> J) { Jobs.push_back(std::move(J)); }
 
   /// Clear the job list.
-  void clear();
+  CLANG_ABI void clear();
 
   const list_type &getJobs() const { return Jobs; }
 

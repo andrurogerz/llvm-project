@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_FRONTEND_ASTUNIT_H
 #define LLVM_CLANG_FRONTEND_ASTUNIT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang-c/Index.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/Basic/Diagnostic.h"
@@ -393,7 +394,7 @@ private:
       CompilerInvocation &PreambleInvocationIn,
       IntrusiveRefCntPtr<llvm::vfs::FileSystem> VFS, bool AllowRebuild = true,
       unsigned MaxLines = 0);
-  void RealizeTopLevelDeclsFromPreamble();
+  CLANG_ABI void RealizeTopLevelDeclsFromPreamble();
 
   /// Transfers ownership of the objects (like SourceManager) from
   /// \param CI to this ASTUnit.
@@ -410,11 +411,11 @@ private:
     void *Mutex; // a std::recursive_mutex in debug;
 
   public:
-    ConcurrencyState();
-    ~ConcurrencyState();
+    CLANG_ABI ConcurrencyState();
+    CLANG_ABI ~ConcurrencyState();
 
-    void start();
-    void finish();
+    CLANG_ABI void start();
+    CLANG_ABI void finish();
   };
   ConcurrencyState ConcurrencyCheckValue;
 
@@ -436,7 +437,7 @@ public:
 
   ASTUnit(const ASTUnit &) = delete;
   ASTUnit &operator=(const ASTUnit &) = delete;
-  ~ASTUnit();
+  CLANG_ABI ~ASTUnit();
 
   bool isMainFileAST() const { return MainFileIsAST; }
 
@@ -457,7 +458,7 @@ public:
   ASTContext &getASTContext() { return *Ctx; }
 
   void setASTContext(ASTContext *ctx) { Ctx = ctx; }
-  void setPreprocessor(std::shared_ptr<Preprocessor> pp);
+  CLANG_ABI void setPreprocessor(std::shared_ptr<Preprocessor> pp);
 
   /// Enable source-range based diagnostic messages.
   ///
@@ -466,7 +467,7 @@ public:
   /// function has to be called.
   /// The function is to be called only once and the AST should be associated
   /// with the same source file afterwards.
-  void enableSourceFileDiagnostics();
+  CLANG_ABI void enableSourceFileDiagnostics();
 
   bool hasSema() const { return (bool)TheSema; }
 
@@ -495,24 +496,24 @@ public:
 
   const FileSystemOptions &getFileSystemOpts() const { return FileSystemOpts; }
 
-  IntrusiveRefCntPtr<ASTReader> getASTReader() const;
+  CLANG_ABI IntrusiveRefCntPtr<ASTReader> getASTReader() const;
 
   StringRef getOriginalSourceFileName() const {
     return OriginalSourceFile;
   }
 
-  ASTMutationListener *getASTMutationListener();
-  ASTDeserializationListener *getDeserializationListener();
+  CLANG_ABI ASTMutationListener *getASTMutationListener();
+  CLANG_ABI ASTDeserializationListener *getDeserializationListener();
 
   bool getOnlyLocalDecls() const { return OnlyLocalDecls; }
 
   bool getOwnsRemappedFileBuffers() const { return OwnsRemappedFileBuffers; }
   void setOwnsRemappedFileBuffers(bool val) { OwnsRemappedFileBuffers = val; }
 
-  StringRef getMainFileName() const;
+  CLANG_ABI StringRef getMainFileName() const;
 
   /// If this ASTUnit came from an AST file, returns the filename for it.
-  StringRef getASTFileName() const;
+  CLANG_ABI StringRef getASTFileName() const;
 
   using top_level_iterator = std::vector<Decl *>::iterator;
 
@@ -546,12 +547,12 @@ public:
   }
 
   /// Add a new local file-level declaration.
-  void addFileLevelDecl(Decl *D);
+  CLANG_ABI void addFileLevelDecl(Decl *D);
 
   /// Get the decls that are contained in a file in the Offset/Length
   /// range. \p Length can be 0 to indicate a point at \p Offset instead of
   /// a range.
-  void findFileRegionDecls(FileID File, unsigned Offset, unsigned Length,
+  CLANG_ABI void findFileRegionDecls(FileID File, unsigned Offset, unsigned Length,
                            SmallVectorImpl<Decl *> &Decls);
 
   /// Retrieve a reference to the current top-level name hash value.
@@ -564,26 +565,26 @@ public:
   /// The difference with SourceManager::getLocation is that this method checks
   /// whether the requested location points inside the precompiled preamble
   /// in which case the returned source location will be a "loaded" one.
-  SourceLocation getLocation(const FileEntry *File,
+  CLANG_ABI SourceLocation getLocation(const FileEntry *File,
                              unsigned Line, unsigned Col) const;
 
   /// Get the source location for the given file:offset pair.
-  SourceLocation getLocation(const FileEntry *File, unsigned Offset) const;
+  CLANG_ABI SourceLocation getLocation(const FileEntry *File, unsigned Offset) const;
 
   /// If \p Loc is a loaded location from the preamble, returns
   /// the corresponding local location of the main file, otherwise it returns
   /// \p Loc.
-  SourceLocation mapLocationFromPreamble(SourceLocation Loc) const;
+  CLANG_ABI SourceLocation mapLocationFromPreamble(SourceLocation Loc) const;
 
   /// If \p Loc is a local location of the main file but inside the
   /// preamble chunk, returns the corresponding loaded location from the
   /// preamble, otherwise it returns \p Loc.
-  SourceLocation mapLocationToPreamble(SourceLocation Loc) const;
+  CLANG_ABI SourceLocation mapLocationToPreamble(SourceLocation Loc) const;
 
-  bool isInPreambleFileID(SourceLocation Loc) const;
-  bool isInMainFileID(SourceLocation Loc) const;
-  SourceLocation getStartOfMainFileID() const;
-  SourceLocation getEndOfPreambleFileID() const;
+  CLANG_ABI bool isInPreambleFileID(SourceLocation Loc) const;
+  CLANG_ABI bool isInMainFileID(SourceLocation Loc) const;
+  CLANG_ABI SourceLocation getStartOfMainFileID() const;
+  CLANG_ABI SourceLocation getEndOfPreambleFileID() const;
 
   /// \see mapLocationFromPreamble.
   SourceRange mapRangeFromPreamble(SourceRange R) const {
@@ -645,7 +646,7 @@ public:
   /// Returns an iterator range for the local preprocessing entities
   /// of the local Preprocessor, if this is a parsed source file, or the loaded
   /// preprocessing entities of the primary module if this is an AST file.
-  llvm::iterator_range<PreprocessingRecord::iterator>
+  CLANG_ABI llvm::iterator_range<PreprocessingRecord::iterator>
   getLocalPreprocessingEntities() const;
 
   /// Type for a function iterating over a number of declarations.
@@ -656,30 +657,30 @@ public:
   /// source file or the loaded declarations of the primary module if this is an
   /// AST file).
   /// \returns true if the iteration was complete or false if it was aborted.
-  bool visitLocalTopLevelDecls(void *context, DeclVisitorFn Fn);
+  CLANG_ABI bool visitLocalTopLevelDecls(void *context, DeclVisitorFn Fn);
 
   /// Get the PCH file if one was included.
-  OptionalFileEntryRef getPCHFile();
+  CLANG_ABI OptionalFileEntryRef getPCHFile();
 
   /// Returns true if the ASTUnit was constructed from a serialized
   /// module file.
-  bool isModuleFile() const;
+  CLANG_ABI bool isModuleFile() const;
 
-  std::unique_ptr<llvm::MemoryBuffer>
+  CLANG_ABI std::unique_ptr<llvm::MemoryBuffer>
   getBufferForFile(StringRef Filename, std::string *ErrorStr = nullptr);
 
   /// Determine what kind of translation unit this AST represents.
   TranslationUnitKind getTranslationUnitKind() const { return TUKind; }
 
   /// Determine the input kind this AST unit represents.
-  InputKind getInputKind() const;
+  CLANG_ABI InputKind getInputKind() const;
 
   /// A mapping from a file name to the memory buffer that stores the
   /// remapped contents of that file.
   using RemappedFile = std::pair<std::string, llvm::MemoryBuffer *>;
 
   /// Create a ASTUnit. Gets ownership of the passed CompilerInvocation.
-  static std::unique_ptr<ASTUnit>
+  CLANG_ABI static std::unique_ptr<ASTUnit>
   create(std::shared_ptr<CompilerInvocation> CI,
          std::shared_ptr<DiagnosticOptions> DiagOpts,
          IntrusiveRefCntPtr<DiagnosticsEngine> Diags,
@@ -706,7 +707,7 @@ public:
   /// lifetime is expected to extend past that of the returned ASTUnit.
   ///
   /// \returns - The initialized ASTUnit or null if the AST failed to load.
-  static std::unique_ptr<ASTUnit> LoadFromASTFile(
+  CLANG_ABI static std::unique_ptr<ASTUnit> LoadFromASTFile(
       StringRef Filename, const PCHContainerReader &PCHContainerRdr,
       WhatToLoad ToLoad, std::shared_ptr<DiagnosticOptions> DiagOpts,
       IntrusiveRefCntPtr<DiagnosticsEngine> Diags,
@@ -768,7 +769,7 @@ public:
   /// This will only receive an ASTUnit if a new one was created. If an already
   /// created ASTUnit was passed in \p Unit then the caller can check that.
   ///
-  static ASTUnit *LoadFromCompilerInvocationAction(
+  CLANG_ABI static ASTUnit *LoadFromCompilerInvocationAction(
       std::shared_ptr<CompilerInvocation> CI,
       std::shared_ptr<PCHContainerOperations> PCHContainerOps,
       std::shared_ptr<DiagnosticOptions> DiagOpts,
@@ -796,7 +797,7 @@ public:
   //
   // FIXME: Move OnlyLocalDecls, UseBumpAllocator to setters on the ASTUnit, we
   // shouldn't need to specify them at construction time.
-  static std::unique_ptr<ASTUnit> LoadFromCompilerInvocation(
+  CLANG_ABI static std::unique_ptr<ASTUnit> LoadFromCompilerInvocation(
       std::shared_ptr<CompilerInvocation> CI,
       std::shared_ptr<PCHContainerOperations> PCHContainerOps,
       std::shared_ptr<DiagnosticOptions> DiagOpts,
@@ -845,7 +846,7 @@ public:
   ///
   // FIXME: Move OnlyLocalDecls, UseBumpAllocator to setters on the ASTUnit, we
   // shouldn't need to specify them at construction time.
-  static std::unique_ptr<ASTUnit> LoadFromCommandLine(
+  CLANG_ABI static std::unique_ptr<ASTUnit> LoadFromCommandLine(
       const char **ArgBegin, const char **ArgEnd,
       std::shared_ptr<PCHContainerOperations> PCHContainerOps,
       std::shared_ptr<DiagnosticOptions> DiagOpts,
@@ -880,14 +881,14 @@ public:
   ///
   /// \returns True if a failure occurred that causes the ASTUnit not to
   /// contain any translation-unit information, false otherwise.
-  bool Reparse(std::shared_ptr<PCHContainerOperations> PCHContainerOps,
+  CLANG_ABI bool Reparse(std::shared_ptr<PCHContainerOperations> PCHContainerOps,
                ArrayRef<RemappedFile> RemappedFiles = {},
                IntrusiveRefCntPtr<llvm::vfs::FileSystem> VFS = nullptr);
 
   /// Free data that will be re-generated on the next parse.
   ///
   /// Preamble-related data is not affected.
-  void ResetForParse();
+  CLANG_ABI void ResetForParse();
 
   /// Perform code completion at the given file, line, and
   /// column within this translation unit.
@@ -913,7 +914,7 @@ public:
   ///
   /// FIXME: The Diag, LangOpts, SourceMgr, FileMgr, StoredDiagnostics, and
   /// OwnedBuffers parameters are all disgusting hacks. They will go away.
-  void CodeComplete(StringRef File, unsigned Line, unsigned Column,
+  CLANG_ABI void CodeComplete(StringRef File, unsigned Line, unsigned Column,
                     ArrayRef<RemappedFile> RemappedFiles, bool IncludeMacros,
                     bool IncludeCodePatterns, bool IncludeBriefComments,
                     CodeCompleteConsumer &Consumer,
@@ -928,12 +929,12 @@ public:
   ///
   /// \returns true if there was a file error or false if the save was
   /// successful.
-  bool Save(StringRef File);
+  CLANG_ABI bool Save(StringRef File);
 
   /// Serialize this translation unit with the given output stream.
   ///
   /// \returns True if an error occurred, false otherwise.
-  bool serialize(raw_ostream &OS);
+  CLANG_ABI bool serialize(raw_ostream &OS);
 };
 
 } // namespace clang
