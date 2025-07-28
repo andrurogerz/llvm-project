@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_REWRITE_FRONTEND_FIXITREWRITER_H
 #define LLVM_CLANG_REWRITE_FRONTEND_FIXITREWRITER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/SourceLocation.h"
@@ -30,7 +31,7 @@ namespace clang {
 class LangOptions;
 class SourceManager;
 
-class FixItOptions {
+class CLANG_ABI FixItOptions {
 public:
   FixItOptions() = default;
   virtual ~FixItOptions();
@@ -59,7 +60,7 @@ public:
   bool Silent = false;
 };
 
-class FixItRewriter : public DiagnosticConsumer {
+class CLANG_ABI FixItRewriter : public DiagnosticConsumer {
   /// The diagnostics machinery.
   DiagnosticsEngine &Diags;
 

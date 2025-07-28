@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_LIB_FORMAT_TOKENANNOTATOR_H
 #define LLVM_CLANG_LIB_FORMAT_TOKENANNOTATOR_H
 
+#include "clang/Support/Compiler.h"
 #include "UnwrappedLineParser.h"
 
 namespace clang {
@@ -229,10 +230,10 @@ public:
   /// Adapts the indent levels of comment lines to the indent of the
   /// subsequent line.
   // FIXME: Can/should this be done in the UnwrappedLineParser?
-  void setCommentLineLevels(SmallVectorImpl<AnnotatedLine *> &Lines) const;
+  CLANG_ABI void setCommentLineLevels(SmallVectorImpl<AnnotatedLine *> &Lines) const;
 
-  void annotate(AnnotatedLine &Line);
-  void calculateFormattingInformation(AnnotatedLine &Line) const;
+  CLANG_ABI void annotate(AnnotatedLine &Line);
+  CLANG_ABI void calculateFormattingInformation(AnnotatedLine &Line) const;
 
 private:
   /// Calculate the penalty for splitting before \c Tok.

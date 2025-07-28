@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_LIB_FORMAT_UNWRAPPEDLINEPARSER_H
 #define LLVM_CLANG_LIB_FORMAT_UNWRAPPEDLINEPARSER_H
 
+#include "clang/Support/Compiler.h"
 #include "Macros.h"
 #include <stack>
 
@@ -100,14 +101,14 @@ class FormatTokenSource;
 
 class UnwrappedLineParser {
 public:
-  UnwrappedLineParser(SourceManager &SourceMgr, const FormatStyle &Style,
+  CLANG_ABI UnwrappedLineParser(SourceManager &SourceMgr, const FormatStyle &Style,
                       const AdditionalKeywords &Keywords,
                       unsigned FirstStartColumn, ArrayRef<FormatToken *> Tokens,
                       UnwrappedLineConsumer &Callback,
                       llvm::SpecificBumpPtrAllocator<FormatToken> &Allocator,
                       IdentifierTable &IdentTable);
 
-  void parse();
+  CLANG_ABI void parse();
 
 private:
   enum class IfStmtKind {
@@ -422,7 +423,7 @@ struct UnwrappedLineNode {
   SmallVector<UnwrappedLine, 0> Children;
 };
 
-std::ostream &operator<<(std::ostream &Stream, const UnwrappedLine &Line);
+CLANG_ABI std::ostream &operator<<(std::ostream &Stream, const UnwrappedLine &Line);
 
 } // end namespace format
 } // end namespace clang

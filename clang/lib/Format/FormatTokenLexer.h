@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_LIB_FORMAT_FORMATTOKENLEXER_H
 #define LLVM_CLANG_LIB_FORMAT_FORMATTOKENLEXER_H
 
+#include "clang/Support/Compiler.h"
 #include "Encoding.h"
 #include "FormatToken.h"
 #include "llvm/ADT/MapVector.h"
@@ -34,12 +35,12 @@ enum LexerState {
 
 class FormatTokenLexer {
 public:
-  FormatTokenLexer(const SourceManager &SourceMgr, FileID ID, unsigned Column,
+  CLANG_ABI FormatTokenLexer(const SourceManager &SourceMgr, FileID ID, unsigned Column,
                    const FormatStyle &Style, encoding::Encoding Encoding,
                    llvm::SpecificBumpPtrAllocator<FormatToken> &Allocator,
                    IdentifierTable &IdentTable);
 
-  ArrayRef<FormatToken *> lex();
+  CLANG_ABI ArrayRef<FormatToken *> lex();
 
   const AdditionalKeywords &getKeywords() { return Keywords; }
 

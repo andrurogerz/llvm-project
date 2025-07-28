@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_LIB_FORMAT_AFFECTEDRANGEMANAGER_H
 #define LLVM_CLANG_LIB_FORMAT_AFFECTEDRANGEMANAGER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/SourceManager.h"
 
 namespace clang {
@@ -31,10 +32,10 @@ public:
   // Determines which lines are affected by the SourceRanges given as input.
   // Returns \c true if at least one line in \p Lines or one of their
   // children is affected.
-  bool computeAffectedLines(SmallVectorImpl<AnnotatedLine *> &Lines);
+  CLANG_ABI bool computeAffectedLines(SmallVectorImpl<AnnotatedLine *> &Lines);
 
   // Returns true if 'Range' intersects with one of the input ranges.
-  bool affectsCharSourceRange(const CharSourceRange &Range);
+  CLANG_ABI bool affectsCharSourceRange(const CharSourceRange &Range);
 
 private:
   // Returns true if the range from 'First' to 'Last' intersects with one of the

@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_LOCINFOTYPE_H
 #define LLVM_CLANG_AST_LOCINFOTYPE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Type.h"
 
 namespace clang {
@@ -44,7 +45,7 @@ public:
   QualType getType() const { return getCanonicalTypeInternal(); }
   TypeSourceInfo *getTypeSourceInfo() const { return DeclInfo; }
 
-  void getAsStringInternal(std::string &Str,
+  CLANG_ABI void getAsStringInternal(std::string &Str,
                            const PrintingPolicy &Policy) const;
 
   static bool classof(const Type *T) {

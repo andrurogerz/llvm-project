@@ -307,7 +307,7 @@ inline bool operator!=(const OptionalFileEntryRef &LHS, const FileEntry *RHS) {
 class FileEntry {
   friend class FileManager;
   friend class FileEntryTestHelper;
-  FileEntry();
+  CLANG_ABI FileEntry();
   FileEntry(const FileEntry &) = delete;
   FileEntry &operator=(const FileEntry &) = delete;
 

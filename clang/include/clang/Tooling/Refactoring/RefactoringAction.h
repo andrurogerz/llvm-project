@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_TOOLING_REFACTORING_REFACTORINGACTION_H
 #define LLVM_CLANG_TOOLING_REFACTORING_REFACTORINGACTION_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Tooling/Refactoring/RefactoringActionRules.h"
 #include <vector>
@@ -46,7 +47,7 @@ public:
 
   virtual StringRef getDescription() const = 0;
 
-  RefactoringActionRules createActiveActionRules();
+  CLANG_ABI RefactoringActionRules createActiveActionRules();
 
 protected:
   /// Returns a set of refactoring actions rules that are defined by this
@@ -55,7 +56,7 @@ protected:
 };
 
 /// Returns the list of all the available refactoring actions.
-std::vector<std::unique_ptr<RefactoringAction>> createRefactoringActions();
+CLANG_ABI std::vector<std::unique_ptr<RefactoringAction>> createRefactoringActions();
 
 } // end namespace tooling
 } // end namespace clang

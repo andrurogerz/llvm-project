@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_INSTALLAPI_DYLIBVERIFIER_H
 #define LLVM_CLANG_INSTALLAPI_DYLIBVERIFIER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/SourceManager.h"
 #include "clang/InstallAPI/MachO.h"
@@ -37,9 +38,9 @@ public:
   using AttrsToArchs = llvm::SmallVector<Entry, 10>;
 
   // Mutable access to architecture set tied to the input attribute.
-  ArchitectureSet &getArchSet(StringRef Attr);
+  CLANG_ABI ArchitectureSet &getArchSet(StringRef Attr);
   // Get entry based on the attribute.
-  std::optional<Entry> find(StringRef Attr) const;
+  CLANG_ABI std::optional<Entry> find(StringRef Attr) const;
   // Immutable access to underlying container.
   const AttrsToArchs &get() const { return LibraryAttributes; };
   // Mutable access to underlying container.
@@ -64,7 +65,7 @@ using ZipperedDeclSources = std::vector<ZipperedDeclSource>;
 /// lifetime of InstallAPI.
 /// As declarations are collected during AST traversal, they are
 /// compared as symbols against what is available in the binary dylib.
-class DylibVerifier : llvm::MachO::RecordVisitor {
+class CLANG_ABI DylibVerifier : llvm::MachO::RecordVisitor {
 private:
   struct SymbolContext;
   struct DWARFContext;
@@ -91,7 +92,7 @@ public:
     DiagnosticsEngine *Diag = nullptr;
 
     // Handle diagnostics reporting for target level violations.
-    void emitDiag(llvm::function_ref<void()> Report, RecordLoc *Loc = nullptr);
+    CLANG_ABI void emitDiag(llvm::function_ref<void()> Report, RecordLoc *Loc = nullptr);
 
     VerifierContext() = default;
     VerifierContext(DiagnosticsEngine *Diag) : Diag(Diag) {}

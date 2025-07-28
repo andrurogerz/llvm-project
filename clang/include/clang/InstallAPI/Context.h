@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_INSTALLAPI_CONTEXT_H
 #define LLVM_CLANG_INSTALLAPI_CONTEXT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/FileManager.h"
 #include "clang/InstallAPI/DylibVerifier.h"
@@ -60,7 +61,7 @@ struct InstallAPIContext {
 
   /// Populate entries of headers that should be included for TextAPI
   /// generation.
-  void addKnownHeader(const HeaderFile &H);
+  CLANG_ABI void addKnownHeader(const HeaderFile &H);
 
   /// Record visited files during frontend actions to determine whether to
   /// include their declarations for TextAPI generation.
@@ -69,7 +70,7 @@ struct InstallAPIContext {
   /// \param PP Preprocesser used for querying how header was imported.
   /// \return Access level of header if it should be included for TextAPI
   /// generation.
-  std::optional<HeaderType> findAndRecordFile(const FileEntry *FE,
+  CLANG_ABI std::optional<HeaderType> findAndRecordFile(const FileEntry *FE,
                                               const Preprocessor &PP);
 
 private:
@@ -93,7 +94,7 @@ private:
 /// \param SearchPaths Fallback search paths if library was not found in earlier
 /// paths.
 /// \return The full path of the library.
-std::string findLibrary(StringRef InstallName, FileManager &FM,
+CLANG_ABI std::string findLibrary(StringRef InstallName, FileManager &FM,
                         ArrayRef<std::string> FrameworkSearchPaths,
                         ArrayRef<std::string> LibrarySearchPaths,
                         ArrayRef<std::string> SearchPaths);

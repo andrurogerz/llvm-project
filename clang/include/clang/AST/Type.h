@@ -3074,7 +3074,7 @@ public:
     return CanonicalType;
   }
 
-  CLANG_ABI CanQualType getCanonicalTypeUnqualified() const; // in CanonicalType.h
+  CanQualType getCanonicalTypeUnqualified() const; // in CanonicalType.h
   CLANG_ABI void dump() const;
   CLANG_ABI void dump(llvm::raw_ostream &OS, const ASTContext &Context) const;
 };
@@ -8807,8 +8807,8 @@ inline bool Type::isNullPtrType() const {
   return isSpecificBuiltinType(BuiltinType::NullPtr);
 }
 
-CLANG_ABI bool IsEnumDeclComplete(EnumDecl *);
-CLANG_ABI bool IsEnumDeclScoped(EnumDecl *);
+bool IsEnumDeclComplete(EnumDecl *);
+bool IsEnumDeclScoped(EnumDecl *);
 
 inline bool Type::isIntegerType() const {
   if (const auto *BT = dyn_cast<BuiltinType>(CanonicalType))

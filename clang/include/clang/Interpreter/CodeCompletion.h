@@ -12,6 +12,7 @@
 
 #ifndef LLVM_CLANG_INTERPRETER_CODE_COMPLETION_H
 #define LLVM_CLANG_INTERPRETER_CODE_COMPLETION_H
+#include "clang/Support/Compiler.h"
 #include <string>
 #include <vector>
 
@@ -40,7 +41,7 @@ struct ReplCodeCompleter {
   /// provides ASTContexts.
 
   /// \param CCResults [out] The completion results.
-  void codeComplete(CompilerInstance *InterpCI, llvm::StringRef Content,
+  CLANG_ABI void codeComplete(CompilerInstance *InterpCI, llvm::StringRef Content,
                     unsigned Line, unsigned Col,
                     const CompilerInstance *ParentCI,
                     std::vector<std::string> &CCResults);

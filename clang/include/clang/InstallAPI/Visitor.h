@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_INSTALLAPI_VISITOR_H
 #define LLVM_CLANG_INSTALLAPI_VISITOR_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Mangle.h"
 #include "clang/AST/RecursiveASTVisitor.h"
 #include "clang/Basic/TargetInfo.h"
@@ -25,7 +26,7 @@ struct AvailabilityInfo;
 namespace installapi {
 
 /// ASTVisitor for collecting declarations that represent global symbols.
-class InstallAPIVisitor final : public ASTConsumer,
+class CLANG_ABI InstallAPIVisitor final : public ASTConsumer,
                                 public RecursiveASTVisitor<InstallAPIVisitor> {
 public:
   InstallAPIVisitor(ASTContext &ASTCtx, InstallAPIContext &Ctx,

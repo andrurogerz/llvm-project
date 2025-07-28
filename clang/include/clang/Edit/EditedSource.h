@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_EDIT_EDITEDSOURCE_H
 #define LLVM_CLANG_EDIT_EDITEDSOURCE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/IdentifierTable.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/SourceLocation.h"
@@ -81,15 +82,15 @@ public:
     return PPRec;
   }
 
-  bool canInsertInOffset(SourceLocation OrigLoc, FileOffset Offs);
+  CLANG_ABI bool canInsertInOffset(SourceLocation OrigLoc, FileOffset Offs);
 
-  bool commit(const Commit &commit);
+  CLANG_ABI bool commit(const Commit &commit);
 
-  void applyRewrites(EditsReceiver &receiver, bool adjustRemovals = true);
-  void clearRewrites();
+  CLANG_ABI void applyRewrites(EditsReceiver &receiver, bool adjustRemovals = true);
+  CLANG_ABI void clearRewrites();
 
   StringRef copyString(StringRef str) { return str.copy(StrAlloc); }
-  StringRef copyString(const Twine &twine);
+  CLANG_ABI StringRef copyString(const Twine &twine);
 
 private:
   bool commitInsert(SourceLocation OrigLoc, FileOffset Offs, StringRef text,
