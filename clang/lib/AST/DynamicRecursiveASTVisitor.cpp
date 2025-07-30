@@ -368,6 +368,6 @@ bool DynamicRecursiveASTVisitorBase<Const>::dataTraverseNode(
 #include "clang/AST/TypeLocNodes.def"
 
 namespace clang {
-template class DynamicRecursiveASTVisitorBase<false>;
-template class DynamicRecursiveASTVisitorBase<true>;
+template class CLANG_EXPORT_TEMPLATE DynamicRecursiveASTVisitorBase<false>;
+template class CLANG_EXPORT_TEMPLATE DynamicRecursiveASTVisitorBase<true>;
 } // namespace clang
