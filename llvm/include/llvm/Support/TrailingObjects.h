@@ -312,10 +312,36 @@ public:
   using FirstTrailingType =
       typename std::tuple_element_t<0, std::tuple<TrailingTys...>>;
 
+#if 0
+  // Can use non-templated getTrailingObjects() only when there is a single
+  // single trailing type
+  template <bool HasOneTrailingType = (sizeof...(TrailingTys) == 1),
+      typename std::enable_if_t<Enable, int> = 0>
   const FirstTrailingType *getTrailingObjects() const {
+    verifyTrailingObjectsAssertions<false>();
+    return this->getTrailingObjectsImpl(
+        static_cast<const BaseTy *>(this),
+        TrailingObjectsBase::OverloadToken<FirstTrailingType>());
+  }
+
+  // Can use non-templated getTrailingObjects() only when there is a single
+  // single trailing type
+  template <bool HasOneTrailingType = (sizeof...(TrailingTys) == 1),
+      typename std::enable_if_t<Enable, int> = 0>
+  FirstTrailingType *getTrailingObjects() {
+    verifyTrailingObjectsAssertions<false>();
+    return this->getTrailingObjectsImpl(
+        static_cast<BaseTy *>(this),
+        TrailingObjectsBase::OverloadToken<FirstTrailingType>());
+  }
+#endif
+
+  const FirstTrailingType *getTrailingObjects() const {
+#if 0
     static_assert(sizeof...(TrailingTys) == 1,
                   "Can use non-templated getTrailingObjects() only when there "
                   "is a single trailing type");
+#endif
     verifyTrailingObjectsAssertions<false>();
     return this->getTrailingObjectsImpl(
         static_cast<const BaseTy *>(this),
@@ -323,9 +349,11 @@ public:
   }
 
   FirstTrailingType *getTrailingObjects() {
+#if 0
     static_assert(sizeof...(TrailingTys) == 1,
                   "Can use non-templated getTrailingObjects() only when there "
                   "is a single trailing type");
+#endif
     verifyTrailingObjectsAssertions<false>();
     return this->getTrailingObjectsImpl(
         static_cast<BaseTy *>(this),
