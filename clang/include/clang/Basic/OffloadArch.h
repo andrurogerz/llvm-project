@@ -9,6 +9,8 @@
 #ifndef LLVM_CLANG_BASIC_OFFLOADARCH_H
 #define LLVM_CLANG_BASIC_OFFLOADARCH_H
 
+#include "clang/Support/Compiler.h"
+
 namespace llvm {
 class StringRef;
 } // namespace llvm

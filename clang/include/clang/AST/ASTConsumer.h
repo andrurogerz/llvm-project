@@ -13,6 +13,8 @@
 #ifndef LLVM_CLANG_AST_ASTCONSUMER_H
 #define LLVM_CLANG_AST_ASTCONSUMER_H
 
+#include "clang/Support/Compiler.h"
+
 namespace clang {
   class ASTContext;
   class CXXMethodDecl;

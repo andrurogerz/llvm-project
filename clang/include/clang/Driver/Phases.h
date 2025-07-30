@@ -9,6 +9,8 @@
 #ifndef LLVM_CLANG_DRIVER_PHASES_H
 #define LLVM_CLANG_DRIVER_PHASES_H
 
+#include "clang/Support/Compiler.h"
+
 namespace clang {
 namespace driver {
 namespace phases {

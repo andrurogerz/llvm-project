@@ -9,6 +9,8 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_BUGREPORTER_COMMONBUGCATEGORIES_H
 #define LLVM_CLANG_STATICANALYZER_CORE_BUGREPORTER_COMMONBUGCATEGORIES_H
 
+#include "clang/Support/Compiler.h"
+
 // Common strings used for the "category" of many static analyzer issues.
 namespace clang {
 namespace ento {

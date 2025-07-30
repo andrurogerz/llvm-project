@@ -16,6 +16,8 @@
 #ifndef LLVM_CLANG_ANALYSIS_CODEINJECTOR_H
 #define LLVM_CLANG_ANALYSIS_CODEINJECTOR_H
 
+#include "clang/Support/Compiler.h"
+
 namespace clang {
 
 class Stmt;
