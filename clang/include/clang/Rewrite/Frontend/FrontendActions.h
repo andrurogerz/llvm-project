@@ -57,11 +57,13 @@ protected:
   bool BeginInvocation(CompilerInstance &CI) override;
 };
 
+#if CLANG_ENABLE_OBJC_REWRITER
 class CLANG_ABI RewriteObjCAction : public ASTFrontendAction {
 protected:
   std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
                                                  StringRef InFile) override;
 };
+#endif
 
 class CLANG_ABI RewriteMacrosAction : public PreprocessorFrontendAction {
 protected:
