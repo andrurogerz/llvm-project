@@ -34,7 +34,7 @@ struct PCHBuffer {
 /// This abstract interface provides operations for creating
 /// containers for serialized ASTs (precompiled headers and clang
 /// modules).
-class PCHContainerWriter {
+class CLANG_ABI PCHContainerWriter {
 public:
   virtual ~PCHContainerWriter() = 0;
   virtual llvm::StringRef getFormat() const = 0;
@@ -53,7 +53,7 @@ public:
 /// This abstract interface provides operations for unwrapping
 /// containers for serialized ASTs (precompiled headers and clang
 /// modules).
-class PCHContainerReader {
+class CLANG_ABI PCHContainerReader {
 public:
   virtual ~PCHContainerReader() = 0;
   /// Equivalent to the format passed to -fmodule-format=
