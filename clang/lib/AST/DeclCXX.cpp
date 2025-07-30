@@ -18,6 +18,7 @@
 #include "clang/AST/Attr.h"
 #include "clang/AST/CXXInheritance.h"
 #include "clang/AST/DeclBase.h"
+#include "clang/AST/DeclFriend.h"
 #include "clang/AST/DeclTemplate.h"
 #include "clang/AST/DeclarationName.h"
 #include "clang/AST/Expr.h"
@@ -2315,6 +2316,19 @@ bool CXXRecordDecl::isEffectivelyFinal() const {
     if (Dtor->hasAttr<FinalAttr>())
       return true;
   return false;
+}
+
+
+CXXRecordDecl::friend_iterator CXXRecordDecl::friend_begin() const {
+  return friend_iterator(getFirstFriend());
+}
+
+CXXRecordDecl::friend_iterator CXXRecordDecl::friend_end() const {
+  return friend_iterator(nullptr);
+}
+
+CXXRecordDecl::friend_range CXXRecordDecl::friends() const {
+  return friend_range(friend_begin(), friend_end());
 }
 
 void CXXDeductionGuideDecl::anchor() {}
