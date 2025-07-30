@@ -5,4 +5,4 @@ add_clang_tool(offload-arch OffloadArch.cpp NVPTXArch.cpp AMDGPUArchByKFD.cpp AM
 add_clang_symlink(amdgpu-arch offload-arch)
 add_clang_symlink(nvptx-arch offload-arch)
 
-target_link_libraries(offload-arch PRIVATE clangBasic)
+clang_target_link_libraries(offload-arch PRIVATE clangBasic)
