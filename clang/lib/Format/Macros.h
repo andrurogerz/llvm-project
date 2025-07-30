@@ -38,6 +38,7 @@
 #ifndef CLANG_LIB_FORMAT_MACROS_H
 #define CLANG_LIB_FORMAT_MACROS_H
 
+#include "clang/Support/Compiler.h"
 #include <list>
 
 #include "FormatToken.h"
@@ -94,28 +95,28 @@ public:
   ///
   /// Macros that cannot be parsed will be silently discarded.
   ///
-  MacroExpander(const std::vector<std::string> &Macros,
+  CLANG_ABI MacroExpander(const std::vector<std::string> &Macros,
                 SourceManager &SourceMgr, const FormatStyle &Style,
                 llvm::SpecificBumpPtrAllocator<FormatToken> &Allocator,
                 IdentifierTable &IdentTable);
-  ~MacroExpander();
+  CLANG_ABI ~MacroExpander();
 
   /// Returns whether any macro \p Name is defined, regardless of overloads.
-  bool defined(StringRef Name) const;
+  CLANG_ABI bool defined(StringRef Name) const;
 
   /// Returns whetherh there is an object-like overload, i.e. where the macro
   /// has no arguments and should not consume subsequent parentheses.
-  bool objectLike(StringRef Name) const;
+  CLANG_ABI bool objectLike(StringRef Name) const;
 
   /// Returns whether macro \p Name provides an overload with the given arity.
-  bool hasArity(StringRef Name, unsigned Arity) const;
+  CLANG_ABI bool hasArity(StringRef Name, unsigned Arity) const;
 
   /// Returns the expanded stream of format tokens for \p ID, where
   /// each element in \p Args is a positional argument to the macro call.
   /// If \p Args is not set, the object-like overload is used.
   /// If \p Args is set, the overload with the arity equal to \c Args.size() is
   /// used.
-  SmallVector<FormatToken *, 8>
+  CLANG_ABI SmallVector<FormatToken *, 8>
   expand(FormatToken *ID, std::optional<ArgsList> OptionalArgs) const;
 
 private:
@@ -175,7 +176,7 @@ public:
   /// Create an Reconstructor whose resulting \p UnwrappedLine will start at
   /// \p Level, using the map from name identifier token to the corresponding
   /// tokens of the spelled macro call.
-  MacroCallReconstructor(
+  CLANG_ABI MacroCallReconstructor(
       unsigned Level,
       const llvm::DenseMap<FormatToken *, std::unique_ptr<UnwrappedLine>>
           &ActiveExpansions);
@@ -184,7 +185,7 @@ public:
   /// macro to unwrapped lines in the spelled macro call so that the resulting
   /// tree of unwrapped lines best resembles the structure of unwrapped lines
   /// passed in via \c addLine.
-  void addLine(const UnwrappedLine &Line);
+  CLANG_ABI void addLine(const UnwrappedLine &Line);
 
   /// Check whether at the current state there is no open macro expansion
   /// that needs to be processed to finish an macro call.
@@ -222,7 +223,7 @@ public:
   ///     ,
   ///     \- int y;
   ///     )
-  UnwrappedLine takeResult() &&;
+  CLANG_ABI UnwrappedLine takeResult() &&;
 
 private:
   void add(FormatToken *Token, FormatToken *ExpandedParent, bool First,
@@ -328,7 +329,7 @@ private:
   SmallVector<Expansion> ActiveExpansions;
 
   struct MacroCallState {
-    MacroCallState(ReconstructedLine *Line, FormatToken *ParentLastToken,
+    CLANG_ABI MacroCallState(ReconstructedLine *Line, FormatToken *ParentLastToken,
                    FormatToken *MacroCallLParen);
 
     ReconstructedLine *Line;

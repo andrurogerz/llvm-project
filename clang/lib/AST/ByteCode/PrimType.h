@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_INTERP_TYPE_H
 #define LLVM_CLANG_AST_INTERP_TYPE_H
 
+#include "clang/Support/Compiler.h"
 #include "llvm/Support/raw_ostream.h"
 #include <climits>
 #include <cstddef>
@@ -165,7 +166,7 @@ template <> struct PrimConv<PT_FixedPoint> {
 };
 
 /// Returns the size of a primitive type in bytes.
-size_t primSize(PrimType Type);
+CLANG_ABI size_t primSize(PrimType Type);
 
 /// Aligns a size to the pointer alignment.
 constexpr size_t align(size_t Size) {

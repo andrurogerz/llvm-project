@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_INTERP_BLOCK_H
 #define LLVM_CLANG_AST_INTERP_BLOCK_H
 
+#include "clang/Support/Compiler.h"
 #include "Descriptor.h"
 #include "llvm/Support/raw_ostream.h"
 
@@ -124,7 +125,7 @@ public:
   }
 
   void dump() const { dump(llvm::errs()); }
-  void dump(llvm::raw_ostream &OS) const;
+  CLANG_ABI void dump(llvm::raw_ostream &OS) const;
 
 private:
   friend class Pointer;
@@ -180,7 +181,7 @@ private:
 class DeadBlock final {
 public:
   /// Copies the block.
-  DeadBlock(DeadBlock *&Root, Block *Blk);
+  CLANG_ABI DeadBlock(DeadBlock *&Root, Block *Blk);
 
   /// Returns a pointer to the stored data.
   std::byte *data() { return B.data(); }

@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_AST_INTERP_FUNCTION_POINTER_H
 #define LLVM_CLANG_AST_INTERP_FUNCTION_POINTER_H
 
+#include "clang/Support/Compiler.h"
 #include "Function.h"
 #include "Primitives.h"
 
@@ -34,8 +35,8 @@ public:
     return Func->getDecl()->isWeak();
   }
 
-  APValue toAPValue(const ASTContext &) const;
-  void print(llvm::raw_ostream &OS) const;
+  CLANG_ABI APValue toAPValue(const ASTContext &) const;
+  CLANG_ABI void print(llvm::raw_ostream &OS) const;
 
   std::string toDiagnosticString(const ASTContext &Ctx) const {
     if (!Func)

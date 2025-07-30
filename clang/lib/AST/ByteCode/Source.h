@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_INTERP_SOURCE_H
 #define LLVM_CLANG_AST_INTERP_SOURCE_H
 
+#include "clang/Support/Compiler.h"
 #include "PrimType.h"
 #include "clang/AST/DeclBase.h"
 #include "clang/AST/Stmt.h"
@@ -76,8 +77,8 @@ public:
   SourceInfo(const Stmt *E) : Source(E) {}
   SourceInfo(const Decl *D) : Source(D) {}
 
-  SourceLocation getLoc() const;
-  SourceRange getRange() const;
+  CLANG_ABI SourceLocation getLoc() const;
+  CLANG_ABI SourceRange getRange() const;
 
   const Stmt *asStmt() const {
     return dyn_cast_if_present<const Stmt *>(Source);
@@ -85,7 +86,7 @@ public:
   const Decl *asDecl() const {
     return dyn_cast_if_present<const Decl *>(Source);
   }
-  const Expr *asExpr() const;
+  CLANG_ABI const Expr *asExpr() const;
 
   operator bool() const { return !Source.isNull(); }
 
@@ -104,10 +105,10 @@ public:
   virtual SourceInfo getSource(const Function *F, CodePtr PC) const = 0;
 
   /// Returns the expression if an opcode belongs to one, null otherwise.
-  const Expr *getExpr(const Function *F, CodePtr PC) const;
+  CLANG_ABI const Expr *getExpr(const Function *F, CodePtr PC) const;
   /// Returns the location from which an opcode originates.
-  SourceLocation getLocation(const Function *F, CodePtr PC) const;
-  SourceRange getRange(const Function *F, CodePtr PC) const;
+  CLANG_ABI SourceLocation getLocation(const Function *F, CodePtr PC) const;
+  CLANG_ABI SourceRange getRange(const Function *F, CodePtr PC) const;
 };
 
 } // namespace interp

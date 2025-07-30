@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_LIB_FORMAT_FORMATTOKEN_H
 #define LLVM_CLANG_LIB_FORMAT_FORMATTOKEN_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/IdentifierTable.h"
 #include "clang/Basic/OperatorPrecedence.h"
 #include "clang/Format/Format.h"
@@ -226,7 +227,7 @@ enum TokenType : uint8_t {
 };
 
 /// Determines the name of a token type.
-const char *getTokenTypeName(TokenType Type);
+CLANG_ABI const char *getTokenTypeName(TokenType Type);
 
 // Represents what type of block a set of braces open.
 enum BraceBlockKind { BK_Unknown, BK_Block, BK_BracedInit };
@@ -703,8 +704,8 @@ public:
            isAttribute();
   }
 
-  [[nodiscard]] bool isTypeName(const LangOptions &LangOpts) const;
-  [[nodiscard]] bool isTypeOrIdentifier(const LangOptions &LangOpts) const;
+  [[nodiscard]] CLANG_ABI bool isTypeName(const LangOptions &LangOpts) const;
+  [[nodiscard]] CLANG_ABI bool isTypeOrIdentifier(const LangOptions &LangOpts) const;
 
   bool isObjCAccessSpecifier() const {
     return is(tok::at) && Next &&
@@ -853,11 +854,11 @@ public:
   }
 
   /// Returns \c true if this token ends a block indented initializer list.
-  [[nodiscard]] bool isBlockIndentedInitRBrace(const FormatStyle &Style) const;
+  [[nodiscard]] CLANG_ABI bool isBlockIndentedInitRBrace(const FormatStyle &Style) const;
 
   /// Returns \c true if this tokens starts a block-type list, i.e. a
   /// list that should be indented with a block indent.
-  [[nodiscard]] bool opensBlockOrBlockTypeList(const FormatStyle &Style) const;
+  [[nodiscard]] CLANG_ABI bool opensBlockOrBlockTypeList(const FormatStyle &Style) const;
 
   /// Returns whether the token is the left square bracket of a C++
   /// structured binding declaration.
@@ -931,7 +932,7 @@ private:
 class ContinuationIndenter;
 struct LineState;
 
-class TokenRole {
+class CLANG_ABI TokenRole {
 public:
   TokenRole(const FormatStyle &Style) : Style(Style) {}
   virtual ~TokenRole();
@@ -969,7 +970,7 @@ protected:
   const FormatStyle &Style;
 };
 
-class CommaSeparatedList : public TokenRole {
+class CLANG_ABI CommaSeparatedList : public TokenRole {
 public:
   CommaSeparatedList(const FormatStyle &Style)
       : TokenRole(Style), HasNestedBracedList(false) {}
@@ -1962,7 +1963,7 @@ inline bool continuesLineComment(const FormatToken &FormatTok,
 }
 
 // Returns \c true if \c Current starts a new parameter.
-bool startsNextParameter(const FormatToken &Current, const FormatStyle &Style);
+CLANG_ABI bool startsNextParameter(const FormatToken &Current, const FormatStyle &Style);
 
 } // namespace format
 } // namespace clang

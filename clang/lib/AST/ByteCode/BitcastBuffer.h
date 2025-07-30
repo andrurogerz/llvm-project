@@ -8,6 +8,7 @@
 #ifndef LLVM_CLANG_AST_INTERP_BITCAST_BUFFER_H
 #define LLVM_CLANG_AST_INTERP_BITCAST_BUFFER_H
 
+#include "clang/Support/Compiler.h"
 #include "llvm/ADT/SmallVector.h"
 #include <cassert>
 #include <cstddef>
@@ -94,23 +95,23 @@ struct BitcastBuffer {
   Bytes byteSize() const { return FinalBitSize.toBytes(); }
 
   /// Returns \c true if all bits in the buffer have been initialized.
-  bool allInitialized() const;
+  CLANG_ABI bool allInitialized() const;
   /// Marks the bits in the given range as initialized.
   /// FIXME: Can we do this automatically in pushData()?
-  void markInitialized(Bits Start, Bits Length);
-  bool rangeInitialized(Bits Offset, Bits Length) const;
+  CLANG_ABI void markInitialized(Bits Start, Bits Length);
+  CLANG_ABI bool rangeInitialized(Bits Offset, Bits Length) const;
 
   /// Push \p BitWidth bits at \p BitOffset from \p In into the buffer.
   /// \p TargetEndianness is the endianness of the target we're compiling for.
   /// \p In must hold at least \p BitWidth many bits.
-  void pushData(const std::byte *In, Bits BitOffset, Bits BitWidth,
+  CLANG_ABI void pushData(const std::byte *In, Bits BitOffset, Bits BitWidth,
                 Endian TargetEndianness);
 
   /// Copy \p BitWidth bits at offset \p BitOffset from the buffer.
   /// \p TargetEndianness is the endianness of the target we're compiling for.
   ///
   /// The returned output holds exactly (\p FullBitWidth / 8) bytes.
-  std::unique_ptr<std::byte[]> copyBits(Bits BitOffset, Bits BitWidth,
+  CLANG_ABI std::unique_ptr<std::byte[]> copyBits(Bits BitOffset, Bits BitWidth,
                                         Bits FullBitWidth,
                                         Endian TargetEndianness) const;
 };

@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_INTERP_RECORD_H
 #define LLVM_CLANG_AST_INTERP_RECORD_H
 
+#include "clang/Support/Compiler.h"
 #include "Descriptor.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/DeclCXX.h"
@@ -52,7 +53,7 @@ public:
   /// Returns the underlying declaration.
   const RecordDecl *getDecl() const { return Decl; }
   /// Returns the name of the underlying declaration.
-  std::string getName() const;
+  CLANG_ABI std::string getName() const;
   /// Checks if the record is a union.
   bool isUnion() const { return IsUnion; }
   /// Checks if the record is an anonymous union.
@@ -62,13 +63,13 @@ public:
   /// Returns the full size of the record, including records.
   unsigned getFullSize() const { return BaseSize + VirtualSize; }
   /// Returns a field.
-  const Field *getField(const FieldDecl *FD) const;
+  CLANG_ABI const Field *getField(const FieldDecl *FD) const;
   /// Returns a base descriptor.
-  const Base *getBase(const RecordDecl *FD) const;
+  CLANG_ABI const Base *getBase(const RecordDecl *FD) const;
   /// Returns a base descriptor.
-  const Base *getBase(QualType T) const;
+  CLANG_ABI const Base *getBase(QualType T) const;
   /// Returns a virtual base descriptor.
-  const Base *getVirtualBase(const RecordDecl *RD) const;
+  CLANG_ABI const Base *getVirtualBase(const RecordDecl *RD) const;
   /// Returns the destructor of the record, if any.
   const CXXDestructorDecl *getDestructor() const {
     if (const auto *CXXDecl = dyn_cast<CXXRecordDecl>(Decl))
@@ -103,7 +104,7 @@ public:
   unsigned getNumVirtualBases() const { return VirtualBases.size(); }
   const Base *getVirtualBase(unsigned I) const { return &VirtualBases[I]; }
 
-  void dump(llvm::raw_ostream &OS, unsigned Indentation = 0,
+  CLANG_ABI void dump(llvm::raw_ostream &OS, unsigned Indentation = 0,
             unsigned Offset = 0) const;
   void dump() const { dump(llvm::errs()); }
 

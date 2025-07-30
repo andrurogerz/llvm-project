@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_AST_INTERP_MEMBER_POINTER_H
 #define LLVM_CLANG_AST_INTERP_MEMBER_POINTER_H
 
+#include "clang/Support/Compiler.h"
 #include "Pointer.h"
 #include <optional>
 
@@ -47,9 +48,9 @@ public:
     return 17;
   }
 
-  std::optional<Pointer> toPointer(const Context &Ctx) const;
+  CLANG_ABI std::optional<Pointer> toPointer(const Context &Ctx) const;
 
-  FunctionPointer toFunctionPointer(const Context &Ctx) const;
+  CLANG_ABI FunctionPointer toFunctionPointer(const Context &Ctx) const;
 
   Pointer getBase() const {
     if (PtrOffset < 0)
@@ -80,7 +81,7 @@ public:
     return MemberPointer(Instance, this->Dcl, this->PtrOffset);
   }
 
-  APValue toAPValue(const ASTContext &) const;
+  CLANG_ABI APValue toAPValue(const ASTContext &) const;
 
   bool isZero() const { return Base.isZero() && !Dcl; }
   bool hasBase() const { return !Base.isZero(); }
