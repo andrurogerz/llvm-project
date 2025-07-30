@@ -384,10 +384,6 @@ private:
 
 public:
   Decl() = delete;
-  Decl(const Decl&) = delete;
-  Decl(Decl &&) = delete;
-  Decl &operator=(const Decl&) = delete;
-  Decl &operator=(Decl&&) = delete;
 
 protected:
   Decl(Kind DK, DeclContext *DC, SourceLocation L)
