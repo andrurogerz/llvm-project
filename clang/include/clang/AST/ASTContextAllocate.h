@@ -23,7 +23,7 @@ class ASTContext;
 
 } // namespace clang
 
-// Defined in ASTContext.h
+// Defined in ASTContext.cpp
 CLANG_ABI void *operator new(size_t Bytes, const clang::ASTContext &C,
                    size_t Alignment = 8);
 CLANG_ABI void *operator new[](size_t Bytes, const clang::ASTContext &C,
