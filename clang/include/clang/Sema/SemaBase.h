@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_SEMA_SEMABASE_H
 #define LLVM_CLANG_SEMA_SEMABASE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/Redeclarable.h"
 #include "clang/Basic/Diagnostic.h"
@@ -35,14 +36,14 @@ class Sema;
 
 class SemaBase {
 public:
-  SemaBase(Sema &S);
+  CLANG_ABI SemaBase(Sema &S);
 
   Sema &SemaRef;
 
-  ASTContext &getASTContext() const;
-  DiagnosticsEngine &getDiagnostics() const;
-  const LangOptions &getLangOpts() const;
-  DeclContext *getCurContext() const;
+  CLANG_ABI ASTContext &getASTContext() const;
+  CLANG_ABI DiagnosticsEngine &getDiagnostics() const;
+  CLANG_ABI const LangOptions &getLangOpts() const;
+  CLANG_ABI DeclContext *getCurContext() const;
 
   /// Helper class that creates diagnostics with optional
   /// template instantiation stacks.
@@ -71,7 +72,7 @@ public:
     // in that case anwyay.
     ImmediateDiagBuilder(const ImmediateDiagBuilder &) = default;
 
-    ~ImmediateDiagBuilder();
+    CLANG_ABI ~ImmediateDiagBuilder();
 
     /// Teach operator<< to produce an object of the correct type.
     template <typename T>
@@ -125,9 +126,9 @@ public:
       K_Deferred
     };
 
-    SemaDiagnosticBuilder(Kind K, SourceLocation Loc, unsigned DiagID,
+    CLANG_ABI SemaDiagnosticBuilder(Kind K, SourceLocation Loc, unsigned DiagID,
                           const FunctionDecl *Fn, Sema &S);
-    SemaDiagnosticBuilder(SemaDiagnosticBuilder &&D);
+    CLANG_ABI SemaDiagnosticBuilder(SemaDiagnosticBuilder &&D);
     SemaDiagnosticBuilder(const SemaDiagnosticBuilder &) = default;
 
     // The copy and move assignment operator is defined as deleted pending
@@ -135,7 +136,7 @@ public:
     SemaDiagnosticBuilder &operator=(const SemaDiagnosticBuilder &) = delete;
     SemaDiagnosticBuilder &operator=(SemaDiagnosticBuilder &&) = delete;
 
-    ~SemaDiagnosticBuilder();
+    CLANG_ABI ~SemaDiagnosticBuilder();
 
     bool isImmediate() const { return ImmediateDiag.has_value(); }
 
@@ -178,7 +179,7 @@ public:
     friend const SemaDiagnosticBuilder &
     operator<<(const SemaDiagnosticBuilder &Diag, const PartialDiagnostic &PD);
 
-    void AddFixItHint(const FixItHint &Hint) const;
+    CLANG_ABI void AddFixItHint(const FixItHint &Hint) const;
 
     friend ExprResult ExprError(const SemaDiagnosticBuilder &) {
       return ExprError();
@@ -208,23 +209,23 @@ public:
     std::optional<ImmediateDiagBuilder> ImmediateDiag;
     std::optional<unsigned> PartialDiagId;
 
-    DeferredDiagnosticsType &getDeviceDeferredDiags() const;
+    CLANG_ABI DeferredDiagnosticsType &getDeviceDeferredDiags() const;
   };
 
   /// Emit a diagnostic.
-  SemaDiagnosticBuilder Diag(SourceLocation Loc, unsigned DiagID,
+  CLANG_ABI SemaDiagnosticBuilder Diag(SourceLocation Loc, unsigned DiagID,
                              bool DeferHint = false);
 
   /// Emit a partial diagnostic.
-  SemaDiagnosticBuilder Diag(SourceLocation Loc, const PartialDiagnostic &PD,
+  CLANG_ABI SemaDiagnosticBuilder Diag(SourceLocation Loc, const PartialDiagnostic &PD,
                              bool DeferHint = false);
 
   /// Emit a compatibility diagnostic.
-  SemaDiagnosticBuilder DiagCompat(SourceLocation Loc, unsigned CompatDiagId,
+  CLANG_ABI SemaDiagnosticBuilder DiagCompat(SourceLocation Loc, unsigned CompatDiagId,
                                    bool DeferHint = false);
 
   /// Build a partial diagnostic.
-  PartialDiagnostic PDiag(unsigned DiagID = 0);
+  CLANG_ABI PartialDiagnostic PDiag(unsigned DiagID = 0);
 };
 
 } // namespace clang

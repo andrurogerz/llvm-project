@@ -32,7 +32,7 @@ class ObjCMethodDecl;
 /// the body can be arbitrary, but it is advised to use memoization to avoid
 /// unnecessary reparsing of the external source that provides the body of the
 /// functions.
-class CodeInjector {
+class CLANG_ABI CodeInjector {
 public:
   CodeInjector();
   virtual ~CodeInjector();

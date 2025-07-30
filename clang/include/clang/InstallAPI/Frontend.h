@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_INSTALLAPI_FRONTEND_H
 #define LLVM_CLANG_INSTALLAPI_FRONTEND_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTConsumer.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Frontend/FrontendActions.h"
@@ -27,7 +28,7 @@ namespace installapi {
 
 /// Create a buffer that contains all headers to scan
 /// for global symbols with.
-std::unique_ptr<llvm::MemoryBuffer> createInputBuffer(InstallAPIContext &Ctx);
+CLANG_ABI std::unique_ptr<llvm::MemoryBuffer> createInputBuffer(InstallAPIContext &Ctx);
 
 class InstallAPIAction : public ASTFrontendAction {
 public:

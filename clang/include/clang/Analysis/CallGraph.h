@@ -17,6 +17,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_CALLGRAPH_H
 #define LLVM_CLANG_ANALYSIS_CALLGRAPH_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/DeclObjC.h"
 #include "clang/AST/DynamicRecursiveASTVisitor.h"
@@ -40,7 +41,7 @@ class Stmt;
 /// The call graph extends itself with the given declarations by implementing
 /// the recursive AST visitor, which constructs the graph by visiting the given
 /// declarations.
-class CallGraph : public DynamicRecursiveASTVisitor {
+class CLANG_ABI CallGraph : public DynamicRecursiveASTVisitor {
   friend class CallGraphNode;
 
   using FunctionMapTy =
@@ -195,8 +196,8 @@ public:
     return getDecl()->getAsFunction()->getDefinition();
   }
 
-  void print(raw_ostream &os) const;
-  void dump() const;
+  CLANG_ABI void print(raw_ostream &os) const;
+  CLANG_ABI void dump() const;
 };
 
 // NOTE: we are comparing based on the callee only. So different call records

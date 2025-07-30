@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_FRONTEND_ANALYSISCONSUMER_H
 #define LLVM_CLANG_STATICANALYZER_FRONTEND_ANALYSISCONSUMER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTConsumer.h"
 #include "clang/Basic/LLVM.h"
 #include <functional>
@@ -49,7 +50,7 @@ public:
 /// CreateAnalysisConsumer - Creates an ASTConsumer to run various code
 /// analysis passes.  (The set of analyses run is controlled by command-line
 /// options.)
-std::unique_ptr<AnalysisASTConsumer>
+CLANG_ABI std::unique_ptr<AnalysisASTConsumer>
 CreateAnalysisConsumer(CompilerInstance &CI);
 
 } // namespace ento

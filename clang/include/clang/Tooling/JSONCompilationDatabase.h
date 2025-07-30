@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_TOOLING_JSONCOMPILATIONDATABASE_H
 #define LLVM_CLANG_TOOLING_JSONCOMPILATIONDATABASE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Tooling/CompilationDatabase.h"
 #include "clang/Tooling/FileMatchTrie.h"
@@ -58,7 +59,7 @@ namespace tooling {
 /// JSON compilation databases can for example be generated in CMake projects
 /// by setting the flag -DCMAKE_EXPORT_COMPILE_COMMANDS.
 enum class JSONCommandLineSyntax { Windows, Gnu, AutoDetect };
-class JSONCompilationDatabase : public CompilationDatabase {
+class CLANG_ABI JSONCompilationDatabase : public CompilationDatabase {
 public:
   /// Loads a JSON compilation database from the specified file.
   ///

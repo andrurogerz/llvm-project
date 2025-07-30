@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_LEX_MODULEMAP_H
 #define LLVM_CLANG_LEX_MODULEMAP_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/IdentifierTable.h"
 #include "clang/Basic/LangOptions.h"
 #include "clang/Basic/Module.h"
@@ -46,7 +47,7 @@ class SourceManager;
 
 /// A mechanism to observe the actions of the module map loader as it
 /// reads module map files.
-class ModuleMapCallbacks {
+class CLANG_ABI ModuleMapCallbacks {
   virtual void anchor();
 
 public:
@@ -116,11 +117,11 @@ class ModuleMap {
 public:
   /// Use PendingLinkAsModule information to mark top level link names that
   /// are going to be replaced by export_as aliases.
-  void resolveLinkAsDependencies(Module *Mod);
+  CLANG_ABI void resolveLinkAsDependencies(Module *Mod);
 
   /// Make module to use export_as as the link dependency name if enough
   /// information is available or add it to a pending list otherwise.
-  void addLinkAsDependency(Module *Mod);
+  CLANG_ABI void addLinkAsDependency(Module *Mod);
 
   /// Flags describing the role of a module header.
   enum ModuleHeaderRole {
@@ -145,13 +146,13 @@ public:
   };
 
   /// Convert a header kind to a role. Requires Kind to not be HK_Excluded.
-  static ModuleHeaderRole headerKindToRole(Module::HeaderKind Kind);
+  CLANG_ABI static ModuleHeaderRole headerKindToRole(Module::HeaderKind Kind);
 
   /// Convert a header role to a kind.
-  static Module::HeaderKind headerRoleToKind(ModuleHeaderRole Role);
+  CLANG_ABI static Module::HeaderKind headerRoleToKind(ModuleHeaderRole Role);
 
   /// Check if the header with the given role is a modular one.
-  static bool isModular(ModuleHeaderRole Role);
+  CLANG_ABI static bool isModular(ModuleHeaderRole Role);
 
   /// A header that is known to reside within a given module,
   /// whether it was included or excluded.
@@ -357,7 +358,7 @@ private:
   ///
   /// \param IntermediateDirs On success, contains the set of directories
   /// searched before finding \p File.
-  KnownHeader findHeaderInUmbrellaDirs(
+  CLANG_ABI KnownHeader findHeaderInUmbrellaDirs(
       FileEntryRef File, SmallVectorImpl<DirectoryEntryRef> &IntermediateDirs);
 
   /// Given that \p File is not in the Headers map, look it up within
@@ -386,15 +387,15 @@ public:
   /// \param LangOpts Language options for this translation unit.
   ///
   /// \param Target The target for this translation unit.
-  ModuleMap(SourceManager &SourceMgr, DiagnosticsEngine &Diags,
+  CLANG_ABI ModuleMap(SourceManager &SourceMgr, DiagnosticsEngine &Diags,
             const LangOptions &LangOpts, const TargetInfo *Target,
             HeaderSearch &HeaderInfo);
 
   /// Destroy the module map.
-  ~ModuleMap();
+  CLANG_ABI ~ModuleMap();
 
   /// Set the target information.
-  void setTarget(const TargetInfo &Target);
+  CLANG_ABI void setTarget(const TargetInfo &Target);
 
   /// Set the directory that contains Clang-supplied include files, such as our
   /// stdarg.h or tgmath.h.
@@ -404,9 +405,9 @@ public:
   OptionalDirectoryEntryRef getBuiltinDir() const { return BuiltinIncludeDir; }
 
   /// Is this a compiler builtin header?
-  bool isBuiltinHeader(FileEntryRef File);
+  CLANG_ABI bool isBuiltinHeader(FileEntryRef File);
 
-  bool shouldImportRelativeToBuiltinIncludeDir(StringRef FileName,
+  CLANG_ABI bool shouldImportRelativeToBuiltinIncludeDir(StringRef FileName,
                                                Module *Module) const;
 
   /// Add a module map callback.
@@ -428,7 +429,7 @@ public:
   /// \returns The module KnownHeader, which provides the module that owns the
   /// given header file.  The KnownHeader is default constructed to indicate
   /// that no module owns this header file.
-  KnownHeader findModuleForHeader(FileEntryRef File, bool AllowTextual = false,
+  CLANG_ABI KnownHeader findModuleForHeader(FileEntryRef File, bool AllowTextual = false,
                                   bool AllowExcluded = false);
 
   /// Retrieve all the modules that contain the given header file. Note that
@@ -438,22 +439,22 @@ public:
   ///
   /// Typically, \ref findModuleForHeader should be used instead, as it picks
   /// the preferred module for the header.
-  ArrayRef<KnownHeader> findAllModulesForHeader(FileEntryRef File);
+  CLANG_ABI ArrayRef<KnownHeader> findAllModulesForHeader(FileEntryRef File);
 
   /// Like \ref findAllModulesForHeader, but do not attempt to infer module
   /// ownership from umbrella headers if we've not already done so.
-  ArrayRef<KnownHeader> findResolvedModulesForHeader(FileEntryRef File) const;
+  CLANG_ABI ArrayRef<KnownHeader> findResolvedModulesForHeader(FileEntryRef File) const;
 
   /// Resolve all lazy header directives for the specified file.
   ///
   /// This ensures that the HeaderFileInfo on HeaderSearch is up to date. This
   /// is effectively internal, but is exposed so HeaderSearch can call it.
-  void resolveHeaderDirectives(const FileEntry *File) const;
+  CLANG_ABI void resolveHeaderDirectives(const FileEntry *File) const;
 
   /// Resolve lazy header directives for the specified module. If File is
   /// provided, only headers with same size and modtime are resolved. If File
   /// is not set, all headers are resolved.
-  void resolveHeaderDirectives(Module *Mod,
+  CLANG_ABI void resolveHeaderDirectives(Module *Mod,
                                std::optional<const FileEntry *> File) const;
 
   /// Reports errors if a module must not include a specific file.
@@ -470,18 +471,18 @@ public:
   /// \param Filename The included filename as written.
   ///
   /// \param File The included file.
-  void diagnoseHeaderInclusion(Module *RequestingModule,
+  CLANG_ABI void diagnoseHeaderInclusion(Module *RequestingModule,
                                bool RequestingModuleIsModuleInterface,
                                SourceLocation FilenameLoc, StringRef Filename,
                                FileEntryRef File);
 
   /// Determine whether the given header is part of a module
   /// marked 'unavailable'.
-  bool isHeaderInUnavailableModule(FileEntryRef Header) const;
+  CLANG_ABI bool isHeaderInUnavailableModule(FileEntryRef Header) const;
 
   /// Determine whether the given header is unavailable as part
   /// of the specified module.
-  bool isHeaderUnavailableInModule(FileEntryRef Header,
+  CLANG_ABI bool isHeaderUnavailableInModule(FileEntryRef Header,
                                    const Module *RequestingModule) const;
 
   /// Retrieve a module with the given name.
@@ -489,11 +490,11 @@ public:
   /// \param Name The name of the module to look up.
   ///
   /// \returns The named module, if known; otherwise, returns null.
-  Module *findModule(StringRef Name) const;
+  CLANG_ABI Module *findModule(StringRef Name) const;
 
-  Module *findOrLoadModule(StringRef Name);
+  CLANG_ABI Module *findOrLoadModule(StringRef Name);
 
-  Module *findOrInferSubmodule(Module *Parent, StringRef Name);
+  CLANG_ABI Module *findOrInferSubmodule(Module *Parent, StringRef Name);
 
   /// Retrieve a module with the given name using lexical name lookup,
   /// starting at the given context.
@@ -504,7 +505,7 @@ public:
   /// name lookup.
   ///
   /// \returns The named module, if known; otherwise, returns null.
-  Module *lookupModuleUnqualified(StringRef Name, Module *Context) const;
+  CLANG_ABI Module *lookupModuleUnqualified(StringRef Name, Module *Context) const;
 
   /// Retrieve a module with the given name within the given context,
   /// using direct (qualified) name lookup.
@@ -515,7 +516,7 @@ public:
   /// null, we will look for a top-level module.
   ///
   /// \returns The named submodule, if known; otherwose, returns null.
-  Module *lookupModuleQualified(StringRef Name, Module *Context) const;
+  CLANG_ABI Module *lookupModuleQualified(StringRef Name, Module *Context) const;
 
   /// Find a new module or submodule, or create it if it does not already
   /// exist.
@@ -531,7 +532,7 @@ public:
   ///
   /// \returns The found or newly-created module, along with a boolean value
   /// that will be true if the module is newly-created.
-  std::pair<Module *, bool> findOrCreateModule(StringRef Name, Module *Parent,
+  CLANG_ABI std::pair<Module *, bool> findOrCreateModule(StringRef Name, Module *Parent,
                                                bool IsFramework,
                                                bool IsExplicit);
   /// Call \c ModuleMap::findOrCreateModule and throw away the information
@@ -543,7 +544,7 @@ public:
   /// Create new submodule, assuming it does not exist. This function can only
   /// be called when it is guaranteed that this submodule does not exist yet.
   /// The parameters have same semantics as \c ModuleMap::findOrCreateModule.
-  Module *createModule(StringRef Name, Module *Parent, bool IsFramework,
+  CLANG_ABI Module *createModule(StringRef Name, Module *Parent, bool IsFramework,
                        bool IsExplicit);
 
   /// Create a global module fragment for a C++ module unit.
@@ -553,18 +554,18 @@ public:
   /// unit's Module until later, because we don't know what it will be called
   /// usually. See C++20 [module.unit]/7.2 for the case we could know its
   /// parent.
-  Module *createGlobalModuleFragmentForModuleUnit(SourceLocation Loc,
+  CLANG_ABI Module *createGlobalModuleFragmentForModuleUnit(SourceLocation Loc,
                                                   Module *Parent = nullptr);
-  Module *createImplicitGlobalModuleFragmentForModuleUnit(SourceLocation Loc,
+  CLANG_ABI Module *createImplicitGlobalModuleFragmentForModuleUnit(SourceLocation Loc,
                                                           Module *Parent);
 
   /// Create a global module fragment for a C++ module interface unit.
-  Module *createPrivateModuleFragmentForInterfaceUnit(Module *Parent,
+  CLANG_ABI Module *createPrivateModuleFragmentForInterfaceUnit(Module *Parent,
                                                       SourceLocation Loc);
 
   /// Create a new C++ module with the specified kind, and reparent any pending
   /// global module fragment(s) to it.
-  Module *createModuleUnitWithKind(SourceLocation Loc, StringRef Name,
+  CLANG_ABI Module *createModuleUnitWithKind(SourceLocation Loc, StringRef Name,
                                    Module::ModuleKind Kind);
 
   /// Create a new module for a C++ module interface unit.
@@ -574,27 +575,27 @@ public:
   /// Note that this also sets the current module to the newly-created module.
   ///
   /// \returns The newly-created module.
-  Module *createModuleForInterfaceUnit(SourceLocation Loc, StringRef Name);
+  CLANG_ABI Module *createModuleForInterfaceUnit(SourceLocation Loc, StringRef Name);
 
   /// Create a new module for a C++ module implementation unit.
   /// The interface module for this implementation (implicitly imported) must
   /// exist and be loaded and present in the modules map.
   ///
   /// \returns The newly-created module.
-  Module *createModuleForImplementationUnit(SourceLocation Loc, StringRef Name);
+  CLANG_ABI Module *createModuleForImplementationUnit(SourceLocation Loc, StringRef Name);
 
   /// Create a C++20 header unit.
-  Module *createHeaderUnit(SourceLocation Loc, StringRef Name,
+  CLANG_ABI Module *createHeaderUnit(SourceLocation Loc, StringRef Name,
                            Module::Header H);
 
   /// Infer the contents of a framework module map from the given
   /// framework directory.
-  Module *inferFrameworkModule(DirectoryEntryRef FrameworkDir, bool IsSystem,
+  CLANG_ABI Module *inferFrameworkModule(DirectoryEntryRef FrameworkDir, bool IsSystem,
                                Module *Parent);
 
   /// Create a new top-level module that is shadowed by
   /// \p ShadowingModule.
-  Module *createShadowedModule(StringRef Name, bool IsFramework,
+  CLANG_ABI Module *createShadowedModule(StringRef Name, bool IsFramework,
                                Module *ShadowingModule);
 
   /// Creates a new declaration scope for module names, allowing
@@ -623,8 +624,8 @@ public:
   ///
   /// \returns The FileID for the module map file containing the given module,
   /// invalid if the module definition was inferred.
-  FileID getContainingModuleMapFileID(const Module *Module) const;
-  OptionalFileEntryRef getContainingModuleMapFile(const Module *Module) const;
+  CLANG_ABI FileID getContainingModuleMapFileID(const Module *Module) const;
+  CLANG_ABI OptionalFileEntryRef getContainingModuleMapFile(const Module *Module) const;
 
   /// Get the module map file that (along with the module name) uniquely
   /// identifies this module.
@@ -635,10 +636,10 @@ public:
   /// of inferred modules, returns the module map that allowed the inference
   /// (e.g. contained 'module *'). Otherwise, returns
   /// getContainingModuleMapFile().
-  FileID getModuleMapFileIDForUniquing(const Module *M) const;
-  OptionalFileEntryRef getModuleMapFileForUniquing(const Module *M) const;
+  CLANG_ABI FileID getModuleMapFileIDForUniquing(const Module *M) const;
+  CLANG_ABI OptionalFileEntryRef getModuleMapFileForUniquing(const Module *M) const;
 
-  void setInferredModuleAllowedBy(Module *M, FileID ModMapFID);
+  CLANG_ABI void setInferredModuleAllowedBy(Module *M, FileID ModMapFID);
 
   /// Canonicalize \p Path in a manner suitable for a module map file. In
   /// particular, this canonicalizes the parent directory separately from the
@@ -647,7 +648,7 @@ public:
   ///
   /// \returns an error code if any filesystem operations failed. In this case
   /// \p Path is not modified.
-  std::error_code canonicalizeModuleMapPath(SmallVectorImpl<char> &Path);
+  CLANG_ABI std::error_code canonicalizeModuleMapPath(SmallVectorImpl<char> &Path);
 
   /// Get any module map files other than getModuleMapFileForUniquing(M)
   /// that define submodules of a top-level module \p M. This is cheaper than
@@ -660,7 +661,7 @@ public:
     return &I->second;
   }
 
-  void addAdditionalModuleMapFile(const Module *M, FileEntryRef ModuleMap);
+  CLANG_ABI void addAdditionalModuleMapFile(const Module *M, FileEntryRef ModuleMap);
 
   /// Resolve all of the unresolved exports in the given module.
   ///
@@ -670,7 +671,7 @@ public:
   ///
   /// \returns true if any errors were encountered while resolving exports,
   /// false otherwise.
-  bool resolveExports(Module *Mod, bool Complain);
+  CLANG_ABI bool resolveExports(Module *Mod, bool Complain);
 
   /// Resolve all of the unresolved uses in the given module.
   ///
@@ -680,7 +681,7 @@ public:
   ///
   /// \returns true if any errors were encountered while resolving uses,
   /// false otherwise.
-  bool resolveUses(Module *Mod, bool Complain);
+  CLANG_ABI bool resolveUses(Module *Mod, bool Complain);
 
   /// Resolve all of the unresolved conflicts in the given module.
   ///
@@ -690,26 +691,26 @@ public:
   ///
   /// \returns true if any errors were encountered while resolving conflicts,
   /// false otherwise.
-  bool resolveConflicts(Module *Mod, bool Complain);
+  CLANG_ABI bool resolveConflicts(Module *Mod, bool Complain);
 
   /// Sets the umbrella header of the given module to the given header.
-  void
+  CLANG_ABI void
   setUmbrellaHeaderAsWritten(Module *Mod, FileEntryRef UmbrellaHeader,
                              const Twine &NameAsWritten,
                              const Twine &PathRelativeToRootModuleDirectory);
 
   /// Sets the umbrella directory of the given module to the given directory.
-  void setUmbrellaDirAsWritten(Module *Mod, DirectoryEntryRef UmbrellaDir,
+  CLANG_ABI void setUmbrellaDirAsWritten(Module *Mod, DirectoryEntryRef UmbrellaDir,
                                const Twine &NameAsWritten,
                                const Twine &PathRelativeToRootModuleDirectory);
 
   /// Adds this header to the given module.
   /// \param Role The role of the header wrt the module.
-  void addHeader(Module *Mod, Module::Header Header,
+  CLANG_ABI void addHeader(Module *Mod, Module::Header Header,
                  ModuleHeaderRole Role, bool Imported = false);
 
   /// Parse a module map without creating `clang::Module` instances.
-  bool parseModuleMapFile(FileEntryRef File, bool IsSystem,
+  CLANG_ABI bool parseModuleMapFile(FileEntryRef File, bool IsSystem,
                           DirectoryEntryRef Dir, FileID ID = FileID(),
                           SourceLocation ExternModuleLoc = SourceLocation());
 
@@ -733,14 +734,14 @@ public:
   ///        that caused us to load this module map file, if any.
   ///
   /// \returns true if an error occurred, false otherwise.
-  bool
+  CLANG_ABI bool
   parseAndLoadModuleMapFile(FileEntryRef File, bool IsSystem,
                             DirectoryEntryRef HomeDir, FileID ID = FileID(),
                             unsigned *Offset = nullptr,
                             SourceLocation ExternModuleLoc = SourceLocation());
 
   /// Dump the contents of the module map, for debugging purposes.
-  void dump();
+  CLANG_ABI void dump();
 
   using module_iterator = llvm::StringMap<Module *>::const_iterator;
 

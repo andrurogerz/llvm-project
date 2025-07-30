@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_BASIC_FILEENTRY_H
 #define LLVM_CLANG_BASIC_FILEENTRY_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/CustomizableOptional.h"
 #include "clang/Basic/DirectoryEntry.h"
 #include "clang/Basic/LLVM.h"
@@ -326,7 +327,7 @@ class FileEntry {
   std::unique_ptr<llvm::MemoryBuffer> Content;
 
 public:
-  ~FileEntry();
+  CLANG_ABI ~FileEntry();
 
   StringRef tryGetRealPathName() const { return RealPathName; }
   off_t getSize() const { return Size; }
@@ -344,7 +345,7 @@ public:
   bool isNamedPipe() const { return IsNamedPipe; }
   bool isDeviceFile() const { return IsDeviceFile; }
 
-  void closeFile() const;
+  CLANG_ABI void closeFile() const;
 };
 
 off_t FileEntryRef::getSize() const { return getFileEntry().getSize(); }

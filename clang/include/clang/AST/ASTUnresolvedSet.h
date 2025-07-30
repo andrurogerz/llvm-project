@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_ASTUNRESOLVEDSET_H
 #define LLVM_CLANG_AST_ASTUNRESOLVEDSET_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTVector.h"
 #include "clang/AST/DeclAccessPair.h"
 #include "clang/AST/DeclID.h"
@@ -103,7 +104,7 @@ public:
 class LazyASTUnresolvedSet {
   mutable ASTUnresolvedSet Impl;
 
-  void getFromExternalSource(ASTContext &C) const;
+  CLANG_ABI void getFromExternalSource(ASTContext &C) const;
 
 public:
   ASTUnresolvedSet &get(ASTContext &C) const {

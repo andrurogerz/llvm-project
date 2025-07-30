@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_SERIALIZATION_MODULEFILE_H
 #define LLVM_CLANG_SERIALIZATION_MODULEFILE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/FileManager.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/Module.h"
@@ -131,7 +132,7 @@ class ModuleFile {
 public:
   ModuleFile(ModuleKind Kind, FileEntryRef File, unsigned Generation)
       : Kind(Kind), File(File), Generation(Generation) {}
-  ~ModuleFile();
+  CLANG_ABI ~ModuleFile();
 
   // === General information ===
 
@@ -518,7 +519,7 @@ public:
   }
 
   /// Dump debugging output for this module.
-  void dump();
+  CLANG_ABI void dump();
 };
 
 } // namespace serialization

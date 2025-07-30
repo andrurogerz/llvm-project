@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_LEX_MACROARGS_H
 #define LLVM_CLANG_LEX_MACROARGS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Lex/Token.h"
 #include "llvm/ADT/ArrayRef.h"
@@ -63,31 +64,31 @@ class MacroArgs final
 public:
   /// MacroArgs ctor function - Create a new MacroArgs object with the specified
   /// macro and argument info.
-  static MacroArgs *create(const MacroInfo *MI,
+  CLANG_ABI static MacroArgs *create(const MacroInfo *MI,
                            ArrayRef<Token> UnexpArgTokens,
                            bool VarargsElided, Preprocessor &PP);
 
   /// destroy - Destroy and deallocate the memory for this object.
   ///
-  void destroy(Preprocessor &PP);
+  CLANG_ABI void destroy(Preprocessor &PP);
 
   /// ArgNeedsPreexpansion - If we can prove that the argument won't be affected
   /// by pre-expansion, return false.  Otherwise, conservatively return true.
-  bool ArgNeedsPreexpansion(const Token *ArgTok, Preprocessor &PP) const;
+  CLANG_ABI bool ArgNeedsPreexpansion(const Token *ArgTok, Preprocessor &PP) const;
 
   /// getUnexpArgument - Return a pointer to the first token of the unexpanded
   /// token list for the specified formal.
   ///
-  const Token *getUnexpArgument(unsigned Arg) const;
+  CLANG_ABI const Token *getUnexpArgument(unsigned Arg) const;
 
   /// getArgLength - Given a pointer to an expanded or unexpanded argument,
   /// return the number of tokens, not counting the EOF, that make up the
   /// argument.
-  static unsigned getArgLength(const Token *ArgPtr);
+  CLANG_ABI static unsigned getArgLength(const Token *ArgPtr);
 
   /// getPreExpArgument - Return the pre-expanded form of the specified
   /// argument.
-  const std::vector<Token> &
+  CLANG_ABI const std::vector<Token> &
     getPreExpArgument(unsigned Arg, Preprocessor &PP);
 
   /// getNumMacroArguments - Return the number of arguments the invoked macro
@@ -114,14 +115,14 @@ public:
   ///   V(,F()) <-- returns false on this invocation.
   /// \endcode
   ///
-  bool invokedWithVariadicArgument(const MacroInfo *const MI, Preprocessor &PP);
+  CLANG_ABI bool invokedWithVariadicArgument(const MacroInfo *const MI, Preprocessor &PP);
 
   /// StringifyArgument - Implement C99 6.10.3.2p2, converting a sequence of
   /// tokens into the literal string token that should be produced by the C #
   /// preprocessor operator.  If Charify is true, then it should be turned into
   /// a character literal for the Microsoft charize (#@) extension.
   ///
-  static Token StringifyArgument(const Token *ArgToks,
+  CLANG_ABI static Token StringifyArgument(const Token *ArgToks,
                                  Preprocessor &PP, bool Charify,
                                  SourceLocation ExpansionLocStart,
                                  SourceLocation ExpansionLocEnd);
@@ -129,7 +130,7 @@ public:
 
   /// deallocate - This should only be called by the Preprocessor when managing
   /// its freelist.
-  MacroArgs *deallocate();
+  CLANG_ABI MacroArgs *deallocate();
 };
 
 }  // end namespace clang

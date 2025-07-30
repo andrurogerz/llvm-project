@@ -8,6 +8,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_FLOWSENSITIVE__ARENA_H
 #define LLVM_CLANG_ANALYSIS_FLOWSENSITIVE__ARENA_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Analysis/FlowSensitive/Formula.h"
 #include "clang/Analysis/FlowSensitive/StorageLocation.h"
 #include "clang/Analysis/FlowSensitive/Value.h"
@@ -63,7 +64,7 @@ public:
   /// Passing in the same formula will result in the same BoolValue.
   /// FIXME: Interning BoolValues but not other Values is inconsistent.
   ///        Decide whether we want Value interning or not.
-  BoolValue &makeBoolValue(const Formula &);
+  CLANG_ABI BoolValue &makeBoolValue(const Formula &);
 
   /// Creates a fresh atom and wraps in in an AtomicBoolValue.
   /// FIXME: For now, identical-address AtomicBoolValue <=> identical atom.
@@ -82,7 +83,7 @@ public:
   /// `Value`. These literals are the same every time.
   /// Integer literals are not typed; the type is determined by the `Expr` that
   /// an integer literal is associated with.
-  IntegerValue &makeIntLiteral(llvm::APInt Value);
+  CLANG_ABI IntegerValue &makeIntLiteral(llvm::APInt Value);
 
   // Factories for boolean formulas.
   // Formulas are interned: passing the same arguments return the same result.
@@ -90,29 +91,29 @@ public:
   // Simplifications are applied: makeOr(X, X) => X, etc.
 
   /// Returns a formula for the conjunction of `LHS` and `RHS`.
-  const Formula &makeAnd(const Formula &LHS, const Formula &RHS);
+  CLANG_ABI const Formula &makeAnd(const Formula &LHS, const Formula &RHS);
 
   /// Returns a formula for the disjunction of `LHS` and `RHS`.
-  const Formula &makeOr(const Formula &LHS, const Formula &RHS);
+  CLANG_ABI const Formula &makeOr(const Formula &LHS, const Formula &RHS);
 
   /// Returns a formula for the negation of `Val`.
-  const Formula &makeNot(const Formula &Val);
+  CLANG_ABI const Formula &makeNot(const Formula &Val);
 
   /// Returns a formula for `LHS => RHS`.
-  const Formula &makeImplies(const Formula &LHS, const Formula &RHS);
+  CLANG_ABI const Formula &makeImplies(const Formula &LHS, const Formula &RHS);
 
   /// Returns a formula for `LHS <=> RHS`.
-  const Formula &makeEquals(const Formula &LHS, const Formula &RHS);
+  CLANG_ABI const Formula &makeEquals(const Formula &LHS, const Formula &RHS);
 
   /// Returns a formula for the variable A.
-  const Formula &makeAtomRef(Atom A);
+  CLANG_ABI const Formula &makeAtomRef(Atom A);
 
   /// Returns a formula for a literal true/false.
   const Formula &makeLiteral(bool Value) { return Value ? True : False; }
 
   // Parses a formula from its textual representation.
   // This may refer to atoms that were not produced by makeAtom() yet!
-  llvm::Expected<const Formula &> parseFormula(llvm::StringRef);
+  CLANG_ABI llvm::Expected<const Formula &> parseFormula(llvm::StringRef);
 
   /// Returns a new atomic boolean variable, distinct from any other.
   Atom makeAtom() { return static_cast<Atom>(NextAtom++); };

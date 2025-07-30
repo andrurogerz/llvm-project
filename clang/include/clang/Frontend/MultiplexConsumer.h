@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_FRONTEND_MULTIPLEXCONSUMER_H
 #define LLVM_CLANG_FRONTEND_MULTIPLEXCONSUMER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Sema/SemaConsumer.h"
 #include "clang/Serialization/ASTDeserializationListener.h"
@@ -26,7 +27,7 @@ class MultiplexASTMutationListener;
 
 // This ASTDeserializationListener forwards its notifications to a set of
 // child listeners.
-class MultiplexASTDeserializationListener : public ASTDeserializationListener {
+class CLANG_ABI MultiplexASTDeserializationListener : public ASTDeserializationListener {
 public:
   // Does NOT take ownership of the elements in L.
   MultiplexASTDeserializationListener(
@@ -49,7 +50,7 @@ private:
 };
 
 // Has a list of ASTConsumers and calls each of them. Owns its children.
-class MultiplexConsumer : public SemaConsumer {
+class CLANG_ABI MultiplexConsumer : public SemaConsumer {
 public:
   // Takes ownership of the pointers in C.
   MultiplexConsumer(std::vector<std::unique_ptr<ASTConsumer>> C);

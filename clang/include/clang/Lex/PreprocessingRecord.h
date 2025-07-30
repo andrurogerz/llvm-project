@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_LEX_PREPROCESSINGRECORD_H
 #define LLVM_CLANG_LEX_PREPROCESSINGRECORD_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/IdentifierTable.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/SourceLocation.h"
@@ -246,7 +247,7 @@ class Token;
     OptionalFileEntryRef File;
 
   public:
-    InclusionDirective(PreprocessingRecord &PPRec, InclusionKind Kind,
+    CLANG_ABI InclusionDirective(PreprocessingRecord &PPRec, InclusionKind Kind,
                        StringRef FileName, bool InQuotes, bool ImportedModule,
                        OptionalFileEntryRef File, SourceRange Range);
 
@@ -276,7 +277,7 @@ class Token;
 
   /// An abstract class that should be subclassed by any external source
   /// of preprocessing record entries.
-  class ExternalPreprocessingRecordSource {
+  class CLANG_ABI ExternalPreprocessingRecordSource {
   public:
     virtual ~ExternalPreprocessingRecordSource();
 
@@ -305,7 +306,7 @@ class Token;
   /// A record of the steps taken while preprocessing a source file,
   /// including the various preprocessing directives processed, macros
   /// expanded, etc.
-  class PreprocessingRecord : public PPCallbacks {
+  class CLANG_ABI PreprocessingRecord : public PPCallbacks {
     SourceManager &SourceMgr;
 
     /// Allocator used to store preprocessing objects.

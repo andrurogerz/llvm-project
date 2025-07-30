@@ -28,6 +28,7 @@
 #ifndef LLVM_CLANG_TOOLING_REFACTORINGCALLBACKS_H
 #define LLVM_CLANG_TOOLING_REFACTORINGCALLBACKS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/Tooling/Refactoring.h"
 
@@ -39,8 +40,8 @@ namespace tooling {
 /// Collects \c tooling::Replacements while running.
 class RefactoringCallback : public ast_matchers::MatchFinder::MatchCallback {
 public:
-  RefactoringCallback();
-  Replacements &getReplacements();
+  CLANG_ABI RefactoringCallback();
+  CLANG_ABI Replacements &getReplacements();
 
 protected:
   Replacements Replace;
@@ -52,7 +53,7 @@ protected:
 /// Runs AST matchers and stores the \c tooling::Replacements in a map.
 class ASTMatchRefactorer {
 public:
-  explicit ASTMatchRefactorer(
+  CLANG_ABI explicit ASTMatchRefactorer(
     std::map<std::string, Replacements> &FileToReplaces);
 
   template <typename T>
@@ -61,10 +62,10 @@ public:
     Callbacks.push_back(Callback);
   }
 
-  void addDynamicMatcher(const ast_matchers::internal::DynTypedMatcher &Matcher,
+  CLANG_ABI void addDynamicMatcher(const ast_matchers::internal::DynTypedMatcher &Matcher,
                          RefactoringCallback *Callback);
 
-  std::unique_ptr<ASTConsumer> newASTConsumer();
+  CLANG_ABI std::unique_ptr<ASTConsumer> newASTConsumer();
 
 private:
   friend class RefactoringASTConsumer;
@@ -75,7 +76,7 @@ private:
 
 /// Replace the text of the statement bound to \c FromId with the text in
 /// \c ToText.
-class ReplaceStmtWithText : public RefactoringCallback {
+class CLANG_ABI ReplaceStmtWithText : public RefactoringCallback {
 public:
   ReplaceStmtWithText(StringRef FromId, StringRef ToText);
   void run(const ast_matchers::MatchFinder::MatchResult &Result) override;
@@ -91,7 +92,7 @@ private:
 /// Expressions of the form ${NodeName} in \c ToTemplate will be
 /// replaced by the text of the node bound to ${NodeName}. The string
 /// "$$" will be replaced by "$".
-class ReplaceNodeWithTemplate : public RefactoringCallback {
+class CLANG_ABI ReplaceNodeWithTemplate : public RefactoringCallback {
 public:
   static llvm::Expected<std::unique_ptr<ReplaceNodeWithTemplate>>
   create(StringRef FromId, StringRef ToTemplate);
@@ -110,7 +111,7 @@ private:
 
 /// Replace the text of the statement bound to \c FromId with the text of
 /// the statement bound to \c ToId.
-class ReplaceStmtWithStmt : public RefactoringCallback {
+class CLANG_ABI ReplaceStmtWithStmt : public RefactoringCallback {
 public:
   ReplaceStmtWithStmt(StringRef FromId, StringRef ToId);
   void run(const ast_matchers::MatchFinder::MatchResult &Result) override;
@@ -123,7 +124,7 @@ private:
 /// Replace an if-statement bound to \c Id with the outdented text of its
 /// body, choosing the consequent or the alternative based on whether
 /// \c PickTrueBranch is true.
-class ReplaceIfStmtWithItsBody : public RefactoringCallback {
+class CLANG_ABI ReplaceIfStmtWithItsBody : public RefactoringCallback {
 public:
   ReplaceIfStmtWithItsBody(StringRef Id, bool PickTrueBranch);
   void run(const ast_matchers::MatchFinder::MatchResult &Result) override;

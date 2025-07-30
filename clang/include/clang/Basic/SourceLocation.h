@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_BASIC_SOURCELOCATION_H
 #define LLVM_CLANG_BASIC_SOURCELOCATION_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/FileEntry.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/StringRef.h"
@@ -182,10 +183,10 @@ public:
            End.isFileID();
   }
 
-  unsigned getHashValue() const;
-  void print(raw_ostream &OS, const SourceManager &SM) const;
-  std::string printToString(const SourceManager &SM) const;
-  void dump(const SourceManager &SM) const;
+  CLANG_ABI unsigned getHashValue() const;
+  CLANG_ABI void print(raw_ostream &OS, const SourceManager &SM) const;
+  CLANG_ABI std::string printToString(const SourceManager &SM) const;
+  CLANG_ABI void dump(const SourceManager &SM) const;
 };
 
 inline bool operator==(const SourceLocation &LHS, const SourceLocation &RHS) {
@@ -243,9 +244,9 @@ public:
     return B <= other.B && E >= other.E;
   }
 
-  void print(raw_ostream &OS, const SourceManager &SM) const;
-  std::string printToString(const SourceManager &SM) const;
-  void dump(const SourceManager &SM) const;
+  CLANG_ABI void print(raw_ostream &OS, const SourceManager &SM) const;
+  CLANG_ABI std::string printToString(const SourceManager &SM) const;
+  CLANG_ABI void dump(const SourceManager &SM) const;
 };
 
 /// Represents a character-granular source range.
@@ -387,53 +388,53 @@ public:
     return *SrcMgr;
   }
 
-  FileID getFileID() const;
+  CLANG_ABI FileID getFileID() const;
 
-  FullSourceLoc getExpansionLoc() const;
-  FullSourceLoc getSpellingLoc() const;
-  FullSourceLoc getFileLoc() const;
-  PresumedLoc getPresumedLoc(bool UseLineDirectives = true) const;
-  bool isMacroArgExpansion(FullSourceLoc *StartLoc = nullptr) const;
-  FullSourceLoc getImmediateMacroCallerLoc() const;
-  std::pair<FullSourceLoc, StringRef> getModuleImportLoc() const;
-  unsigned getFileOffset() const;
+  CLANG_ABI FullSourceLoc getExpansionLoc() const;
+  CLANG_ABI FullSourceLoc getSpellingLoc() const;
+  CLANG_ABI FullSourceLoc getFileLoc() const;
+  CLANG_ABI PresumedLoc getPresumedLoc(bool UseLineDirectives = true) const;
+  CLANG_ABI bool isMacroArgExpansion(FullSourceLoc *StartLoc = nullptr) const;
+  CLANG_ABI FullSourceLoc getImmediateMacroCallerLoc() const;
+  CLANG_ABI std::pair<FullSourceLoc, StringRef> getModuleImportLoc() const;
+  CLANG_ABI unsigned getFileOffset() const;
 
-  unsigned getExpansionLineNumber(bool *Invalid = nullptr) const;
-  unsigned getExpansionColumnNumber(bool *Invalid = nullptr) const;
+  CLANG_ABI unsigned getExpansionLineNumber(bool *Invalid = nullptr) const;
+  CLANG_ABI unsigned getExpansionColumnNumber(bool *Invalid = nullptr) const;
 
   /// Decompose the underlying \c SourceLocation into a raw (FileID + Offset)
   /// pair, after walking through all expansion records.
   ///
   /// \see SourceManager::getDecomposedExpansionLoc
-  FileIDAndOffset getDecomposedExpansionLoc() const;
+  CLANG_ABI FileIDAndOffset getDecomposedExpansionLoc() const;
 
-  unsigned getSpellingLineNumber(bool *Invalid = nullptr) const;
-  unsigned getSpellingColumnNumber(bool *Invalid = nullptr) const;
+  CLANG_ABI unsigned getSpellingLineNumber(bool *Invalid = nullptr) const;
+  CLANG_ABI unsigned getSpellingColumnNumber(bool *Invalid = nullptr) const;
 
-  const char *getCharacterData(bool *Invalid = nullptr) const;
+  CLANG_ABI const char *getCharacterData(bool *Invalid = nullptr) const;
 
-  unsigned getLineNumber(bool *Invalid = nullptr) const;
-  unsigned getColumnNumber(bool *Invalid = nullptr) const;
+  CLANG_ABI unsigned getLineNumber(bool *Invalid = nullptr) const;
+  CLANG_ABI unsigned getColumnNumber(bool *Invalid = nullptr) const;
 
-  const FileEntry *getFileEntry() const;
-  OptionalFileEntryRef getFileEntryRef() const;
+  CLANG_ABI const FileEntry *getFileEntry() const;
+  CLANG_ABI OptionalFileEntryRef getFileEntryRef() const;
 
   /// Return a StringRef to the source buffer data for the
   /// specified FileID.
-  StringRef getBufferData(bool *Invalid = nullptr) const;
+  CLANG_ABI StringRef getBufferData(bool *Invalid = nullptr) const;
 
   /// Decompose the specified location into a raw FileID + Offset pair.
   ///
   /// The first element is the FileID, the second is the offset from the
   /// start of the buffer of the location.
-  FileIDAndOffset getDecomposedLoc() const;
+  CLANG_ABI FileIDAndOffset getDecomposedLoc() const;
 
-  bool isInSystemHeader() const;
+  CLANG_ABI bool isInSystemHeader() const;
 
   /// Determines the order of 2 source locations in the translation unit.
   ///
   /// \returns true if this source location comes before 'Loc', false otherwise.
-  bool isBeforeInTranslationUnitThan(SourceLocation Loc) const;
+  CLANG_ABI bool isBeforeInTranslationUnitThan(SourceLocation Loc) const;
 
   /// Determines the order of 2 source locations in the translation unit.
   ///
@@ -454,7 +455,7 @@ public:
   /// Prints information about this FullSourceLoc to stderr.
   ///
   /// This is useful for debugging.
-  void dump() const;
+  CLANG_ABI void dump() const;
 
   friend bool
   operator==(const FullSourceLoc &LHS, const FullSourceLoc &RHS) {
@@ -518,7 +519,7 @@ namespace llvm {
 
   // Allow calling FoldingSetNodeID::Add with SourceLocation object as parameter
   template <> struct FoldingSetTrait<clang::SourceLocation, void> {
-    static void Profile(const clang::SourceLocation &X, FoldingSetNodeID &ID);
+    CLANG_ABI static void Profile(const clang::SourceLocation &X, FoldingSetNodeID &ID);
   };
 
 } // namespace llvm

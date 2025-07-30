@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_TOOLING_INCLUSIONS_HEADERINCLUDES_H
 #define LLVM_CLANG_TOOLING_INCLUSIONS_HEADERINCLUDES_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/SourceManager.h"
 #include "clang/Tooling/Core/Replacement.h"
 #include "clang/Tooling/Inclusions/IncludeStyle.h"
@@ -27,14 +28,14 @@ namespace tooling {
 /// include sorting functions are also moved here.
 class IncludeCategoryManager {
 public:
-  IncludeCategoryManager(const IncludeStyle &Style, StringRef FileName);
+  CLANG_ABI IncludeCategoryManager(const IncludeStyle &Style, StringRef FileName);
 
   /// Returns the priority of the category which \p IncludeName belongs to.
   /// If \p CheckMainHeader is true and \p IncludeName is a main header, returns
   /// 0. Otherwise, returns the priority of the matching category or INT_MAX.
   /// NOTE: this API is not thread-safe!
-  int getIncludePriority(StringRef IncludeName, bool CheckMainHeader) const;
-  int getSortIncludePriority(StringRef IncludeName, bool CheckMainHeader) const;
+  CLANG_ABI int getIncludePriority(StringRef IncludeName, bool CheckMainHeader) const;
+  CLANG_ABI int getSortIncludePriority(StringRef IncludeName, bool CheckMainHeader) const;
 
 private:
   bool isMainHeader(StringRef IncludeName) const;
@@ -51,7 +52,7 @@ enum class IncludeDirective { Include, Import };
 /// file.
 class HeaderIncludes {
 public:
-  HeaderIncludes(llvm::StringRef FileName, llvm::StringRef Code,
+  CLANG_ABI HeaderIncludes(llvm::StringRef FileName, llvm::StringRef Code,
                  const IncludeStyle &Style);
 
   /// Inserts an #include or #import directive of \p Header into the code.
@@ -73,7 +74,7 @@ public:
   /// same category in the code that should be sorted after \p IncludeName. If
   /// \p IncludeName already exists (with exactly the same spelling), this
   /// returns std::nullopt.
-  std::optional<tooling::Replacement> insert(llvm::StringRef Header,
+  CLANG_ABI std::optional<tooling::Replacement> insert(llvm::StringRef Header,
                                              bool IsAngled,
                                              IncludeDirective Directive) const;
 
@@ -81,10 +82,10 @@ public:
   /// \p IsAngled is true or "" if \p IsAngled is false.
   /// This doesn't resolve the header file path; it only deletes #includes and
   /// #imports with exactly the same spelling.
-  tooling::Replacements remove(llvm::StringRef Header, bool IsAngled) const;
+  CLANG_ABI tooling::Replacements remove(llvm::StringRef Header, bool IsAngled) const;
 
   // Matches a whole #include directive.
-  static const llvm::Regex IncludeRegex;
+  CLANG_ABI static const llvm::Regex IncludeRegex;
 
 private:
   struct Include {

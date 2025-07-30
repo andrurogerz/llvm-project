@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_BASIC_DARWINSDKINFO_H
 #define LLVM_CLANG_BASIC_DARWINSDKINFO_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/Support/Error.h"
@@ -101,7 +102,7 @@ public:
     /// Returns the mapped key, or the appropriate Minimum / MaximumValue if
     /// they key is outside of the mapping bounds. If they key isn't mapped, but
     /// within the minimum and maximum bounds, std::nullopt is returned.
-    std::optional<VersionTuple>
+    CLANG_ABI std::optional<VersionTuple>
     map(const VersionTuple &Key, const VersionTuple &MinimumValue,
         std::optional<VersionTuple> MaximumValue) const;
 
@@ -129,7 +130,7 @@ public:
       return map(Key, MinimumValue, MaximumValue);
     }
 
-    static std::optional<RelatedTargetVersionMapping>
+    CLANG_ABI static std::optional<RelatedTargetVersionMapping>
     parseJSON(const llvm::json::Object &Obj,
               VersionTuple MaximumDeploymentTarget);
 
@@ -174,7 +175,7 @@ public:
     return Mapping->getSecond() ? &*Mapping->getSecond() : nullptr;
   }
 
-  static std::optional<DarwinSDKInfo>
+  CLANG_ABI static std::optional<DarwinSDKInfo>
   parseDarwinSDKSettingsJSON(const llvm::json::Object *Obj);
 
 private:
@@ -193,7 +194,7 @@ private:
 ///
 /// \returns an error if the SDKSettings.json file is invalid, std::nullopt if
 /// the SDK has no SDKSettings.json, or a valid \c DarwinSDKInfo otherwise.
-Expected<std::optional<DarwinSDKInfo>>
+CLANG_ABI Expected<std::optional<DarwinSDKInfo>>
 parseDarwinSDKInfo(llvm::vfs::FileSystem &VFS, StringRef SDKRootPath);
 
 } // end namespace clang

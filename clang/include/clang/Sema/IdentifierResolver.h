@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_SEMA_IDENTIFIERRESOLVER_H
 #define LLVM_CLANG_SEMA_IDENTIFIERRESOLVER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/SmallVector.h"
 #include <cassert>
@@ -51,7 +52,7 @@ class IdentifierResolver {
 
     /// RemoveDecl - Remove the decl from the scope chain.
     /// The decl must already be part of the decl chain.
-    void RemoveDecl(NamedDecl *D);
+    CLANG_ABI void RemoveDecl(NamedDecl *D);
 
     /// Insert the given declaration at the given position in the list.
     void InsertDecl(DeclsTy::iterator Pos, NamedDecl *D) {
@@ -102,7 +103,7 @@ public:
       return reinterpret_cast<BaseIter>(Ptr & ~0x1);
     }
 
-    void incrementSlowCase();
+    CLANG_ABI void incrementSlowCase();
 
   public:
     iterator() = default;
@@ -131,17 +132,17 @@ public:
     }
   };
 
-  explicit IdentifierResolver(Preprocessor &PP);
-  ~IdentifierResolver();
+  CLANG_ABI explicit IdentifierResolver(Preprocessor &PP);
+  CLANG_ABI ~IdentifierResolver();
 
   IdentifierResolver(const IdentifierResolver &) = delete;
   IdentifierResolver &operator=(const IdentifierResolver &) = delete;
 
   /// Returns a range of decls with the name 'Name'.
-  llvm::iterator_range<iterator> decls(DeclarationName Name);
+  CLANG_ABI llvm::iterator_range<iterator> decls(DeclarationName Name);
 
   /// Returns an iterator over decls with the name 'Name'.
-  iterator begin(DeclarationName Name);
+  CLANG_ABI iterator begin(DeclarationName Name);
 
   /// Returns the end iterator.
   iterator end() { return iterator(); }
@@ -156,19 +157,19 @@ public:
   ///        template instantiation or specialization). In this case, a
   ///        declaration is in scope if it's in the inline namespace set of the
   ///        context.
-  bool isDeclInScope(Decl *D, DeclContext *Ctx, Scope *S = nullptr,
+  CLANG_ABI bool isDeclInScope(Decl *D, DeclContext *Ctx, Scope *S = nullptr,
                      bool AllowInlineNamespace = false) const;
 
   /// AddDecl - Link the decl to its shadowed decl chain.
-  void AddDecl(NamedDecl *D);
+  CLANG_ABI void AddDecl(NamedDecl *D);
 
   /// RemoveDecl - Unlink the decl from its shadowed decl chain.
   /// The decl must already be part of the decl chain.
-  void RemoveDecl(NamedDecl *D);
+  CLANG_ABI void RemoveDecl(NamedDecl *D);
 
   /// Insert the given declaration after the given iterator
   /// position.
-  void InsertDeclAfter(iterator Pos, NamedDecl *D);
+  CLANG_ABI void InsertDeclAfter(iterator Pos, NamedDecl *D);
 
   /// Try to add the given declaration to the top level scope, if it
   /// (or a redeclaration of it) hasn't already been added.
@@ -178,7 +179,7 @@ public:
   /// \param Name The name of the externally-produced declaration.
   ///
   /// \returns true if the declaration was added, false otherwise.
-  bool tryAddTopLevelDecl(NamedDecl *D, DeclarationName Name);
+  CLANG_ABI bool tryAddTopLevelDecl(NamedDecl *D, DeclarationName Name);
 
 private:
   const LangOptions &LangOpt;

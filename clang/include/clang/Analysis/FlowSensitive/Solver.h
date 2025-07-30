@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_SOLVER_H
 #define LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_SOLVER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Analysis/FlowSensitive/Formula.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/ArrayRef.h"
@@ -92,8 +93,8 @@ public:
   virtual bool reachedLimit() const = 0;
 };
 
-llvm::raw_ostream &operator<<(llvm::raw_ostream &, const Solver::Result &);
-llvm::raw_ostream &operator<<(llvm::raw_ostream &, Solver::Result::Assignment);
+CLANG_ABI llvm::raw_ostream &operator<<(llvm::raw_ostream &, const Solver::Result &);
+CLANG_ABI llvm::raw_ostream &operator<<(llvm::raw_ostream &, Solver::Result::Assignment);
 
 } // namespace dataflow
 } // namespace clang

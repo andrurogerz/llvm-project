@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_BASIC_IDENTIFIERTABLE_H
 #define LLVM_CLANG_BASIC_IDENTIFIERTABLE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/Builtins.h"
 #include "clang/Basic/DiagnosticIDs.h"
 #include "clang/Basic/LLVM.h"
@@ -338,7 +339,7 @@ public:
   /// Return the preprocessor keyword ID for this identifier.
   ///
   /// For example, "define" will return tok::pp_define.
-  tok::PPKeywordKind getPPKeywordID() const;
+  CLANG_ABI tok::PPKeywordKind getPPKeywordID() const;
 
   /// Return the Objective-C keyword ID for the this identifier.
   ///
@@ -453,11 +454,11 @@ public:
   void setIsKeywordInCPlusPlus(bool Val = true) { IsKeywordInCpp = Val; }
 
   /// Return true if this token is a keyword in the specified language.
-  bool isKeyword(const LangOptions &LangOpts) const;
+  CLANG_ABI bool isKeyword(const LangOptions &LangOpts) const;
 
   /// Return true if this token is a C++ keyword in the specified
   /// language.
-  bool isCPlusPlusKeyword(const LangOptions &LangOpts) const;
+  CLANG_ABI bool isCPlusPlusKeyword(const LangOptions &LangOpts) const;
 
   /// Get and set FETokenInfo. The language front-end is allowed to associate
   /// arbitrary metadata with this token.
@@ -549,15 +550,15 @@ public:
 
   /// Determine whether \p this is a name reserved for the implementation (C99
   /// 7.1.3, C++ [lib.global.names]).
-  ReservedIdentifierStatus isReserved(const LangOptions &LangOpts) const;
+  CLANG_ABI ReservedIdentifierStatus isReserved(const LangOptions &LangOpts) const;
 
   /// Determine whether \p this is a name reserved for future standardization or
   /// the implementation (C++ [usrlit.suffix]).
-  ReservedLiteralSuffixIdStatus isReservedLiteralSuffixId() const;
+  CLANG_ABI ReservedLiteralSuffixIdStatus isReservedLiteralSuffixId() const;
 
   /// If the identifier is an "uglified" reserved name, return a cleaned form.
   /// e.g. _Foo => Foo. Otherwise, just returns the name.
-  StringRef deuglifiedName() const;
+  CLANG_ABI StringRef deuglifiedName() const;
   bool isPlaceholder() const {
     return getLength() == 1 && getNameStart()[0] == '_';
   }
@@ -612,7 +613,7 @@ public:
 /// advance, and end-of-sequence checking in a single
 /// operation. Subclasses of this iterator type will provide the
 /// actual functionality.
-class IdentifierIterator {
+class CLANG_ABI IdentifierIterator {
 protected:
   IdentifierIterator() = default;
 
@@ -631,7 +632,7 @@ public:
 };
 
 /// Provides lookups to, and iteration over, IdentiferInfo objects.
-class IdentifierInfoLookup {
+class CLANG_ABI IdentifierInfoLookup {
 public:
   virtual ~IdentifierInfoLookup();
 
@@ -670,11 +671,11 @@ class IdentifierTable {
 
 public:
   /// Create the identifier table.
-  explicit IdentifierTable(IdentifierInfoLookup *ExternalLookup = nullptr);
+  CLANG_ABI explicit IdentifierTable(IdentifierInfoLookup *ExternalLookup = nullptr);
 
   /// Create the identifier table, populating it with info about the
   /// language keywords for the language specified by \p LangOpts.
-  explicit IdentifierTable(const LangOptions &LangOpts,
+  CLANG_ABI explicit IdentifierTable(const LangOptions &LangOpts,
                            IdentifierInfoLookup *ExternalLookup = nullptr);
 
   /// Set the external identifier lookup mechanism.
@@ -763,16 +764,16 @@ public:
 
   /// Print some statistics to stderr that indicate how well the
   /// hashing is doing.
-  void PrintStats() const;
+  CLANG_ABI void PrintStats() const;
 
   /// Populate the identifier table with info about the language keywords
   /// for the language specified by \p LangOpts.
-  void AddKeywords(const LangOptions &LangOpts);
+  CLANG_ABI void AddKeywords(const LangOptions &LangOpts);
 
   /// Returns the correct diagnostic to issue for a future-compat diagnostic
   /// warning. Note, this function assumes the identifier passed has already
   /// been determined to be a future compatible keyword.
-  diag::kind getFutureCompatDiagKind(const IdentifierInfo &II,
+  CLANG_ABI diag::kind getFutureCompatDiagKind(const IdentifierInfo &II,
                                      const LangOptions &LangOpts);
 };
 
@@ -933,7 +934,7 @@ public:
   }
 
   // getName - Derive the full selector name and return it.
-  std::string getName() const;
+  CLANG_ABI std::string getName() const;
 
   using DeclarationNameExtra::getNumArgs;
 
@@ -1033,9 +1034,9 @@ class Selector {
     return new_flags;
   }
 
-  static ObjCMethodFamily getMethodFamilyImpl(Selector sel);
+  CLANG_ABI static ObjCMethodFamily getMethodFamilyImpl(Selector sel);
 
-  static ObjCStringFormatFamily getStringFormatFamilyImpl(Selector sel);
+  CLANG_ABI static ObjCStringFormatFamily getStringFormatFamilyImpl(Selector sel);
 
 public:
   /// The default ctor should only be used when creating data structures that
@@ -1064,12 +1065,12 @@ public:
   bool isUnarySelector() const { return InfoPtr.getInt() == ZeroArg; }
 
   /// If this selector is the specific keyword selector described by Names.
-  bool isKeywordSelector(ArrayRef<StringRef> Names) const;
+  CLANG_ABI bool isKeywordSelector(ArrayRef<StringRef> Names) const;
 
   /// If this selector is the specific unary selector described by Name.
-  bool isUnarySelector(StringRef Name) const;
+  CLANG_ABI bool isUnarySelector(StringRef Name) const;
 
-  unsigned getNumArgs() const;
+  CLANG_ABI unsigned getNumArgs() const;
 
   /// Retrieve the identifier at a given position in the selector.
   ///
@@ -1084,7 +1085,7 @@ public:
   ///
   /// \returns the uniqued identifier for this slot, or NULL if this slot has
   /// no corresponding identifier.
-  const IdentifierInfo *getIdentifierInfoForSlot(unsigned argIndex) const;
+  CLANG_ABI const IdentifierInfo *getIdentifierInfoForSlot(unsigned argIndex) const;
 
   /// Retrieve the name at a given position in the selector.
   ///
@@ -1094,16 +1095,16 @@ public:
   ///
   /// \returns the name for this slot, which may be the empty string if no
   /// name was supplied.
-  StringRef getNameForSlot(unsigned argIndex) const;
+  CLANG_ABI StringRef getNameForSlot(unsigned argIndex) const;
 
   /// Derive the full selector name (e.g. "foo:bar:") and return
   /// it as an std::string.
-  std::string getAsString() const;
+  CLANG_ABI std::string getAsString() const;
 
   /// Prints the full selector name (e.g. "foo:bar:").
-  void print(llvm::raw_ostream &OS) const;
+  CLANG_ABI void print(llvm::raw_ostream &OS) const;
 
-  void dump() const;
+  CLANG_ABI void dump() const;
 
   /// Derive the conventional family of this method.
   ObjCMethodFamily getMethodFamily() const {
@@ -1122,7 +1123,7 @@ public:
     return Selector(uintptr_t(-2));
   }
 
-  static ObjCInstanceTypeFamily getInstTypeMethodFamily(Selector sel);
+  CLANG_ABI static ObjCInstanceTypeFamily getInstTypeMethodFamily(Selector sel);
 };
 
 /// This table allows us to fully hide how we implement
@@ -1132,16 +1133,16 @@ class SelectorTable {
   void *Impl;
 
 public:
-  SelectorTable();
+  CLANG_ABI SelectorTable();
   SelectorTable(const SelectorTable &) = delete;
   SelectorTable &operator=(const SelectorTable &) = delete;
-  ~SelectorTable();
+  CLANG_ABI ~SelectorTable();
 
   /// Can create any sort of selector.
   ///
   /// \p NumArgs indicates whether this is a no argument selector "foo", a
   /// single argument selector "foo:" or multi-argument "foo:bar:".
-  Selector getSelector(unsigned NumArgs, const IdentifierInfo **IIV);
+  CLANG_ABI Selector getSelector(unsigned NumArgs, const IdentifierInfo **IIV);
 
   Selector getUnarySelector(const IdentifierInfo *ID) {
     return Selector(ID, 1);
@@ -1152,24 +1153,24 @@ public:
   }
 
   /// Return the total amount of memory allocated for managing selectors.
-  size_t getTotalMemory() const;
+  CLANG_ABI size_t getTotalMemory() const;
 
   /// Return the default setter name for the given identifier.
   ///
   /// This is "set" + \p Name where the initial character of \p Name
   /// has been capitalized.
-  static SmallString<64> constructSetterName(StringRef Name);
+  CLANG_ABI static SmallString<64> constructSetterName(StringRef Name);
 
   /// Return the default setter selector for the given identifier.
   ///
   /// This is "set" + \p Name where the initial character of \p Name
   /// has been capitalized.
-  static Selector constructSetterSelector(IdentifierTable &Idents,
+  CLANG_ABI static Selector constructSetterSelector(IdentifierTable &Idents,
                                           SelectorTable &SelTable,
                                           const IdentifierInfo *Name);
 
   /// Return the property name for the given setter selector.
-  static std::string getPropertyNameFromSetterSelector(Selector Sel);
+  CLANG_ABI static std::string getPropertyNameFromSetterSelector(Selector Sel);
 };
 
 /// A simple pair of identifier info and location.
@@ -1210,7 +1211,7 @@ struct DenseMapInfo<clang::Selector> {
     return clang::Selector::getTombstoneMarker();
   }
 
-  static unsigned getHashValue(clang::Selector S);
+  CLANG_ABI static unsigned getHashValue(clang::Selector S);
 
   static bool isEqual(clang::Selector LHS, clang::Selector RHS) {
     return LHS == RHS;

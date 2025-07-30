@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_DRIVER_TOOLCHAIN_H
 #define LLVM_CLANG_DRIVER_TOOLCHAIN_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/LangOptions.h"
 #include "clang/Basic/Sanitizers.h"
@@ -89,7 +90,7 @@ struct ParsedClangName {
 };
 
 /// ToolChain - Access to tools for a single platform.
-class ToolChain {
+class CLANG_ABI ToolChain {
 public:
   using path_list = SmallVector<std::string, 16>;
 

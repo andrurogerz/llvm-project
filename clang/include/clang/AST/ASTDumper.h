@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_AST_ASTDUMPER_H
 #define LLVM_CLANG_AST_ASTDUMPER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTNodeTraverser.h"
 #include "clang/AST/TextNodeDumper.h"
 #include "clang/Basic/SourceManager.h"
@@ -32,8 +33,8 @@ public:
 
   TextNodeDumper &doGetNodeDelegate() { return NodeDumper; }
 
-  void dumpInvalidDeclContext(const DeclContext *DC);
-  void dumpLookups(const DeclContext *DC, bool DumpDecls);
+  CLANG_ABI void dumpInvalidDeclContext(const DeclContext *DC);
+  CLANG_ABI void dumpLookups(const DeclContext *DC, bool DumpDecls);
 
   template <typename SpecializationDecl>
   void dumpTemplateDeclSpecialization(const SpecializationDecl *D,
@@ -41,9 +42,9 @@ public:
   template <typename TemplateDecl>
   void dumpTemplateDecl(const TemplateDecl *D, bool DumpExplicitInst);
 
-  void VisitFunctionTemplateDecl(const FunctionTemplateDecl *D);
-  void VisitClassTemplateDecl(const ClassTemplateDecl *D);
-  void VisitVarTemplateDecl(const VarTemplateDecl *D);
+  CLANG_ABI void VisitFunctionTemplateDecl(const FunctionTemplateDecl *D);
+  CLANG_ABI void VisitClassTemplateDecl(const ClassTemplateDecl *D);
+  CLANG_ABI void VisitVarTemplateDecl(const VarTemplateDecl *D);
 };
 
 } // namespace clang

@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_BUGREPORTER_BUGREPORTER_H
 #define LLVM_CLANG_STATICANALYZER_CORE_BUGREPORTER_BUGREPORTER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Analysis/PathDiagnostic.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/SourceLocation.h"
@@ -88,7 +89,7 @@ public:
 /// traversing the CallExpr associated with the call and checking if the given
 /// symbol is returned or is one of the arguments.
 /// The hint can be customized by redefining 'getMessageForX()' methods.
-class StackHintGeneratorForSymbol : public StackHintGenerator {
+class CLANG_ABI StackHintGeneratorForSymbol : public StackHintGenerator {
 private:
   SymbolRef Sym;
   std::string Msg;
@@ -248,7 +249,7 @@ public:
   virtual void Profile(llvm::FoldingSetNodeID& hash) const = 0;
 };
 
-class BasicBugReport : public BugReport {
+class CLANG_ABI BasicBugReport : public BugReport {
   PathDiagnosticLocation Location;
   const Decl *DeclWithIssue = nullptr;
 
@@ -286,7 +287,7 @@ public:
   void Profile(llvm::FoldingSetNodeID& hash) const override;
 };
 
-class PathSensitiveBugReport : public BugReport {
+class CLANG_ABI PathSensitiveBugReport : public BugReport {
 public:
   using VisitorList = SmallVector<std::unique_ptr<BugReporterVisitor>, 8>;
   using visitor_iterator = VisitorList::iterator;
@@ -583,7 +584,7 @@ public:
 /// and flush the corresponding diagnostics.
 ///
 /// The base class is used for generating path-insensitive
-class BugReporter {
+class CLANG_ABI BugReporter {
 private:
   BugReporterData& D;
 
@@ -680,7 +681,7 @@ protected:
 };
 
 /// GRBugReporter is used for generating path-sensitive reports.
-class PathSensitiveBugReporter final : public BugReporter {
+class CLANG_ABI PathSensitiveBugReporter final : public BugReporter {
   ExprEngine& Eng;
 
   BugReport *findReportInEquivalenceClass(
@@ -718,7 +719,7 @@ public:
 };
 
 
-class BugReporterContext {
+class CLANG_ABI BugReporterContext {
   PathSensitiveBugReporter &BR;
 
   virtual void anchor();
@@ -787,7 +788,7 @@ public:
                                              PathSensitiveBugReport &)>;
 
 private:
-  static int Kind;
+  CLANG_ABI static int Kind;
 
   const Callback Cb;
   const bool IsPrunable;

@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_EXPROPENMP_H
 #define LLVM_CLANG_AST_EXPROPENMP_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ComputeDependence.h"
 #include "clang/AST/Expr.h"
 
@@ -57,12 +58,12 @@ class OMPArrayShapingExpr final
   }
 
 public:
-  static OMPArrayShapingExpr *Create(const ASTContext &Context, QualType T,
+  CLANG_ABI static OMPArrayShapingExpr *Create(const ASTContext &Context, QualType T,
                                      Expr *Op, SourceLocation L,
                                      SourceLocation R, ArrayRef<Expr *> Dims,
                                      ArrayRef<SourceRange> BracketRanges);
 
-  static OMPArrayShapingExpr *CreateEmpty(const ASTContext &Context,
+  CLANG_ABI static OMPArrayShapingExpr *CreateEmpty(const ASTContext &Context,
                                           unsigned NumDims);
 
   SourceLocation getLParenLoc() const { return LPLoc; }
@@ -230,13 +231,13 @@ private:
   }
 
 public:
-  static OMPIteratorExpr *Create(const ASTContext &Context, QualType T,
+  CLANG_ABI static OMPIteratorExpr *Create(const ASTContext &Context, QualType T,
                                  SourceLocation IteratorKwLoc, SourceLocation L,
                                  SourceLocation R,
                                  ArrayRef<IteratorDefinition> Data,
                                  ArrayRef<OMPIteratorHelperData> Helpers);
 
-  static OMPIteratorExpr *CreateEmpty(const ASTContext &Context,
+  CLANG_ABI static OMPIteratorExpr *CreateEmpty(const ASTContext &Context,
                                       unsigned NumIterators);
 
   SourceLocation getLParenLoc() const { return LPLoc; }
@@ -251,32 +252,32 @@ public:
   SourceLocation getEndLoc() const LLVM_READONLY { return RPLoc; }
 
   /// Gets the iterator declaration for the given iterator.
-  Decl *getIteratorDecl(unsigned I);
+  CLANG_ABI Decl *getIteratorDecl(unsigned I);
   const Decl *getIteratorDecl(unsigned I) const {
     return const_cast<OMPIteratorExpr *>(this)->getIteratorDecl(I);
   }
 
   /// Gets the iterator range for the given iterator.
-  IteratorRange getIteratorRange(unsigned I);
+  CLANG_ABI IteratorRange getIteratorRange(unsigned I);
   const IteratorRange getIteratorRange(unsigned I) const {
     return const_cast<OMPIteratorExpr *>(this)->getIteratorRange(I);
   }
 
   /// Gets the location of '=' for the given iterator definition.
-  SourceLocation getAssignLoc(unsigned I) const;
+  CLANG_ABI SourceLocation getAssignLoc(unsigned I) const;
   /// Gets the location of the first ':' in the range for the given iterator
   /// definition.
-  SourceLocation getColonLoc(unsigned I) const;
+  CLANG_ABI SourceLocation getColonLoc(unsigned I) const;
   /// Gets the location of the second ':' (if any) in the range for the given
   /// iteratori definition.
-  SourceLocation getSecondColonLoc(unsigned I) const;
+  CLANG_ABI SourceLocation getSecondColonLoc(unsigned I) const;
 
   /// Returns number of iterator definitions.
   unsigned numOfIterators() const { return NumIterators; }
 
   /// Fetches helper data for the specified iteration space.
-  OMPIteratorHelperData &getHelper(unsigned I);
-  const OMPIteratorHelperData &getHelper(unsigned I) const;
+  CLANG_ABI OMPIteratorHelperData &getHelper(unsigned I);
+  CLANG_ABI const OMPIteratorHelperData &getHelper(unsigned I) const;
 
   static bool classof(const Stmt *T) {
     return T->getStmtClass() == OMPIteratorExprClass;

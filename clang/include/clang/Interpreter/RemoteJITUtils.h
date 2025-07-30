@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_INTERPRETER_REMOTEJITUTILS_H
 #define LLVM_CLANG_INTERPRETER_REMOTEJITUTILS_H
 
+#include "clang/Support/Compiler.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ExecutionEngine/Orc/Core.h"
 #include "llvm/ExecutionEngine/Orc/Layer.h"
@@ -24,14 +25,14 @@
 #include <memory>
 #include <string>
 
-llvm::Expected<std::unique_ptr<llvm::orc::SimpleRemoteEPC>>
+CLANG_ABI llvm::Expected<std::unique_ptr<llvm::orc::SimpleRemoteEPC>>
 launchExecutor(llvm::StringRef ExecutablePath, bool UseSharedMemory,
                llvm::StringRef SlabAllocateSizeString);
 
 /// Create a JITLinkExecutor that connects to the given network address
 /// through a TCP socket. A valid NetworkAddress provides hostname and port,
 /// e.g. localhost:20000.
-llvm::Expected<std::unique_ptr<llvm::orc::SimpleRemoteEPC>>
+CLANG_ABI llvm::Expected<std::unique_ptr<llvm::orc::SimpleRemoteEPC>>
 connectTCPSocket(llvm::StringRef NetworkAddress, bool UseSharedMemory,
                  llvm::StringRef SlabAllocateSizeString);
 

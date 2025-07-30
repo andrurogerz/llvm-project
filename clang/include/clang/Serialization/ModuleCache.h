@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_SERIALIZATION_MODULECACHE_H
 #define LLVM_CLANG_SERIALIZATION_MODULECACHE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
 
@@ -58,7 +59,7 @@ public:
 /// operated on by multiple processes. This instance must be used across all
 /// \c CompilerInstance instances participating in building modules for single
 /// translation unit in order to share the same \c InMemoryModuleCache.
-IntrusiveRefCntPtr<ModuleCache> createCrossProcessModuleCache();
+CLANG_ABI IntrusiveRefCntPtr<ModuleCache> createCrossProcessModuleCache();
 } // namespace clang
 
 #endif

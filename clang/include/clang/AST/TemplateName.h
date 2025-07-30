@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_TEMPLATENAME_H
 #define LLVM_CLANG_AST_TEMPLATENAME_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/DependenceFlags.h"
 #include "clang/AST/NestedNameSpecifier.h"
 #include "clang/Basic/LLVM.h"
@@ -153,31 +154,31 @@ class SubstTemplateTemplateParmPackStorage : public UncommonTemplateNameStorage,
   llvm::PointerIntPair<Decl *, 1, bool> AssociatedDeclAndFinal;
 
 public:
-  SubstTemplateTemplateParmPackStorage(ArrayRef<TemplateArgument> ArgPack,
+  CLANG_ABI SubstTemplateTemplateParmPackStorage(ArrayRef<TemplateArgument> ArgPack,
                                        Decl *AssociatedDecl, unsigned Index,
                                        bool Final);
 
   /// A template-like entity which owns the whole pattern being substituted.
   /// This will own a set of template parameters.
-  Decl *getAssociatedDecl() const;
+  CLANG_ABI Decl *getAssociatedDecl() const;
 
   /// Returns the index of the replaced parameter in the associated declaration.
   /// This should match the result of `getParameterPack()->getIndex()`.
   unsigned getIndex() const { return Bits.Index; }
 
   // When true the substitution will be 'Final' (subst node won't be placed).
-  bool getFinal() const;
+  CLANG_ABI bool getFinal() const;
 
   /// Retrieve the template template parameter pack being substituted.
-  TemplateTemplateParmDecl *getParameterPack() const;
+  CLANG_ABI TemplateTemplateParmDecl *getParameterPack() const;
 
   /// Retrieve the template template argument pack with which this
   /// parameter was substituted.
-  TemplateArgument getArgumentPack() const;
+  CLANG_ABI TemplateArgument getArgumentPack() const;
 
-  void Profile(llvm::FoldingSetNodeID &ID, ASTContext &Context);
+  CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID, ASTContext &Context);
 
-  static void Profile(llvm::FoldingSetNodeID &ID, ASTContext &Context,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, ASTContext &Context,
                       const TemplateArgument &ArgPack, Decl *AssociatedDecl,
                       unsigned Index, bool Final);
 };
@@ -230,7 +231,7 @@ class TemplateName {
 
   StorageType Storage;
 
-  explicit TemplateName(void *Ptr);
+  CLANG_ABI explicit TemplateName(void *Ptr);
 
 public:
   // Kind of name that is actually stored.
@@ -272,21 +273,21 @@ public:
   };
 
   TemplateName() = default;
-  explicit TemplateName(TemplateDecl *Template);
-  explicit TemplateName(OverloadedTemplateStorage *Storage);
-  explicit TemplateName(AssumedTemplateStorage *Storage);
-  explicit TemplateName(SubstTemplateTemplateParmStorage *Storage);
-  explicit TemplateName(SubstTemplateTemplateParmPackStorage *Storage);
-  explicit TemplateName(QualifiedTemplateName *Qual);
-  explicit TemplateName(DependentTemplateName *Dep);
-  explicit TemplateName(UsingShadowDecl *Using);
-  explicit TemplateName(DeducedTemplateStorage *Deduced);
+  CLANG_ABI explicit TemplateName(TemplateDecl *Template);
+  CLANG_ABI explicit TemplateName(OverloadedTemplateStorage *Storage);
+  CLANG_ABI explicit TemplateName(AssumedTemplateStorage *Storage);
+  CLANG_ABI explicit TemplateName(SubstTemplateTemplateParmStorage *Storage);
+  CLANG_ABI explicit TemplateName(SubstTemplateTemplateParmPackStorage *Storage);
+  CLANG_ABI explicit TemplateName(QualifiedTemplateName *Qual);
+  CLANG_ABI explicit TemplateName(DependentTemplateName *Dep);
+  CLANG_ABI explicit TemplateName(UsingShadowDecl *Using);
+  CLANG_ABI explicit TemplateName(DeducedTemplateStorage *Deduced);
 
   /// Determine whether this template name is NULL.
-  bool isNull() const;
+  CLANG_ABI bool isNull() const;
 
   // Get the kind of name that is actually stored.
-  NameKind getKind() const;
+  CLANG_ABI NameKind getKind() const;
 
   /// Retrieve the underlying template declaration that
   /// this template name refers to, if known.
@@ -295,12 +296,12 @@ public:
   /// to, if any. If the template name does not refer to a specific
   /// declaration because it is a dependent name, or if it refers to a
   /// set of function templates, returns NULL.
-  TemplateDecl *getAsTemplateDecl(bool IgnoreDeduced = false) const;
+  CLANG_ABI TemplateDecl *getAsTemplateDecl(bool IgnoreDeduced = false) const;
 
   /// Retrieves the underlying template declaration that
   /// this template name refers to, along with the
   /// deduced default arguments, if any.
-  std::pair<TemplateDecl *, DefaultArguments>
+  CLANG_ABI std::pair<TemplateDecl *, DefaultArguments>
   getTemplateDeclAndDefaultArgs() const;
 
   /// Retrieve the underlying, overloaded function template
@@ -310,58 +311,58 @@ public:
   /// name refers to, if known. If the template name does not refer to a
   /// specific set of function templates because it is a dependent name or
   /// refers to a single template, returns NULL.
-  OverloadedTemplateStorage *getAsOverloadedTemplate() const;
+  CLANG_ABI OverloadedTemplateStorage *getAsOverloadedTemplate() const;
 
   /// Retrieve information on a name that has been assumed to be a
   /// template-name in order to permit a call via ADL.
-  AssumedTemplateStorage *getAsAssumedTemplateName() const;
+  CLANG_ABI AssumedTemplateStorage *getAsAssumedTemplateName() const;
 
   /// Retrieve the substituted template template parameter, if
   /// known.
   ///
   /// \returns The storage for the substituted template template parameter,
   /// if known. Otherwise, returns NULL.
-  SubstTemplateTemplateParmStorage *getAsSubstTemplateTemplateParm() const;
+  CLANG_ABI SubstTemplateTemplateParmStorage *getAsSubstTemplateTemplateParm() const;
 
   /// Retrieve the substituted template template parameter pack, if
   /// known.
   ///
   /// \returns The storage for the substituted template template parameter pack,
   /// if known. Otherwise, returns NULL.
-  SubstTemplateTemplateParmPackStorage *
+  CLANG_ABI SubstTemplateTemplateParmPackStorage *
   getAsSubstTemplateTemplateParmPack() const;
 
   /// Retrieve the underlying qualified template name
   /// structure, if any.
-  QualifiedTemplateName *getAsQualifiedTemplateName() const;
+  CLANG_ABI QualifiedTemplateName *getAsQualifiedTemplateName() const;
 
   /// Retrieve the underlying dependent template name
   /// structure, if any.
-  DependentTemplateName *getAsDependentTemplateName() const;
+  CLANG_ABI DependentTemplateName *getAsDependentTemplateName() const;
 
   /// Retrieve the using shadow declaration through which the underlying
   /// template declaration is introduced, if any.
-  UsingShadowDecl *getAsUsingShadowDecl() const;
+  CLANG_ABI UsingShadowDecl *getAsUsingShadowDecl() const;
 
   /// Retrieve the deduced template info, if any.
-  DeducedTemplateStorage *getAsDeducedTemplateName() const;
+  CLANG_ABI DeducedTemplateStorage *getAsDeducedTemplateName() const;
 
-  std::optional<TemplateName> desugar(bool IgnoreDeduced) const;
+  CLANG_ABI std::optional<TemplateName> desugar(bool IgnoreDeduced) const;
 
   TemplateName getUnderlying() const;
 
-  TemplateNameDependence getDependence() const;
+  CLANG_ABI TemplateNameDependence getDependence() const;
 
   /// Determines whether this is a dependent template name.
-  bool isDependent() const;
+  CLANG_ABI bool isDependent() const;
 
   /// Determines whether this is a template name that somehow
   /// depends on a template parameter.
-  bool isInstantiationDependent() const;
+  CLANG_ABI bool isInstantiationDependent() const;
 
   /// Determines whether this template name contains an
   /// unexpanded parameter pack (for C++0x variadic templates).
-  bool containsUnexpandedParameterPack() const;
+  CLANG_ABI bool containsUnexpandedParameterPack() const;
 
   enum class Qualified { None, AsWritten };
   /// Print the template name.
@@ -372,15 +373,15 @@ public:
   /// \param Qual print the (Qualified::None) simple name,
   /// (Qualified::AsWritten) any written (possibly partial) qualifier, or
   /// (Qualified::Fully) the fully qualified name.
-  void print(raw_ostream &OS, const PrintingPolicy &Policy,
+  CLANG_ABI void print(raw_ostream &OS, const PrintingPolicy &Policy,
              Qualified Qual = Qualified::AsWritten) const;
 
   /// Debugging aid that dumps the template name.
-  void dump(raw_ostream &OS, const ASTContext &Context) const;
+  CLANG_ABI void dump(raw_ostream &OS, const ASTContext &Context) const;
 
   /// Debugging aid that dumps the template name to standard
   /// error.
-  void dump() const;
+  CLANG_ABI void dump() const;
 
   void Profile(llvm::FoldingSetNodeID &ID) {
     ID.AddPointer(Storage.getOpaqueValue());
@@ -401,7 +402,7 @@ public:
 
 /// Insertion operator for diagnostics.  This allows sending TemplateName's
 /// into a diagnostic with <<.
-const StreamingDiagnostic &operator<<(const StreamingDiagnostic &DB,
+CLANG_ABI const StreamingDiagnostic &operator<<(const StreamingDiagnostic &DB,
                                       TemplateName N);
 
 /// A structure for storing the information associated with a
@@ -440,12 +441,12 @@ public:
     return UnsignedOrNone::fromInternalRepresentation(Bits.Data >> 1);
   }
 
-  TemplateTemplateParmDecl *getParameter() const;
+  CLANG_ABI TemplateTemplateParmDecl *getParameter() const;
   TemplateName getReplacement() const { return Replacement; }
 
-  void Profile(llvm::FoldingSetNodeID &ID);
+  CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID);
 
-  static void Profile(llvm::FoldingSetNodeID &ID, TemplateName Replacement,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, TemplateName Replacement,
                       Decl *AssociatedDecl, unsigned Index,
                       UnsignedOrNone PackIndex, bool Final);
 };
@@ -468,9 +469,9 @@ public:
                       Bits.Data}};
   }
 
-  void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context) const;
+  CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context) const;
 
-  static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
+  CLANG_ABI static void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context,
                       TemplateName Underlying, const DefaultArguments &DefArgs);
 };
 
@@ -544,8 +545,8 @@ public:
 
 struct IdentifierOrOverloadedOperator {
   IdentifierOrOverloadedOperator() = default;
-  IdentifierOrOverloadedOperator(const IdentifierInfo *II);
-  IdentifierOrOverloadedOperator(OverloadedOperatorKind OOK);
+  CLANG_ABI IdentifierOrOverloadedOperator(const IdentifierInfo *II);
+  CLANG_ABI IdentifierOrOverloadedOperator(OverloadedOperatorKind OOK);
 
   /// Returns the identifier to which this template name refers.
   const IdentifierInfo *getIdentifier() const {
@@ -561,7 +562,7 @@ struct IdentifierOrOverloadedOperator {
                                           : OO_None;
   }
 
-  void Profile(llvm::FoldingSetNodeID &ID) const;
+  CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID) const;
 
   bool operator==(const IdentifierOrOverloadedOperator &Other) const {
     return PtrOrOp == Other.PtrOrOp;
@@ -591,7 +592,7 @@ class DependentTemplateStorage {
   IdentifierOrOverloadedOperator Name;
 
 public:
-  DependentTemplateStorage(NestedNameSpecifier *Qualifier,
+  CLANG_ABI DependentTemplateStorage(NestedNameSpecifier *Qualifier,
                            IdentifierOrOverloadedOperator Name,
                            bool HasTemplateKeyword);
 
@@ -603,7 +604,7 @@ public:
   /// Was this template name was preceeded by the template keyword?
   bool hasTemplateKeyword() const { return Qualifier.getInt(); }
 
-  TemplateNameDependence getDependence() const;
+  CLANG_ABI TemplateNameDependence getDependence() const;
 
   void Profile(llvm::FoldingSetNodeID &ID) const {
     Profile(ID, getQualifier(), getName(), hasTemplateKeyword());
@@ -617,7 +618,7 @@ public:
     Name.Profile(ID);
   }
 
-  void print(raw_ostream &OS, const PrintingPolicy &Policy) const;
+  CLANG_ABI void print(raw_ostream &OS, const PrintingPolicy &Policy) const;
 };
 
 class DependentTemplateName : public DependentTemplateStorage,

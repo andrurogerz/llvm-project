@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_BLOCKCOUNTER_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_BLOCKCOUNTER_H
 
+#include "clang/Support/Compiler.h"
 #include "llvm/Support/Allocator.h"
 
 namespace clang {
@@ -34,17 +35,17 @@ class BlockCounter {
 public:
   BlockCounter() : Data(nullptr) {}
 
-  unsigned getNumVisited(const StackFrameContext *CallSite,
+  CLANG_ABI unsigned getNumVisited(const StackFrameContext *CallSite,
                          unsigned BlockID) const;
 
   class Factory {
     void *F;
   public:
-    Factory(llvm::BumpPtrAllocator& Alloc);
-    ~Factory();
+    CLANG_ABI Factory(llvm::BumpPtrAllocator& Alloc);
+    CLANG_ABI ~Factory();
 
-    BlockCounter GetEmptyCounter();
-    BlockCounter IncrementCount(BlockCounter BC,
+    CLANG_ABI BlockCounter GetEmptyCounter();
+    CLANG_ABI BlockCounter IncrementCount(BlockCounter BC,
                                   const StackFrameContext *CallSite,
                                   unsigned BlockID);
   };

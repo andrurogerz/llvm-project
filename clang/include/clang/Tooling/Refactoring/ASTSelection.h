@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_TOOLING_REFACTORING_ASTSELECTION_H
 #define LLVM_CLANG_TOOLING_REFACTORING_ASTSELECTION_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTTypeTraits.h"
 #include "clang/AST/Stmt.h"
 #include "clang/Basic/LLVM.h"
@@ -59,7 +60,7 @@ struct SelectedASTNode {
   SelectedASTNode(SelectedASTNode &&) = default;
   SelectedASTNode &operator=(SelectedASTNode &&) = default;
 
-  void dump(llvm::raw_ostream &OS = llvm::errs()) const;
+  CLANG_ABI void dump(llvm::raw_ostream &OS = llvm::errs()) const;
 
   using ReferenceType = std::reference_wrapper<const SelectedASTNode>;
 };
@@ -68,7 +69,7 @@ struct SelectedASTNode {
 ///
 /// \returns std::nullopt if no nodes are selected in the AST, or a selected AST
 /// node that corresponds to the TranslationUnitDecl otherwise.
-std::optional<SelectedASTNode> findSelectedASTNodes(const ASTContext &Context,
+CLANG_ABI std::optional<SelectedASTNode> findSelectedASTNodes(const ASTContext &Context,
                                                     SourceRange SelectionRange);
 
 /// An AST selection value that corresponds to a selection of a set of
@@ -125,13 +126,13 @@ public:
   ///
   /// Use the \c getFunctionLikeNearestParent to get the function-like parent
   /// declaration.
-  bool isInFunctionLikeBodyOfCode() const;
+  CLANG_ABI bool isInFunctionLikeBodyOfCode() const;
 
   /// Returns the nearest function-like parent declaration or null if such
   /// declaration doesn't exist.
-  const Decl *getFunctionLikeNearestParent() const;
+  CLANG_ABI const Decl *getFunctionLikeNearestParent() const;
 
-  static std::optional<CodeRangeASTSelection>
+  CLANG_ABI static std::optional<CodeRangeASTSelection>
   create(SourceRange SelectionRange, const SelectedASTNode &ASTSelection);
 
 private:

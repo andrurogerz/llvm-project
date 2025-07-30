@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_SEMA_CODECOMPLETECONSUMER_H
 #define LLVM_CLANG_SEMA_CODECOMPLETECONSUMER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang-c/Index.h"
 #include "clang/AST/Type.h"
 #include "clang/Basic/LLVM.h"
@@ -158,11 +159,11 @@ enum SimplifiedTypeClass {
 };
 
 /// Determine the simplified type class of the given canonical type.
-SimplifiedTypeClass getSimplifiedTypeClass(CanQualType T);
+CLANG_ABI SimplifiedTypeClass getSimplifiedTypeClass(CanQualType T);
 
 /// Determine the type that this declaration will have if it is used
 /// as a type or in an expression.
-QualType getDeclUsageType(ASTContext &C, const NamedDecl *ND);
+CLANG_ABI QualType getDeclUsageType(ASTContext &C, const NamedDecl *ND);
 
 /// Determine the priority to be given to a macro code completion result
 /// with the given name.
@@ -173,13 +174,13 @@ QualType getDeclUsageType(ASTContext &C, const NamedDecl *ND);
 ///
 /// \param PreferredTypeIsPointer Whether the preferred type for the context
 /// of this macro is a pointer type.
-unsigned getMacroUsagePriority(StringRef MacroName,
+CLANG_ABI unsigned getMacroUsagePriority(StringRef MacroName,
                                const LangOptions &LangOpts,
                                bool PreferredTypeIsPointer = false);
 
 /// Determine the libclang cursor kind associated with the given
 /// declaration.
-CXCursorKind getCursorKindForDecl(const Decl *D);
+CLANG_ABI CXCursorKind getCursorKindForDecl(const Decl *D);
 
 /// The context in which code completion occurred, so that the
 /// code-completion consumer can process the results accordingly.
@@ -410,7 +411,7 @@ public:
 
   /// Determines whether we want C++ constructors as results within this
   /// context.
-  bool wantConstructorResults() const;
+  CLANG_ABI bool wantConstructorResults() const;
 
   /// Sets the scope specifier that comes before the completion token.
   /// This is expected to be set in code completions on qualfied specifiers
@@ -437,7 +438,7 @@ public:
 };
 
 /// Get string representation of \p Kind, useful for debugging.
-llvm::StringRef getCompletionKindString(CodeCompletionContext::Kind Kind);
+CLANG_ABI llvm::StringRef getCompletionKindString(CodeCompletionContext::Kind Kind);
 
 /// A "string" used to describe how code completion can
 /// be performed for an entity.
@@ -546,25 +547,25 @@ public:
 
     Chunk() : Text(nullptr) {}
 
-    explicit Chunk(ChunkKind Kind, const char *Text = "");
+    CLANG_ABI explicit Chunk(ChunkKind Kind, const char *Text = "");
 
     /// Create a new text chunk.
-    static Chunk CreateText(const char *Text);
+    CLANG_ABI static Chunk CreateText(const char *Text);
 
     /// Create a new optional chunk.
-    static Chunk CreateOptional(CodeCompletionString *Optional);
+    CLANG_ABI static Chunk CreateOptional(CodeCompletionString *Optional);
 
     /// Create a new placeholder chunk.
-    static Chunk CreatePlaceholder(const char *Placeholder);
+    CLANG_ABI static Chunk CreatePlaceholder(const char *Placeholder);
 
     /// Create a new informative chunk.
-    static Chunk CreateInformative(const char *Informative);
+    CLANG_ABI static Chunk CreateInformative(const char *Informative);
 
     /// Create a new result type chunk.
-    static Chunk CreateResultType(const char *ResultType);
+    CLANG_ABI static Chunk CreateResultType(const char *ResultType);
 
     /// Create a new current-parameter chunk.
-    static Chunk CreateCurrentParameter(const char *CurrentParameter);
+    CLANG_ABI static Chunk CreateCurrentParameter(const char *CurrentParameter);
   };
 
 private:
@@ -615,10 +616,10 @@ public:
   }
 
   /// Returns the text in the first TypedText chunk.
-  const char *getTypedText() const;
+  CLANG_ABI const char *getTypedText() const;
 
   /// Returns the combined text from all TypedText chunks.
-  std::string getAllTypedText() const;
+  CLANG_ABI std::string getAllTypedText() const;
 
   /// Retrieve the priority of this code completion result.
   unsigned getPriority() const { return Priority; }
@@ -627,10 +628,10 @@ public:
   unsigned getAvailability() const { return Availability; }
 
   /// Retrieve the number of annotations for this code completion result.
-  unsigned getAnnotationCount() const;
+  CLANG_ABI unsigned getAnnotationCount() const;
 
   /// Retrieve the annotation string specified by \c AnnotationNr.
-  const char *getAnnotation(unsigned AnnotationNr) const;
+  CLANG_ABI const char *getAnnotation(unsigned AnnotationNr) const;
 
   /// Retrieve the name of the parent context.
   StringRef getParentContextName() const {
@@ -643,14 +644,14 @@ public:
 
   /// Retrieve a string representation of the code completion string,
   /// which is mainly useful for debugging.
-  std::string getAsString() const;
+  CLANG_ABI std::string getAsString() const;
 };
 
 /// An allocator used specifically for the purpose of code completion.
 class CodeCompletionAllocator : public llvm::BumpPtrAllocator {
 public:
   /// Copy the given string into this allocator.
-  const char *CopyString(const Twine &String);
+  CLANG_ABI const char *CopyString(const Twine &String);
 };
 
 /// Allocator for a cached set of global code completions.
@@ -674,7 +675,7 @@ public:
     return *AllocatorRef;
   }
 
-  StringRef getParentName(const DeclContext *DC);
+  CLANG_ABI StringRef getParentName(const DeclContext *DC);
 };
 
 } // namespace clang
@@ -719,39 +720,39 @@ public:
   /// Take the resulting completion string.
   ///
   /// This operation can only be performed once.
-  CodeCompletionString *TakeString();
+  CLANG_ABI CodeCompletionString *TakeString();
 
   /// Add a new typed-text chunk.
-  void AddTypedTextChunk(const char *Text);
+  CLANG_ABI void AddTypedTextChunk(const char *Text);
 
   /// Add a new text chunk.
-  void AddTextChunk(const char *Text);
+  CLANG_ABI void AddTextChunk(const char *Text);
 
   /// Add a new optional chunk.
-  void AddOptionalChunk(CodeCompletionString *Optional);
+  CLANG_ABI void AddOptionalChunk(CodeCompletionString *Optional);
 
   /// Add a new placeholder chunk.
-  void AddPlaceholderChunk(const char *Placeholder);
+  CLANG_ABI void AddPlaceholderChunk(const char *Placeholder);
 
   /// Add a new informative chunk.
-  void AddInformativeChunk(const char *Text);
+  CLANG_ABI void AddInformativeChunk(const char *Text);
 
   /// Add a new result-type chunk.
-  void AddResultTypeChunk(const char *ResultType);
+  CLANG_ABI void AddResultTypeChunk(const char *ResultType);
 
   /// Add a new current-parameter chunk.
-  void AddCurrentParameterChunk(const char *CurrentParameter);
+  CLANG_ABI void AddCurrentParameterChunk(const char *CurrentParameter);
 
   /// Add a new chunk.
-  void AddChunk(CodeCompletionString::ChunkKind CK, const char *Text = "");
+  CLANG_ABI void AddChunk(CodeCompletionString::ChunkKind CK, const char *Text = "");
 
   void AddAnnotation(const char *A) { Annotations.push_back(A); }
 
   /// Add the parent context information to this code completion.
-  void addParentContext(const DeclContext *DC);
+  CLANG_ABI void addParentContext(const DeclContext *DC);
 
   const char *getBriefComment() const { return BriefComment; }
-  void addBriefComment(StringRef Comment);
+  CLANG_ABI void addBriefComment(StringRef Comment);
 
   StringRef getParentName() const { return ParentName; }
 };
@@ -957,12 +958,12 @@ public:
   ///
   /// \param Allocator The allocator that will be used to allocate the
   /// string itself.
-  CodeCompletionString *CreateCodeCompletionString(Sema &S,
+  CLANG_ABI CodeCompletionString *CreateCodeCompletionString(Sema &S,
                                          const CodeCompletionContext &CCContext,
                                            CodeCompletionAllocator &Allocator,
                                            CodeCompletionTUInfo &CCTUInfo,
                                            bool IncludeBriefComments);
-  CodeCompletionString *CreateCodeCompletionString(ASTContext &Ctx,
+  CLANG_ABI CodeCompletionString *CreateCodeCompletionString(ASTContext &Ctx,
                                                    Preprocessor &PP,
                                          const CodeCompletionContext &CCContext,
                                            CodeCompletionAllocator &Allocator,
@@ -971,17 +972,17 @@ public:
   /// Creates a new code-completion string for the macro result. Similar to the
   /// above overloads, except this only requires preprocessor information.
   /// The result kind must be `RK_Macro`.
-  CodeCompletionString *
+  CLANG_ABI CodeCompletionString *
   CreateCodeCompletionStringForMacro(Preprocessor &PP,
                                      CodeCompletionAllocator &Allocator,
                                      CodeCompletionTUInfo &CCTUInfo);
 
-  CodeCompletionString *createCodeCompletionStringForDecl(
+  CLANG_ABI CodeCompletionString *createCodeCompletionStringForDecl(
       Preprocessor &PP, ASTContext &Ctx, CodeCompletionBuilder &Result,
       bool IncludeBriefComments, const CodeCompletionContext &CCContext,
       PrintingPolicy &Policy);
 
-  CodeCompletionString *createCodeCompletionStringForOverride(
+  CLANG_ABI CodeCompletionString *createCodeCompletionStringForOverride(
       Preprocessor &PP, ASTContext &Ctx, CodeCompletionBuilder &Result,
       bool IncludeBriefComments, const CodeCompletionContext &CCContext,
       PrintingPolicy &Policy);
@@ -990,13 +991,13 @@ public:
   ///
   /// If the name needs to be constructed as a string, that string will be
   /// saved into Saved and the returned StringRef will refer to it.
-  StringRef getOrderedName(std::string &Saved) const;
+  CLANG_ABI StringRef getOrderedName(std::string &Saved) const;
 
 private:
-  void computeCursorKindAndAvailability(bool Accessible = true);
+  CLANG_ABI void computeCursorKindAndAvailability(bool Accessible = true);
 };
 
-bool operator<(const CodeCompletionResult &X, const CodeCompletionResult &Y);
+CLANG_ABI bool operator<(const CodeCompletionResult &X, const CodeCompletionResult &Y);
 
 inline bool operator>(const CodeCompletionResult &X,
                       const CodeCompletionResult &Y) {
@@ -1015,7 +1016,7 @@ inline bool operator>=(const CodeCompletionResult &X,
 
 /// Abstract interface for a consumer of code-completion
 /// information.
-class CodeCompleteConsumer {
+class CLANG_ABI CodeCompleteConsumer {
 protected:
   const CodeCompleteOptions CodeCompleteOpts;
 
@@ -1109,7 +1110,7 @@ public:
 
     /// Retrieve the function overload candidate or the templated
     /// function declaration for a function template.
-    FunctionDecl *getFunction() const;
+    CLANG_ABI FunctionDecl *getFunction() const;
 
     /// Retrieve the function template overload candidate.
     FunctionTemplateDecl *getFunctionTemplate() const {
@@ -1119,12 +1120,12 @@ public:
 
     /// Retrieve the function type of the entity, regardless of how the
     /// function is stored.
-    const FunctionType *getFunctionType() const;
+    CLANG_ABI const FunctionType *getFunctionType() const;
 
     /// Retrieve the function ProtoTypeLoc candidate.
     /// This can be called for any Kind, but returns null for kinds
     /// other than CK_FunctionProtoTypeLoc.
-    const FunctionProtoTypeLoc getFunctionProtoTypeLoc() const;
+    CLANG_ABI const FunctionProtoTypeLoc getFunctionProtoTypeLoc() const;
 
     const TemplateDecl *getTemplate() const {
       assert(getKind() == CK_Template && "Not a template");
@@ -1138,19 +1139,19 @@ public:
     }
 
     /// Get the number of parameters in this signature.
-    unsigned getNumParams() const;
+    CLANG_ABI unsigned getNumParams() const;
 
     /// Get the type of the Nth parameter.
     /// Returns null if the type is unknown or N is out of range.
-    QualType getParamType(unsigned N) const;
+    CLANG_ABI QualType getParamType(unsigned N) const;
 
     /// Get the declaration of the Nth parameter.
     /// Returns null if the decl is unknown or N is out of range.
-    const NamedDecl *getParamDecl(unsigned N) const;
+    CLANG_ABI const NamedDecl *getParamDecl(unsigned N) const;
 
     /// Create a new code-completion string that describes the function
     /// signature of this overload candidate.
-    CodeCompletionString *
+    CLANG_ABI CodeCompletionString *
     CreateSignatureString(unsigned CurrentArg, Sema &S,
                           CodeCompletionAllocator &Allocator,
                           CodeCompletionTUInfo &CCTUInfo,
@@ -1241,24 +1242,24 @@ public:
 
 /// Get the documentation comment used to produce
 /// CodeCompletionString::BriefComment for RK_Declaration.
-const RawComment *getCompletionComment(const ASTContext &Ctx,
+CLANG_ABI const RawComment *getCompletionComment(const ASTContext &Ctx,
                                        const NamedDecl *Decl);
 
 /// Get the documentation comment used to produce
 /// CodeCompletionString::BriefComment for RK_Pattern.
-const RawComment *getPatternCompletionComment(const ASTContext &Ctx,
+CLANG_ABI const RawComment *getPatternCompletionComment(const ASTContext &Ctx,
                                               const NamedDecl *Decl);
 
 /// Get the documentation comment used to produce
 /// CodeCompletionString::BriefComment for OverloadCandidate.
-const RawComment *
+CLANG_ABI const RawComment *
 getParameterComment(const ASTContext &Ctx,
                     const CodeCompleteConsumer::OverloadCandidate &Result,
                     unsigned ArgIndex);
 
 /// A simple code-completion consumer that prints the results it
 /// receives in a simple format.
-class PrintingCodeCompleteConsumer : public CodeCompleteConsumer {
+class CLANG_ABI PrintingCodeCompleteConsumer : public CodeCompleteConsumer {
   /// The raw output stream.
   raw_ostream &OS;
 

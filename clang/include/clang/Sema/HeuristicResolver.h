@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_SEMA_HEURISTICRESOLVER_H
 #define LLVM_CLANG_SEMA_HEURISTICRESOLVER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include <vector>
 
@@ -49,42 +50,42 @@ public:
 
   // Try to heuristically resolve certain types of expressions, declarations, or
   // types to one or more likely-referenced declarations.
-  std::vector<const NamedDecl *>
+  CLANG_ABI std::vector<const NamedDecl *>
   resolveMemberExpr(const CXXDependentScopeMemberExpr *ME) const;
-  std::vector<const NamedDecl *>
+  CLANG_ABI std::vector<const NamedDecl *>
   resolveDeclRefExpr(const DependentScopeDeclRefExpr *RE) const;
-  std::vector<const NamedDecl *>
+  CLANG_ABI std::vector<const NamedDecl *>
   resolveTypeOfCallExpr(const CallExpr *CE) const;
-  std::vector<const NamedDecl *>
+  CLANG_ABI std::vector<const NamedDecl *>
   resolveCalleeOfCallExpr(const CallExpr *CE) const;
-  std::vector<const NamedDecl *>
+  CLANG_ABI std::vector<const NamedDecl *>
   resolveUsingValueDecl(const UnresolvedUsingValueDecl *UUVD) const;
-  std::vector<const NamedDecl *>
+  CLANG_ABI std::vector<const NamedDecl *>
   resolveDependentNameType(const DependentNameType *DNT) const;
-  std::vector<const NamedDecl *> resolveTemplateSpecializationType(
+  CLANG_ABI std::vector<const NamedDecl *> resolveTemplateSpecializationType(
       const DependentTemplateSpecializationType *DTST) const;
 
   // Try to heuristically resolve a dependent nested name specifier
   // to the type it likely denotes. Note that *dependent* name specifiers always
   // denote types, not namespaces.
-  QualType
+  CLANG_ABI QualType
   resolveNestedNameSpecifierToType(const NestedNameSpecifier *NNS) const;
 
   // Perform an imprecise lookup of a dependent name in `RD`.
   // This function does not follow strict semantic rules and should be used
   // only when lookup rules can be relaxed, e.g. indexing.
-  std::vector<const NamedDecl *>
+  CLANG_ABI std::vector<const NamedDecl *>
   lookupDependentName(CXXRecordDecl *RD, DeclarationName Name,
                       llvm::function_ref<bool(const NamedDecl *ND)> Filter);
 
   // Given the type T of a dependent expression that appears of the LHS of a
   // "->", heuristically find a corresponding pointee type in whose scope we
   // could look up the name appearing on the RHS.
-  const QualType getPointeeType(QualType T) const;
+  CLANG_ABI const QualType getPointeeType(QualType T) const;
 
   // Heuristically resolve a possibly-dependent type `T` to a TagDecl
   // in which a member's name can be looked up.
-  TagDecl *resolveTypeToTagDecl(QualType T) const;
+  CLANG_ABI TagDecl *resolveTypeToTagDecl(QualType T) const;
 
   // Simplify the type `Type`.
   // `E` is the expression whose type `Type` is, if known. This sometimes
@@ -92,13 +93,13 @@ public:
   // itself.
   // If `UnwrapPointer` is true, exactly only pointer type will be unwrapped
   // during simplification, and the operation fails if no pointer type is found.
-  QualType simplifyType(QualType Type, const Expr *E, bool UnwrapPointer);
+  CLANG_ABI QualType simplifyType(QualType Type, const Expr *E, bool UnwrapPointer);
 
   // Given an expression `Fn` representing the callee in a function call,
   // if the call is through a function pointer, try to find the declaration of
   // the corresponding function pointer type, so that we can recover argument
   // names from it.
-  FunctionProtoTypeLoc getFunctionProtoTypeLoc(const Expr *Fn) const;
+  CLANG_ABI FunctionProtoTypeLoc getFunctionProtoTypeLoc(const Expr *Fn) const;
 
 private:
   ASTContext &Ctx;

@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_ASTOPS_H
 #define LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_ASTOPS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/DynamicRecursiveASTVisitor.h"
 #include "clang/AST/Expr.h"
@@ -35,18 +36,18 @@ namespace dataflow {
 ///   * `ExprWithCleanups` - The CFG will generate the appropriate calls to
 ///   destructors and then omit the node.
 ///
-const Expr &ignoreCFGOmittedNodes(const Expr &E);
-const Stmt &ignoreCFGOmittedNodes(const Stmt &S);
+CLANG_ABI const Expr &ignoreCFGOmittedNodes(const Expr &E);
+CLANG_ABI const Stmt &ignoreCFGOmittedNodes(const Stmt &S);
 
 /// A set of `FieldDecl *`. Use `SmallSetVector` to guarantee deterministic
 /// iteration order.
 using FieldSet = llvm::SmallSetVector<const FieldDecl *, 4>;
 
 /// Returns the set of all fields in the type.
-FieldSet getObjectFields(QualType Type);
+CLANG_ABI FieldSet getObjectFields(QualType Type);
 
 /// Returns whether `Fields` and `FieldLocs` contain the same fields.
-bool containsSameFields(const FieldSet &Fields,
+CLANG_ABI bool containsSameFields(const FieldSet &Fields,
                         const RecordStorageLocation::FieldToLoc &FieldLocs);
 
 /// Helper class for initialization of a record with an `InitListExpr`.
@@ -57,8 +58,8 @@ bool containsSameFields(const FieldSet &Fields,
 class RecordInitListHelper {
 public:
   // `InitList` must have record type.
-  RecordInitListHelper(const InitListExpr *InitList);
-  RecordInitListHelper(const CXXParenListInitExpr *ParenInitList);
+  CLANG_ABI RecordInitListHelper(const InitListExpr *InitList);
+  CLANG_ABI RecordInitListHelper(const CXXParenListInitExpr *ParenInitList);
 
   // Base classes with their associated initializer expressions.
   ArrayRef<std::pair<const CXXBaseSpecifier *, Expr *>> base_inits() const {
@@ -153,10 +154,10 @@ struct ReferencedDecls {
 };
 
 /// Returns declarations that are declared in or referenced from `FD`.
-ReferencedDecls getReferencedDecls(const FunctionDecl &FD);
+CLANG_ABI ReferencedDecls getReferencedDecls(const FunctionDecl &FD);
 
 /// Returns declarations that are declared in or referenced from `S`.
-ReferencedDecls getReferencedDecls(const Stmt &S);
+CLANG_ABI ReferencedDecls getReferencedDecls(const Stmt &S);
 
 } // namespace dataflow
 } // namespace clang

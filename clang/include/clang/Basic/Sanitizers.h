@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_BASIC_SANITIZERS_H
 #define LLVM_CLANG_BASIC_SANITIZERS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Support/HashBuilder.h"
@@ -64,7 +65,7 @@ public:
     return SanitizerMask(mask1, mask2);
   }
 
-  unsigned countPopulation() const;
+  CLANG_ABI unsigned countPopulation() const;
 
   void flipAllBits() {
     for (auto &Val : maskLoToHigh)
@@ -75,7 +76,7 @@ public:
     return countPopulation() == 1;
   }
 
-  llvm::hash_code hash_value() const;
+  CLANG_ABI llvm::hash_code hash_value() const;
 
   template <typename HasherT, llvm::endianness Endianness>
   friend void addHash(llvm::HashBuilder<HasherT, Endianness> &HBuilder,
@@ -128,7 +129,7 @@ public:
 };
 
 // Declaring in clang namespace so that it can be found by ADL.
-llvm::hash_code hash_value(const clang::SanitizerMask &Arg);
+CLANG_ABI llvm::hash_code hash_value(const clang::SanitizerMask &Arg);
 
 // Define the set of sanitizer kinds, as well as the set of sanitizers each
 // sanitizer group expands into.
@@ -158,14 +159,14 @@ class SanitizerMaskCutoffs {
   std::vector<double> Cutoffs;
 
 public:
-  std::optional<double> operator[](unsigned Kind) const;
+  CLANG_ABI std::optional<double> operator[](unsigned Kind) const;
 
-  void set(SanitizerMask K, double V);
-  void clear(SanitizerMask K = SanitizerKind::All);
+  CLANG_ABI void set(SanitizerMask K, double V);
+  CLANG_ABI void clear(SanitizerMask K = SanitizerKind::All);
 
   // Returns nullopt if all the values are zero.
   // Otherwise, return value contains a vector of all the scaled values.
-  std::optional<std::vector<unsigned>>
+  CLANG_ABI std::optional<std::vector<unsigned>>
   getAllScaled(unsigned ScalingFactor) const;
 };
 
@@ -203,7 +204,7 @@ struct SanitizerSet {
 
 /// Parse a single value from a -fsanitize= or -fno-sanitize= value list.
 /// Returns a non-zero SanitizerMask, or \c 0 if \p Value is not known.
-SanitizerMask parseSanitizerValue(StringRef Value, bool AllowGroups);
+CLANG_ABI SanitizerMask parseSanitizerValue(StringRef Value, bool AllowGroups);
 
 /// Parse a single weighted value (e.g., 'undefined=0.05') from a -fsanitize= or
 /// -fno-sanitize= value list.
@@ -211,20 +212,20 @@ SanitizerMask parseSanitizerValue(StringRef Value, bool AllowGroups);
 /// Individual Cutoffs are never reset to zero unless explicitly set
 /// (e.g., 'null=0.0').
 /// Returns \c false if \p Value is not known or the weight is not valid.
-bool parseSanitizerWeightedValue(StringRef Value, bool AllowGroups,
+CLANG_ABI bool parseSanitizerWeightedValue(StringRef Value, bool AllowGroups,
                                  SanitizerMaskCutoffs &Cutoffs);
 
 /// Serialize a SanitizerSet into values for -fsanitize= or -fno-sanitize=.
-void serializeSanitizerSet(SanitizerSet Set,
+CLANG_ABI void serializeSanitizerSet(SanitizerSet Set,
                            SmallVectorImpl<StringRef> &Values);
 
 /// Serialize a SanitizerMaskCutoffs into command line arguments.
-void serializeSanitizerMaskCutoffs(const SanitizerMaskCutoffs &Cutoffs,
+CLANG_ABI void serializeSanitizerMaskCutoffs(const SanitizerMaskCutoffs &Cutoffs,
                                    SmallVectorImpl<std::string> &Values);
 
 /// For each sanitizer group bit set in \p Kinds, set the bits for sanitizers
 /// this group enables.
-SanitizerMask expandSanitizerGroups(SanitizerMask Kinds);
+CLANG_ABI SanitizerMask expandSanitizerGroups(SanitizerMask Kinds);
 
 /// Return the sanitizers which do not affect preprocessing.
 inline SanitizerMask getPPTransparentSanitizers() {
@@ -233,14 +234,14 @@ inline SanitizerMask getPPTransparentSanitizers() {
          SanitizerKind::Undefined | SanitizerKind::FloatDivideByZero;
 }
 
-StringRef AsanDtorKindToString(llvm::AsanDtorKind kind);
+CLANG_ABI StringRef AsanDtorKindToString(llvm::AsanDtorKind kind);
 
-llvm::AsanDtorKind AsanDtorKindFromString(StringRef kind);
+CLANG_ABI llvm::AsanDtorKind AsanDtorKindFromString(StringRef kind);
 
-StringRef AsanDetectStackUseAfterReturnModeToString(
+CLANG_ABI StringRef AsanDetectStackUseAfterReturnModeToString(
     llvm::AsanDetectStackUseAfterReturnMode mode);
 
-llvm::AsanDetectStackUseAfterReturnMode
+CLANG_ABI llvm::AsanDetectStackUseAfterReturnMode
 AsanDetectStackUseAfterReturnModeFromString(StringRef modeStr);
 
 } // namespace clang

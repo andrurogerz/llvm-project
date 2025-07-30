@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_COMMENTLEXER_H
 #define LLVM_CLANG_AST_COMMENTLEXER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/SourceManager.h"
 #include "llvm/ADT/SmallString.h"
@@ -213,7 +214,7 @@ public:
     IntVal = Name.size();
   }
 
-  void dump(const Lexer &L, const SourceManager &SM) const;
+  CLANG_ABI void dump(const Lexer &L, const SourceManager &SM) const;
 };
 
 /// Comment lexer.
@@ -296,7 +297,7 @@ private:
   /// Given a Unicode codepoint as base-16 integer, return the character.
   StringRef resolveHTMLHexCharacterReference(StringRef Name) const;
 
-  void formTokenWithChars(Token &Result, const char *TokEnd,
+  CLANG_ABI void formTokenWithChars(Token &Result, const char *TokEnd,
                           tok::TokenKind Kind);
 
   void formTextToken(Token &Result, const char *TokEnd) {
@@ -349,14 +350,14 @@ private:
   void lexHTMLEndTag(Token &T);
 
 public:
-  Lexer(llvm::BumpPtrAllocator &Allocator, DiagnosticsEngine &Diags,
+  CLANG_ABI Lexer(llvm::BumpPtrAllocator &Allocator, DiagnosticsEngine &Diags,
         const CommandTraits &Traits, SourceLocation FileLoc,
         const char *BufferStart, const char *BufferEnd,
         bool ParseCommands = true);
 
-  void lex(Token &T);
+  CLANG_ABI void lex(Token &T);
 
-  StringRef getSpelling(const Token &Tok, const SourceManager &SourceMgr) const;
+  CLANG_ABI StringRef getSpelling(const Token &Tok, const SourceManager &SourceMgr) const;
 };
 
 } // end namespace comments

@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_COMMENTPARSER_H
 #define LLVM_CLANG_AST_COMMENTPARSER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Comment.h"
 #include "clang/AST/CommentLexer.h"
 #include "clang/AST/CommentSema.h"
@@ -85,41 +86,41 @@ class Parser {
   }
 
 public:
-  Parser(Lexer &L, Sema &S, llvm::BumpPtrAllocator &Allocator,
+  CLANG_ABI Parser(Lexer &L, Sema &S, llvm::BumpPtrAllocator &Allocator,
          const SourceManager &SourceMgr, DiagnosticsEngine &Diags,
          const CommandTraits &Traits);
 
   /// Parse arguments for \\param command.
-  void parseParamCommandArgs(ParamCommandComment *PC,
+  CLANG_ABI void parseParamCommandArgs(ParamCommandComment *PC,
                              TextTokenRetokenizer &Retokenizer);
 
   /// Parse arguments for \\tparam command.
-  void parseTParamCommandArgs(TParamCommandComment *TPC,
+  CLANG_ABI void parseTParamCommandArgs(TParamCommandComment *TPC,
                               TextTokenRetokenizer &Retokenizer);
 
-  ArrayRef<Comment::Argument>
+  CLANG_ABI ArrayRef<Comment::Argument>
   parseCommandArgs(TextTokenRetokenizer &Retokenizer, unsigned NumArgs);
 
   /// Parse arguments for \throws command supported args are in form of class
   /// or template.
-  ArrayRef<Comment::Argument>
+  CLANG_ABI ArrayRef<Comment::Argument>
   parseThrowCommandArgs(TextTokenRetokenizer &Retokenizer, unsigned NumArgs);
 
-  ArrayRef<Comment::Argument>
+  CLANG_ABI ArrayRef<Comment::Argument>
   parseParCommandArgs(TextTokenRetokenizer &Retokenizer, unsigned NumArgs);
 
-  BlockCommandComment *parseBlockCommand();
-  InlineCommandComment *parseInlineCommand();
+  CLANG_ABI BlockCommandComment *parseBlockCommand();
+  CLANG_ABI InlineCommandComment *parseInlineCommand();
 
-  HTMLStartTagComment *parseHTMLStartTag();
-  HTMLEndTagComment *parseHTMLEndTag();
+  CLANG_ABI HTMLStartTagComment *parseHTMLStartTag();
+  CLANG_ABI HTMLEndTagComment *parseHTMLEndTag();
 
-  BlockContentComment *parseParagraphOrBlockCommand();
+  CLANG_ABI BlockContentComment *parseParagraphOrBlockCommand();
 
-  VerbatimBlockComment *parseVerbatimBlock();
-  VerbatimLineComment *parseVerbatimLine();
-  BlockContentComment *parseBlockContent();
-  FullComment *parseFullComment();
+  CLANG_ABI VerbatimBlockComment *parseVerbatimBlock();
+  CLANG_ABI VerbatimLineComment *parseVerbatimLine();
+  CLANG_ABI BlockContentComment *parseBlockContent();
+  CLANG_ABI FullComment *parseFullComment();
 };
 
 } // end namespace comments

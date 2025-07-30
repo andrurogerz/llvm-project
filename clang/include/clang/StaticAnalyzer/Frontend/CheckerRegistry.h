@@ -18,6 +18,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_FRONTEND_CHECKERREGISTRY_H
 #define LLVM_CLANG_STATICANALYZER_FRONTEND_CHECKERREGISTRY_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/StaticAnalyzer/Core/CheckerRegistryData.h"
 #include "llvm/ADT/StringRef.h"
@@ -88,7 +89,7 @@ class CheckerManager;
 /// "core.builtin", or the full name "core.builtin.NoReturnFunctionChecker".
 class CheckerRegistry {
 public:
-  CheckerRegistry(CheckerRegistryData &Data, ArrayRef<std::string> Plugins,
+  CLANG_ABI CheckerRegistry(CheckerRegistryData &Data, ArrayRef<std::string> Plugins,
                   DiagnosticsEngine &Diags, AnalyzerOptions &AnOpts,
                   ArrayRef<std::function<void(CheckerRegistry &)>>
                       CheckerRegistrationFns = {});
@@ -96,7 +97,7 @@ public:
   /// Collects all enabled checkers in the field EnabledCheckers. It preserves
   /// the order of insertion, as dependencies have to be enabled before the
   /// checkers that depend on them.
-  void initializeRegistry(const CheckerManager &Mgr);
+  CLANG_ABI void initializeRegistry(const CheckerManager &Mgr);
 
 
 private:
@@ -115,7 +116,7 @@ public:
   /// Use this for a checker defined in a plugin if it requires custom
   /// registration functions (e.g. for handling checker options).
   /// NOTE: As of now `DocsUri` is never queried from the checker registry.
-  void addChecker(RegisterCheckerFn Fn, ShouldRegisterFunction Sfn,
+  CLANG_ABI void addChecker(RegisterCheckerFn Fn, ShouldRegisterFunction Sfn,
                   StringRef FullName, StringRef Desc,
                   StringRef DocsUri = "NoDocsUri", bool IsHidden = false);
 
@@ -131,11 +132,11 @@ public:
 
   /// Makes the checker with the full name \p fullName depend on the checker
   /// called \p dependency.
-  void addDependency(StringRef FullName, StringRef Dependency);
+  CLANG_ABI void addDependency(StringRef FullName, StringRef Dependency);
 
   /// Makes the checker with the full name \p fullName weak depend on the
   /// checker called \p dependency.
-  void addWeakDependency(StringRef FullName, StringRef Dependency);
+  CLANG_ABI void addWeakDependency(StringRef FullName, StringRef Dependency);
 
   /// Registers an option to a given checker. A checker option will always have
   /// the following format:
@@ -146,13 +147,13 @@ public:
   /// Options for unknown checkers, or unknown options for a given checker, or
   /// invalid value types for that given option are reported as an error in
   /// non-compatibility mode.
-  void addCheckerOption(StringRef OptionType, StringRef CheckerFullName,
+  CLANG_ABI void addCheckerOption(StringRef OptionType, StringRef CheckerFullName,
                         StringRef OptionName, StringRef DefaultValStr,
                         StringRef Description, StringRef DevelopmentStatus,
                         bool IsHidden = false);
 
   /// Adds a package to the registry.
-  void addPackage(StringRef FullName);
+  CLANG_ABI void addPackage(StringRef FullName);
 
   /// Registers an option to a given package. A package option will always have
   /// the following format:
@@ -163,7 +164,7 @@ public:
   /// Options for unknown packages, or unknown options for a given package, or
   /// invalid value types for that given option are reported as an error in
   /// non-compatibility mode.
-  void addPackageOption(StringRef OptionType, StringRef PackageFullName,
+  CLANG_ABI void addPackageOption(StringRef OptionType, StringRef PackageFullName,
                         StringRef OptionName, StringRef DefaultValStr,
                         StringRef Description, StringRef DevelopmentStatus,
                         bool IsHidden = false);
@@ -173,10 +174,10 @@ public:
   /// all checkers specified by the given CheckerOptInfo list. The order of this
   /// list is significant; later options can be used to reverse earlier ones.
   /// This can be used to exclude certain checkers in an included package.
-  void initializeManager(CheckerManager &CheckerMgr) const;
+  CLANG_ABI void initializeManager(CheckerManager &CheckerMgr) const;
 
   /// Check if every option corresponds to a specific checker or package.
-  void validateCheckerOptions() const;
+  CLANG_ABI void validateCheckerOptions() const;
 
 private:
   template <bool IsWeak> void resolveDependencies();

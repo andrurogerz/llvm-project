@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_FRONTEND_SERIALIZEDDIAGNOSTICPRINTER_H
 #define LLVM_CLANG_FRONTEND_SERIALIZEDDIAGNOSTICPRINTER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Frontend/SerializedDiagnostics.h"
 #include "llvm/Bitstream/BitstreamWriter.h"
@@ -31,7 +32,7 @@ namespace serialized_diags {
 /// This allows wrapper tools for Clang to get diagnostics from Clang
 /// (via libclang) without needing to parse Clang's command line output.
 ///
-std::unique_ptr<DiagnosticConsumer> create(StringRef OutputFile,
+CLANG_ABI std::unique_ptr<DiagnosticConsumer> create(StringRef OutputFile,
                                            DiagnosticOptions &DiagOpts,
                                            bool MergeChildRecords = false);
 

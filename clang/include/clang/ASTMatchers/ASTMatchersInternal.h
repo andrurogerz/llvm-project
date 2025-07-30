@@ -34,6 +34,7 @@
 #ifndef LLVM_CLANG_ASTMATCHERS_ASTMATCHERSINTERNAL_H
 #define LLVM_CLANG_ASTMATCHERS_ASTMATCHERSINTERNAL_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTTypeTraits.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/DeclCXX.h"
@@ -298,12 +299,12 @@ public:
   }
 
   /// Adds a branch in the tree.
-  void addMatch(const BoundNodesTreeBuilder &Bindings);
+  CLANG_ABI void addMatch(const BoundNodesTreeBuilder &Bindings);
 
   /// Visits all matches that this BoundNodesTree represents.
   ///
   /// The ownership of 'ResultVisitor' remains at the caller.
-  void visitMatches(Visitor* ResultVisitor);
+  CLANG_ABI void visitMatches(Visitor* ResultVisitor);
 
   template <typename ExcludePredicate>
   bool removeBindings(const ExcludePredicate &Predicate) {
@@ -438,51 +439,51 @@ public:
     VO_UnaryNot
   };
 
-  static DynTypedMatcher
+  CLANG_ABI static DynTypedMatcher
   constructVariadic(VariadicOperator Op, ASTNodeKind SupportedKind,
                     std::vector<DynTypedMatcher> InnerMatchers);
 
-  static DynTypedMatcher
+  CLANG_ABI static DynTypedMatcher
   constructRestrictedWrapper(const DynTypedMatcher &InnerMatcher,
                              ASTNodeKind RestrictKind);
 
   /// Get a "true" matcher for \p NodeKind.
   ///
   /// It only checks that the node is of the right kind.
-  static DynTypedMatcher trueMatcher(ASTNodeKind NodeKind);
+  CLANG_ABI static DynTypedMatcher trueMatcher(ASTNodeKind NodeKind);
 
   void setAllowBind(bool AB) { AllowBind = AB; }
 
   /// Check whether this matcher could ever match a node of kind \p Kind.
   /// \return \c false if this matcher will never match such a node. Otherwise,
   /// return \c true.
-  bool canMatchNodesOfKind(ASTNodeKind Kind) const;
+  CLANG_ABI bool canMatchNodesOfKind(ASTNodeKind Kind) const;
 
   /// Return a matcher that points to the same implementation, but
   ///   restricts the node types for \p Kind.
-  DynTypedMatcher dynCastTo(const ASTNodeKind Kind) const;
+  CLANG_ABI DynTypedMatcher dynCastTo(const ASTNodeKind Kind) const;
 
   /// Return a matcher that points to the same implementation, but sets the
   ///   traversal kind.
   ///
   /// If the traversal kind is already set, then \c TK overrides it.
-  DynTypedMatcher withTraversalKind(TraversalKind TK);
+  CLANG_ABI DynTypedMatcher withTraversalKind(TraversalKind TK);
 
   /// Returns true if the matcher matches the given \c DynNode.
-  bool matches(const DynTypedNode &DynNode, ASTMatchFinder *Finder,
+  CLANG_ABI bool matches(const DynTypedNode &DynNode, ASTMatchFinder *Finder,
                BoundNodesTreeBuilder *Builder) const;
 
   /// Same as matches(), but skips the kind check.
   ///
   /// It is faster, but the caller must ensure the node is valid for the
   /// kind of this matcher.
-  bool matchesNoKindCheck(const DynTypedNode &DynNode, ASTMatchFinder *Finder,
+  CLANG_ABI bool matchesNoKindCheck(const DynTypedNode &DynNode, ASTMatchFinder *Finder,
                           BoundNodesTreeBuilder *Builder) const;
 
   /// Bind the specified \p ID to the matcher.
   /// \return A new matcher with the \p ID bound to it if this matcher supports
   ///   binding. Otherwise, returns an empty \c std::optional<>.
-  std::optional<DynTypedMatcher> tryBind(StringRef ID) const;
+  CLANG_ABI std::optional<DynTypedMatcher> tryBind(StringRef ID) const;
 
   /// Returns a unique \p ID for the matcher.
   ///
@@ -513,7 +514,7 @@ public:
   template <typename T> bool canConvertTo() const {
     return canConvertTo(ASTNodeKind::getFromNodeKind<T>());
   }
-  bool canConvertTo(ASTNodeKind To) const;
+  CLANG_ABI bool canConvertTo(ASTNodeKind To) const;
 
   /// Construct a \c Matcher<T> interface around the dynamic matcher.
   ///
@@ -792,7 +793,7 @@ public:
 
   virtual bool IsMatchingInASTNodeNotAsIs() const = 0;
 
-  bool isTraversalIgnoringImplicitNodes() const;
+  CLANG_ABI bool isTraversalIgnoringImplicitNodes() const;
 
 protected:
   virtual bool matchesChildOf(const DynTypedNode &Node, ASTContext &Ctx,
@@ -932,7 +933,7 @@ private:
 /// Matches named declarations with a specific name.
 ///
 /// See \c hasName() and \c hasAnyName() in ASTMatchers.h for details.
-class HasNameMatcher : public SingleNodeMatcherInterface<NamedDecl> {
+class CLANG_ABI HasNameMatcher : public SingleNodeMatcherInterface<NamedDecl> {
  public:
   explicit HasNameMatcher(std::vector<std::string> Names);
 
@@ -966,11 +967,11 @@ private:
 
 /// Trampoline function to use VariadicFunction<> to construct a
 ///        HasNameMatcher.
-Matcher<NamedDecl> hasAnyNameFunc(ArrayRef<const StringRef *> NameRefs);
+CLANG_ABI Matcher<NamedDecl> hasAnyNameFunc(ArrayRef<const StringRef *> NameRefs);
 
 /// Trampoline function to use VariadicFunction<> to construct a
 ///        hasAnySelector matcher.
-Matcher<ObjCMessageExpr> hasAnySelectorFunc(
+CLANG_ABI Matcher<ObjCMessageExpr> hasAnySelectorFunc(
     ArrayRef<const StringRef *> NameRefs);
 
 /// Matches declarations for QualType and CallExpr.
@@ -2215,7 +2216,7 @@ CompoundStmtMatcher<StmtExpr>::get(const StmtExpr &Node) {
 /// location (in the chain of expansions) at which \p MacroName was
 /// expanded. Since the macro may have been expanded inside a series of
 /// expansions, that location may itself be a MacroID.
-std::optional<SourceLocation> getExpansionLocOfMacro(StringRef MacroName,
+CLANG_ABI std::optional<SourceLocation> getExpansionLocOfMacro(StringRef MacroName,
                                                      SourceLocation Loc,
                                                      const ASTContext &Context);
 
@@ -2287,24 +2288,24 @@ using HasOpNameMatcher =
                                     CXXRewrittenBinaryOperator, UnaryOperator>),
                        std::vector<std::string>>;
 
-HasOpNameMatcher hasAnyOperatorNameFunc(ArrayRef<const StringRef *> NameRefs);
+CLANG_ABI HasOpNameMatcher hasAnyOperatorNameFunc(ArrayRef<const StringRef *> NameRefs);
 
 using HasOverloadOpNameMatcher =
     PolymorphicMatcher<HasOverloadedOperatorNameMatcher,
                        void(TypeList<CXXOperatorCallExpr, FunctionDecl>),
                        std::vector<std::string>>;
 
-HasOverloadOpNameMatcher
+CLANG_ABI HasOverloadOpNameMatcher
 hasAnyOverloadedOperatorNameFunc(ArrayRef<const StringRef *> NameRefs);
 
 /// Returns true if \p Node has a base specifier matching \p BaseSpec.
 ///
 /// A class is not considered to be derived from itself.
-bool matchesAnyBase(const CXXRecordDecl &Node,
+CLANG_ABI bool matchesAnyBase(const CXXRecordDecl &Node,
                     const Matcher<CXXBaseSpecifier> &BaseSpecMatcher,
                     ASTMatchFinder *Finder, BoundNodesTreeBuilder *Builder);
 
-std::shared_ptr<llvm::Regex> createAndVerifyRegex(StringRef Regex,
+CLANG_ABI std::shared_ptr<llvm::Regex> createAndVerifyRegex(StringRef Regex,
                                                   llvm::Regex::RegexFlags Flags,
                                                   StringRef MatcherID);
 

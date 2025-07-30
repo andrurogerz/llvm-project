@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_DECLFRIEND_H
 #define LLVM_CLANG_AST_DECLFRIEND_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/DeclBase.h"
 #include "clang/AST/DeclCXX.h"
@@ -49,7 +50,7 @@ class ASTContext;
 /// @endcode
 ///
 /// The semantic context of a friend decl is its declaring class.
-class FriendDecl final
+class CLANG_ABI FriendDecl final
     : public Decl,
       private llvm::TrailingObjects<FriendDecl, TemplateParameterList *> {
   LLVM_DECLARE_VIRTUAL_ANCHOR_FUNCTION();

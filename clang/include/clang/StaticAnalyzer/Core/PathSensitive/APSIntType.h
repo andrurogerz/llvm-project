@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_APSINTTYPE_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_APSINTTYPE_H
 
+#include "clang/Support/Compiler.h"
 #include "llvm/ADT/APSInt.h"
 #include <tuple>
 
@@ -85,7 +86,7 @@ public:
   /// \param AllowMixedSign Whether or not to allow signedness conversions.
   ///                       This determines whether -1s8 is considered in range
   ///                       for 'unsigned char' (u8).
-  RangeTestResultKind testInRange(const llvm::APSInt &Val,
+  CLANG_ABI RangeTestResultKind testInRange(const llvm::APSInt &Val,
                                   bool AllowMixedSign) const LLVM_READONLY;
 
   bool operator==(const APSIntType &Other) const {

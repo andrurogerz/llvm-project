@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_CHECKER_H
 #define LLVM_CLANG_STATICANALYZER_CORE_CHECKER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Analysis/ProgramPoint.h"
 #include "clang/Basic/LangOptions.h"
 #include "clang/StaticAnalyzer/Core/CheckerManager.h"
@@ -529,7 +530,7 @@ public:
 /// can create `ExplodedNode`s (by acting as a `ProgramPointTag`) and can be
 /// registered to handle various checker callbacks. (Moreover the debug
 /// callback `printState` is also introduced here.)
-class CheckerBackend : public ProgramPointTag {
+class CLANG_ABI CheckerBackend : public ProgramPointTag {
 public:
   /// Debug state dump callback, see CheckerManager::runCheckersForPrintState.
   /// Default implementation does nothing.
@@ -538,7 +539,7 @@ public:
 };
 
 /// The non-templated common ancestor of all the simple `Checker<...>` classes.
-class CheckerBase : public CheckerFrontend, public CheckerBackend {
+class CLANG_ABI CheckerBase : public CheckerFrontend, public CheckerBackend {
 public:
   /// Attached to nodes created by this checker class when the ExplodedGraph is
   /// dumped for debugging.
@@ -619,7 +620,7 @@ struct ImplicitNullDerefEvent {
   // that is marked with nonnull attribute.)
   bool IsDirectDereference;
 
-  static int Tag;
+  CLANG_ABI static int Tag;
 };
 
 } // end ento namespace

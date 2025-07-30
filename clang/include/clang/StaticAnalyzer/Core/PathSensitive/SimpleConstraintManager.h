@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_SIMPLECONSTRAINTMANAGER_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_SIMPLECONSTRAINTMANAGER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/ConstraintManager.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/ProgramState.h"
 
@@ -20,7 +21,7 @@ namespace clang {
 
 namespace ento {
 
-class SimpleConstraintManager : public ConstraintManager {
+class CLANG_ABI SimpleConstraintManager : public ConstraintManager {
   ExprEngine *EE;
   SValBuilder &SVB;
 

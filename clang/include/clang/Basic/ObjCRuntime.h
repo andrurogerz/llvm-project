@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_BASIC_OBJCRUNTIME_H
 #define LLVM_CLANG_BASIC_OBJCRUNTIME_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Support/ErrorHandling.h"
@@ -482,9 +483,9 @@ public:
   /// string.
   ///
   /// \return true on error.
-  bool tryParse(StringRef input);
+  CLANG_ABI bool tryParse(StringRef input);
 
-  std::string getAsString() const;
+  CLANG_ABI std::string getAsString() const;
 
   friend bool operator==(const ObjCRuntime &left, const ObjCRuntime &right) {
     return left.getKind() == right.getKind() &&
@@ -506,7 +507,7 @@ public:
   }
 };
 
-raw_ostream &operator<<(raw_ostream &out, const ObjCRuntime &value);
+CLANG_ABI raw_ostream &operator<<(raw_ostream &out, const ObjCRuntime &value);
 
 } // namespace clang
 

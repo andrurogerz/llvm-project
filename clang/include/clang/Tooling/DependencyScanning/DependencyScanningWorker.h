@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_TOOLING_DEPENDENCYSCANNING_DEPENDENCYSCANNINGWORKER_H
 #define LLVM_CLANG_TOOLING_DEPENDENCYSCANNING_DEPENDENCYSCANNINGWORKER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/DiagnosticOptions.h"
 #include "clang/Basic/FileManager.h"
 #include "clang/Basic/LLVM.h"
@@ -66,7 +67,7 @@ public:
 
 /// Dependency scanner callbacks that are used during scanning to influence the
 /// behaviour of the scan - for example, to customize the scanned invocations.
-class DependencyActionController {
+class CLANG_ABI DependencyActionController {
 public:
   virtual ~DependencyActionController();
 
@@ -86,7 +87,7 @@ public:
   ///
   /// @param Service The parent service. Must outlive the worker.
   /// @param FS The filesystem for the worker to use.
-  DependencyScanningWorker(DependencyScanningService &Service,
+  CLANG_ABI DependencyScanningWorker(DependencyScanningService &Service,
                            llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem> FS);
 
   /// Run the dependency scanning tool for a given clang driver command-line,
@@ -97,7 +98,7 @@ public:
   ///
   /// \returns false if clang errors occurred (with diagnostics reported to
   /// \c DiagConsumer), true otherwise.
-  bool computeDependencies(
+  CLANG_ABI bool computeDependencies(
       StringRef WorkingDirectory, const std::vector<std::string> &CommandLine,
       DependencyConsumer &DepConsumer, DependencyActionController &Controller,
       DiagnosticConsumer &DiagConsumer,
@@ -108,7 +109,7 @@ public:
   ///
   /// \returns false if clang errors occurred (with diagnostics reported to
   /// \c DiagConsumer), true otherwise.
-  bool computeDependencies(StringRef WorkingDirectory,
+  CLANG_ABI bool computeDependencies(StringRef WorkingDirectory,
                            const std::vector<std::string> &CommandLine,
                            DependencyConsumer &DepConsumer,
                            DependencyActionController &Controller,
@@ -120,7 +121,7 @@ public:
   ///
   /// \returns A \c StringError with the diagnostic output if clang errors
   /// occurred, success otherwise.
-  llvm::Error computeDependencies(
+  CLANG_ABI llvm::Error computeDependencies(
       StringRef WorkingDirectory, const std::vector<std::string> &CommandLine,
       DependencyConsumer &Consumer, DependencyActionController &Controller,
       std::optional<llvm::MemoryBufferRef> TUBuffer = std::nullopt);
@@ -130,7 +131,7 @@ public:
   ///
   /// \returns A \c StringError with the diagnostic output if clang errors
   /// occurred, success otherwise.
-  llvm::Error computeDependencies(StringRef WorkingDirectory,
+  CLANG_ABI llvm::Error computeDependencies(StringRef WorkingDirectory,
                                   const std::vector<std::string> &CommandLine,
                                   DependencyConsumer &Consumer,
                                   DependencyActionController &Controller,

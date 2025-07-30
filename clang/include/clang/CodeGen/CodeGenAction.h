@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_CODEGEN_CODEGENACTION_H
 #define LLVM_CLANG_CODEGEN_CODEGENACTION_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Frontend/FrontendAction.h"
 #include <memory>
 
@@ -21,7 +22,7 @@ namespace clang {
 class BackendConsumer;
 class CodeGenerator;
 
-class CodeGenAction : public ASTFrontendAction {
+class CLANG_ABI CodeGenAction : public ASTFrontendAction {
 private:
   // Let BackendConsumer access LinkModule.
   friend class BackendConsumer;
@@ -88,37 +89,37 @@ public:
   BackendConsumer *BEConsumer = nullptr;
 };
 
-class EmitAssemblyAction : public CodeGenAction {
+class CLANG_ABI EmitAssemblyAction : public CodeGenAction {
   virtual void anchor();
 public:
   EmitAssemblyAction(llvm::LLVMContext *_VMContext = nullptr);
 };
 
-class EmitBCAction : public CodeGenAction {
+class CLANG_ABI EmitBCAction : public CodeGenAction {
   virtual void anchor();
 public:
   EmitBCAction(llvm::LLVMContext *_VMContext = nullptr);
 };
 
-class EmitLLVMAction : public CodeGenAction {
+class CLANG_ABI EmitLLVMAction : public CodeGenAction {
   virtual void anchor();
 public:
   EmitLLVMAction(llvm::LLVMContext *_VMContext = nullptr);
 };
 
-class EmitLLVMOnlyAction : public CodeGenAction {
+class CLANG_ABI EmitLLVMOnlyAction : public CodeGenAction {
   virtual void anchor();
 public:
   EmitLLVMOnlyAction(llvm::LLVMContext *_VMContext = nullptr);
 };
 
-class EmitCodeGenOnlyAction : public CodeGenAction {
+class CLANG_ABI EmitCodeGenOnlyAction : public CodeGenAction {
   virtual void anchor();
 public:
   EmitCodeGenOnlyAction(llvm::LLVMContext *_VMContext = nullptr);
 };
 
-class EmitObjAction : public CodeGenAction {
+class CLANG_ABI EmitObjAction : public CodeGenAction {
   virtual void anchor();
 public:
   EmitObjAction(llvm::LLVMContext *_VMContext = nullptr);

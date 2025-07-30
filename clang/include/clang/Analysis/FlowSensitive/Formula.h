@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_FORMULA_H
 #define LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_FORMULA_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/DenseMap.h"
@@ -88,10 +89,10 @@ public:
   // Produce a stable human-readable representation of this formula.
   // For example: (V3 | !(V1 & V2))
   // If AtomNames is provided, these override the default V0, V1... names.
-  void print(llvm::raw_ostream &OS, const AtomNames * = nullptr) const;
+  CLANG_ABI void print(llvm::raw_ostream &OS, const AtomNames * = nullptr) const;
 
   // Allocate Formulas using Arena rather than calling this function directly.
-  static const Formula &create(llvm::BumpPtrAllocator &Alloc, Kind K,
+  CLANG_ABI static const Formula &create(llvm::BumpPtrAllocator &Alloc, Kind K,
                                ArrayRef<const Formula *> Operands,
                                unsigned Value = 0);
 

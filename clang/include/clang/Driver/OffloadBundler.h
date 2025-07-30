@@ -17,6 +17,7 @@
 #ifndef LLVM_CLANG_DRIVER_OFFLOADBUNDLER_H
 #define LLVM_CLANG_DRIVER_OFFLOADBUNDLER_H
 
+#include "clang/Support/Compiler.h"
 #include "llvm/Support/Compression.h"
 #include "llvm/Support/Error.h"
 #include "llvm/TargetParser/Triple.h"
@@ -28,7 +29,7 @@ namespace clang {
 
 class OffloadBundlerConfig {
 public:
-  OffloadBundlerConfig();
+  CLANG_ABI OffloadBundlerConfig();
 
   bool AllowNoHost = false;
   bool AllowMissingBundles = false;
@@ -61,13 +62,13 @@ public:
   OffloadBundler(const OffloadBundlerConfig &BC) : BundlerConfig(BC) {}
 
   // List bundle IDs. Return true if an error was found.
-  static llvm::Error
+  CLANG_ABI static llvm::Error
   ListBundleIDsInFile(llvm::StringRef InputFileName,
                       const OffloadBundlerConfig &BundlerConfig);
 
-  llvm::Error BundleFiles();
-  llvm::Error UnbundleFiles();
-  llvm::Error UnbundleArchive();
+  CLANG_ABI llvm::Error BundleFiles();
+  CLANG_ABI llvm::Error UnbundleFiles();
+  CLANG_ABI llvm::Error UnbundleArchive();
 };
 
 /// Obtain the offload kind, real machine triple, and an optional TargetID
@@ -83,14 +84,14 @@ struct OffloadTargetInfo {
 
   const OffloadBundlerConfig &BundlerConfig;
 
-  OffloadTargetInfo(const llvm::StringRef Target,
+  CLANG_ABI OffloadTargetInfo(const llvm::StringRef Target,
                     const OffloadBundlerConfig &BC);
-  bool hasHostKind() const;
-  bool isOffloadKindValid() const;
-  bool isOffloadKindCompatible(const llvm::StringRef TargetOffloadKind) const;
-  bool isTripleValid() const;
-  bool operator==(const OffloadTargetInfo &Target) const;
-  std::string str() const;
+  CLANG_ABI bool hasHostKind() const;
+  CLANG_ABI bool isOffloadKindValid() const;
+  CLANG_ABI bool isOffloadKindCompatible(const llvm::StringRef TargetOffloadKind) const;
+  CLANG_ABI bool isTripleValid() const;
+  CLANG_ABI bool operator==(const OffloadTargetInfo &Target) const;
+  CLANG_ABI std::string str() const;
 };
 
 // CompressedOffloadBundle represents the format for the compressed offload
@@ -117,22 +118,22 @@ public:
     size_t UncompressedFileSize;
     uint64_t Hash;
 
-    static llvm::Expected<CompressedBundleHeader> tryParse(llvm::StringRef);
+    CLANG_ABI static llvm::Expected<CompressedBundleHeader> tryParse(llvm::StringRef);
   };
 
   static inline const uint16_t DefaultVersion = 2;
 
-  static llvm::Expected<std::unique_ptr<llvm::MemoryBuffer>>
+  CLANG_ABI static llvm::Expected<std::unique_ptr<llvm::MemoryBuffer>>
   compress(llvm::compression::Params P, const llvm::MemoryBuffer &Input,
            uint16_t Version, bool Verbose = false);
-  static llvm::Expected<std::unique_ptr<llvm::MemoryBuffer>>
+  CLANG_ABI static llvm::Expected<std::unique_ptr<llvm::MemoryBuffer>>
   decompress(const llvm::MemoryBuffer &Input, bool Verbose = false);
 };
 
 /// Check whether the bundle id is in the following format:
 /// <kind>-<triple>[-<target id>[:target features]]
 /// <triple> := <arch>-<vendor>-<os>-<env>
-bool checkOffloadBundleID(const llvm::StringRef Str);
+CLANG_ABI bool checkOffloadBundleID(const llvm::StringRef Str);
 } // namespace clang
 
 #endif // LLVM_CLANG_DRIVER_OFFLOADBUNDLER_H

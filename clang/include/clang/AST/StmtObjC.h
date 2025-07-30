@@ -12,6 +12,7 @@
 #ifndef LLVM_CLANG_AST_STMTOBJC_H
 #define LLVM_CLANG_AST_STMTOBJC_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Stmt.h"
 #include "llvm/Support/Compiler.h"
 
@@ -26,7 +27,7 @@ class ObjCForCollectionStmt : public Stmt {
   SourceLocation ForLoc;
   SourceLocation RParenLoc;
 public:
-  ObjCForCollectionStmt(Stmt *Elem, Expr *Collect, Stmt *Body,
+  CLANG_ABI ObjCForCollectionStmt(Stmt *Elem, Expr *Collect, Stmt *Body,
                         SourceLocation FCL, SourceLocation RPL);
   explicit ObjCForCollectionStmt(EmptyShell Empty) :
     Stmt(ObjCForCollectionStmtClass, Empty) { }
@@ -199,11 +200,11 @@ class ObjCAtTryStmt final
       HasFinally(HasFinally) { }
 
 public:
-  static ObjCAtTryStmt *Create(const ASTContext &Context,
+  CLANG_ABI static ObjCAtTryStmt *Create(const ASTContext &Context,
                                SourceLocation atTryLoc, Stmt *atTryStmt,
                                Stmt **CatchStmts, unsigned NumCatchStmts,
                                Stmt *atFinallyStmt);
-  static ObjCAtTryStmt *CreateEmpty(const ASTContext &Context,
+  CLANG_ABI static ObjCAtTryStmt *CreateEmpty(const ASTContext &Context,
                                     unsigned NumCatchStmts, bool HasFinally);
 
   /// Retrieve the location of the @ in the \@try.
@@ -256,7 +257,7 @@ public:
   }
 
   SourceLocation getBeginLoc() const LLVM_READONLY { return AtTryLoc; }
-  SourceLocation getEndLoc() const LLVM_READONLY;
+  CLANG_ABI SourceLocation getEndLoc() const LLVM_READONLY;
 
   static bool classof(const Stmt *T) {
     return T->getStmtClass() == ObjCAtTryStmtClass;

@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_LEX_MODULELOADER_H
 #define LLVM_CLANG_LEX_MODULELOADER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/IdentifierTable.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/Module.h"
@@ -80,7 +81,7 @@ public:
 /// This abstract interface describes a module loader, which is responsible
 /// for resolving a module name (e.g., "std") to an actual module file, and
 /// then loading that module.
-class ModuleLoader {
+class CLANG_ABI ModuleLoader {
   // Building a module if true.
   bool BuildingModule;
 

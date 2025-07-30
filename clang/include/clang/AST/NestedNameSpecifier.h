@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_NESTEDNAMESPECIFIER_H
 #define LLVM_CLANG_AST_NESTEDNAMESPECIFIER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/DependenceFlags.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/SourceLocation.h"
@@ -113,17 +114,17 @@ public:
   /// The prefix must be dependent, since nested name specifiers
   /// referencing an identifier are only permitted when the identifier
   /// cannot be resolved.
-  static NestedNameSpecifier *Create(const ASTContext &Context,
+  CLANG_ABI static NestedNameSpecifier *Create(const ASTContext &Context,
                                      NestedNameSpecifier *Prefix,
                                      const IdentifierInfo *II);
 
   /// Builds a nested name specifier that names a namespace or namespace alias.
-  static NestedNameSpecifier *Create(const ASTContext &Context,
+  CLANG_ABI static NestedNameSpecifier *Create(const ASTContext &Context,
                                      NestedNameSpecifier *Prefix,
                                      const NamespaceBaseDecl *NS);
 
   /// Builds a nested name specifier that names a type.
-  static NestedNameSpecifier *
+  CLANG_ABI static NestedNameSpecifier *
   Create(const ASTContext &Context, NestedNameSpecifier *Prefix, const Type *T);
 
   /// Builds a specifier that consists of just an identifier.
@@ -132,16 +133,16 @@ public:
   /// prefix because the prefix is implied by something outside of the
   /// nested name specifier, e.g., in "x->Base::f", the "x" has a dependent
   /// type.
-  static NestedNameSpecifier *Create(const ASTContext &Context,
+  CLANG_ABI static NestedNameSpecifier *Create(const ASTContext &Context,
                                      const IdentifierInfo *II);
 
   /// Returns the nested name specifier representing the global
   /// scope.
-  static NestedNameSpecifier *GlobalSpecifier(const ASTContext &Context);
+  CLANG_ABI static NestedNameSpecifier *GlobalSpecifier(const ASTContext &Context);
 
   /// Returns the nested name specifier representing the __super scope
   /// for the given CXXRecordDecl.
-  static NestedNameSpecifier *SuperSpecifier(const ASTContext &Context,
+  CLANG_ABI static NestedNameSpecifier *SuperSpecifier(const ASTContext &Context,
                                              CXXRecordDecl *RD);
 
   /// Return the prefix of this nested name specifier.
@@ -154,7 +155,7 @@ public:
   NestedNameSpecifier *getPrefix() const { return Prefix.getPointer(); }
 
   /// Determine what kind of nested name specifier is stored.
-  SpecifierKind getKind() const;
+  CLANG_ABI SpecifierKind getKind() const;
 
   /// Retrieve the identifier stored in this nested name
   /// specifier.
@@ -167,11 +168,11 @@ public:
 
   /// Retrieve the namespace or namespace alias stored in this nested name
   /// specifier.
-  NamespaceBaseDecl *getAsNamespace() const;
+  CLANG_ABI NamespaceBaseDecl *getAsNamespace() const;
 
   /// Retrieve the record declaration stored in this nested name
   /// specifier.
-  CXXRecordDecl *getAsRecordDecl() const;
+  CLANG_ABI CXXRecordDecl *getAsRecordDecl() const;
 
   /// Retrieve the type stored in this nested name specifier.
   const Type *getAsType() const {
@@ -184,30 +185,30 @@ public:
   /// Fully translate this nested name specifier to a type.
   /// Unlike getAsType, this will convert this entire nested
   /// name specifier chain into its equivalent type.
-  const Type *translateToType(const ASTContext &Context) const;
+  CLANG_ABI const Type *translateToType(const ASTContext &Context) const;
 
-  NestedNameSpecifierDependence getDependence() const;
+  CLANG_ABI NestedNameSpecifierDependence getDependence() const;
 
   /// Whether this nested name specifier refers to a dependent
   /// type or not.
-  bool isDependent() const;
+  CLANG_ABI bool isDependent() const;
 
   /// Whether this nested name specifier involves a template
   /// parameter.
-  bool isInstantiationDependent() const;
+  CLANG_ABI bool isInstantiationDependent() const;
 
   /// Whether this nested-name-specifier contains an unexpanded
   /// parameter pack (for C++11 variadic templates).
-  bool containsUnexpandedParameterPack() const;
+  CLANG_ABI bool containsUnexpandedParameterPack() const;
 
   /// Whether this nested name specifier contains an error.
-  bool containsErrors() const;
+  CLANG_ABI bool containsErrors() const;
 
   /// Print this nested name specifier to the given output stream. If
   /// `ResolveTemplateArguments` is true, we'll print actual types, e.g.
   /// `ns::SomeTemplate<int, MyClass>` instead of
   /// `ns::SomeTemplate<Container::value_type, T>`.
-  void print(raw_ostream &OS, const PrintingPolicy &Policy,
+  CLANG_ABI void print(raw_ostream &OS, const PrintingPolicy &Policy,
              bool ResolveTemplateArguments = false,
              bool PrintFinalScopeResOp = true) const;
 
@@ -218,10 +219,10 @@ public:
 
   /// Dump the nested name specifier to standard output to aid
   /// in debugging.
-  void dump(const LangOptions &LO) const;
-  void dump() const;
-  void dump(llvm::raw_ostream &OS) const;
-  void dump(llvm::raw_ostream &OS, const LangOptions &LO) const;
+  CLANG_ABI void dump(const LangOptions &LO) const;
+  CLANG_ABI void dump() const;
+  CLANG_ABI void dump(llvm::raw_ostream &OS) const;
+  CLANG_ABI void dump(llvm::raw_ostream &OS, const LangOptions &LO) const;
 };
 
 /// A C++ nested-name-specifier augmented with source location
@@ -236,7 +237,7 @@ class NestedNameSpecifierLoc {
 
   /// Determines the data length for the entire
   /// nested-name-specifier.
-  static unsigned getDataLength(NestedNameSpecifier *Qualifier);
+  CLANG_ABI static unsigned getDataLength(NestedNameSpecifier *Qualifier);
 
 public:
   /// Construct an empty nested-name-specifier.
@@ -280,7 +281,7 @@ public:
   /// For example, if this instance refers to a nested-name-specifier
   /// \c \::std::vector<int>::, the returned source range would cover
   /// from "vector" to the last '::'.
-  SourceRange getLocalSourceRange() const;
+  CLANG_ABI SourceRange getLocalSourceRange() const;
 
   /// Retrieve the location of the beginning of this
   /// nested-name-specifier.
@@ -325,7 +326,7 @@ public:
 
   /// For a nested-name-specifier that refers to a type,
   /// retrieve the type with source-location information.
-  TypeLoc getTypeLoc() const;
+  CLANG_ABI TypeLoc getTypeLoc() const;
 
   /// Determines the data length for the entire
   /// nested-name-specifier.
@@ -368,9 +369,9 @@ class NestedNameSpecifierLocBuilder {
 
 public:
   NestedNameSpecifierLocBuilder() = default;
-  NestedNameSpecifierLocBuilder(const NestedNameSpecifierLocBuilder &Other);
+  CLANG_ABI NestedNameSpecifierLocBuilder(const NestedNameSpecifierLocBuilder &Other);
 
-  NestedNameSpecifierLocBuilder &
+  CLANG_ABI NestedNameSpecifierLocBuilder &
   operator=(const NestedNameSpecifierLocBuilder &Other);
 
   ~NestedNameSpecifierLocBuilder() {
@@ -390,7 +391,7 @@ public:
   /// \param TL The TypeLoc that describes the type preceding the '::'.
   ///
   /// \param ColonColonLoc The location of the trailing '::'.
-  void Extend(ASTContext &Context, TypeLoc TL, SourceLocation ColonColonLoc);
+  CLANG_ABI void Extend(ASTContext &Context, TypeLoc TL, SourceLocation ColonColonLoc);
 
   /// Extend the current nested-name-specifier by another
   /// nested-name-specifier component of the form 'identifier::'.
@@ -403,7 +404,7 @@ public:
   /// \param IdentifierLoc The location of the identifier.
   ///
   /// \param ColonColonLoc The location of the trailing '::'.
-  void Extend(ASTContext &Context, IdentifierInfo *Identifier,
+  CLANG_ABI void Extend(ASTContext &Context, IdentifierInfo *Identifier,
               SourceLocation IdentifierLoc, SourceLocation ColonColonLoc);
 
   /// Extend the current nested-name-specifier by another
@@ -418,12 +419,12 @@ public:
   //  alias.
   ///
   /// \param ColonColonLoc The location of the trailing '::'.
-  void Extend(ASTContext &Context, NamespaceBaseDecl *Namespace,
+  CLANG_ABI void Extend(ASTContext &Context, NamespaceBaseDecl *Namespace,
               SourceLocation NamespaceLoc, SourceLocation ColonColonLoc);
 
   /// Turn this (empty) nested-name-specifier into the global
   /// nested-name-specifier '::'.
-  void MakeGlobal(ASTContext &Context, SourceLocation ColonColonLoc);
+  CLANG_ABI void MakeGlobal(ASTContext &Context, SourceLocation ColonColonLoc);
 
   /// Turns this (empty) nested-name-specifier into '__super'
   /// nested-name-specifier.
@@ -438,7 +439,7 @@ public:
   /// name.
   ///
   /// \param ColonColonLoc The location of the trailing '::'.
-  void MakeSuper(ASTContext &Context, CXXRecordDecl *RD,
+  CLANG_ABI void MakeSuper(ASTContext &Context, CXXRecordDecl *RD,
                  SourceLocation SuperLoc, SourceLocation ColonColonLoc);
 
   /// Make a new nested-name-specifier from incomplete source-location
@@ -447,12 +448,12 @@ public:
   /// This routine should be used very, very rarely, in cases where we
   /// need to synthesize a nested-name-specifier. Most code should instead use
   /// \c Adopt() with a proper \c NestedNameSpecifierLoc.
-  void MakeTrivial(ASTContext &Context, NestedNameSpecifier *Qualifier,
+  CLANG_ABI void MakeTrivial(ASTContext &Context, NestedNameSpecifier *Qualifier,
                    SourceRange R);
 
   /// Adopt an existing nested-name-specifier (with source-range
   /// information).
-  void Adopt(NestedNameSpecifierLoc Other);
+  CLANG_ABI void Adopt(NestedNameSpecifierLoc Other);
 
   /// Retrieve the source range covered by this nested-name-specifier.
   SourceRange getSourceRange() const LLVM_READONLY {
@@ -464,7 +465,7 @@ public:
   ///
   /// \param Context The context into which this nested-name-specifier will be
   /// copied.
-  NestedNameSpecifierLoc getWithLocInContext(ASTContext &Context) const;
+  CLANG_ABI NestedNameSpecifierLoc getWithLocInContext(ASTContext &Context) const;
 
   /// Retrieve a nested-name-specifier with location
   /// information based on the information in this builder.

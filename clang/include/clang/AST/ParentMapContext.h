@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_PARENTMAPCONTEXT_H
 #define LLVM_CLANG_AST_PARENTMAPCONTEXT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/ASTTypeTraits.h"
 
@@ -22,9 +23,9 @@ class DynTypedNodeList;
 
 class ParentMapContext {
 public:
-  ParentMapContext(ASTContext &Ctx);
+  CLANG_ABI ParentMapContext(ASTContext &Ctx);
 
-  ~ParentMapContext();
+  CLANG_ABI ~ParentMapContext();
 
   /// Returns the parents of the given node (within the traversal scope).
   ///
@@ -52,17 +53,17 @@ public:
   /// NestedNameSpecifier or NestedNameSpecifierLoc.
   template <typename NodeT> DynTypedNodeList getParents(const NodeT &Node);
 
-  DynTypedNodeList getParents(const DynTypedNode &Node);
+  CLANG_ABI DynTypedNodeList getParents(const DynTypedNode &Node);
 
   /// Clear parent maps.
-  void clear();
+  CLANG_ABI void clear();
 
   TraversalKind getTraversalKind() const { return Traversal; }
   void setTraversalKind(TraversalKind TK) { Traversal = TK; }
 
-  const Expr *traverseIgnored(const Expr *E) const;
-  Expr *traverseIgnored(Expr *E) const;
-  DynTypedNode traverseIgnored(const DynTypedNode &N) const;
+  CLANG_ABI const Expr *traverseIgnored(const Expr *E) const;
+  CLANG_ABI Expr *traverseIgnored(Expr *E) const;
+  CLANG_ABI DynTypedNode traverseIgnored(const DynTypedNode &N) const;
 
   class ParentMap;
 

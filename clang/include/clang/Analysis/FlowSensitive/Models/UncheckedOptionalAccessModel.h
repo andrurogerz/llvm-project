@@ -14,6 +14,7 @@
 #ifndef CLANG_ANALYSIS_FLOWSENSITIVE_MODELS_UNCHECKEDOPTIONALACCESSMODEL_H
 #define CLANG_ANALYSIS_FLOWSENSITIVE_MODELS_UNCHECKEDOPTIONALACCESSMODEL_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/Analysis/CFG.h"
 #include "clang/Analysis/FlowSensitive/CFGMatchSwitch.h"
@@ -57,14 +58,14 @@ class UncheckedOptionalAccessModel
     : public DataflowAnalysis<UncheckedOptionalAccessModel,
                               UncheckedOptionalAccessLattice> {
 public:
-  UncheckedOptionalAccessModel(ASTContext &Ctx, dataflow::Environment &Env);
+  CLANG_ABI UncheckedOptionalAccessModel(ASTContext &Ctx, dataflow::Environment &Env);
 
   /// Returns a matcher for the optional classes covered by this model.
-  static ast_matchers::DeclarationMatcher optionalClassDecl();
+  CLANG_ABI static ast_matchers::DeclarationMatcher optionalClassDecl();
 
   static UncheckedOptionalAccessLattice initialElement() { return {}; }
 
-  void transfer(const CFGElement &Elt, UncheckedOptionalAccessLattice &L,
+  CLANG_ABI void transfer(const CFGElement &Elt, UncheckedOptionalAccessLattice &L,
                 Environment &Env);
 
 private:
@@ -79,7 +80,7 @@ struct UncheckedOptionalAccessDiagnostic {
 
 class UncheckedOptionalAccessDiagnoser {
 public:
-  UncheckedOptionalAccessDiagnoser(
+  CLANG_ABI UncheckedOptionalAccessDiagnoser(
       UncheckedOptionalAccessModelOptions Options = {});
 
   llvm::SmallVector<UncheckedOptionalAccessDiagnostic>

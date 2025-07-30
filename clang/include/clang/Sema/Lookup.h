@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_SEMA_LOOKUP_H
 #define LLVM_CLANG_SEMA_LOOKUP_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/DeclBase.h"
 #include "clang/AST/DeclCXX.h"
@@ -369,9 +370,9 @@ public:
 
   /// Determine whether the given declaration is visible to the
   /// program.
-  static bool isVisible(Sema &SemaRef, NamedDecl *D);
+  CLANG_ABI static bool isVisible(Sema &SemaRef, NamedDecl *D);
 
-  static bool isReachable(Sema &SemaRef, NamedDecl *D);
+  CLANG_ABI static bool isReachable(Sema &SemaRef, NamedDecl *D);
 
   static bool isAcceptable(Sema &SemaRef, NamedDecl *D,
                            Sema::AcceptableKind Kind) {
@@ -401,7 +402,7 @@ public:
   ///   return func().v;
   /// }
   /// ```
-  static bool isAvailableForLookup(Sema &SemaRef, NamedDecl *ND);
+  CLANG_ABI static bool isAvailableForLookup(Sema &SemaRef, NamedDecl *ND);
 
   /// Retrieve the accepted (re)declaration of the given declaration,
   /// if there is one.
@@ -419,7 +420,7 @@ private:
   static bool isAcceptableSlow(Sema &SemaRef, NamedDecl *D,
                                Sema::AcceptableKind Kind);
   static bool isReachableSlow(Sema &SemaRef, NamedDecl *D);
-  NamedDecl *getAcceptableDeclSlow(NamedDecl *D) const;
+  CLANG_ABI NamedDecl *getAcceptableDeclSlow(NamedDecl *D) const;
 
 public:
   /// Returns the identifier namespace mask for this lookup.
@@ -518,7 +519,7 @@ public:
   ///
   /// This should be called in any environment where lookup might
   /// generate multiple lookup results.
-  void resolveKind();
+  CLANG_ABI void resolveKind();
 
   /// Re-resolves the result kind of the lookup after a set of
   /// removals has been performed.
@@ -588,13 +589,13 @@ public:
   /// base classes of different types.
   ///
   /// The given paths object is copied and invalidated.
-  void setAmbiguousBaseSubobjectTypes(CXXBasePaths &P);
+  CLANG_ABI void setAmbiguousBaseSubobjectTypes(CXXBasePaths &P);
 
   /// Make these results show that the name was found in
   /// distinct base classes of the same type.
   ///
   /// The given paths object is copied and invalidated.
-  void setAmbiguousBaseSubobjects(CXXBasePaths &P);
+  CLANG_ABI void setAmbiguousBaseSubobjects(CXXBasePaths &P);
 
   /// Make these results show that the name was found in
   /// different contexts and a tag decl was hidden by an ordinary
@@ -628,8 +629,8 @@ public:
     configure();
   }
 
-  void dump();
-  void print(raw_ostream &);
+  CLANG_ABI void dump();
+  CLANG_ABI void print(raw_ostream &);
 
   /// Suppress the diagnostics that would normally fire because of this
   /// lookup.  This happens during (e.g.) redeclaration lookups.
@@ -777,7 +778,7 @@ private:
   }
 
   void addDeclsFromBasePaths(const CXXBasePaths &P);
-  void configure();
+  CLANG_ABI void configure();
 
   bool checkDebugAssumptions() const;
 
@@ -788,7 +789,7 @@ private:
     return false;
   }
 
-  static void deletePaths(CXXBasePaths *);
+  CLANG_ABI static void deletePaths(CXXBasePaths *);
 
   // Results.
   LookupResultKind ResultKind = LookupResultKind::NotFound;
@@ -835,7 +836,7 @@ private:
 /// This abstract class is meant to be subclassed by clients of \c
 /// Sema::LookupVisibleDecls(), each of which should override the \c
 /// FoundDecl() function to process declarations as they are found.
-class VisibleDeclConsumer {
+class CLANG_ABI VisibleDeclConsumer {
 public:
   /// Destroys the visible declaration consumer.
   virtual ~VisibleDeclConsumer();
@@ -881,7 +882,7 @@ private:
 
 public:
   /// Adds a new ADL candidate to this map.
-  void insert(NamedDecl *D);
+  CLANG_ABI void insert(NamedDecl *D);
 
   /// Removes any data associated with a given decl.
   void erase(NamedDecl *D) {

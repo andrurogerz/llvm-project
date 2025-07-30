@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_COMPARISONCATEGORIES_H
 #define LLVM_CLANG_AST_COMPARISONCATEGORIES_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/APSInt.h"
 #include "llvm/ADT/DenseMap.h"
@@ -58,7 +59,7 @@ inline ComparisonCategoryType commonComparisonType(ComparisonCategoryType A,
 
 /// Get the comparison category that should be used when comparing values of
 /// type \c T.
-std::optional<ComparisonCategoryType>
+CLANG_ABI std::optional<ComparisonCategoryType>
 getComparisonCategoryForBuiltinCmp(QualType T);
 
 /// An enumeration representing the possible results of a three-way
@@ -91,11 +92,11 @@ public:
 
     /// True iff we've successfully evaluated the variable as a constant
     /// expression and extracted its integer value.
-    bool hasValidIntValue() const;
+    CLANG_ABI bool hasValidIntValue() const;
 
     /// Get the constant integer value used by this variable to represent
     /// the comparison category result type.
-    llvm::APSInt getIntValue() const;
+    CLANG_ABI llvm::APSInt getIntValue() const;
   };
 private:
   const ASTContext &Ctx;
@@ -111,7 +112,7 @@ private:
   ///
   /// If the ValueInfo does not have a valid integer value the variable
   /// is evaluated as a constant expression to determine that value.
-  ValueInfo *lookupValueInfo(ComparisonCategoryResult ValueKind) const;
+  CLANG_ABI ValueInfo *lookupValueInfo(ComparisonCategoryResult ValueKind) const;
 
 public:
   /// The declaration for the comparison category type from the
@@ -122,7 +123,7 @@ public:
   ComparisonCategoryType Kind;
 
 public:
-  QualType getType() const;
+  CLANG_ABI QualType getType() const;
 
   const ValueInfo *getValueInfo(ComparisonCategoryResult ValueKind) const {
     ValueInfo *Info = lookupValueInfo(ValueKind);
@@ -173,12 +174,12 @@ public:
 
 class ComparisonCategories {
 public:
-  static StringRef getCategoryString(ComparisonCategoryType Kind);
-  static StringRef getResultString(ComparisonCategoryResult Kind);
+  CLANG_ABI static StringRef getCategoryString(ComparisonCategoryType Kind);
+  CLANG_ABI static StringRef getResultString(ComparisonCategoryResult Kind);
 
   /// Return the list of results which are valid for the specified
   /// comparison category type.
-  static std::vector<ComparisonCategoryResult>
+  CLANG_ABI static std::vector<ComparisonCategoryResult>
   getPossibleResultsForType(ComparisonCategoryType Type);
 
   /// Return the comparison category information for the category
@@ -195,21 +196,21 @@ public:
   /// the declaration is looked up and a cache entry is created.
   /// NOTE: Lookup is expected to succeed. Use lookupInfo if failure is
   /// possible.
-  const ComparisonCategoryInfo &getInfoForType(QualType Ty) const;
+  CLANG_ABI const ComparisonCategoryInfo &getInfoForType(QualType Ty) const;
 
 public:
   /// Return the cached comparison category information for the
   /// specified 'Kind'. If no cache entry is present the comparison category
   /// type is looked up. If lookup fails nullptr is returned. Otherwise, a
   /// new cache entry is created and returned
-  const ComparisonCategoryInfo *lookupInfo(ComparisonCategoryType Kind) const;
+  CLANG_ABI const ComparisonCategoryInfo *lookupInfo(ComparisonCategoryType Kind) const;
 
   ComparisonCategoryInfo *lookupInfo(ComparisonCategoryType Kind) {
     const auto &This = *this;
     return const_cast<ComparisonCategoryInfo *>(This.lookupInfo(Kind));
   }
 
-  const ComparisonCategoryInfo *lookupInfoForType(QualType Ty) const;
+  CLANG_ABI const ComparisonCategoryInfo *lookupInfoForType(QualType Ty) const;
 
 private:
   friend class ASTContext;

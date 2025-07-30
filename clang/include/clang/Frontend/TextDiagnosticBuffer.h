@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_FRONTEND_TEXTDIAGNOSTICBUFFER_H
 #define LLVM_CLANG_FRONTEND_TEXTDIAGNOSTICBUFFER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/SourceLocation.h"
 #include <cstddef>
@@ -22,7 +23,7 @@
 
 namespace clang {
 
-class TextDiagnosticBuffer : public DiagnosticConsumer {
+class CLANG_ABI TextDiagnosticBuffer : public DiagnosticConsumer {
 public:
   using DiagList = std::vector<std::pair<SourceLocation, std::string>>;
   using iterator = DiagList::iterator;

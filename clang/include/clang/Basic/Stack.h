@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_BASIC_STACK_H
 #define LLVM_CLANG_BASIC_STACK_H
 
+#include "clang/Support/Compiler.h"
 #include <cstddef>
 
 #include "llvm/ADT/STLExtras.h"
@@ -30,12 +31,12 @@ namespace clang {
   ///
   /// \param ForceSet set to true if you know the call is near the bottom of a
   ///                 new stack. Used for split stacks.
-  void noteBottomOfStack(bool ForceSet = false);
+  CLANG_ABI void noteBottomOfStack(bool ForceSet = false);
 
   /// Determine whether the stack is nearly exhausted.
-  bool isStackNearlyExhausted();
+  CLANG_ABI bool isStackNearlyExhausted();
 
-  void runWithSufficientStackSpaceSlow(llvm::function_ref<void()> Diag,
+  CLANG_ABI void runWithSufficientStackSpaceSlow(llvm::function_ref<void()> Diag,
                                        llvm::function_ref<void()> Fn);
 
   /// Run a given function on a stack with "sufficient" space. If stack space

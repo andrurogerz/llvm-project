@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_CLONEDETECTION_H
 #define LLVM_CLANG_ANALYSIS_CLONEDETECTION_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/StmtVisitor.h"
 #include "llvm/Support/Regex.h"
 #include <vector>
@@ -58,25 +59,25 @@ public:
   /// \param StartIndex The inclusive start index in the children array of
   ///                   \p Stmt
   /// \param EndIndex The exclusive end index in the children array of \p Stmt.
-  StmtSequence(const CompoundStmt *Stmt, const Decl *D, unsigned StartIndex,
+  CLANG_ABI StmtSequence(const CompoundStmt *Stmt, const Decl *D, unsigned StartIndex,
                unsigned EndIndex);
 
   /// Constructs a StmtSequence holding a single statement.
   ///
   /// \param Stmt An arbitrary Stmt.
   /// \param D The Decl containing this Stmt.
-  StmtSequence(const Stmt *Stmt, const Decl *D);
+  CLANG_ABI StmtSequence(const Stmt *Stmt, const Decl *D);
 
   /// Constructs an empty StmtSequence.
-  StmtSequence();
+  CLANG_ABI StmtSequence();
 
   typedef const Stmt *const *iterator;
 
   /// Returns an iterator pointing to the first statement in this sequence.
-  iterator begin() const;
+  CLANG_ABI iterator begin() const;
 
   /// Returns an iterator pointing behind the last statement in this sequence.
-  iterator end() const;
+  CLANG_ABI iterator end() const;
 
   /// Returns the first statement in this sequence.
   ///
@@ -107,7 +108,7 @@ public:
   bool empty() const { return size() == 0; }
 
   /// Returns the related ASTContext for the stored Stmts.
-  ASTContext &getASTContext() const;
+  CLANG_ABI ASTContext &getASTContext() const;
 
   /// Returns the declaration that contains the stored Stmts.
   const Decl *getContainingDecl() const {
@@ -121,16 +122,16 @@ public:
   /// Returns the start sourcelocation of the first statement in this sequence.
   ///
   /// This method should only be called on a non-empty StmtSequence object.
-  SourceLocation getBeginLoc() const;
+  CLANG_ABI SourceLocation getBeginLoc() const;
 
   /// Returns the end sourcelocation of the last statement in this sequence.
   ///
   /// This method should only be called on a non-empty StmtSequence object.
-  SourceLocation getEndLoc() const;
+  CLANG_ABI SourceLocation getEndLoc() const;
 
   /// Returns the source range of the whole sequence - from the beginning
   /// of the first statement to the end of the last statement.
-  SourceRange getSourceRange() const;
+  CLANG_ABI SourceRange getSourceRange() const;
 
   bool operator==(const StmtSequence &Other) const {
     return std::tie(S, StartIndex, EndIndex) ==
@@ -147,7 +148,7 @@ public:
   ///
   /// This method should only be called on a non-empty StmtSequence object
   /// and passed a non-empty StmtSequence object.
-  bool contains(const StmtSequence &Other) const;
+  CLANG_ABI bool contains(const StmtSequence &Other) const;
 };
 
 /// Searches for similar subtrees in the AST.
@@ -171,7 +172,7 @@ public:
 
   /// Generates and stores search data for all statements in the body of
   /// the given Decl.
-  void analyzeCodeBody(const Decl *D);
+  CLANG_ABI void analyzeCodeBody(const Decl *D);
 
   /// Constrains the given list of clone groups with the given constraint.
   ///
@@ -238,7 +239,7 @@ public:
   /// \param Compare The comparison function that all clones are supposed to
   ///                pass. Should return true if and only if two clones belong
   ///                to the same CloneGroup.
-  static void splitCloneGroups(
+  CLANG_ABI static void splitCloneGroups(
       std::vector<CloneDetector::CloneGroup> &CloneGroups,
       llvm::function_ref<bool(const StmtSequence &, const StmtSequence &)>
           Compare);
@@ -253,7 +254,7 @@ public:
 /// through a more detailed analysis.
 class RecursiveCloneTypeIIHashConstraint {
 public:
-  void constrain(std::vector<CloneDetector::CloneGroup> &Sequences);
+  CLANG_ABI void constrain(std::vector<CloneDetector::CloneGroup> &Sequences);
 };
 
 /// This constraint moves clones into clone groups of type II by comparing them.
@@ -264,7 +265,7 @@ public:
 /// slow to efficiently handle large amounts of clones.
 class RecursiveCloneTypeIIVerifyConstraint {
 public:
-  void constrain(std::vector<CloneDetector::CloneGroup> &Sequences);
+  CLANG_ABI void constrain(std::vector<CloneDetector::CloneGroup> &Sequences);
 };
 
 /// Ensures that every clone has at least the given complexity.
@@ -283,7 +284,7 @@ public:
   /// \param Limit The limit of complexity we probe for. After reaching
   ///              this limit during calculation, this method is exiting
   ///              early to improve performance and returns this limit.
-  size_t calculateStmtComplexity(const StmtSequence &Seq, std::size_t Limit,
+  CLANG_ABI size_t calculateStmtComplexity(const StmtSequence &Seq, std::size_t Limit,
                                  const std::string &ParentMacroStack = "");
 
   void constrain(std::vector<CloneDetector::CloneGroup> &CloneGroups) {
@@ -316,7 +317,7 @@ public:
 
 /// Ensures that no clone group fully contains another clone group.
 struct OnlyLargestCloneConstraint {
-  void constrain(std::vector<CloneDetector::CloneGroup> &Result);
+  CLANG_ABI void constrain(std::vector<CloneDetector::CloneGroup> &Result);
 };
 
 struct FilenamePatternConstraint {
@@ -329,7 +330,7 @@ struct FilenamePatternConstraint {
         IgnoredFilesPattern.str() + "$)");
   }
 
-  bool isAutoGenerated(const CloneDetector::CloneGroup &Group);
+  CLANG_ABI bool isAutoGenerated(const CloneDetector::CloneGroup &Group);
 
   void constrain(std::vector<CloneDetector::CloneGroup> &CloneGroups) {
     CloneConstraint::filterGroups(
@@ -365,7 +366,7 @@ class VariablePattern {
   void addVariableOccurence(const VarDecl *VarDecl, const Stmt *Mention);
 
   /// Adds each referenced variable from the given statement.
-  void addVariables(const Stmt *S);
+  CLANG_ABI void addVariables(const Stmt *S);
 
 public:
   /// Creates an VariablePattern object with information about the given
@@ -423,14 +424,14 @@ public:
   ///
   /// This function should only be called if the related statements of the given
   /// pattern and the statements of this objects are clones of each other.
-  unsigned countPatternDifferences(
+  CLANG_ABI unsigned countPatternDifferences(
       const VariablePattern &Other,
       VariablePattern::SuspiciousClonePair *FirstMismatch = nullptr);
 };
 
 /// Ensures that all clones reference variables in the same pattern.
 struct MatchingVariablePatternConstraint {
-  void constrain(std::vector<CloneDetector::CloneGroup> &CloneGroups);
+  CLANG_ABI void constrain(std::vector<CloneDetector::CloneGroup> &CloneGroups);
 };
 
 } // end namespace clang

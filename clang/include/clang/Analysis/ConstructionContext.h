@@ -16,6 +16,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_CONSTRUCTIONCONTEXT_H
 #define LLVM_CLANG_ANALYSIS_CONSTRUCTIONCONTEXT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Analysis/Support/BumpVector.h"
 #include "clang/AST/ExprCXX.h"
 #include "clang/AST/ExprObjC.h"
@@ -219,7 +220,7 @@ class ConstructionContextLayer {
       : Parent(Parent), Item(Item) {}
 
 public:
-  static const ConstructionContextLayer *
+  CLANG_ABI static const ConstructionContextLayer *
   create(BumpVectorContext &C, const ConstructionContextItem &Item,
          const ConstructionContextLayer *Parent = nullptr);
 
@@ -232,7 +233,7 @@ public:
   /// then the other context terminates but our context goes further - i.e.,
   /// we are providing the same context that the other context provides,
   /// and a bit more above that.
-  bool isStrictlyMoreSpecificThan(const ConstructionContextLayer *Other) const;
+  CLANG_ABI bool isStrictlyMoreSpecificThan(const ConstructionContextLayer *Other) const;
 };
 
 
@@ -300,7 +301,7 @@ public:
   /// Consume the construction context layer, together with its parent layers,
   /// and wrap it up into a complete construction context. May return null
   /// if layers do not form any supported construction context.
-  static const ConstructionContext *
+  CLANG_ABI static const ConstructionContext *
   createFromLayers(BumpVectorContext &C,
                    const ConstructionContextLayer *TopLayer);
 

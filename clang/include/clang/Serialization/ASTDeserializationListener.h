@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_SERIALIZATION_ASTDESERIALIZATIONLISTENER_H
 #define LLVM_CLANG_SERIALIZATION_ASTDESERIALIZATIONLISTENER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/IdentifierTable.h"
 #include "clang/Serialization/ASTBitCodes.h"
 
@@ -29,7 +30,7 @@ class SourceLocation;
 
 // IMPORTANT: when you add a new interface to this class, please update the
 // DelegatingDeserializationListener below.
-class ASTDeserializationListener {
+class CLANG_ABI ASTDeserializationListener {
 public:
   virtual ~ASTDeserializationListener();
 

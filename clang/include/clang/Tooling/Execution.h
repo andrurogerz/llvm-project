@@ -27,6 +27,7 @@
 #ifndef LLVM_CLANG_TOOLING_EXECUTION_H
 #define LLVM_CLANG_TOOLING_EXECUTION_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/Tooling/Tooling.h"
 #include "llvm/Support/Error.h"
@@ -36,7 +37,7 @@
 namespace clang {
 namespace tooling {
 
-extern llvm::cl::opt<std::string> ExecutorName;
+extern CLANG_ABI llvm::cl::opt<std::string> ExecutorName;
 
 /// An abstraction for the result of a tool execution. For example, the
 /// underlying result can be in-memory or on-disk.
@@ -56,7 +57,7 @@ public:
 /// Stores the key-value results in memory. It maintains the lifetime of
 /// the result. Clang tools using this class are expected to generate a small
 /// set of different results, or a large set of duplicated results.
-class InMemoryToolResults : public ToolResults {
+class CLANG_ABI InMemoryToolResults : public ToolResults {
 public:
   InMemoryToolResults() : Strings(Arena) {}
   void addResult(StringRef Key, StringRef Value) override;
@@ -82,7 +83,7 @@ public:
   explicit ExecutionContext(ToolResults *Results) : Results(Results) {}
 
   /// Adds a KV pair to the result container of this execution.
-  void reportResult(StringRef Key, StringRef Value);
+  CLANG_ABI void reportResult(StringRef Key, StringRef Value);
 
   // Returns the source control system's revision number if applicable.
   // Otherwise returns an empty string.
@@ -122,9 +123,9 @@ public:
               Actions) = 0;
 
   /// Convenient functions for the above `execute`.
-  llvm::Error execute(std::unique_ptr<FrontendActionFactory> Action);
+  CLANG_ABI llvm::Error execute(std::unique_ptr<FrontendActionFactory> Action);
   /// Executes an action with an argument adjuster.
-  llvm::Error execute(std::unique_ptr<FrontendActionFactory> Action,
+  CLANG_ABI llvm::Error execute(std::unique_ptr<FrontendActionFactory> Action,
                       ArgumentsAdjuster Adjuster);
 
   /// Returns a reference to the execution context.
@@ -168,13 +169,13 @@ public:
 ///
 /// By default, this creates a `StandaloneToolExecutor` ("standalone") if
 /// `--executor` is not provided.
-llvm::Expected<std::unique_ptr<ToolExecutor>>
+CLANG_ABI llvm::Expected<std::unique_ptr<ToolExecutor>>
 createExecutorFromCommandLineArgs(int &argc, const char **argv,
                                   llvm::cl::OptionCategory &Category,
                                   const char *Overview = nullptr);
 
 namespace internal {
-llvm::Expected<std::unique_ptr<ToolExecutor>>
+CLANG_ABI llvm::Expected<std::unique_ptr<ToolExecutor>>
 createExecutorFromCommandLineArgsImpl(int &argc, const char **argv,
                                       llvm::cl::OptionCategory &Category,
                                       const char *Overview = nullptr);

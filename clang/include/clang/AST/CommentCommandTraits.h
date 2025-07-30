@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_AST_COMMENTCOMMANDTRAITS_H
 #define LLVM_CLANG_AST_COMMENTCOMMANDTRAITS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/CommentOptions.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/SmallVector.h"
@@ -155,14 +156,14 @@ public:
     KCI_Last
   };
 
-  CommandTraits(llvm::BumpPtrAllocator &Allocator,
+  CLANG_ABI CommandTraits(llvm::BumpPtrAllocator &Allocator,
                 const CommentOptions &CommentOptions);
 
-  void registerCommentOptions(const CommentOptions &CommentOptions);
+  CLANG_ABI void registerCommentOptions(const CommentOptions &CommentOptions);
 
   /// \returns a CommandInfo object for a given command name or
   /// NULL if no CommandInfo object exists for this command.
-  const CommandInfo *getCommandInfoOrNULL(StringRef Name) const;
+  CLANG_ABI const CommandInfo *getCommandInfoOrNULL(StringRef Name) const;
 
   const CommandInfo *getCommandInfo(StringRef Name) const {
     if (const CommandInfo *Info = getCommandInfoOrNULL(Name))
@@ -170,21 +171,21 @@ public:
     llvm_unreachable("the command should be known");
   }
 
-  const CommandInfo *getTypoCorrectCommandInfo(StringRef Typo) const;
+  CLANG_ABI const CommandInfo *getTypoCorrectCommandInfo(StringRef Typo) const;
 
-  const CommandInfo *getCommandInfo(unsigned CommandID) const;
+  CLANG_ABI const CommandInfo *getCommandInfo(unsigned CommandID) const;
 
-  const CommandInfo *registerUnknownCommand(StringRef CommandName);
+  CLANG_ABI const CommandInfo *registerUnknownCommand(StringRef CommandName);
 
-  const CommandInfo *registerBlockCommand(StringRef CommandName);
+  CLANG_ABI const CommandInfo *registerBlockCommand(StringRef CommandName);
 
   /// \returns a CommandInfo object for a given command name or
   /// NULL if \c Name is not a builtin command.
-  static const CommandInfo *getBuiltinCommandInfo(StringRef Name);
+  CLANG_ABI static const CommandInfo *getBuiltinCommandInfo(StringRef Name);
 
   /// \returns a CommandInfo object for a given command ID or
   /// NULL if \c CommandID is not a builtin command.
-  static const CommandInfo *getBuiltinCommandInfo(unsigned CommandID);
+  CLANG_ABI static const CommandInfo *getBuiltinCommandInfo(unsigned CommandID);
 
 private:
   CommandTraits(const CommandTraits &) = delete;

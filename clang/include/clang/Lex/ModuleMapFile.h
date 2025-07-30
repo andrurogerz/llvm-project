@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_LEX_MODULEMAPFILE_H
 #define LLVM_CLANG_LEX_MODULEMAPFILE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 // TODO: Consider moving ModuleId to another header, parsing a modulemap file is
 //   intended to not depend on anything about the clang::Module class.
@@ -146,7 +147,7 @@ struct ModuleMapFile {
   bool IsSystem;
   std::vector<TopLevelDecl> Decls;
 
-  void dump(llvm::raw_ostream &out) const;
+  CLANG_ABI void dump(llvm::raw_ostream &out) const;
 };
 
 /// Parse a module map file into an in memory representation.
@@ -161,7 +162,7 @@ struct ModuleMapFile {
 ///               of the module map on return.
 ///
 /// \returns The parsed ModuleMapFile if successful, std::nullopt otherwise.
-std::optional<ModuleMapFile>
+CLANG_ABI std::optional<ModuleMapFile>
 parseModuleMap(FileID ID, clang::DirectoryEntryRef Dir, SourceManager &SM,
                DiagnosticsEngine &Diags, bool IsSystem, unsigned *Offset);
 

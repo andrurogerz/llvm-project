@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_SVALBUILDER_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_SVALBUILDER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/DeclarationName.h"
 #include "clang/AST/Expr.h"
@@ -51,7 +52,7 @@ class CallEvent;
 class ConditionTruthVal;
 class ProgramStateManager;
 class StoreRef;
-class SValBuilder {
+class CLANG_ABI SValBuilder {
   virtual void anchor();
 
 protected:
@@ -398,7 +399,7 @@ public:
                                const StackFrameContext *SFC);
 };
 
-SValBuilder* createSimpleSValBuilder(llvm::BumpPtrAllocator &alloc,
+CLANG_ABI SValBuilder* createSimpleSValBuilder(llvm::BumpPtrAllocator &alloc,
                                      ASTContext &context,
                                      ProgramStateManager &stateMgr);
 

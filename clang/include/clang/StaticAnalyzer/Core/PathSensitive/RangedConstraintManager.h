@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_RANGEDCONSTRAINTMANAGER_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_RANGEDCONSTRAINTMANAGER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/ProgramState.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/ProgramStateTrait.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/SimpleConstraintManager.h"
@@ -47,8 +48,8 @@ public:
     ID.AddPointer(&From());
     ID.AddPointer(&To());
   }
-  void dump(raw_ostream &OS) const;
-  void dump() const;
+  CLANG_ABI void dump(raw_ostream &OS) const;
+  CLANG_ABI void dump() const;
 
   // In order to keep non-overlapping ranges sorted, we can compare only From
   // points.
@@ -127,49 +128,49 @@ public:
     ///
     /// Complexity: O(N + M)
     ///             where N = size(LHS), M = size(RHS)
-    RangeSet add(RangeSet LHS, RangeSet RHS);
+    CLANG_ABI RangeSet add(RangeSet LHS, RangeSet RHS);
     /// Create a new set with all ranges from the original set plus the new one.
     /// Possible intersections are not checked here.
     ///
     /// Complexity: O(N)
     ///             where N = size(Original)
-    RangeSet add(RangeSet Original, Range Element);
+    CLANG_ABI RangeSet add(RangeSet Original, Range Element);
     /// Create a new set with all ranges from the original set plus the point.
     /// Possible intersections are not checked here.
     ///
     /// Complexity: O(N)
     ///             where N = size(Original)
-    RangeSet add(RangeSet Original, const llvm::APSInt &Point);
+    CLANG_ABI RangeSet add(RangeSet Original, const llvm::APSInt &Point);
     /// Create a new set which is a union of two given ranges.
     /// Possible intersections are not checked here.
     ///
     /// Complexity: O(N + M)
     ///             where N = size(LHS), M = size(RHS)
-    RangeSet unite(RangeSet LHS, RangeSet RHS);
+    CLANG_ABI RangeSet unite(RangeSet LHS, RangeSet RHS);
     /// Create a new set by uniting given range set with the given range.
     /// All intersections and adjacent ranges are handled here.
     ///
     /// Complexity: O(N)
     ///             where N = size(Original)
-    RangeSet unite(RangeSet Original, Range Element);
+    CLANG_ABI RangeSet unite(RangeSet Original, Range Element);
     /// Create a new set by uniting given range set with the given point.
     /// All intersections and adjacent ranges are handled here.
     ///
     /// Complexity: O(N)
     ///             where N = size(Original)
-    RangeSet unite(RangeSet Original, llvm::APSInt Point);
+    CLANG_ABI RangeSet unite(RangeSet Original, llvm::APSInt Point);
     /// Create a new set by uniting given range set with the given range
     /// between points. All intersections and adjacent ranges are handled here.
     ///
     /// Complexity: O(N)
     ///             where N = size(Original)
-    RangeSet unite(RangeSet Original, llvm::APSInt From, llvm::APSInt To);
+    CLANG_ABI RangeSet unite(RangeSet Original, llvm::APSInt From, llvm::APSInt To);
 
     RangeSet getEmptySet() { return &EmptySet; }
 
     /// Create a new set with just one range.
     /// @{
-    RangeSet getRangeSet(Range Origin);
+    CLANG_ABI RangeSet getRangeSet(Range Origin);
     RangeSet getRangeSet(const llvm::APSInt &From, const llvm::APSInt &To) {
       return getRangeSet(Range(From, To));
     }
@@ -182,7 +183,7 @@ public:
     ///
     /// Complexity: O(N + M)
     ///             where N = size(LHS), M = size(RHS)
-    RangeSet intersect(RangeSet LHS, RangeSet RHS);
+    CLANG_ABI RangeSet intersect(RangeSet LHS, RangeSet RHS);
     /// Intersect the given set with the closed range [Lower, Upper].
     ///
     /// Unlike the Range type, this range uses modular arithmetic, corresponding
@@ -194,7 +195,7 @@ public:
     ///
     /// Complexity: O(N)
     ///             where N = size(What)
-    RangeSet intersect(RangeSet What, llvm::APSInt Lower, llvm::APSInt Upper);
+    CLANG_ABI RangeSet intersect(RangeSet What, llvm::APSInt Lower, llvm::APSInt Upper);
     /// Intersect the given range with the given point.
     ///
     /// The result can be either an empty set or a set containing the given
@@ -202,13 +203,13 @@ public:
     ///
     /// Complexity: O(logN)
     ///             where N = size(What)
-    RangeSet intersect(RangeSet What, llvm::APSInt Point);
+    CLANG_ABI RangeSet intersect(RangeSet What, llvm::APSInt Point);
 
     /// Delete the given point from the range set.
     ///
     /// Complexity: O(N)
     ///             where N = size(From)
-    RangeSet deletePoint(RangeSet From, const llvm::APSInt &Point);
+    CLANG_ABI RangeSet deletePoint(RangeSet From, const llvm::APSInt &Point);
     /// Negate the given range set.
     ///
     /// Turn all [A, B] ranges to [-B, -A], when "-" is a C-like unary minus
@@ -236,7 +237,7 @@ public:
     ///
     /// Complexity: O(N)
     ///             where N = size(What)
-    RangeSet negate(RangeSet What);
+    CLANG_ABI RangeSet negate(RangeSet What);
     /// Performs promotions, truncations and conversions of the given set.
     ///
     /// This function is optimized for each of the six cast cases:
@@ -258,8 +259,8 @@ public:
     ///     - Truncation                         O(N^2);
     ///     - Another case                       O(N);
     ///     where N = size(What)
-    RangeSet castTo(RangeSet What, APSIntType Ty);
-    RangeSet castTo(RangeSet What, QualType T);
+    CLANG_ABI RangeSet castTo(RangeSet What, APSIntType Ty);
+    CLANG_ABI RangeSet castTo(RangeSet What, QualType T);
 
     /// Return associated value factory.
     BasicValueFactory &getValueFactory() const { return ValueFactory; }
@@ -301,7 +302,7 @@ public:
     // Usually we deal with the same ranges and range sets over and over.
     // Here we track all created containers and try not to repeat ourselves.
     llvm::FoldingSet<ContainerType> Cache;
-    static ContainerType EmptySet;
+    CLANG_ABI static ContainerType EmptySet;
   };
 
   RangeSet(const RangeSet &) = default;
@@ -336,15 +337,15 @@ public:
   /// Get the minimal value covered by the ranges in the set.
   ///
   /// Complexity: O(1)
-  const llvm::APSInt &getMinValue() const;
+  CLANG_ABI const llvm::APSInt &getMinValue() const;
   /// Get the maximal value covered by the ranges in the set.
   ///
   /// Complexity: O(1)
-  const llvm::APSInt &getMaxValue() const;
+  CLANG_ABI const llvm::APSInt &getMaxValue() const;
 
-  bool isUnsigned() const;
-  uint32_t getBitWidth() const;
-  APSIntType getAPSIntType() const;
+  CLANG_ABI bool isUnsigned() const;
+  CLANG_ABI uint32_t getBitWidth() const;
+  CLANG_ABI APSIntType getAPSIntType() const;
 
   /// Test whether the given point is contained by any of the ranges.
   ///
@@ -371,8 +372,8 @@ public:
   ///             where N = size(this)
   bool encodesTrueRange() const { return !containsZero(); }
 
-  void dump(raw_ostream &OS) const;
-  void dump() const;
+  CLANG_ABI void dump(raw_ostream &OS) const;
+  CLANG_ABI void dump() const;
 
   bool operator==(const RangeSet &Other) const { return *Impl == *Other.Impl; }
   bool operator!=(const RangeSet &Other) const { return !(*this == Other); }
@@ -396,15 +397,15 @@ private:
   /// @}
 
   // This version of this function modifies its arguments (pins it).
-  bool containsImpl(llvm::APSInt &Point) const;
+  CLANG_ABI bool containsImpl(llvm::APSInt &Point) const;
 
   friend class Factory;
 };
 
 using ConstraintMap = llvm::ImmutableMap<SymbolRef, RangeSet>;
-ConstraintMap getConstraintMap(ProgramStateRef State);
+CLANG_ABI ConstraintMap getConstraintMap(ProgramStateRef State);
 
-class RangedConstraintManager : public SimpleConstraintManager {
+class CLANG_ABI RangedConstraintManager : public SimpleConstraintManager {
 public:
   RangedConstraintManager(ExprEngine *EE, SValBuilder &SB)
       : SimpleConstraintManager(EE, SB) {}
@@ -486,13 +487,13 @@ private:
 /// functions where we can work only with symbols. Use the other function
 /// (simplifyToSVal) if you are interested in a simplification that may yield
 /// a concrete constant value.
-SymbolRef simplify(ProgramStateRef State, SymbolRef Sym);
+CLANG_ABI SymbolRef simplify(ProgramStateRef State, SymbolRef Sym);
 
 /// Try to simplify a given symbolic expression's associated `SVal` based on the
 /// constraints in State. This is very similar to `simplify`, but this function
 /// always returns the simplified SVal. The simplified SVal might be a single
 /// constant (i.e. `ConcreteInt`).
-SVal simplifyToSVal(ProgramStateRef State, SymbolRef Sym);
+CLANG_ABI SVal simplifyToSVal(ProgramStateRef State, SymbolRef Sym);
 
 } // namespace ento
 } // namespace clang

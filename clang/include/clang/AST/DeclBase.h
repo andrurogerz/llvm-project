@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_DECLBASE_H
 #define LLVM_CLANG_AST_DECLBASE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTDumperUtils.h"
 #include "clang/AST/AttrIterator.h"
 #include "clang/AST/DeclID.h"
@@ -83,7 +84,7 @@ enum AvailabilityResult {
 /// (and its subclasses) in its Decl::operator new(). Proper alignment
 /// of all subclasses (not requiring more than the alignment of Decl) is
 /// asserted in DeclBase.cpp.
-class alignas(8) Decl {
+class alignas(8) CLANG_ABI Decl {
 public:
   /// Lists the kind of concrete classes of Decl.
   enum Kind {
@@ -1294,7 +1295,7 @@ inline bool declaresSameEntity(const Decl *D1, const Decl *D2) {
 
 /// PrettyStackTraceDecl - If a crash occurs, indicate that it happened when
 /// doing something to a specific decl.
-class PrettyStackTraceDecl : public llvm::PrettyStackTraceEntry {
+class CLANG_ABI PrettyStackTraceDecl : public llvm::PrettyStackTraceEntry {
   const Decl *TheDecl;
   SourceLocation Loc;
   SourceManager &SM;
@@ -2091,23 +2092,23 @@ protected:
   /// Build up a chain of declarations.
   ///
   /// \returns the first/last pair of declarations.
-  static std::pair<Decl *, Decl *>
+  CLANG_ABI static std::pair<Decl *, Decl *>
   BuildDeclChain(ArrayRef<Decl*> Decls, bool FieldsAlreadyLoaded);
 
-  DeclContext(Decl::Kind K);
+  CLANG_ABI DeclContext(Decl::Kind K);
 
 public:
-  ~DeclContext();
+  CLANG_ABI ~DeclContext();
 
   // For use when debugging; hasValidDeclKind() will always return true for
   // a correctly constructed object within its lifetime.
-  bool hasValidDeclKind() const;
+  CLANG_ABI bool hasValidDeclKind() const;
 
   Decl::Kind getDeclKind() const {
     return static_cast<Decl::Kind>(DeclContextBits.DeclKind);
   }
 
-  const char *getDeclKindName() const;
+  CLANG_ABI const char *getDeclKindName() const;
 
   /// getParent - Returns the containing DeclContext.
   DeclContext *getParent() {
@@ -2133,7 +2134,7 @@ public:
     return const_cast<DeclContext*>(this)->getLexicalParent();
   }
 
-  DeclContext *getLookupParent();
+  CLANG_ABI DeclContext *getLookupParent();
 
   const DeclContext *getLookupParent() const {
     return const_cast<DeclContext*>(this)->getLookupParent();
@@ -2147,7 +2148,7 @@ public:
 
   /// Return this DeclContext if it is a BlockDecl. Otherwise, return the
   /// innermost enclosing BlockDecl or null if there are no enclosing blocks.
-  const BlockDecl *getInnermostBlockDecl() const;
+  CLANG_ABI const BlockDecl *getInnermostBlockDecl() const;
 
   bool isObjCContainer() const {
     switch (getDeclKind()) {
@@ -2201,13 +2202,13 @@ public:
 
   bool isNamespace() const { return getDeclKind() == Decl::Namespace; }
 
-  bool isStdNamespace() const;
+  CLANG_ABI bool isStdNamespace() const;
 
-  bool isInlineNamespace() const;
+  CLANG_ABI bool isInlineNamespace() const;
 
   /// Determines whether this context is dependent on a
   /// template parameter.
-  bool isDependentContext() const;
+  CLANG_ABI bool isDependentContext() const;
 
   /// isTransparentContext - Determines whether this context is a
   /// "transparent" context, meaning that the members declared in this
@@ -2224,18 +2225,18 @@ public:
   /// appear (semantically) that it is in the same context of E.
   /// Examples of transparent contexts include: enumerations (except for
   /// C++0x scoped enums), C++ linkage specifications and export declaration.
-  bool isTransparentContext() const;
+  CLANG_ABI bool isTransparentContext() const;
 
   /// Determines whether this context or some of its ancestors is a
   /// linkage specification context that specifies C linkage.
-  bool isExternCContext() const;
+  CLANG_ABI bool isExternCContext() const;
 
   /// Retrieve the nearest enclosing C linkage specification context.
-  const LinkageSpecDecl *getExternCContext() const;
+  CLANG_ABI const LinkageSpecDecl *getExternCContext() const;
 
   /// Determines whether this context or some of its ancestors is a
   /// linkage specification context that specifies C++ linkage.
-  bool isExternCXXContext() const;
+  CLANG_ABI bool isExternCXXContext() const;
 
   /// Determine whether this declaration context is equivalent
   /// to the declaration context DC.
@@ -2245,22 +2246,22 @@ public:
 
   /// Determine whether this declaration context semantically encloses the
   /// declaration context DC.
-  bool Encloses(const DeclContext *DC) const;
+  CLANG_ABI bool Encloses(const DeclContext *DC) const;
 
   /// Determine whether this declaration context lexically encloses the
   /// declaration context DC.
-  bool LexicallyEncloses(const DeclContext *DC) const;
+  CLANG_ABI bool LexicallyEncloses(const DeclContext *DC) const;
 
   /// Find the nearest non-closure ancestor of this context,
   /// i.e. the innermost semantic parent of this context which is not
   /// a closure.  A context may be its own non-closure ancestor.
-  Decl *getNonClosureAncestor();
+  CLANG_ABI Decl *getNonClosureAncestor();
   const Decl *getNonClosureAncestor() const {
     return const_cast<DeclContext*>(this)->getNonClosureAncestor();
   }
 
   // Retrieve the nearest context that is not a transparent context.
-  DeclContext *getNonTransparentContext();
+  CLANG_ABI DeclContext *getNonTransparentContext();
   const DeclContext *getNonTransparentContext() const {
     return const_cast<DeclContext *>(this)->getNonTransparentContext();
   }
@@ -2271,7 +2272,7 @@ public:
   /// a different set of declarations. This routine returns the
   /// "primary" DeclContext structure, which will contain the
   /// information needed to perform name lookup into this context.
-  DeclContext *getPrimaryContext();
+  CLANG_ABI DeclContext *getPrimaryContext();
   const DeclContext *getPrimaryContext() const {
     return const_cast<DeclContext*>(this)->getPrimaryContext();
   }
@@ -2279,19 +2280,19 @@ public:
   /// getRedeclContext - Retrieve the context in which an entity conflicts with
   /// other entities of the same name, or where it is a redeclaration if the
   /// two entities are compatible. This skips through transparent contexts.
-  DeclContext *getRedeclContext();
+  CLANG_ABI DeclContext *getRedeclContext();
   const DeclContext *getRedeclContext() const {
     return const_cast<DeclContext *>(this)->getRedeclContext();
   }
 
   /// Retrieve the nearest enclosing namespace context.
-  DeclContext *getEnclosingNamespaceContext();
+  CLANG_ABI DeclContext *getEnclosingNamespaceContext();
   const DeclContext *getEnclosingNamespaceContext() const {
     return const_cast<DeclContext *>(this)->getEnclosingNamespaceContext();
   }
 
   /// Retrieve the outermost lexically enclosing record context.
-  RecordDecl *getOuterLexicalRecordContext();
+  CLANG_ABI RecordDecl *getOuterLexicalRecordContext();
   const RecordDecl *getOuterLexicalRecordContext() const {
     return const_cast<DeclContext *>(this)->getOuterLexicalRecordContext();
   }
@@ -2302,7 +2303,7 @@ public:
   ///
   /// The enclosing namespace set of a namespace is the namespace and, if it is
   /// inline, its enclosing namespace, recursively.
-  bool InEnclosingNamespaceSetOf(const DeclContext *NS) const;
+  CLANG_ABI bool InEnclosingNamespaceSetOf(const DeclContext *NS) const;
 
   /// Collects all of the declaration contexts that are semantically
   /// connected to this declaration context.
@@ -2327,7 +2328,7 @@ public:
   /// contexts that are semanticaly connected to this declaration context,
   /// in source order, including this context (which may be the only result,
   /// for non-namespace contexts).
-  void collectAllContexts(SmallVectorImpl<DeclContext *> &Contexts);
+  CLANG_ABI void collectAllContexts(SmallVectorImpl<DeclContext *> &Contexts);
 
   /// decl_iterator - Iterates through the declarations stored
   /// within this context.
@@ -2375,9 +2376,9 @@ public:
   /// decls_begin/decls_end - Iterate over the declarations stored in
   /// this context.
   decl_range decls() const { return decl_range(decls_begin(), decls_end()); }
-  decl_iterator decls_begin() const;
+  CLANG_ABI decl_iterator decls_begin() const;
   decl_iterator decls_end() const { return decl_iterator(); }
-  bool decls_empty() const;
+  CLANG_ABI bool decls_empty() const;
 
   /// noload_decls_begin/end - Iterate over the declarations stored in this
   /// context that are currently loaded; don't attempt to retrieve anything
@@ -2548,7 +2549,7 @@ public:
   ///
   /// If D is also a NamedDecl, it will be made visible within its
   /// semantic context via makeDeclVisibleInContext.
-  void addDecl(Decl *D);
+  CLANG_ABI void addDecl(Decl *D);
 
   /// Add the declaration D into this context, but suppress
   /// searches for external declarations with the same name.
@@ -2558,7 +2559,7 @@ public:
   /// added in response to an external search; in all other cases,
   /// addDecl() is the right function to use.
   /// See the ASTImporter for use cases.
-  void addDeclInternal(Decl *D);
+  CLANG_ABI void addDeclInternal(Decl *D);
 
   /// Add the declaration D to this context without modifying
   /// any lookup tables.
@@ -2566,17 +2567,17 @@ public:
   /// This is useful for some operations in dependent contexts where
   /// the semantic context might not be dependent;  this basically
   /// only happens with friends.
-  void addHiddenDecl(Decl *D);
+  CLANG_ABI void addHiddenDecl(Decl *D);
 
   /// Removes a declaration from this context.
-  void removeDecl(Decl *D);
+  CLANG_ABI void removeDecl(Decl *D);
 
   /// Checks whether a declaration is in this context.
-  bool containsDecl(Decl *D) const;
+  CLANG_ABI bool containsDecl(Decl *D) const;
 
   /// Checks whether a declaration is in this context.
   /// This also loads the Decls from the external source before the check.
-  bool containsDeclAndLoad(Decl *D) const;
+  CLANG_ABI bool containsDeclAndLoad(Decl *D) const;
 
   using lookup_result = DeclContextLookupResult;
   using lookup_iterator = lookup_result::iterator;
@@ -2586,12 +2587,12 @@ public:
   /// the declarations with this name, with object, function, member,
   /// and enumerator names preceding any tag name. Note that this
   /// routine will not look into parent contexts.
-  lookup_result lookup(DeclarationName Name) const;
+  CLANG_ABI lookup_result lookup(DeclarationName Name) const;
 
   /// Find the declarations with the given name that are visible
   /// within this context; don't attempt to retrieve anything from an
   /// external source.
-  lookup_result noload_lookup(DeclarationName Name);
+  CLANG_ABI lookup_result noload_lookup(DeclarationName Name);
 
   /// A simplistic name lookup mechanism that performs name lookup
   /// into this declaration context without consulting the external source.
@@ -2602,7 +2603,7 @@ public:
   ///
   /// FIXME: This is very inefficient; replace uses of it with uses of
   /// noload_lookup.
-  void localUncachedLookup(DeclarationName Name,
+  CLANG_ABI void localUncachedLookup(DeclarationName Name,
                            SmallVectorImpl<NamedDecl *> &Results);
 
   /// Makes a declaration visible within this context.
@@ -2619,7 +2620,7 @@ public:
   /// visible from this context, as determined by
   /// NamedDecl::declarationReplaces, the previous declaration will be
   /// replaced with D.
-  void makeDeclVisibleInContext(NamedDecl *D);
+  CLANG_ABI void makeDeclVisibleInContext(NamedDecl *D);
 
   /// all_lookups_iterator - An iterator that provides a view over the results
   /// of looking up every possible name.
@@ -2627,20 +2628,20 @@ public:
 
   using lookups_range = llvm::iterator_range<all_lookups_iterator>;
 
-  lookups_range lookups() const;
+  CLANG_ABI lookups_range lookups() const;
   // Like lookups(), but avoids loading external declarations.
   // If PreserveInternalState, avoids building lookup data structures too.
-  lookups_range noload_lookups(bool PreserveInternalState) const;
+  CLANG_ABI lookups_range noload_lookups(bool PreserveInternalState) const;
 
   /// Iterators over all possible lookups within this context.
-  all_lookups_iterator lookups_begin() const;
-  all_lookups_iterator lookups_end() const;
+  CLANG_ABI all_lookups_iterator lookups_begin() const;
+  CLANG_ABI all_lookups_iterator lookups_end() const;
 
   /// Iterators over all possible lookups within this context that are
   /// currently loaded; don't attempt to retrieve anything from an external
   /// source.
-  all_lookups_iterator noload_lookups_begin() const;
-  all_lookups_iterator noload_lookups_end() const;
+  CLANG_ABI all_lookups_iterator noload_lookups_begin() const;
+  CLANG_ABI all_lookups_iterator noload_lookups_end() const;
 
   struct udir_iterator;
 
@@ -2652,19 +2653,19 @@ public:
   struct udir_iterator : udir_iterator_base {
     udir_iterator(lookup_iterator I) : udir_iterator_base(I) {}
 
-    UsingDirectiveDecl *operator*() const;
+    CLANG_ABI UsingDirectiveDecl *operator*() const;
   };
 
   using udir_range = llvm::iterator_range<udir_iterator>;
 
-  udir_range using_directives() const;
+  CLANG_ABI udir_range using_directives() const;
 
   // These are all defined in DependentDiagnostic.h.
   class ddiag_iterator;
 
   using ddiag_range = llvm::iterator_range<DeclContext::ddiag_iterator>;
 
-  inline ddiag_range ddiags() const;
+  CLANG_ABI inline ddiag_range ddiags() const;
 
   // Low-level accessors
 
@@ -2685,7 +2686,7 @@ public:
   StoredDeclsMap *getLookupPtr() const { return LookupPtr; }
 
   /// Ensure the lookup structure is fully-built and return it.
-  StoredDeclsMap *buildLookup();
+  CLANG_ABI StoredDeclsMap *buildLookup();
 
   /// Whether this DeclContext has external storage containing
   /// additional declarations that are lexically in this context.
@@ -2728,14 +2729,14 @@ public:
     return DeclContextBits.UseQualifiedLookup;
   }
 
-  static bool classof(const Decl *D);
+  CLANG_ABI static bool classof(const Decl *D);
   static bool classof(const DeclContext *D) { return true; }
 
-  void dumpAsDecl() const;
-  void dumpAsDecl(const ASTContext *Ctx) const;
-  void dumpDeclContext() const;
-  void dumpLookups() const;
-  void dumpLookups(llvm::raw_ostream &OS, bool DumpDecls = false,
+  CLANG_ABI void dumpAsDecl() const;
+  CLANG_ABI void dumpAsDecl(const ASTContext *Ctx) const;
+  CLANG_ABI void dumpDeclContext() const;
+  CLANG_ABI void dumpLookups() const;
+  CLANG_ABI void dumpLookups(llvm::raw_ostream &OS, bool DumpDecls = false,
                    bool Deserialize = false) const;
 
 private:

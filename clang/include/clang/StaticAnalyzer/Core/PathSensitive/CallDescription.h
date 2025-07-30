@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_CALLDESCRIPTION_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_CALLDESCRIPTION_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/CallEvent.h"
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/Support/Compiler.h"
@@ -97,7 +98,7 @@ public:
   /// @param RequiredParams The expected number of parameters in the function
   /// definition that is called. Omit this parameter to match every occurrence
   /// without checking the parameter count in the definition.
-  CallDescription(Mode MatchAs, ArrayRef<StringRef> QualifiedName,
+  CLANG_ABI CallDescription(Mode MatchAs, ArrayRef<StringRef> QualifiedName,
                   MaybeCount RequiredArgs = std::nullopt,
                   MaybeCount RequiredParams = std::nullopt);
 
@@ -123,7 +124,7 @@ public:
   ///
   /// \note This function is not intended to be used to match Obj-C method
   /// calls.
-  bool matches(const CallEvent &Call) const;
+  CLANG_ABI bool matches(const CallEvent &Call) const;
 
   /// Returns true whether the CallEvent matches on any of the CallDescriptions
   /// supplied.
@@ -160,7 +161,7 @@ public:
   /// information, such as the precise argument count (see comments for
   /// CallEvent::getNumArgs), the called function if it was called through a
   /// function pointer, and other information not available syntactically.
-  bool matchesAsWritten(const CallExpr &CE) const;
+  CLANG_ABI bool matchesAsWritten(const CallExpr &CE) const;
 
   /// Returns true whether the CallExpr matches on any of the CallDescriptions
   /// supplied.
@@ -263,12 +264,12 @@ class CallDescriptionSet {
   CallDescriptionMap<bool /*unused*/> Impl = {};
 
 public:
-  CallDescriptionSet(std::initializer_list<CallDescription> &&List);
+  CLANG_ABI CallDescriptionSet(std::initializer_list<CallDescription> &&List);
 
   CallDescriptionSet(const CallDescriptionSet &) = delete;
   CallDescriptionSet &operator=(const CallDescription &) = delete;
 
-  [[nodiscard]] bool contains(const CallEvent &Call) const;
+  [[nodiscard]] CLANG_ABI bool contains(const CallEvent &Call) const;
 
   /// When available, always prefer lookup with a CallEvent! This function
   /// exists only when that is not available, for example, when _only_
@@ -282,7 +283,7 @@ public:
   /// information, such as the precise argument count (see comments for
   /// CallEvent::getNumArgs), the called function if it was called through a
   /// function pointer, and other information not available syntactically.
-  [[nodiscard]] bool containsAsWritten(const CallExpr &CE) const;
+  [[nodiscard]] CLANG_ABI bool containsAsWritten(const CallExpr &CE) const;
 };
 
 } // namespace ento

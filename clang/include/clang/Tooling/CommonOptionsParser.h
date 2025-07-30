@@ -26,6 +26,7 @@
 #ifndef LLVM_CLANG_TOOLING_COMMONOPTIONSPARSER_H
 #define LLVM_CLANG_TOOLING_COMMONOPTIONSPARSER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Tooling/ArgumentsAdjusters.h"
 #include "clang/Tooling/CompilationDatabase.h"
 #include "llvm/Support/CommandLine.h"
@@ -78,7 +79,7 @@ protected:
   /// All options not belonging to \p Category become hidden.
   ///
   /// It also allows calls to set the required number of positional parameters.
-  CommonOptionsParser(
+  CLANG_ABI CommonOptionsParser(
       int &argc, const char **argv, llvm::cl::OptionCategory &Category,
       llvm::cl::NumOccurrencesFlag OccurrencesFlag = llvm::cl::OneOrMore,
       const char *Overview = nullptr);
@@ -86,7 +87,7 @@ protected:
 public:
   /// A factory method that is similar to the above constructor, except
   /// this returns an error instead exiting the program on error.
-  static llvm::Expected<CommonOptionsParser>
+  CLANG_ABI static llvm::Expected<CommonOptionsParser>
   create(int &argc, const char **argv, llvm::cl::OptionCategory &Category,
          llvm::cl::NumOccurrencesFlag OccurrencesFlag = llvm::cl::OneOrMore,
          const char *Overview = nullptr);
@@ -105,7 +106,7 @@ public:
   //"--extra-arg-before" options.
   ArgumentsAdjuster getArgumentsAdjuster() { return Adjuster; }
 
-  static const char *const HelpMessage;
+  CLANG_ABI static const char *const HelpMessage;
 
 private:
   CommonOptionsParser() = default;
@@ -120,7 +121,7 @@ private:
   ArgumentsAdjuster Adjuster;
 };
 
-class ArgumentsAdjustingCompilations : public CompilationDatabase {
+class CLANG_ABI ArgumentsAdjustingCompilations : public CompilationDatabase {
 public:
   ArgumentsAdjustingCompilations(
       std::unique_ptr<CompilationDatabase> Compilations)

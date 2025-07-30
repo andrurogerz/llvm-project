@@ -18,6 +18,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_EXPLODEDGRAPH_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_EXPLODEDGRAPH_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Analysis/AnalysisDeclContext.h"
 #include "clang/Analysis/ProgramPoint.h"
 #include "clang/Analysis/Support/BumpVector.h"
@@ -93,25 +94,25 @@ class ExplodedNode : public llvm::FoldingSetNode {
       assert(getFlag() == Flag);
     }
 
-    ExplodedNode * const *begin() const;
+    CLANG_ABI ExplodedNode * const *begin() const;
 
-    ExplodedNode * const *end() const;
+    CLANG_ABI ExplodedNode * const *end() const;
 
-    unsigned size() const;
+    CLANG_ABI unsigned size() const;
 
     bool empty() const { return P == 0 || getFlag() != 0; }
 
     /// Adds a node to the list.
     ///
     /// The group must not have been created with its flag set.
-    void addNode(ExplodedNode *N, ExplodedGraph &G);
+    CLANG_ABI void addNode(ExplodedNode *N, ExplodedGraph &G);
 
     /// Replaces the single node in this group with a new node.
     ///
     /// Note that this should only be used when you know the group was not
     /// created with its flag set, and that the group is empty or contains
     /// only a single node.
-    void replaceNode(ExplodedNode *node);
+    CLANG_ABI void replaceNode(ExplodedNode *node);
 
     /// Returns whether this group was created with its flag set.
     bool getFlag() const {
@@ -156,7 +157,7 @@ public:
 
   CFG &getCFG() const { return *getLocationContext()->getCFG(); }
 
-  const CFGBlock *getCFGBlock() const;
+  CLANG_ABI const CFGBlock *getCFGBlock() const;
 
   const ParentMap &getParentMap() const {
     return getLocationContext()->getParentMap();
@@ -193,7 +194,7 @@ public:
 
   /// addPredeccessor - Adds a predecessor to the current node, and
   ///  in tandem add this node as a successor of the other node.
-  void addPredecessor(ExplodedNode *V, ExplodedGraph &G);
+  CLANG_ABI void addPredecessor(ExplodedNode *V, ExplodedGraph &G);
 
   unsigned succ_size() const { return Succs.size(); }
   unsigned pred_size() const { return Preds.size(); }
@@ -266,31 +267,31 @@ public:
   /// and its program state is the same as the program state of the previous
   /// node.
   /// Trivial nodes may be skipped while printing exploded graph.
-  bool isTrivial() const;
+  CLANG_ABI bool isTrivial() const;
 
   /// If the node's program point corresponds to a statement, retrieve that
   /// statement. Useful for figuring out where to put a warning or a note.
   /// If the statement belongs to a body-farmed definition,
   /// retrieve the call site for that definition.
-  const Stmt *getStmtForDiagnostics() const;
+  CLANG_ABI const Stmt *getStmtForDiagnostics() const;
 
   /// Find the next statement that was executed on this node's execution path.
   /// Useful for explaining control flow that follows the current node.
   /// If the statement belongs to a body-farmed definition, retrieve the
   /// call site for that definition.
-  const Stmt *getNextStmtForDiagnostics() const;
+  CLANG_ABI const Stmt *getNextStmtForDiagnostics() const;
 
   /// Find the statement that was executed immediately before this node.
   /// Useful when the node corresponds to a CFG block entrance.
   /// If the statement belongs to a body-farmed definition, retrieve the
   /// call site for that definition.
-  const Stmt *getPreviousStmtForDiagnostics() const;
+  CLANG_ABI const Stmt *getPreviousStmtForDiagnostics() const;
 
   /// Find the statement that was executed at or immediately before this node.
   /// Useful when any nearby statement will do.
   /// If the statement belongs to a body-farmed definition, retrieve the
   /// call site for that definition.
-  const Stmt *getCurrentOrPreviousStmtForDiagnostics() const;
+  CLANG_ABI const Stmt *getCurrentOrPreviousStmtForDiagnostics() const;
 
 private:
   void replaceSuccessor(ExplodedNode *node) { Succs.replaceNode(node); }
@@ -340,8 +341,8 @@ protected:
   unsigned ReclaimCounter;
 
 public:
-  ExplodedGraph();
-  ~ExplodedGraph();
+  CLANG_ABI ExplodedGraph();
+  CLANG_ABI ~ExplodedGraph();
 
   /// Get the root node of the graph. This may return nullptr if the graph is
   /// empty or under construction.
@@ -350,14 +351,14 @@ public:
   /// Retrieve the node associated with a (Location, State) pair, where the
   /// 'Location' is a ProgramPoint in the CFG. If no node for this pair exists,
   /// it is created. IsNew is set to true if the node was freshly created.
-  ExplodedNode *getNode(const ProgramPoint &L, ProgramStateRef State,
+  CLANG_ABI ExplodedNode *getNode(const ProgramPoint &L, ProgramStateRef State,
                         bool IsSink = false,
                         bool* IsNew = nullptr);
 
   /// Create a node for a (Location, State) pair, but don't store it for
   /// deduplication later. This is useful when copying some nodes from an
   /// already completed ExplodedGraph for further processing.
-  ExplodedNode *createUncachedNode(const ProgramPoint &L,
+  CLANG_ABI ExplodedNode *createUncachedNode(const ProgramPoint &L,
     ProgramStateRef State,
     int64_t Id,
     bool IsSink = false);
@@ -418,7 +419,7 @@ public:
   /// \param[out] InverseMap An optional map from nodes in the returned graph to
   ///                        nodes in this graph.
   /// \returns The trimmed graph
-  std::unique_ptr<ExplodedGraph>
+  CLANG_ABI std::unique_ptr<ExplodedGraph>
   trim(ArrayRef<const NodeTy *> Nodes,
        InterExplodedGraphMap *ForwardMap = nullptr,
        InterExplodedGraphMap *InverseMap = nullptr) const;
@@ -431,11 +432,11 @@ public:
 
   /// Reclaim "uninteresting" nodes created since the last time this method
   /// was called.
-  void reclaimRecentlyAllocatedNodes();
+  CLANG_ABI void reclaimRecentlyAllocatedNodes();
 
   /// Returns true if nodes for the given expression kind are always
   ///        kept around.
-  static bool isInterestingLValueExpr(const Expr *Ex);
+  CLANG_ABI static bool isInterestingLValueExpr(const Expr *Ex);
 
 private:
   bool shouldCollect(const ExplodedNode *node);

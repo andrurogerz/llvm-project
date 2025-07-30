@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_LEX_PPCALLBACKS_H
 #define LLVM_CLANG_LEX_PPCALLBACKS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/DiagnosticIDs.h"
 #include "clang/Basic/IdentifierTable.h"
 #include "clang/Basic/SourceLocation.h"
@@ -34,7 +35,7 @@ struct LexEmbedParametersResult;
 /// preprocessor as it does its thing.
 ///
 /// Clients can define their hooks here to implement preprocessor level tools.
-class PPCallbacks {
+class CLANG_ABI PPCallbacks {
 public:
   virtual ~PPCallbacks();
 
@@ -468,7 +469,7 @@ public:
 };
 
 /// Simple wrapper class for chaining callbacks.
-class PPChainedCallbacks : public PPCallbacks {
+class CLANG_ABI PPChainedCallbacks : public PPCallbacks {
   std::unique_ptr<PPCallbacks> First, Second;
 
 public:

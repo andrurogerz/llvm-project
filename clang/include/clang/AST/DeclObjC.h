@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_AST_DECLOBJC_H
 #define LLVM_CLANG_AST_DECLOBJC_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/DeclBase.h"
 #include "clang/AST/DeclObjCCommon.h"
@@ -71,7 +72,7 @@ public:
   bool empty() const { return NumElts == 0; }
 
 protected:
-  void set(void *const* InList, unsigned Elts, ASTContext &Ctx);
+  CLANG_ABI void set(void *const* InList, unsigned Elts, ASTContext &Ctx);
 };
 
 /// ObjCList - This is a simple template class used to hold various lists of
@@ -111,7 +112,7 @@ public:
   loc_iterator loc_begin() const { return Locations; }
   loc_iterator loc_end() const { return Locations + size(); }
 
-  void set(ObjCProtocolDecl* const* InList, unsigned Elts,
+  CLANG_ABI void set(ObjCProtocolDecl* const* InList, unsigned Elts,
            const SourceLocation *Locs, ASTContext &Ctx);
 };
 
@@ -137,7 +138,7 @@ enum class ObjCImplementationControl { None, Required, Optional };
 /// A selector represents a unique name for a method. The selector names for
 /// the above methods are setMenu:, menu, replaceSubview:with:, and defaultMenu.
 ///
-class ObjCMethodDecl : public NamedDecl, public DeclContext {
+class CLANG_ABI ObjCMethodDecl : public NamedDecl, public DeclContext {
   // This class stores some data in DeclContext::ObjCMethodDeclBits
   // to save some space. Use the provided accessors to access it.
 
@@ -575,7 +576,7 @@ enum class ObjCTypeParamVariance : uint8_t {
 /// while \c Value gets an implicit bound of \c id.
 ///
 /// Objective-C type parameters are typedef-names in the grammar,
-class ObjCTypeParamDecl : public TypedefNameDecl {
+class CLANG_ABI ObjCTypeParamDecl : public TypedefNameDecl {
   /// Index of this type parameter in the type parameter list.
   unsigned Index : 14;
 
@@ -670,7 +671,7 @@ public:
   friend TrailingObjects;
 
   /// Create a new Objective-C type parameter list.
-  static ObjCTypeParamList *create(ASTContext &ctx,
+  CLANG_ABI static ObjCTypeParamList *create(ASTContext &ctx,
                                    SourceLocation lAngleLoc,
                                    ArrayRef<ObjCTypeParamDecl *> typeParams,
                                    SourceLocation rAngleLoc);
@@ -710,7 +711,7 @@ public:
 
   /// Gather the default set of type arguments to be substituted for
   /// these type parameters when dealing with an unspecialized type.
-  void gatherDefaultTypeArgs(SmallVectorImpl<QualType> &typeArgs) const;
+  CLANG_ABI void gatherDefaultTypeArgs(SmallVectorImpl<QualType> &typeArgs) const;
 };
 
 enum class ObjCPropertyQueryKind : uint8_t {
@@ -725,7 +726,7 @@ enum class ObjCPropertyQueryKind : uint8_t {
 /// \code{.mm}
 /// \@property (assign, readwrite) int MyProperty;
 /// \endcode
-class ObjCPropertyDecl : public NamedDecl {
+class CLANG_ABI ObjCPropertyDecl : public NamedDecl {
   void anchor() override;
 
 public:
@@ -942,7 +943,7 @@ public:
 /// Current sub-classes are ObjCInterfaceDecl, ObjCCategoryDecl,
 /// ObjCProtocolDecl, and ObjCImplDecl.
 ///
-class ObjCContainerDecl : public NamedDecl, public DeclContext {
+class CLANG_ABI ObjCContainerDecl : public NamedDecl, public DeclContext {
   // This class stores some data in DeclContext::ObjCContainerDeclBits
   // to save some space. Use the provided accessors to access it.
 
@@ -1147,7 +1148,7 @@ public:
 ///   Unlike C++, ObjC is a single-rooted class model. In Cocoa, classes
 ///   typically inherit from NSObject (an exception is NSProxy).
 ///
-class ObjCInterfaceDecl : public ObjCContainerDecl
+class CLANG_ABI ObjCInterfaceDecl : public ObjCContainerDecl
                         , public Redeclarable<ObjCInterfaceDecl> {
   friend class ASTContext;
   friend class ODRDiagsEmitter;
@@ -1946,7 +1947,7 @@ private:
 ///     id canBePackage; // framework visibility (not available in C++).
 ///   }
 ///
-class ObjCIvarDecl : public FieldDecl {
+class CLANG_ABI ObjCIvarDecl : public FieldDecl {
   void anchor() override;
 
 public:
@@ -2024,7 +2025,7 @@ private:
 };
 
 /// Represents a field declaration created by an \@defs(...).
-class ObjCAtDefsFieldDecl : public FieldDecl {
+class CLANG_ABI ObjCAtDefsFieldDecl : public FieldDecl {
   ObjCAtDefsFieldDecl(DeclContext *DC, SourceLocation StartLoc,
                       SourceLocation IdLoc, IdentifierInfo *Id,
                       QualType T, Expr *BW)
@@ -2077,7 +2078,7 @@ public:
 /// protocols are referenced using angle brackets as follows:
 ///
 /// id \<NSDraggingInfo> anyObjectThatImplementsNSDraggingInfo;
-class ObjCProtocolDecl : public ObjCContainerDecl,
+class CLANG_ABI ObjCProtocolDecl : public ObjCContainerDecl,
                          public Redeclarable<ObjCProtocolDecl> {
   struct DefinitionData {
     // The declaration that defines this protocol.
@@ -2323,7 +2324,7 @@ public:
 /// Categories were originally inspired by dynamic languages such as Common
 /// Lisp and Smalltalk.  More traditional class-based languages (C++, Java)
 /// don't support this level of dynamism, which is both powerful and dangerous.
-class ObjCCategoryDecl : public ObjCContainerDecl {
+class CLANG_ABI ObjCCategoryDecl : public ObjCContainerDecl {
   /// Interface belonging to this category
   ObjCInterfaceDecl *ClassInterface;
 
@@ -2466,7 +2467,7 @@ public:
   static bool classofKind(Kind K) { return K == ObjCCategory; }
 };
 
-class ObjCImplDecl : public ObjCContainerDecl {
+class CLANG_ABI ObjCImplDecl : public ObjCContainerDecl {
   /// Class interface for this class/category implementation
   ObjCInterfaceDecl *ClassInterface;
 
@@ -2539,7 +2540,7 @@ public:
 /// \@end
 ///
 /// ObjCCategoryImplDecl
-class ObjCCategoryImplDecl : public ObjCImplDecl {
+class CLANG_ABI ObjCCategoryImplDecl : public ObjCImplDecl {
   // Category name location
   SourceLocation CategoryNameLoc;
 
@@ -2572,7 +2573,7 @@ public:
   static bool classofKind(Kind K) { return K == ObjCCategoryImpl;}
 };
 
-raw_ostream &operator<<(raw_ostream &OS, const ObjCCategoryImplDecl &CID);
+CLANG_ABI raw_ostream &operator<<(raw_ostream &OS, const ObjCCategoryImplDecl &CID);
 
 /// ObjCImplementationDecl - Represents a class definition - this is where
 /// method definitions are specified. For example:
@@ -2591,7 +2592,7 @@ raw_ostream &operator<<(raw_ostream &OS, const ObjCCategoryImplDecl &CID);
 /// interface, \em not in the implementation. Nevertheless (for legacy reasons),
 /// we allow instance variables to be specified in the implementation. When
 /// specified, they need to be \em identical to the interface.
-class ObjCImplementationDecl : public ObjCImplDecl {
+class CLANG_ABI ObjCImplementationDecl : public ObjCImplDecl {
   /// Implementation Class's super class.
   ObjCInterfaceDecl *SuperClass;
   SourceLocation SuperLoc;
@@ -2765,11 +2766,11 @@ public:
   static bool classofKind(Kind K) { return K == ObjCImplementation; }
 };
 
-raw_ostream &operator<<(raw_ostream &OS, const ObjCImplementationDecl &ID);
+CLANG_ABI raw_ostream &operator<<(raw_ostream &OS, const ObjCImplementationDecl &ID);
 
 /// ObjCCompatibleAliasDecl - Represents alias of a class. This alias is
 /// declared as \@compatibility_alias alias class.
-class ObjCCompatibleAliasDecl : public NamedDecl {
+class CLANG_ABI ObjCCompatibleAliasDecl : public NamedDecl {
   /// Class that this is an alias of.
   ObjCInterfaceDecl *AliasedClass;
 
@@ -2799,7 +2800,7 @@ public:
 /// in a class or category implementation block. For example:
 /// \@synthesize prop1 = ivar1;
 ///
-class ObjCPropertyImplDecl : public Decl {
+class CLANG_ABI ObjCPropertyImplDecl : public Decl {
 public:
   enum Kind {
     Synthesize,

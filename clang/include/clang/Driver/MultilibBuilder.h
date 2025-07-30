@@ -10,6 +10,7 @@
 #ifndef LLVM_CLANG_DRIVER_MULTILIBBUILDER_H
 #define LLVM_CLANG_DRIVER_MULTILIBBUILDER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Driver/Multilib.h"
 
 namespace clang {
@@ -30,11 +31,11 @@ private:
   flags_list Flags;
 
 public:
-  MultilibBuilder(StringRef GCCSuffix, StringRef OSSuffix,
+  CLANG_ABI MultilibBuilder(StringRef GCCSuffix, StringRef OSSuffix,
                   StringRef IncludeSuffix);
 
   /// Initializes GCCSuffix, OSSuffix & IncludeSuffix to the same value.
-  MultilibBuilder(StringRef Suffix = {});
+  CLANG_ABI MultilibBuilder(StringRef Suffix = {});
 
   /// Get the detected GCC installation path suffix for the multi-arch
   /// target variant. Always starts with a '/', unless empty
@@ -45,7 +46,7 @@ public:
   }
 
   /// Set the GCC installation path suffix.
-  MultilibBuilder &gccSuffix(StringRef S);
+  CLANG_ABI MultilibBuilder &gccSuffix(StringRef S);
 
   /// Get the detected os path suffix for the multi-arch
   /// target variant. Always starts with a '/', unless empty
@@ -56,7 +57,7 @@ public:
   }
 
   /// Set the os path suffix.
-  MultilibBuilder &osSuffix(StringRef S);
+  CLANG_ABI MultilibBuilder &osSuffix(StringRef S);
 
   /// Get the include directory suffix. Always starts with a '/', unless
   /// empty
@@ -67,7 +68,7 @@ public:
   }
 
   /// Set the include directory suffix
-  MultilibBuilder &includeSuffix(StringRef S);
+  CLANG_ABI MultilibBuilder &includeSuffix(StringRef S);
 
   /// Get the flags that indicate or contraindicate this multilib's use
   /// All elements begin with either '-' or '!'
@@ -77,12 +78,12 @@ public:
   /// Add a flag to the flags list
   /// \p Flag must be a flag accepted by the driver.
   /// \p Disallow defines whether the flag is negated and therefore disallowed.
-  MultilibBuilder &flag(StringRef Flag, bool Disallow = false);
+  CLANG_ABI MultilibBuilder &flag(StringRef Flag, bool Disallow = false);
 
-  Multilib makeMultilib() const;
+  CLANG_ABI Multilib makeMultilib() const;
 
   /// Check whether any of the 'against' flags contradict the 'for' flags.
-  bool isValid() const;
+  CLANG_ABI bool isValid() const;
 
   /// Check whether the default is selected
   bool isDefault() const {
@@ -100,29 +101,29 @@ public:
   MultilibSetBuilder() = default;
 
   /// Add an optional Multilib segment
-  MultilibSetBuilder &Maybe(const MultilibBuilder &M);
+  CLANG_ABI MultilibSetBuilder &Maybe(const MultilibBuilder &M);
 
   /// Add a set of mutually incompatible Multilib segments
-  MultilibSetBuilder &Either(const MultilibBuilder &M1,
+  CLANG_ABI MultilibSetBuilder &Either(const MultilibBuilder &M1,
                              const MultilibBuilder &M2);
-  MultilibSetBuilder &Either(const MultilibBuilder &M1,
+  CLANG_ABI MultilibSetBuilder &Either(const MultilibBuilder &M1,
                              const MultilibBuilder &M2,
                              const MultilibBuilder &M3);
-  MultilibSetBuilder &Either(const MultilibBuilder &M1,
+  CLANG_ABI MultilibSetBuilder &Either(const MultilibBuilder &M1,
                              const MultilibBuilder &M2,
                              const MultilibBuilder &M3,
                              const MultilibBuilder &M4);
-  MultilibSetBuilder &Either(const MultilibBuilder &M1,
+  CLANG_ABI MultilibSetBuilder &Either(const MultilibBuilder &M1,
                              const MultilibBuilder &M2,
                              const MultilibBuilder &M3,
                              const MultilibBuilder &M4,
                              const MultilibBuilder &M5);
-  MultilibSetBuilder &Either(ArrayRef<MultilibBuilder> Ms);
+  CLANG_ABI MultilibSetBuilder &Either(ArrayRef<MultilibBuilder> Ms);
 
   /// Filter out those Multilibs whose gccSuffix matches the given expression
-  MultilibSetBuilder &FilterOut(const char *Regex);
+  CLANG_ABI MultilibSetBuilder &FilterOut(const char *Regex);
 
-  MultilibSet makeMultilibSet() const;
+  CLANG_ABI MultilibSet makeMultilibSet() const;
 
 private:
   multilib_list Multilibs;

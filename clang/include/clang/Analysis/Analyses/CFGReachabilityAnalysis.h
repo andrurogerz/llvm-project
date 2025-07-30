@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_ANALYSES_CFGREACHABILITYANALYSIS_H
 #define LLVM_CLANG_ANALYSIS_ANALYSES_CFGREACHABILITYANALYSIS_H
 
+#include "clang/Support/Compiler.h"
 #include "llvm/ADT/BitVector.h"
 #include "llvm/ADT/DenseMap.h"
 
@@ -36,10 +37,10 @@ class CFGReverseBlockReachabilityAnalysis {
   ReachableMap reachable;
 
 public:
-  CFGReverseBlockReachabilityAnalysis(const CFG &cfg);
+  CLANG_ABI CFGReverseBlockReachabilityAnalysis(const CFG &cfg);
 
   /// Returns true if the block 'Dst' can be reached from block 'Src'.
-  bool isReachable(const CFGBlock *Src, const CFGBlock *Dst);
+  CLANG_ABI bool isReachable(const CFGBlock *Src, const CFGBlock *Dst);
 
 private:
   void mapReachability(const CFGBlock *Dst);

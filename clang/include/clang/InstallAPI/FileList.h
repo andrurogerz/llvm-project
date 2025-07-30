@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_INSTALLAPI_FILELIST_H
 #define LLVM_CLANG_INSTALLAPI_FILELIST_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/FileManager.h"
 #include "clang/InstallAPI/HeaderFile.h"
@@ -30,7 +31,7 @@ public:
   /// \param InputBuffer JSON input data.
   /// \param Destination Container to load headers into.
   /// \param FM Optional File Manager to validate input files exist.
-  static llvm::Error
+  CLANG_ABI static llvm::Error
   loadHeaders(std::unique_ptr<llvm::MemoryBuffer> InputBuffer,
               HeaderSeq &Destination, clang::FileManager *FM = nullptr);
 

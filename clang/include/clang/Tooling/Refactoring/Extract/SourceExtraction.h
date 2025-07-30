@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_TOOLING_REFACTORING_EXTRACT_SOURCEEXTRACTION_H
 #define LLVM_CLANG_TOOLING_REFACTORING_EXTRACT_SOURCEEXTRACTION_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 
 namespace clang {
@@ -31,7 +32,7 @@ public:
 
   /// Returns the semicolon insertion policy that is needed for extraction of
   /// the given statement from the given source range.
-  static ExtractionSemicolonPolicy compute(const Stmt *S,
+  CLANG_ABI static ExtractionSemicolonPolicy compute(const Stmt *S,
                                            SourceRange &ExtractedRange,
                                            const SourceManager &SM,
                                            const LangOptions &LangOpts);

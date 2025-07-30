@@ -28,7 +28,7 @@ namespace phases {
     MaxNumberOfPhases = IfsMerge + 1
   };
 
-  const char *getPhaseName(ID Id);
+  CLANG_ABI const char *getPhaseName(ID Id);
 
 } // end namespace phases
 } // end namespace driver

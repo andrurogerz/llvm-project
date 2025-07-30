@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_BASIC_CODEGENOPTIONS_H
 #define LLVM_CLANG_BASIC_CODEGENOPTIONS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/CFProtectionOptions.h"
 #include "clang/Basic/PointerAuthOptions.h"
 #include "clang/Basic/Sanitizers.h"
@@ -549,7 +550,7 @@ public:
   void set##Name(Type Value) { Name = static_cast<unsigned>(Value); }
 #include "clang/Basic/CodeGenOptions.def"
 
-  CodeGenOptions();
+  CLANG_ABI CodeGenOptions();
 
   const std::vector<std::string> &getNoBuiltinFuncs() const {
     return NoBuiltinFuncs;
@@ -634,7 +635,7 @@ public:
 
   /// Reset all of the options that are not considered when building a
   /// module.
-  void resetNonModularOptions(StringRef ModuleFormat);
+  CLANG_ABI void resetNonModularOptions(StringRef ModuleFormat);
 
   // Is the given function name one of the functions that can be replaced by the
   // loader?

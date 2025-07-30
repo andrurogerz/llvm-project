@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_CALLEVENT_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_CALLEVENT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/DeclBase.h"
 #include "clang/AST/DeclCXX.h"
@@ -150,7 +151,7 @@ public:
 /// CallEventManager to be able to re-use CallEvent-sized memory blocks,
 /// subclasses of CallEvent may not add any data members to the base class.
 /// Use the "Data" and "Location" fields instead.
-class CallEvent {
+class CLANG_ABI CallEvent {
 public:
   using Kind = CallEventKind;
 
@@ -496,7 +497,7 @@ public:
 
 /// Represents a call to any sort of function that might have a
 /// FunctionDecl.
-class AnyFunctionCall : public CallEvent {
+class CLANG_ABI AnyFunctionCall : public CallEvent {
 protected:
   AnyFunctionCall(const Expr *E, ProgramStateRef St,
                   const LocationContext *LCtx,
@@ -533,7 +534,7 @@ public:
 /// Represents a C function or static C++ member function call.
 ///
 /// Example: \c fun()
-class SimpleFunctionCall : public AnyFunctionCall {
+class CLANG_ABI SimpleFunctionCall : public AnyFunctionCall {
   friend class CallEventManager;
 
 protected:
@@ -573,7 +574,7 @@ public:
 /// Represents a call to a block.
 ///
 /// Example: <tt>^{ statement-body }()</tt>
-class BlockCall : public CallEvent {
+class CLANG_ABI BlockCall : public CallEvent {
   friend class CallEventManager;
 
 protected:
@@ -676,7 +677,7 @@ public:
 
 /// Represents a non-static C++ member function call, no matter how
 /// it is written.
-class CXXInstanceCall : public AnyFunctionCall {
+class CLANG_ABI CXXInstanceCall : public AnyFunctionCall {
 protected:
   CXXInstanceCall(const CallExpr *CE, ProgramStateRef St,
                   const LocationContext *LCtx,
@@ -791,7 +792,7 @@ public:
 /// Represents a non-static C++ member function call.
 ///
 /// Example: \c obj.fun()
-class CXXMemberCall : public CXXInstanceCall {
+class CLANG_ABI CXXMemberCall : public CXXInstanceCall {
   friend class CallEventManager;
 
 protected:
@@ -834,7 +835,7 @@ public:
 /// implemented as a non-static member function.
 ///
 /// Example: <tt>iter + 1</tt>
-class CXXMemberOperatorCall : public CXXInstanceCall {
+class CLANG_ABI CXXMemberOperatorCall : public CXXInstanceCall {
   friend class CallEventManager;
 
 protected:
@@ -894,7 +895,7 @@ public:
 ///
 /// This can occur at the end of a scope (for automatic objects), at the end
 /// of a full-expression (for temporaries), or as part of a delete.
-class CXXDestructorCall : public CXXInstanceCall {
+class CLANG_ABI CXXDestructorCall : public CXXInstanceCall {
   friend class CallEventManager;
 
 protected:
@@ -952,7 +953,7 @@ public:
 
 /// Represents any constructor invocation. This includes regular constructors
 /// and inherited constructors.
-class AnyCXXConstructorCall : public AnyFunctionCall {
+class CLANG_ABI AnyCXXConstructorCall : public AnyFunctionCall {
 protected:
   AnyCXXConstructorCall(const Expr *E, const MemRegion *Target,
                         ProgramStateRef St, const LocationContext *LCtx,
@@ -1080,7 +1081,7 @@ public:
 
   /// Obtain the stack frame of the inheriting constructor. Argument expressions
   /// can be found on the call site of that stack frame.
-  const StackFrameContext *getInheritingStackFrame() const;
+  CLANG_ABI const StackFrameContext *getInheritingStackFrame() const;
 
   /// Obtain the CXXConstructExpr for the sub-class that inherited the current
   /// constructor (possibly indirectly). It's the statement that contains
@@ -1247,7 +1248,7 @@ enum ObjCMessageKind { OCM_PropertyAccess, OCM_Subscript, OCM_Message };
 /// Represents any expression that calls an Objective-C method.
 ///
 /// This includes all of the kinds listed in ObjCMessageKind.
-class ObjCMethodCall : public CallEvent {
+class CLANG_ABI ObjCMethodCall : public CallEvent {
   friend class CallEventManager;
 
   const PseudoObjectExpr *getContainingPseudoObjectExpr() const;
@@ -1417,16 +1418,16 @@ public:
   CallEventManager(llvm::BumpPtrAllocator &alloc) : Alloc(alloc) {}
 
   /// Gets an outside caller given a callee context.
-  CallEventRef<> getCaller(const StackFrameContext *CalleeCtx,
+  CLANG_ABI CallEventRef<> getCaller(const StackFrameContext *CalleeCtx,
                            ProgramStateRef State);
 
   /// Gets a call event for a function call, Objective-C method call,
   /// a 'new', or a 'delete' call.
-  CallEventRef<> getCall(const Stmt *S, ProgramStateRef State,
+  CLANG_ABI CallEventRef<> getCall(const Stmt *S, ProgramStateRef State,
                          const LocationContext *LC,
                          CFGBlock::ConstCFGElementRef ElemRef);
 
-  CallEventRef<> getSimpleCall(const CallExpr *E, ProgramStateRef State,
+  CLANG_ABI CallEventRef<> getSimpleCall(const CallExpr *E, ProgramStateRef State,
                                const LocationContext *LCtx,
                                CFGBlock::ConstCFGElementRef ElemRef);
 

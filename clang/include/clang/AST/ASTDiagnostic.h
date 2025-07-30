@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_AST_ASTDIAGNOSTIC_H
 #define LLVM_CLANG_AST_ASTDIAGNOSTIC_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Type.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/DiagnosticAST.h"
@@ -23,7 +24,7 @@ namespace clang {
   /// diagnostics. It is meant to be used as the argument to
   /// \c DiagnosticsEngine::SetArgToStringFn(), where the cookie is an \c
   /// ASTContext pointer.
-  void FormatASTNodeDiagnosticArgument(
+  CLANG_ABI void FormatASTNodeDiagnosticArgument(
       DiagnosticsEngine::ArgumentKind Kind,
       intptr_t Val,
       StringRef Modifier,
@@ -36,10 +37,10 @@ namespace clang {
   /// Returns a desugared version of the QualType, and marks ShouldAKA as true
   /// whenever we remove significant sugar from the type. Make sure ShouldAKA
   /// is initialized before passing it in.
-  QualType desugarForDiagnostic(ASTContext &Context, QualType QT,
+  CLANG_ABI QualType desugarForDiagnostic(ASTContext &Context, QualType QT,
                                 bool &ShouldAKA);
 
-  std::string FormatUTFCodeUnitAsCodepoint(unsigned Value, QualType T);
+  CLANG_ABI std::string FormatUTFCodeUnitAsCodepoint(unsigned Value, QualType T);
 
 }  // end namespace clang
 

@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_DRIVER_MULTILIB_H
 #define LLVM_CLANG_DRIVER_MULTILIB_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/STLExtras.h"
@@ -60,7 +61,7 @@ public:
   /// GCCSuffix, OSSuffix & IncludeSuffix will be appended directly to the
   /// sysroot string so they must either be empty or begin with a '/' character.
   /// This is enforced with an assert in the constructor.
-  Multilib(StringRef GCCSuffix = {}, StringRef OSSuffix = {},
+  CLANG_ABI Multilib(StringRef GCCSuffix = {}, StringRef OSSuffix = {},
            StringRef IncludeSuffix = {}, const flags_list &Flags = flags_list(),
            StringRef ExclusiveGroup = {},
            std::optional<StringRef> Error = std::nullopt);
@@ -84,22 +85,22 @@ public:
   /// Get the exclusive group label.
   const std::string &exclusiveGroup() const { return ExclusiveGroup; }
 
-  LLVM_DUMP_METHOD void dump() const;
+  LLVM_DUMP_METHOD CLANG_ABI void dump() const;
   /// print summary of the Multilib
-  void print(raw_ostream &OS) const;
+  CLANG_ABI void print(raw_ostream &OS) const;
 
   /// Check whether the default is selected
   bool isDefault() const
   { return GCCSuffix.empty() && OSSuffix.empty() && IncludeSuffix.empty(); }
 
-  bool operator==(const Multilib &Other) const;
+  CLANG_ABI bool operator==(const Multilib &Other) const;
 
   bool isError() const { return Error.has_value(); }
 
   const std::string &getErrorMessage() const { return Error.value(); }
 };
 
-raw_ostream &operator<<(raw_ostream &OS, const Multilib &M);
+CLANG_ABI raw_ostream &operator<<(raw_ostream &OS, const Multilib &M);
 
 namespace custom_flag {
 struct Declaration;
@@ -116,10 +117,10 @@ struct Declaration {
   std::optional<size_t> DefaultValueIdx;
 
   Declaration() = default;
-  Declaration(const Declaration &);
-  Declaration(Declaration &&);
-  Declaration &operator=(const Declaration &);
-  Declaration &operator=(Declaration &&);
+  CLANG_ABI Declaration(const Declaration &);
+  CLANG_ABI Declaration(Declaration &&);
+  CLANG_ABI Declaration &operator=(const Declaration &);
+  CLANG_ABI Declaration &operator=(Declaration &&);
 };
 
 static constexpr StringRef Prefix = "-fmultilib-flag=";
@@ -160,10 +161,10 @@ public:
   const multilib_list &getMultilibs() { return Multilibs; }
 
   /// Filter out some subset of the Multilibs using a user defined callback
-  MultilibSet &FilterOut(FilterCallback F);
+  CLANG_ABI MultilibSet &FilterOut(FilterCallback F);
 
   /// Add a completed Multilib to the set
-  void push_back(const Multilib &M);
+  CLANG_ABI void push_back(const Multilib &M);
 
   const_iterator begin() const { return Multilibs.begin(); }
   const_iterator end() const { return Multilibs.end(); }
@@ -173,11 +174,11 @@ public:
   /// Returns a pair where:
   ///  - first: the new flags list including custom flags after processing.
   ///  - second: the extra macro defines to be fed to the driver.
-  std::pair<Multilib::flags_list, SmallVector<StringRef>>
+  CLANG_ABI std::pair<Multilib::flags_list, SmallVector<StringRef>>
   processCustomFlags(const Driver &D, const Multilib::flags_list &Flags) const;
 
   /// Select compatible variants, \returns false if none are compatible
-  bool select(const Driver &D, const Multilib::flags_list &Flags,
+  CLANG_ABI bool select(const Driver &D, const Multilib::flags_list &Flags,
               llvm::SmallVectorImpl<Multilib> &,
               llvm::SmallVector<StringRef> * = nullptr) const;
 
@@ -186,10 +187,10 @@ public:
   /// Get the given flags plus flags found by matching them against the
   /// FlagMatchers and choosing the Flags of each accordingly. The select method
   /// calls this method so in most cases it's not necessary to call it directly.
-  llvm::StringSet<> expandFlags(const Multilib::flags_list &) const;
+  CLANG_ABI llvm::StringSet<> expandFlags(const Multilib::flags_list &) const;
 
-  LLVM_DUMP_METHOD void dump() const;
-  void print(raw_ostream &OS) const;
+  LLVM_DUMP_METHOD CLANG_ABI void dump() const;
+  CLANG_ABI void print(raw_ostream &OS) const;
 
   MultilibSet &setIncludeDirsCallback(IncludeDirsFunc F) {
     IncludeCallback = std::move(F);
@@ -205,12 +206,12 @@ public:
 
   const IncludeDirsFunc &filePathsCallback() const { return FilePathsCallback; }
 
-  static llvm::ErrorOr<MultilibSet>
+  CLANG_ABI static llvm::ErrorOr<MultilibSet>
   parseYaml(llvm::MemoryBufferRef, llvm::SourceMgr::DiagHandlerTy = nullptr,
             void *DiagHandlerCtxt = nullptr);
 };
 
-raw_ostream &operator<<(raw_ostream &OS, const MultilibSet &MS);
+CLANG_ABI raw_ostream &operator<<(raw_ostream &OS, const MultilibSet &MS);
 
 } // namespace driver
 } // namespace clang

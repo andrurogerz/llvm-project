@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_TYPEERASEDDATAFLOWANALYSIS_H
 #define LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_TYPEERASEDDATAFLOWANALYSIS_H
 
+#include "clang/Support/Compiler.h"
 #include <optional>
 #include <utility>
 #include <vector>
@@ -157,7 +158,7 @@ struct CFGEltCallbacksTypeErased {
 /// blocks. This parameter is a backstop to prevent infinite loops, in the case
 /// of bugs in the lattice and/or transfer functions that prevent the analysis
 /// from converging.
-llvm::Expected<std::vector<std::optional<TypeErasedDataflowAnalysisState>>>
+CLANG_ABI llvm::Expected<std::vector<std::optional<TypeErasedDataflowAnalysisState>>>
 runTypeErasedDataflowAnalysis(
     const AdornedCFG &ACFG, TypeErasedDataflowAnalysis &Analysis,
     const Environment &InitEnv,

@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_COREENGINE_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_COREENGINE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Stmt.h"
 #include "clang/Analysis/AnalysisDeclContext.h"
 #include "clang/Analysis/CFG.h"
@@ -136,7 +137,7 @@ private:
 
 public:
   /// Construct a CoreEngine object to analyze the provided CFG.
-  CoreEngine(ExprEngine &exprengine,
+  CLANG_ABI CoreEngine(ExprEngine &exprengine,
              FunctionSummariesTy *FS,
              AnalyzerOptions &Opts);
 
@@ -148,12 +149,12 @@ public:
 
   /// ExecuteWorkList - Run the worklist algorithm for a maximum number of
   ///  steps.  Returns true if there is still simulation state on the worklist.
-  bool ExecuteWorkList(const LocationContext *L, unsigned Steps,
+  CLANG_ABI bool ExecuteWorkList(const LocationContext *L, unsigned Steps,
                        ProgramStateRef InitState);
 
   /// Dispatch the work list item based on the given location information.
   /// Use Pred parameter as the predecessor state.
-  void dispatchWorkItem(ExplodedNode* Pred, ProgramPoint Loc,
+  CLANG_ABI void dispatchWorkItem(ExplodedNode* Pred, ProgramPoint Loc,
                         const WorkListUnit& WU);
 
   // Functions for external checking of whether we have unfinished work.
@@ -179,18 +180,18 @@ public:
   auto aborted_blocks() const { return llvm::iterator_range(blocksAborted); }
 
   /// Enqueue the given set of nodes onto the work list.
-  void enqueue(ExplodedNodeSet &Set);
+  CLANG_ABI void enqueue(ExplodedNodeSet &Set);
 
   /// Enqueue nodes that were created as a result of processing
   /// a statement onto the work list.
-  void enqueue(ExplodedNodeSet &Set, const CFGBlock *Block, unsigned Idx);
+  CLANG_ABI void enqueue(ExplodedNodeSet &Set, const CFGBlock *Block, unsigned Idx);
 
   /// enqueue the nodes corresponding to the end of function onto the
   /// end of path / work list.
-  void enqueueEndOfFunction(ExplodedNodeSet &Set, const ReturnStmt *RS);
+  CLANG_ABI void enqueueEndOfFunction(ExplodedNodeSet &Set, const ReturnStmt *RS);
 
   /// Enqueue a single node created as a result of statement processing.
-  void enqueueStmtNode(ExplodedNode *N, const CFGBlock *Block, unsigned Idx);
+  CLANG_ABI void enqueueStmtNode(ExplodedNode *N, const CFGBlock *Block, unsigned Idx);
 
   DataTag::Factory &getDataTags() { return DataTags; }
 };
@@ -237,7 +238,7 @@ public:
 /// be propagated to the next step / builder. They are the nodes which have been
 /// added to the builder (either as the input node set or as the newly
 /// constructed nodes) but did not have any outgoing transitions added.
-class NodeBuilder {
+class CLANG_ABI NodeBuilder {
   virtual void anchor();
 
 protected:
@@ -344,7 +345,7 @@ public:
 
 /// \class NodeBuilderWithSinks
 /// This node builder keeps track of the generated sink nodes.
-class NodeBuilderWithSinks: public NodeBuilder {
+class CLANG_ABI NodeBuilderWithSinks: public NodeBuilder {
   void anchor() override;
 
 protected:
@@ -381,7 +382,7 @@ public:
 /// This builder class is useful for generating nodes that resulted from
 /// visiting a statement. The main difference from its parent NodeBuilder is
 /// that it creates a statement specific ProgramPoint.
-class StmtNodeBuilder: public NodeBuilder {
+class CLANG_ABI StmtNodeBuilder: public NodeBuilder {
   NodeBuilder *EnclosingBldr;
 
 public:
@@ -433,7 +434,7 @@ public:
 
 /// BranchNodeBuilder is responsible for constructing the nodes
 /// corresponding to the two branches of the if statement - true and false.
-class BranchNodeBuilder: public NodeBuilder {
+class CLANG_ABI BranchNodeBuilder: public NodeBuilder {
   const CFGBlock *DstT;
   const CFGBlock *DstF;
 
@@ -500,7 +501,7 @@ public:
   iterator begin() { return iterator(DispatchBlock.succ_begin()); }
   iterator end() { return iterator(DispatchBlock.succ_end()); }
 
-  ExplodedNode *generateNode(const iterator &I,
+  CLANG_ABI ExplodedNode *generateNode(const iterator &I,
                              ProgramStateRef State,
                              bool isSink = false);
 
@@ -552,10 +553,10 @@ public:
     return cast<SwitchStmt>(Src->getTerminator());
   }
 
-  ExplodedNode *generateCaseStmtNode(const iterator &I,
+  CLANG_ABI ExplodedNode *generateCaseStmtNode(const iterator &I,
                                      ProgramStateRef State);
 
-  ExplodedNode *generateDefaultCaseNode(ProgramStateRef State,
+  CLANG_ABI ExplodedNode *generateDefaultCaseNode(ProgramStateRef State,
                                         bool isSink = false);
 
   const Expr *getCondition() const { return Condition; }

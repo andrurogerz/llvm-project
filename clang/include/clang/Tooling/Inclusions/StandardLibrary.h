@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_TOOLING_INCLUSIONS_STANDARDLIBRARY_H
 #define LLVM_CLANG_TOOLING_INCLUSIONS_STANDARDLIBRARY_H
 
+#include "clang/Support/Compiler.h"
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/Hashing.h"
 #include "llvm/ADT/StringRef.h"
@@ -39,15 +40,15 @@ enum class Lang { C = 0, CXX, LastValue = CXX };
 // "<cstdio>" and "<stdio.h>" (and their symbols) are treated differently.
 class Header {
 public:
-  static std::vector<Header> all(Lang L = Lang::CXX);
+  CLANG_ABI static std::vector<Header> all(Lang L = Lang::CXX);
   // Name should contain the angle brackets, e.g. "<vector>".
-  static std::optional<Header> named(llvm::StringRef Name,
+  CLANG_ABI static std::optional<Header> named(llvm::StringRef Name,
                                      Lang Language = Lang::CXX);
 
   friend llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const Header &H) {
     return OS << H.name();
   }
-  llvm::StringRef name() const;
+  CLANG_ABI llvm::StringRef name() const;
 
 private:
   Header(unsigned ID, Lang Language) : ID(ID), Language(Language) {}
@@ -69,22 +70,22 @@ private:
 // for them.
 class Symbol {
 public:
-  static std::vector<Symbol> all(Lang L = Lang::CXX);
+  CLANG_ABI static std::vector<Symbol> all(Lang L = Lang::CXX);
   /// \p Scope should have the trailing "::", for example:
   /// named("std::chrono::", "system_clock")
-  static std::optional<Symbol>
+  CLANG_ABI static std::optional<Symbol>
   named(llvm::StringRef Scope, llvm::StringRef Name, Lang Language = Lang::CXX);
 
   friend llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const Symbol &S) {
     return OS << S.qualifiedName();
   }
-  llvm::StringRef scope() const;
-  llvm::StringRef name() const;
-  llvm::StringRef qualifiedName() const;
+  CLANG_ABI llvm::StringRef scope() const;
+  CLANG_ABI llvm::StringRef name() const;
+  CLANG_ABI llvm::StringRef qualifiedName() const;
   // The preferred header for this symbol (e.g. the suggested insertion).
-  std::optional<Header> header() const;
+  CLANG_ABI std::optional<Header> header() const;
   // Some symbols may be provided by multiple headers.
-  llvm::SmallVector<Header> headers() const;
+  CLANG_ABI llvm::SmallVector<Header> headers() const;
 
 private:
   Symbol(unsigned ID, Lang Language) : ID(ID), Language(Language) {}
@@ -104,8 +105,8 @@ private:
 // symbol (std::vector).
 class Recognizer {
 public:
-  Recognizer();
-  std::optional<Symbol> operator()(const Decl *D);
+  CLANG_ABI Recognizer();
+  CLANG_ABI std::optional<Symbol> operator()(const Decl *D);
 
 private:
   using NSSymbolMap = llvm::DenseMap<llvm::StringRef, unsigned>;

@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_TYPELOC_H
 #define LLVM_CLANG_AST_TYPELOC_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTConcept.h"
 #include "clang/AST/DeclarationName.h"
 #include "clang/AST/NestedNameSpecifier.h"
@@ -122,11 +123,11 @@ public:
   explicit operator bool() const { return Ty; }
 
   /// Returns the size of type source info data block for the given type.
-  static unsigned getFullDataSizeForType(QualType Ty);
+  CLANG_ABI static unsigned getFullDataSizeForType(QualType Ty);
 
   /// Returns the alignment of type source info data block for
   /// the given type.
-  static unsigned getLocalAlignmentForType(QualType Ty);
+  CLANG_ABI static unsigned getLocalAlignmentForType(QualType Ty);
 
   /// Get the type for which this source info wrapper provides
   /// information.
@@ -145,10 +146,10 @@ public:
   }
 
   /// Get the begin source location.
-  SourceLocation getBeginLoc() const;
+  CLANG_ABI SourceLocation getBeginLoc() const;
 
   /// Get the end source location.
-  SourceLocation getEndLoc() const;
+  CLANG_ABI SourceLocation getEndLoc() const;
 
   /// Get the full source range.
   SourceRange getSourceRange() const LLVM_READONLY {
@@ -183,15 +184,15 @@ public:
   ///   QualifiedTypeLoc
   ///   AtomicTypeLoc
   ///   AttributedTypeLoc, for those type attributes that behave as qualifiers
-  TypeLoc findExplicitQualifierLoc() const;
+  CLANG_ABI TypeLoc findExplicitQualifierLoc() const;
 
   /// Get the typeloc of an AutoType whose type will be deduced for a variable
   /// with an initializer of this type. This looks through declarators like
   /// pointer types, but not through decltype or typedefs.
-  AutoTypeLoc getContainedAutoTypeLoc() const;
+  CLANG_ABI AutoTypeLoc getContainedAutoTypeLoc() const;
 
   /// Get the SourceLocation of the template keyword (if any).
-  SourceLocation getTemplateKeywordLoc() const;
+  CLANG_ABI SourceLocation getTemplateKeywordLoc() const;
 
   /// Initializes this to state that every location in this
   /// type is the given location.
@@ -219,7 +220,7 @@ public:
   }
 
   /// Copies the other type loc into this one.
-  void copy(TypeLoc other);
+  CLANG_ABI void copy(TypeLoc other);
 
   friend bool operator==(const TypeLoc &LHS, const TypeLoc &RHS) {
     return LHS.Ty == RHS.Ty && LHS.Data == RHS.Data;
@@ -231,21 +232,21 @@ public:
 
   /// Find the location of the nullability specifier (__nonnull,
   /// __nullable, or __null_unspecifier), if there is one.
-  SourceLocation findNullabilityLoc() const;
+  CLANG_ABI SourceLocation findNullabilityLoc() const;
 
-  void dump() const;
-  void dump(llvm::raw_ostream &, const ASTContext &) const;
+  CLANG_ABI void dump() const;
+  CLANG_ABI void dump(llvm::raw_ostream &, const ASTContext &) const;
 
 private:
   static bool isKind(const TypeLoc&) {
     return true;
   }
 
-  static void initializeImpl(ASTContext &Context, TypeLoc TL,
+  CLANG_ABI static void initializeImpl(ASTContext &Context, TypeLoc TL,
                              SourceLocation Loc);
-  static TypeLoc getNextTypeLocImpl(TypeLoc TL);
-  static TypeLoc IgnoreParensImpl(TypeLoc TL);
-  static SourceRange getLocalSourceRangeImpl(TypeLoc TL);
+  CLANG_ABI static TypeLoc getNextTypeLocImpl(TypeLoc TL);
+  CLANG_ABI static TypeLoc IgnoreParensImpl(TypeLoc TL);
+  CLANG_ABI static SourceRange getLocalSourceRangeImpl(TypeLoc TL);
 };
 
 inline TypeSourceInfo::TypeSourceInfo(QualType ty, size_t DataSize) : Ty(ty) {
@@ -644,7 +645,7 @@ public:
       getWrittenBuiltinSpecs().Width = static_cast<unsigned>(written);
   }
 
-  TypeSpecifierType getWrittenTypeSpec() const;
+  CLANG_ABI TypeSpecifierType getWrittenTypeSpec() const;
 
   bool hasWrittenTypeSpec() const {
     return getWrittenTypeSpec() != TST_unspecified;
@@ -734,7 +735,7 @@ public:
   TagDecl *getDecl() const { return getTypePtr()->getDecl(); }
 
   /// True if the tag was defined in this type specifier.
-  bool isDefinition() const;
+  CLANG_ABI bool isDefinition() const;
 };
 
 /// Wrapper for source info for record types.
@@ -831,7 +832,7 @@ public:
     return {getProtocolLocArray(), getNumProtocols()};
   }
 
-  void initializeLocal(ASTContext &Context, SourceLocation Loc);
+  CLANG_ABI void initializeLocal(ASTContext &Context, SourceLocation Loc);
 
   unsigned getExtraLocalDataSize() const {
     if (!this->getNumProtocols()) return 0;
@@ -908,7 +909,7 @@ public:
     return dyn_cast_or_null<T>(getAttr());
   }
 
-  SourceRange getLocalSourceRange() const;
+  CLANG_ABI SourceRange getLocalSourceRange() const;
 
   void initializeLocal(ASTContext &Context, SourceLocation loc) {
     setAttr(nullptr);
@@ -935,7 +936,7 @@ public:
     return dyn_cast_or_null<T>(getAttr());
   }
 
-  SourceRange getLocalSourceRange() const;
+  CLANG_ABI SourceRange getLocalSourceRange() const;
 
   void initializeLocal(ASTContext &Context, SourceLocation loc) {}
 
@@ -1113,7 +1114,7 @@ public:
     return SourceRange(start, end);
   }
 
-  void initializeLocal(ASTContext &Context, SourceLocation Loc);
+  CLANG_ABI void initializeLocal(ASTContext &Context, SourceLocation Loc);
 
   unsigned getExtraLocalDataSize() const {
     return this->getNumTypeArgs() * sizeof(TypeSourceInfo *)
@@ -1195,7 +1196,7 @@ public:
   bool isCountInBytes() const { return getTypePtr()->isCountInBytes(); }
   bool isOrNull() const { return getTypePtr()->isOrNull(); }
 
-  SourceRange getLocalSourceRange() const;
+  CLANG_ABI SourceRange getLocalSourceRange() const;
 };
 
 struct MacroQualifiedLocInfo {
@@ -1789,7 +1790,7 @@ public:
                       getArgInfos(), Loc);
   }
 
-  static void initializeArgLocs(ASTContext &Context,
+  CLANG_ABI static void initializeArgLocs(ASTContext &Context,
                                 ArrayRef<TemplateArgument> Args,
                                 TemplateArgumentLocInfo *ArgInfos,
                                 SourceLocation Loc);
@@ -2100,7 +2101,7 @@ public:
   // Reimplemented to account for GNU/C++ extension
   //     typeof unary-expression
   // where there are no parentheses.
-  SourceRange getLocalSourceRange() const;
+  CLANG_ABI SourceRange getLocalSourceRange() const;
 };
 
 class TypeOfTypeLoc
@@ -2118,7 +2119,7 @@ public:
     this->getLocalData()->UnmodifiedTInfo = TI;
   }
 
-  void initializeLocal(ASTContext &Context, SourceLocation Loc);
+  CLANG_ABI void initializeLocal(ASTContext &Context, SourceLocation Loc);
 };
 
 // decltype(expression) abc;
@@ -2222,7 +2223,7 @@ public:
     setRParenLoc(Range.getEnd());
   }
 
-  void initializeLocal(ASTContext &Context, SourceLocation Loc);
+  CLANG_ABI void initializeLocal(ASTContext &Context, SourceLocation Loc);
 };
 
 class DeducedTypeLoc
@@ -2343,7 +2344,7 @@ public:
     memcpy(Data, Loc.Data, size);
   }
 
-  void initializeLocal(ASTContext &Context, SourceLocation Loc);
+  CLANG_ABI void initializeLocal(ASTContext &Context, SourceLocation Loc);
 };
 
 class DeducedTemplateSpecializationTypeLoc
@@ -2412,7 +2413,7 @@ public:
       return getQualifierLoc().getSourceRange();
   }
 
-  void initializeLocal(ASTContext &Context, SourceLocation Loc);
+  CLANG_ABI void initializeLocal(ASTContext &Context, SourceLocation Loc);
 
   TypeLoc getNamedTypeLoc() const { return getInnerTypeLoc(); }
 
@@ -2493,7 +2494,7 @@ public:
     memcpy(Data, Loc.Data, size);
   }
 
-  void initializeLocal(ASTContext &Context, SourceLocation Loc);
+  CLANG_ABI void initializeLocal(ASTContext &Context, SourceLocation Loc);
 };
 
 struct DependentTemplateSpecializationLocInfo : DependentNameLocInfo {
@@ -2608,7 +2609,7 @@ public:
     memcpy(Data, Loc.Data, size);
   }
 
-  void initializeLocal(ASTContext &Context, SourceLocation Loc);
+  CLANG_ABI void initializeLocal(ASTContext &Context, SourceLocation Loc);
 
   unsigned getExtraLocalDataSize() const {
     return getNumArgs() * sizeof(TemplateArgumentLocInfo);

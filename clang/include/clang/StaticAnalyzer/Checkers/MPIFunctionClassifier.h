@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CHECKERS_MPIFUNCTIONCLASSIFIER_H
 #define LLVM_CLANG_STATICANALYZER_CHECKERS_MPIFUNCTIONCLASSIFIER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/StaticAnalyzer/Core/PathSensitive/CheckerContext.h"
 
 namespace clang {
@@ -25,30 +26,30 @@ public:
   MPIFunctionClassifier(ASTContext &ASTCtx) { identifierInit(ASTCtx); }
 
   // general identifiers
-  bool isMPIType(const IdentifierInfo *const IdentInfo) const;
-  bool isNonBlockingType(const IdentifierInfo *const IdentInfo) const;
+  CLANG_ABI bool isMPIType(const IdentifierInfo *const IdentInfo) const;
+  CLANG_ABI bool isNonBlockingType(const IdentifierInfo *const IdentInfo) const;
 
   // point-to-point identifiers
-  bool isPointToPointType(const IdentifierInfo *const IdentInfo) const;
+  CLANG_ABI bool isPointToPointType(const IdentifierInfo *const IdentInfo) const;
 
   // collective identifiers
-  bool isCollectiveType(const IdentifierInfo *const IdentInfo) const;
-  bool isCollToColl(const IdentifierInfo *const IdentInfo) const;
-  bool isScatterType(const IdentifierInfo *const IdentInfo) const;
-  bool isGatherType(const IdentifierInfo *const IdentInfo) const;
-  bool isAllgatherType(const IdentifierInfo *const IdentInfo) const;
-  bool isAlltoallType(const IdentifierInfo *const IdentInfo) const;
-  bool isReduceType(const IdentifierInfo *const IdentInfo) const;
-  bool isBcastType(const IdentifierInfo *const IdentInfo) const;
+  CLANG_ABI bool isCollectiveType(const IdentifierInfo *const IdentInfo) const;
+  CLANG_ABI bool isCollToColl(const IdentifierInfo *const IdentInfo) const;
+  CLANG_ABI bool isScatterType(const IdentifierInfo *const IdentInfo) const;
+  CLANG_ABI bool isGatherType(const IdentifierInfo *const IdentInfo) const;
+  CLANG_ABI bool isAllgatherType(const IdentifierInfo *const IdentInfo) const;
+  CLANG_ABI bool isAlltoallType(const IdentifierInfo *const IdentInfo) const;
+  CLANG_ABI bool isReduceType(const IdentifierInfo *const IdentInfo) const;
+  CLANG_ABI bool isBcastType(const IdentifierInfo *const IdentInfo) const;
 
   // additional identifiers
-  bool isMPI_Wait(const IdentifierInfo *const IdentInfo) const;
-  bool isMPI_Waitall(const IdentifierInfo *const IdentInfo) const;
-  bool isWaitType(const IdentifierInfo *const IdentInfo) const;
+  CLANG_ABI bool isMPI_Wait(const IdentifierInfo *const IdentInfo) const;
+  CLANG_ABI bool isMPI_Waitall(const IdentifierInfo *const IdentInfo) const;
+  CLANG_ABI bool isWaitType(const IdentifierInfo *const IdentInfo) const;
 
 private:
   // Initializes function identifiers, to recognize them during analysis.
-  void identifierInit(ASTContext &ASTCtx);
+  CLANG_ABI void identifierInit(ASTContext &ASTCtx);
   void initPointToPointIdentifiers(ASTContext &ASTCtx);
   void initCollectiveIdentifiers(ASTContext &ASTCtx);
   void initAdditionalIdentifiers(ASTContext &ASTCtx);

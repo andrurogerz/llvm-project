@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_LOGGER_H
 #define LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_LOGGER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Analysis/CFG.h"
 #include "llvm/Support/raw_ostream.h"
 #include <memory>
@@ -27,13 +28,13 @@ struct TypeErasedDataflowAnalysisState;
 class Logger {
 public:
   /// Returns a dummy logger that does nothing.
-  static Logger &null();
+  CLANG_ABI static Logger &null();
   /// A logger that simply writes messages to the specified ostream in real
   /// time.
-  static std::unique_ptr<Logger> textual(llvm::raw_ostream &);
+  CLANG_ABI static std::unique_ptr<Logger> textual(llvm::raw_ostream &);
   /// A logger that builds an HTML UI to inspect the analysis results.
   /// Each function's analysis is written to a stream obtained from the factory.
-  static std::unique_ptr<Logger>
+  CLANG_ABI static std::unique_ptr<Logger>
       html(std::function<std::unique_ptr<llvm::raw_ostream>()>);
 
   virtual ~Logger() = default;

@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_FRONTEND_FRONTENDOPTIONS_H
 #define LLVM_CLANG_FRONTEND_FRONTENDOPTIONS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTDumperUtils.h"
 #include "clang/Basic/LangStandard.h"
 #include "clang/Frontend/CommandLineSourceLoc.h"
@@ -558,7 +559,7 @@ public:
   ///
   /// \return The input kind for the extension, or Language::Unknown if the
   /// extension is not recognized.
-  static InputKind getInputKindForExtension(StringRef Extension);
+  CLANG_ABI static InputKind getInputKindForExtension(StringRef Extension);
 };
 
 } // namespace clang

@@ -17,6 +17,7 @@
 //===----------------------------------------------------------------------===//
 #ifndef LLVM_CLANG_ANALYSIS_ANALYSES_LIFETIMESAFETY_H
 #define LLVM_CLANG_ANALYSIS_ANALYSES_LIFETIMESAFETY_H
+#include "clang/Support/Compiler.h"
 #include "clang/Analysis/AnalysisDeclContext.h"
 #include "clang/Analysis/CFG.h"
 #include "llvm/ADT/ImmutableSet.h"
@@ -26,7 +27,7 @@
 namespace clang::lifetimes {
 
 /// The main entry point for the analysis.
-void runLifetimeSafetyAnalysis(AnalysisDeclContext &AC);
+CLANG_ABI void runLifetimeSafetyAnalysis(AnalysisDeclContext &AC);
 
 namespace internal {
 // Forward declarations of internal types.
@@ -78,24 +79,24 @@ using ProgramPoint = const Fact *;
 /// encapsulates the various dataflow analyses.
 class LifetimeSafetyAnalysis {
 public:
-  LifetimeSafetyAnalysis(AnalysisDeclContext &AC);
-  ~LifetimeSafetyAnalysis();
+  CLANG_ABI LifetimeSafetyAnalysis(AnalysisDeclContext &AC);
+  CLANG_ABI ~LifetimeSafetyAnalysis();
 
-  void run();
+  CLANG_ABI void run();
 
   /// Returns the set of loans an origin holds at a specific program point.
-  LoanSet getLoansAtPoint(OriginID OID, ProgramPoint PP) const;
+  CLANG_ABI LoanSet getLoansAtPoint(OriginID OID, ProgramPoint PP) const;
 
   /// Returns the set of loans that have expired at a specific program point.
-  LoanSet getExpiredLoansAtPoint(ProgramPoint PP) const;
+  CLANG_ABI LoanSet getExpiredLoansAtPoint(ProgramPoint PP) const;
 
   /// Finds the OriginID for a given declaration.
   /// Returns a null optional if not found.
-  std::optional<OriginID> getOriginIDForDecl(const ValueDecl *D) const;
+  CLANG_ABI std::optional<OriginID> getOriginIDForDecl(const ValueDecl *D) const;
 
   /// Finds the LoanID's for the loan created with the specific variable as
   /// their Path.
-  std::vector<LoanID> getLoanIDForVar(const VarDecl *VD) const;
+  CLANG_ABI std::vector<LoanID> getLoanIDForVar(const VarDecl *VD) const;
 
   /// Retrieves program points that were specially marked in the source code
   /// for testing.
@@ -106,7 +107,7 @@ public:
   /// `ProgramPoint`. This allows test harnesses to query the analysis state at
   /// user-defined locations in the code.
   /// \note This is intended for testing only.
-  llvm::StringMap<ProgramPoint> getTestPoints() const;
+  CLANG_ABI llvm::StringMap<ProgramPoint> getTestPoints() const;
 
 private:
   AnalysisDeclContext &AC;

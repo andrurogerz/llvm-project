@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_LEX_LITERALSUPPORT_H
 #define LLVM_CLANG_LEX_LITERALSUPPORT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/CharInfo.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/TokenKinds.h"
@@ -34,16 +35,16 @@ class SourceManager;
 class LangOptions;
 
 /// Copy characters from Input to Buf, expanding any UCNs.
-void expandUCNs(SmallVectorImpl<char> &Buf, StringRef Input);
+CLANG_ABI void expandUCNs(SmallVectorImpl<char> &Buf, StringRef Input);
 
 /// Return true if the token corresponds to a function local predefined macro,
 /// which expands to a string literal, that can be concatenated with other
 /// string literals (only in Microsoft mode).
-bool isFunctionLocalStringLiteralMacro(tok::TokenKind K, const LangOptions &LO);
+CLANG_ABI bool isFunctionLocalStringLiteralMacro(tok::TokenKind K, const LangOptions &LO);
 
 /// Return true if the token is a string literal, or a function local
 /// predefined macro, which expands to a string literal.
-bool tokenIsLikeStringLiteral(const Token &Tok, const LangOptions &LO);
+CLANG_ABI bool tokenIsLikeStringLiteral(const Token &Tok, const LangOptions &LO);
 
 /// NumericLiteralParser - This performs strict semantic analysis of the content
 /// of a ppnumber, classifying it as either integer, floating, or erroneous,
@@ -65,7 +66,7 @@ class NumericLiteralParser {
   SmallString<32> UDSuffixBuf;
 
 public:
-  NumericLiteralParser(StringRef TokSpelling, SourceLocation TokLoc,
+  CLANG_ABI NumericLiteralParser(StringRef TokSpelling, SourceLocation TokLoc,
                        const SourceManager &SM, const LangOptions &LangOpts,
                        const TargetInfo &Target, DiagnosticsEngine &Diags);
   bool hadError : 1;
@@ -108,7 +109,7 @@ public:
     return SuffixBegin - ThisTokBegin;
   }
 
-  static bool isValidUDSuffix(const LangOptions &LangOpts, StringRef Suffix);
+  CLANG_ABI static bool isValidUDSuffix(const LangOptions &LangOpts, StringRef Suffix);
 
   unsigned getRadix() const { return radix; }
 
@@ -116,18 +117,18 @@ public:
   /// matches Val's input width.  If there is an overflow (i.e., if the unsigned
   /// value read is larger than the APInt's bits will hold), set Val to the low
   /// bits of the result and return true.  Otherwise, return false.
-  bool GetIntegerValue(llvm::APInt &Val);
+  CLANG_ABI bool GetIntegerValue(llvm::APInt &Val);
 
   /// Convert this numeric literal to a floating value, using the specified
   /// APFloat fltSemantics (specifying float, double, etc) and rounding mode.
-  llvm::APFloat::opStatus GetFloatValue(llvm::APFloat &Result,
+  CLANG_ABI llvm::APFloat::opStatus GetFloatValue(llvm::APFloat &Result,
                                         llvm::RoundingMode RM);
 
   /// GetFixedPointValue - Convert this numeric literal value into a
   /// scaled integer that represents this value. Returns true if an overflow
   /// occurred when calculating the integral part of the scaled integer or
   /// calculating the digit sequence of the exponent.
-  bool GetFixedPointValue(llvm::APInt &StoreVal, unsigned Scale);
+  CLANG_ABI bool GetFixedPointValue(llvm::APInt &StoreVal, unsigned Scale);
 
   /// Get the digits that comprise the literal. This excludes any prefix or
   /// suffix associated with the literal.
@@ -201,7 +202,7 @@ class CharLiteralParser {
   SmallString<32> UDSuffixBuf;
   unsigned UDSuffixOffset;
 public:
-  CharLiteralParser(const char *begin, const char *end,
+  CLANG_ABI CharLiteralParser(const char *begin, const char *end,
                     SourceLocation Loc, Preprocessor &PP,
                     tok::TokenKind kind);
 
@@ -246,7 +247,7 @@ class StringLiteralParser {
   StringLiteralEvalMethod EvalMethod;
 
 public:
-  StringLiteralParser(ArrayRef<Token> StringToks, Preprocessor &PP,
+  CLANG_ABI StringLiteralParser(ArrayRef<Token> StringToks, Preprocessor &PP,
                       StringLiteralEvalMethod StringMethod =
                           StringLiteralEvalMethod::Evaluated);
   StringLiteralParser(ArrayRef<Token> StringToks, const SourceManager &sm,
@@ -277,7 +278,7 @@ public:
   ///
   /// If the Diagnostics pointer is non-null, then this will do semantic
   /// checking of the string literal and emit errors and warnings.
-  unsigned getOffsetOfStringByte(const Token &TheTok, unsigned ByteNo) const;
+  CLANG_ABI unsigned getOffsetOfStringByte(const Token &TheTok, unsigned ByteNo) const;
 
   bool isOrdinary() const { return Kind == tok::string_literal; }
   bool isWide() const { return Kind == tok::wide_string_literal; }
@@ -302,10 +303,10 @@ public:
     return UDSuffixOffset;
   }
 
-  static bool isValidUDSuffix(const LangOptions &LangOpts, StringRef Suffix);
+  CLANG_ABI static bool isValidUDSuffix(const LangOptions &LangOpts, StringRef Suffix);
 
 private:
-  void init(ArrayRef<Token> StringToks);
+  CLANG_ABI void init(ArrayRef<Token> StringToks);
   bool CopyStringFragment(const Token &Tok, const char *TokBegin,
                           StringRef Fragment);
   void DiagnoseLexingError(SourceLocation Loc);

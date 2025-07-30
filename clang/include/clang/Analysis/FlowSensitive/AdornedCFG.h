@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_ADORNEDCFG_H
 #define LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_ADORNEDCFG_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/Stmt.h"
@@ -31,7 +32,7 @@ namespace dataflow {
 namespace internal {
 class StmtToBlockMap {
 public:
-  StmtToBlockMap(const CFG &Cfg);
+  CLANG_ABI StmtToBlockMap(const CFG &Cfg);
 
   const CFGBlock *lookup(const Stmt &S) const {
     return StmtToBlock.lookup(&ignoreCFGOmittedNodes(S));
@@ -49,11 +50,11 @@ public:
   /// Builds an `AdornedCFG` from a `FunctionDecl`.
   /// `Func.doesThisDeclarationHaveABody()` must be true, and
   /// `Func.isTemplated()` must be false.
-  static llvm::Expected<AdornedCFG> build(const FunctionDecl &Func);
+  CLANG_ABI static llvm::Expected<AdornedCFG> build(const FunctionDecl &Func);
 
   /// Builds an `AdornedCFG` from an AST node. `D` is the function in which
   /// `S` resides. `D.isTemplated()` must be false.
-  static llvm::Expected<AdornedCFG> build(const Decl &D, Stmt &S,
+  CLANG_ABI static llvm::Expected<AdornedCFG> build(const Decl &D, Stmt &S,
                                           ASTContext &C);
 
   /// Returns the `Decl` containing the statement used to construct the CFG, if

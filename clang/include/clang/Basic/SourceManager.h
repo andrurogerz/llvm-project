@@ -34,6 +34,7 @@
 #ifndef LLVM_CLANG_BASIC_SOURCEMANAGER_H
 #define LLVM_CLANG_BASIC_SOURCEMANAGER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/FileEntry.h"
 #include "clang/Basic/FileManager.h"
@@ -113,11 +114,11 @@ public:
   const unsigned *end() const { return getLines().end(); }
   const unsigned &operator[](int I) const { return getLines()[I]; }
 
-  static LineOffsetMapping get(llvm::MemoryBufferRef Buffer,
+  CLANG_ABI static LineOffsetMapping get(llvm::MemoryBufferRef Buffer,
                                llvm::BumpPtrAllocator &Alloc);
 
   LineOffsetMapping() = default;
-  LineOffsetMapping(ArrayRef<unsigned> LineOffsets,
+  CLANG_ABI LineOffsetMapping(ArrayRef<unsigned> LineOffsets,
                     llvm::BumpPtrAllocator &Alloc);
 
 private:
@@ -217,7 +218,7 @@ public:
   ///
   /// \param Loc If specified, is the location that invalid file diagnostics
   ///   will be emitted at.
-  std::optional<llvm::MemoryBufferRef>
+  CLANG_ABI std::optional<llvm::MemoryBufferRef>
   getBufferOrNone(DiagnosticsEngine &Diag, FileManager &FM,
                   SourceLocation Loc = SourceLocation()) const;
 
@@ -227,17 +228,17 @@ public:
   /// This can be the size of the source file or the size of an
   /// arbitrary scratch buffer.  If the ContentCache encapsulates a source
   /// file this size is retrieved from the file's FileEntry.
-  unsigned getSize() const;
+  CLANG_ABI unsigned getSize() const;
 
   /// Returns the number of bytes actually mapped for this
   /// ContentCache.
   ///
   /// This can be 0 if the MemBuffer was not actually expanded.
-  unsigned getSizeBytesMapped() const;
+  CLANG_ABI unsigned getSizeBytesMapped() const;
 
   /// Returns the kind of memory used to back the memory buffer for
   /// this content cache.  This is used for performance analysis.
-  llvm::MemoryBuffer::BufferKind getMemoryBufferKind() const;
+  CLANG_ABI llvm::MemoryBuffer::BufferKind getMemoryBufferKind() const;
 
   /// Return the buffer, only if it has been loaded.
   std::optional<llvm::MemoryBufferRef> getBufferIfLoaded() const {
@@ -271,7 +272,7 @@ public:
 
   // If BufStr has an invalid BOM, returns the BOM name; otherwise, returns
   // nullptr
-  static const char *getInvalidBOM(StringRef BufStr);
+  CLANG_ABI static const char *getInvalidBOM(StringRef BufStr);
 };
 
 // Assert that the \c ContentCache objects will always be 8-byte aligned so
@@ -541,7 +542,7 @@ public:
 } // namespace SrcMgr
 
 /// External source of source location entries.
-class ExternalSLocEntrySource {
+class CLANG_ABI ExternalSLocEntrySource {
 public:
   virtual ~ExternalSLocEntrySource();
 
@@ -841,17 +842,17 @@ class SourceManager : public RefCountedBase<SourceManager> {
   SmallVector<std::pair<std::string, FullSourceLoc>, 2> StoredModuleBuildStack;
 
 public:
-  SourceManager(DiagnosticsEngine &Diag, FileManager &FileMgr,
+  CLANG_ABI SourceManager(DiagnosticsEngine &Diag, FileManager &FileMgr,
                 bool UserFilesAreVolatile = false);
   explicit SourceManager(const SourceManager &) = delete;
   SourceManager &operator=(const SourceManager &) = delete;
-  ~SourceManager();
+  CLANG_ABI ~SourceManager();
 
-  void clearIDTables();
+  CLANG_ABI void clearIDTables();
 
   /// Initialize this source manager suitably to replay the compilation
   /// described by \p Old. Requires that \p Old outlive \p *this.
-  void initializeForReplay(const SourceManager &Old);
+  CLANG_ABI void initializeForReplay(const SourceManager &Old);
 
   DiagnosticsEngine &getDiagnostics() const { return Diag; }
 
@@ -899,7 +900,7 @@ public:
   /// Returns true when the given FileEntry corresponds to the main file.
   ///
   /// The main file should be set prior to calling this function.
-  bool isMainFile(const FileEntry &SourceFile);
+  CLANG_ABI bool isMainFile(const FileEntry &SourceFile);
 
   /// Set the file ID for the precompiled preamble.
   void setPreambleFileID(FileID Preamble) {
@@ -916,7 +917,7 @@ public:
 
   /// Create a new FileID that represents the specified file
   /// being \#included from the specified IncludePosition.
-  FileID createFileID(FileEntryRef SourceFile, SourceLocation IncludePos,
+  CLANG_ABI FileID createFileID(FileEntryRef SourceFile, SourceLocation IncludePos,
                       SrcMgr::CharacteristicKind FileCharacter,
                       int LoadedID = 0,
                       SourceLocation::UIntTy LoadedOffset = 0);
@@ -925,7 +926,7 @@ public:
   ///
   /// This does no caching of the buffer and takes ownership of the
   /// MemoryBuffer, so only pass a MemoryBuffer to this once.
-  FileID createFileID(std::unique_ptr<llvm::MemoryBuffer> Buffer,
+  CLANG_ABI FileID createFileID(std::unique_ptr<llvm::MemoryBuffer> Buffer,
                       SrcMgr::CharacteristicKind FileCharacter = SrcMgr::C_User,
                       int LoadedID = 0, SourceLocation::UIntTy LoadedOffset = 0,
                       SourceLocation IncludeLoc = SourceLocation());
@@ -934,14 +935,14 @@ public:
   ///
   /// This does not take ownership of the MemoryBuffer. The memory buffer must
   /// outlive the SourceManager.
-  FileID createFileID(const llvm::MemoryBufferRef &Buffer,
+  CLANG_ABI FileID createFileID(const llvm::MemoryBufferRef &Buffer,
                       SrcMgr::CharacteristicKind FileCharacter = SrcMgr::C_User,
                       int LoadedID = 0, SourceLocation::UIntTy LoadedOffset = 0,
                       SourceLocation IncludeLoc = SourceLocation());
 
   /// Get the FileID for \p SourceFile if it exists. Otherwise, create a
   /// new FileID for the \p SourceFile.
-  FileID getOrCreateFileID(FileEntryRef SourceFile,
+  CLANG_ABI FileID getOrCreateFileID(FileEntryRef SourceFile,
                            SrcMgr::CharacteristicKind FileCharacter);
 
   /// Creates an expansion SLocEntry for the substitution of an argument into a
@@ -949,7 +950,7 @@ public:
   ///
   /// The macro argument was written at \p SpellingLoc with length \p Length.
   /// \p ExpansionLoc is the parameter name in the (expanded) macro body.
-  SourceLocation createMacroArgExpansionLoc(SourceLocation SpellingLoc,
+  CLANG_ABI SourceLocation createMacroArgExpansionLoc(SourceLocation SpellingLoc,
                                             SourceLocation ExpansionLoc,
                                             unsigned Length);
 
@@ -957,7 +958,7 @@ public:
   ///
   /// The macro body begins at \p SpellingLoc with length \p Length.
   /// The macro use spans [ExpansionLocStart, ExpansionLocEnd].
-  SourceLocation createExpansionLoc(SourceLocation SpellingLoc,
+  CLANG_ABI SourceLocation createExpansionLoc(SourceLocation SpellingLoc,
                                     SourceLocation ExpansionLocStart,
                                     SourceLocation ExpansionLocEnd,
                                     unsigned Length,
@@ -967,14 +968,14 @@ public:
 
   /// Return a new SourceLocation that encodes that the token starting
   /// at \p TokenStart ends prematurely at \p TokenEnd.
-  SourceLocation createTokenSplitLoc(SourceLocation SpellingLoc,
+  CLANG_ABI SourceLocation createTokenSplitLoc(SourceLocation SpellingLoc,
                                      SourceLocation TokenStart,
                                      SourceLocation TokenEnd);
 
   /// Retrieve the memory buffer associated with the given file.
   ///
   /// Returns std::nullopt if the buffer is not valid.
-  std::optional<llvm::MemoryBufferRef>
+  CLANG_ABI std::optional<llvm::MemoryBufferRef>
   getMemoryBufferForFileOrNone(FileEntryRef File);
 
   /// Retrieve the memory buffer associated with the given file.
@@ -1005,7 +1006,7 @@ public:
   ///
   /// \param Buffer the memory buffer whose contents will be used as the
   /// data in the given source file.
-  void overrideFileContents(FileEntryRef SourceFile,
+  CLANG_ABI void overrideFileContents(FileEntryRef SourceFile,
                             std::unique_ptr<llvm::MemoryBuffer> Buffer);
 
   /// Override the given source file with another one.
@@ -1014,7 +1015,7 @@ public:
   ///
   /// \param NewFile the file whose contents will be used as the
   /// data instead of the contents of the given source file.
-  void overrideFileContents(const FileEntry *SourceFile, FileEntryRef NewFile);
+  CLANG_ABI void overrideFileContents(const FileEntry *SourceFile, FileEntryRef NewFile);
 
   /// Returns true if the file contents have been overridden.
   bool isFileOverridden(const FileEntry *File) const {
@@ -1032,10 +1033,10 @@ public:
   /// is no such file in the filesystem.
   ///
   /// This should be called before parsing has begun.
-  OptionalFileEntryRef bypassFileContentsOverride(FileEntryRef File);
+  CLANG_ABI OptionalFileEntryRef bypassFileContentsOverride(FileEntryRef File);
 
   /// Specify that a file is transient.
-  void setFileIsTransient(FileEntryRef SourceFile);
+  CLANG_ABI void setFileIsTransient(FileEntryRef SourceFile);
 
   /// Specify that all files that are read during this compilation are
   /// transient.
@@ -1088,7 +1089,7 @@ public:
   /// buffer that's not represented by a filename.
   ///
   /// Returns std::nullopt for non-files and built-in files.
-  std::optional<StringRef> getNonBuiltinFilenameForID(FileID FID) const;
+  CLANG_ABI std::optional<StringRef> getNonBuiltinFilenameForID(FileID FID) const;
 
   /// Returns the FileEntry record for the provided SLocEntry.
   const FileEntry *
@@ -1103,19 +1104,19 @@ public:
   ///
   /// \param FID The file ID whose contents will be returned.
   /// \param Invalid If non-NULL, will be set true if an error occurred.
-  StringRef getBufferData(FileID FID, bool *Invalid = nullptr) const;
+  CLANG_ABI StringRef getBufferData(FileID FID, bool *Invalid = nullptr) const;
 
   /// Return a StringRef to the source buffer data for the
   /// specified FileID, returning std::nullopt if invalid.
   ///
   /// \param FID The file ID whose contents will be returned.
-  std::optional<StringRef> getBufferDataOrNone(FileID FID) const;
+  CLANG_ABI std::optional<StringRef> getBufferDataOrNone(FileID FID) const;
 
   /// Return a StringRef to the source buffer data for the
   /// specified FileID, returning std::nullopt if it's not yet loaded.
   ///
   /// \param FID The file ID whose contents will be returned.
-  std::optional<StringRef> getBufferDataIfLoaded(FileID FID) const;
+  CLANG_ABI std::optional<StringRef> getBufferDataIfLoaded(FileID FID) const;
 
   /// Get the number of FileIDs (files and macros) that were created
   /// during preprocessing of \p FID, including it.
@@ -1151,7 +1152,7 @@ public:
   }
 
   /// Return the filename of the file containing a SourceLocation.
-  StringRef getFilename(SourceLocation SpellingLoc) const;
+  CLANG_ABI StringRef getFilename(SourceLocation SpellingLoc) const;
 
   /// Return the source location corresponding to the first byte of
   /// the specified file.
@@ -1214,11 +1215,11 @@ public:
   /// expansion location.
   ///
   /// \pre \p Loc is required to be an expansion location.
-  CharSourceRange getImmediateExpansionRange(SourceLocation Loc) const;
+  CLANG_ABI CharSourceRange getImmediateExpansionRange(SourceLocation Loc) const;
 
   /// Given a SourceLocation object, return the range of
   /// tokens covered by the expansion in the ultimate file.
-  CharSourceRange getExpansionRange(SourceLocation Loc) const;
+  CLANG_ABI CharSourceRange getExpansionRange(SourceLocation Loc) const;
 
   /// Given a SourceRange object, return the range of
   /// tokens or characters covered by the expansion in the ultimate file.
@@ -1256,7 +1257,7 @@ public:
   /// This is the first level down towards the place where the characters
   /// that make up the lexed token can be found.  This should not generally
   /// be used by clients.
-  SourceLocation getImmediateSpellingLoc(SourceLocation Loc) const;
+  CLANG_ABI SourceLocation getImmediateSpellingLoc(SourceLocation Loc) const;
 
   /// Form a SourceLocation from a FileID and Offset pair.
   SourceLocation getComposedLoc(FileID FID, unsigned Offset) const {
@@ -1316,7 +1317,7 @@ public:
 
   /// Returns the "included/expanded in" decomposed location of the given
   /// FileID.
-  FileIDAndOffset getDecomposedIncludedLoc(FileID FID) const;
+  CLANG_ABI FileIDAndOffset getDecomposedIncludedLoc(FileID FID) const;
 
   /// Returns the offset from the start of the file that the
   /// specified SourceLocation represents.
@@ -1335,7 +1336,7 @@ public:
   /// Such source locations only appear inside of the expansion
   /// locations representing where a particular function-like macro was
   /// expanded.
-  bool isMacroArgExpansion(SourceLocation Loc,
+  CLANG_ABI bool isMacroArgExpansion(SourceLocation Loc,
                            SourceLocation *StartLoc = nullptr) const;
 
   /// Tests whether the given source location represents the expansion of
@@ -1343,14 +1344,14 @@ public:
   ///
   /// This is equivalent to testing whether the location is part of a macro
   /// expansion but not the expansion of an argument to a function-like macro.
-  bool isMacroBodyExpansion(SourceLocation Loc) const;
+  CLANG_ABI bool isMacroBodyExpansion(SourceLocation Loc) const;
 
   /// Returns true if the given MacroID location points at the beginning
   /// of the immediate macro expansion.
   ///
   /// \param MacroBegin If non-null and function returns true, it is set to the
   /// begin location of the immediate macro expansion.
-  bool isAtStartOfImmediateMacroExpansion(SourceLocation Loc,
+  CLANG_ABI bool isAtStartOfImmediateMacroExpansion(SourceLocation Loc,
                                     SourceLocation *MacroBegin = nullptr) const;
 
   /// Returns true if the given MacroID location points at the character
@@ -1358,7 +1359,7 @@ public:
   ///
   /// \param MacroEnd If non-null and function returns true, it is set to the
   /// character end location of the immediate macro expansion.
-  bool
+  CLANG_ABI bool
   isAtEndOfImmediateMacroExpansion(SourceLocation Loc,
                                    SourceLocation *MacroEnd = nullptr) const;
 
@@ -1415,7 +1416,7 @@ public:
   /// in the appropriate spelling MemoryBuffer.
   ///
   /// \param Invalid If non-NULL, will be set \c true if an error occurs.
-  const char *getCharacterData(SourceLocation SL,
+  CLANG_ABI const char *getCharacterData(SourceLocation SL,
                                bool *Invalid = nullptr) const;
 
   /// Return the column # for the specified file position.
@@ -1424,13 +1425,13 @@ public:
   /// returns zero if the column number isn't known.  This may only be called
   /// on a file sloc, so you must choose a spelling or expansion location
   /// before calling this method.
-  unsigned getColumnNumber(FileID FID, unsigned FilePos,
+  CLANG_ABI unsigned getColumnNumber(FileID FID, unsigned FilePos,
                            bool *Invalid = nullptr) const;
-  unsigned getSpellingColumnNumber(SourceLocation Loc,
+  CLANG_ABI unsigned getSpellingColumnNumber(SourceLocation Loc,
                                    bool *Invalid = nullptr) const;
-  unsigned getExpansionColumnNumber(SourceLocation Loc,
+  CLANG_ABI unsigned getExpansionColumnNumber(SourceLocation Loc,
                                     bool *Invalid = nullptr) const;
-  unsigned getPresumedColumnNumber(SourceLocation Loc,
+  CLANG_ABI unsigned getPresumedColumnNumber(SourceLocation Loc,
                                    bool *Invalid = nullptr) const;
 
   /// Given a SourceLocation, return the spelling line number
@@ -1439,17 +1440,17 @@ public:
   /// This requires building and caching a table of line offsets for the
   /// MemoryBuffer, so this is not cheap: use only when about to emit a
   /// diagnostic.
-  unsigned getLineNumber(FileID FID, unsigned FilePos, bool *Invalid = nullptr) const;
-  unsigned getSpellingLineNumber(SourceLocation Loc, bool *Invalid = nullptr) const;
-  unsigned getExpansionLineNumber(SourceLocation Loc, bool *Invalid = nullptr) const;
-  unsigned getPresumedLineNumber(SourceLocation Loc, bool *Invalid = nullptr) const;
+  CLANG_ABI unsigned getLineNumber(FileID FID, unsigned FilePos, bool *Invalid = nullptr) const;
+  CLANG_ABI unsigned getSpellingLineNumber(SourceLocation Loc, bool *Invalid = nullptr) const;
+  CLANG_ABI unsigned getExpansionLineNumber(SourceLocation Loc, bool *Invalid = nullptr) const;
+  CLANG_ABI unsigned getPresumedLineNumber(SourceLocation Loc, bool *Invalid = nullptr) const;
 
   /// Return the filename or buffer identifier of the buffer the
   /// location is in.
   ///
   /// Note that this name does not respect \#line directives.  Use
   /// getPresumedLoc for normal clients.
-  StringRef getBufferName(SourceLocation Loc, bool *Invalid = nullptr) const;
+  CLANG_ABI StringRef getBufferName(SourceLocation Loc, bool *Invalid = nullptr) const;
 
   /// Return the file characteristic of the specified source
   /// location, indicating whether this is a normal file, a system
@@ -1461,7 +1462,7 @@ public:
   /// \endcode
   /// which changes all source locations in the current file after that to be
   /// considered to be from a system header.
-  SrcMgr::CharacteristicKind getFileCharacteristic(SourceLocation Loc) const;
+  CLANG_ABI SrcMgr::CharacteristicKind getFileCharacteristic(SourceLocation Loc) const;
 
   /// Returns the "presumed" location of a SourceLocation specifies.
   ///
@@ -1476,7 +1477,7 @@ public:
   /// presumed location cannot be calculated (e.g., because \p Loc is invalid
   /// or the file containing \p Loc has changed on disk), returns an invalid
   /// presumed location.
-  PresumedLoc getPresumedLoc(SourceLocation Loc,
+  CLANG_ABI PresumedLoc getPresumedLoc(SourceLocation Loc,
                              bool UseLineDirectives = true) const;
 
   /// Returns whether the PresumedLoc for a given SourceLocation is
@@ -1486,7 +1487,7 @@ public:
   /// whether it came from a file other than the main file. This is different
   /// from isWrittenInMainFile() because it takes line marker directives into
   /// account.
-  bool isInMainFile(SourceLocation Loc) const;
+  CLANG_ABI bool isInMainFile(SourceLocation Loc) const;
 
   /// Returns true if the spelling locations for both SourceLocations
   /// are part of the same file buffer.
@@ -1571,7 +1572,7 @@ public:
   }
 
   /// The size of the SLocEntry that \p FID represents.
-  unsigned getFileIDSize(FileID FID) const;
+  CLANG_ABI unsigned getFileIDSize(FileID FID) const;
 
   /// Given a specific FileID, returns true if \p Loc is inside that
   /// FileID chunk and sets relative offset (offset of \p Loc from beginning
@@ -1593,13 +1594,13 @@ public:
   //===--------------------------------------------------------------------===//
 
   /// Return the uniqued ID for the specified filename.
-  unsigned getLineTableFilenameID(StringRef Str);
+  CLANG_ABI unsigned getLineTableFilenameID(StringRef Str);
 
   /// Add a line note to the line table for the FileID and offset
   /// specified by Loc.
   ///
   /// If FilenameID is -1, it is considered to be unspecified.
-  void AddLineNote(SourceLocation Loc, unsigned LineNo, int FilenameID,
+  CLANG_ABI void AddLineNote(SourceLocation Loc, unsigned LineNo, int FilenameID,
                    bool IsFileEntry, bool IsFileExit,
                    SrcMgr::CharacteristicKind FileKind);
 
@@ -1607,7 +1608,7 @@ public:
   bool hasLineTable() const { return LineTable != nullptr; }
 
   /// Retrieve the stored line table.
-  LineTableInfo &getLineTable();
+  CLANG_ABI LineTableInfo &getLineTable();
 
   //===--------------------------------------------------------------------===//
   // Queries for performance analysis.
@@ -1629,11 +1630,11 @@ public:
 
   /// Return the amount of memory used by memory buffers, breaking down
   /// by heap-backed versus mmap'ed memory.
-  MemoryBufferSizes getMemoryBufferSizes() const;
+  CLANG_ABI MemoryBufferSizes getMemoryBufferSizes() const;
 
   /// Return the amount of memory used for various side tables and
   /// data structures in the SourceManager.
-  size_t getDataStructureSizes() const;
+  CLANG_ABI size_t getDataStructureSizes() const;
 
   //===--------------------------------------------------------------------===//
   // Other miscellaneous methods.
@@ -1643,21 +1644,21 @@ public:
   ///
   /// If the source file is included multiple times, the source location will
   /// be based upon the first inclusion.
-  SourceLocation translateFileLineCol(const FileEntry *SourceFile,
+  CLANG_ABI SourceLocation translateFileLineCol(const FileEntry *SourceFile,
                                       unsigned Line, unsigned Col) const;
 
   /// Get the FileID for the given file.
   ///
   /// If the source file is included multiple times, the FileID will be the
   /// first inclusion.
-  FileID translateFile(const FileEntry *SourceFile) const;
+  CLANG_ABI FileID translateFile(const FileEntry *SourceFile) const;
   FileID translateFile(FileEntryRef SourceFile) const {
     return translateFile(&SourceFile.getFileEntry());
   }
 
   /// Get the source location in \p FID for the given line:col.
   /// Returns null location if \p FID is not a file SLocEntry.
-  SourceLocation translateLineCol(FileID FID,
+  CLANG_ABI SourceLocation translateLineCol(FileID FID,
                                   unsigned Line, unsigned Col) const;
 
   /// If \p Loc points inside a function macro argument, the returned
@@ -1669,12 +1670,12 @@ public:
   ///             ^
   /// Passing a file location pointing at 'foo', will yield a macro location
   /// where 'foo' was expanded into.
-  SourceLocation getMacroArgExpandedLocation(SourceLocation Loc) const;
+  CLANG_ABI SourceLocation getMacroArgExpandedLocation(SourceLocation Loc) const;
 
   /// Determines the order of 2 source locations in the translation unit.
   ///
   /// \returns true if LHS source location comes before RHS, false otherwise.
-  bool isBeforeInTranslationUnit(SourceLocation LHS, SourceLocation RHS) const;
+  CLANG_ABI bool isBeforeInTranslationUnit(SourceLocation LHS, SourceLocation RHS) const;
 
   /// Determines whether the two decomposed source location is in the
   ///        same translation unit. As a byproduct, it also calculates the order
@@ -1683,17 +1684,17 @@ public:
   /// \returns Pair of bools the first component is true if the two locations
   ///          are in the same TU. The second bool is true if the first is true
   ///          and \p LOffs is before \p ROffs.
-  std::pair<bool, bool>
+  CLANG_ABI std::pair<bool, bool>
   isInTheSameTranslationUnit(FileIDAndOffset &LOffs,
                              FileIDAndOffset &ROffs) const;
 
   /// \param Loc a source location in a loaded AST (of a PCH/Module file).
   /// \returns a FileID uniquely identifies the AST of a loaded
   /// module/PCH where `Loc` is at.
-  FileID getUniqueLoadedASTFileID(SourceLocation Loc) const;
+  CLANG_ABI FileID getUniqueLoadedASTFileID(SourceLocation Loc) const;
 
   /// Determines whether the two decomposed source location is in the same TU.
-  bool isInTheSameTranslationUnitImpl(const FileIDAndOffset &LOffs,
+  CLANG_ABI bool isInTheSameTranslationUnitImpl(const FileIDAndOffset &LOffs,
                                       const FileIDAndOffset &ROffs) const;
 
   /// Determines the order of 2 source locations in the "source location
@@ -1736,12 +1737,12 @@ public:
   }
 
   /// Print statistics to stderr.
-  void PrintStats() const;
+  CLANG_ABI void PrintStats() const;
 
-  void dump() const;
+  CLANG_ABI void dump() const;
 
   // Produce notes describing the current source location address space usage.
-  void noteSLocAddressSpaceUsage(DiagnosticsEngine &Diag,
+  CLANG_ABI void noteSLocAddressSpaceUsage(DiagnosticsEngine &Diag,
                                  std::optional<unsigned> MaxNotes = 32) const;
 
   /// Get the number of local SLocEntries we have.
@@ -1804,7 +1805,7 @@ public:
   /// NumSLocEntries will be allocated, which occupy a total of TotalSize space
   /// in the global source view. The lowest ID and the base offset of the
   /// entries will be returned.
-  std::pair<int, SourceLocation::UIntTy>
+  CLANG_ABI std::pair<int, SourceLocation::UIntTy>
   AllocateLoadedSLocEntries(unsigned NumSLocEntries,
                             SourceLocation::UIntTy TotalSize);
 
@@ -1846,17 +1847,17 @@ public:
   }
 
   /// \return Location of the top-level macro caller.
-  SourceLocation getTopMacroCallerLoc(SourceLocation Loc) const;
+  CLANG_ABI SourceLocation getTopMacroCallerLoc(SourceLocation Loc) const;
 
 private:
   friend class ASTReader;
   friend class ASTWriter;
 
-  llvm::MemoryBufferRef getFakeBufferForRecovery() const;
+  CLANG_ABI llvm::MemoryBufferRef getFakeBufferForRecovery() const;
   SrcMgr::ContentCache &getFakeContentCacheForRecovery() const;
 
   const SrcMgr::SLocEntry &loadSLocEntry(unsigned Index, bool *Invalid) const;
-  SrcMgr::SLocEntry &loadSLocEntry(unsigned Index, bool *Invalid);
+  CLANG_ABI SrcMgr::SLocEntry &loadSLocEntry(unsigned Index, bool *Invalid);
 
   const SrcMgr::SLocEntry *getSLocEntryOrNull(FileID FID) const {
     return const_cast<SourceManager *>(this)->getSLocEntryOrNull(FID);
@@ -1971,17 +1972,17 @@ private:
   SrcMgr::ContentCache &
   createMemBufferContentCache(std::unique_ptr<llvm::MemoryBuffer> Buf);
 
-  FileID getFileIDSlow(SourceLocation::UIntTy SLocOffset) const;
+  CLANG_ABI FileID getFileIDSlow(SourceLocation::UIntTy SLocOffset) const;
   FileID getFileIDLocal(SourceLocation::UIntTy SLocOffset) const;
   FileID getFileIDLoaded(SourceLocation::UIntTy SLocOffset) const;
 
-  SourceLocation getExpansionLocSlowCase(SourceLocation Loc) const;
-  SourceLocation getSpellingLocSlowCase(SourceLocation Loc) const;
-  SourceLocation getFileLocSlowCase(SourceLocation Loc) const;
+  CLANG_ABI SourceLocation getExpansionLocSlowCase(SourceLocation Loc) const;
+  CLANG_ABI SourceLocation getSpellingLocSlowCase(SourceLocation Loc) const;
+  CLANG_ABI SourceLocation getFileLocSlowCase(SourceLocation Loc) const;
 
-  FileIDAndOffset
+  CLANG_ABI FileIDAndOffset
   getDecomposedExpansionLocSlowCase(const SrcMgr::SLocEntry *E) const;
-  FileIDAndOffset getDecomposedSpellingLocSlowCase(const SrcMgr::SLocEntry *E,
+  CLANG_ABI FileIDAndOffset getDecomposedSpellingLocSlowCase(const SrcMgr::SLocEntry *E,
                                                    unsigned Offset) const;
   void computeMacroArgsCache(MacroArgsMap &MacroArgsCache, FileID FID) const;
   void associateFileChunkWithMacroArgExp(MacroArgsMap &MacroArgsCache,
@@ -2028,7 +2029,7 @@ class SourceManagerForFile {
 public:
   /// Creates SourceManager and necessary dependencies (e.g. VFS, FileManager).
   /// The main file in the SourceManager will be \p FileName with \p Content.
-  SourceManagerForFile(StringRef FileName, StringRef Content);
+  CLANG_ABI SourceManagerForFile(StringRef FileName, StringRef Content);
 
   SourceManager &get() {
     assert(SourceMgr);

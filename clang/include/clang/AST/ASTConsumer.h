@@ -31,7 +31,7 @@ namespace clang {
 /// ASTConsumer - This is an abstract interface that should be implemented by
 /// clients that read ASTs.  This abstraction layer allows the client to be
 /// independent of the AST producer (e.g. parser vs AST dump file reader, etc).
-class ASTConsumer {
+class CLANG_ABI ASTConsumer {
   /// Whether this AST consumer also requires information about
   /// semantic analysis.
   bool SemaConsumer = false;

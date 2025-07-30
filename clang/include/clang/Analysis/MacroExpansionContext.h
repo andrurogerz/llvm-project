@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_MACROEXPANSIONCONTEXT_H
 #define LLVM_CLANG_ANALYSIS_MACROEXPANSIONCONTEXT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LangOptions.h"
 #include "clang/Basic/SourceLocation.h"
 #include "clang/Lex/Preprocessor.h"
@@ -75,31 +76,31 @@ public:
   /// Creates a MacroExpansionContext.
   /// \remark You must call registerForPreprocessor to set the required
   ///         onTokenLexed callback and the PPCallbacks.
-  explicit MacroExpansionContext(const LangOptions &LangOpts);
+  CLANG_ABI explicit MacroExpansionContext(const LangOptions &LangOpts);
 
   /// Register the necessary callbacks to the Preprocessor to record the
   /// expansion events and the generated tokens. Must ensure that this object
   /// outlives the given Preprocessor.
-  void registerForPreprocessor(Preprocessor &PP);
+  CLANG_ABI void registerForPreprocessor(Preprocessor &PP);
 
   /// \param MacroExpansionLoc Must be the expansion location of a macro.
   /// \return The textual representation of the token sequence which was
   ///         substituted in place of the macro after the preprocessing.
   ///         If no macro was expanded at that location, returns std::nullopt.
-  std::optional<StringRef>
+  CLANG_ABI std::optional<StringRef>
   getExpandedText(SourceLocation MacroExpansionLoc) const;
 
   /// \param MacroExpansionLoc Must be the expansion location of a macro.
   /// \return The text from the original source code which were substituted by
   ///         the macro expansion chain from the given location.
   ///         If no macro was expanded at that location, returns std::nullopt.
-  std::optional<StringRef>
+  CLANG_ABI std::optional<StringRef>
   getOriginalText(SourceLocation MacroExpansionLoc) const;
 
-  LLVM_DUMP_METHOD void dumpExpansionRangesToStream(raw_ostream &OS) const;
-  LLVM_DUMP_METHOD void dumpExpandedTextsToStream(raw_ostream &OS) const;
-  LLVM_DUMP_METHOD void dumpExpansionRanges() const;
-  LLVM_DUMP_METHOD void dumpExpandedTexts() const;
+  LLVM_DUMP_METHOD CLANG_ABI void dumpExpansionRangesToStream(raw_ostream &OS) const;
+  LLVM_DUMP_METHOD CLANG_ABI void dumpExpandedTextsToStream(raw_ostream &OS) const;
+  LLVM_DUMP_METHOD CLANG_ABI void dumpExpansionRanges() const;
+  LLVM_DUMP_METHOD CLANG_ABI void dumpExpandedTexts() const;
 
 private:
   friend class detail::MacroExpansionRangeRecorder;

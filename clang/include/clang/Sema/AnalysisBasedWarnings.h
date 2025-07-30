@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_SEMA_ANALYSISBASEDWARNINGS_H
 #define LLVM_CLANG_SEMA_ANALYSISBASEDWARNINGS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "llvm/ADT/DenseMap.h"
 #include <memory>
@@ -45,7 +46,7 @@ public:
     LLVM_PREFERRED_TYPE(bool)
     unsigned enableConsumedAnalysis : 1;
   public:
-    Policy();
+    CLANG_ABI Policy();
     void disableCheckFallThrough() { enableCheckFallThrough = 0; }
   };
 
@@ -98,24 +99,24 @@ private:
   /// @}
 
 public:
-  AnalysisBasedWarnings(Sema &s);
-  ~AnalysisBasedWarnings();
+  CLANG_ABI AnalysisBasedWarnings(Sema &s);
+  CLANG_ABI ~AnalysisBasedWarnings();
 
-  void IssueWarnings(Policy P, FunctionScopeInfo *fscope,
+  CLANG_ABI void IssueWarnings(Policy P, FunctionScopeInfo *fscope,
                      const Decl *D, QualType BlockType);
 
   // Issue warnings that require whole-translation-unit analysis.
-  void IssueWarnings(TranslationUnitDecl *D);
+  CLANG_ABI void IssueWarnings(TranslationUnitDecl *D);
 
   // Gets the default policy which is in effect at the given source location.
-  Policy getPolicyInEffectAt(SourceLocation Loc);
+  CLANG_ABI Policy getPolicyInEffectAt(SourceLocation Loc);
 
   // Get the policies we may want to override due to things like #pragma clang
   // diagnostic handling. If a caller sets any of these policies to true, that
   // will override the policy used to issue warnings.
   Policy &getPolicyOverrides() { return PolicyOverrides; }
 
-  void PrintStats() const;
+  CLANG_ABI void PrintStats() const;
 };
 
 } // namespace sema

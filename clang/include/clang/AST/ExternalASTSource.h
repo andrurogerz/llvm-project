@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_EXTERNALASTSOURCE_H
 #define LLVM_CLANG_AST_EXTERNALASTSOURCE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/CharUnits.h"
 #include "clang/AST/DeclBase.h"
 #include "clang/Basic/LLVM.h"
@@ -60,7 +61,7 @@ class VarDecl;
 /// sources can resolve types and declarations from abstract IDs into
 /// actual type and declaration nodes, and read parts of declaration
 /// contexts.
-class ExternalASTSource : public RefCountedBase<ExternalASTSource> {
+class CLANG_ABI ExternalASTSource : public RefCountedBase<ExternalASTSource> {
   friend class ExternalSemaSource;
 
   /// Generation number for this external AST source. Must be increased

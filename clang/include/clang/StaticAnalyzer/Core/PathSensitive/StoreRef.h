@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_STOREREF_H
 #define LLVM_CLANG_STATICANALYZER_CORE_PATHSENSITIVE_STOREREF_H
 
+#include "clang/Support/Compiler.h"
 #include <cassert>
 
 namespace clang {
@@ -31,10 +32,10 @@ class StoreRef {
   StoreManager &mgr;
 
 public:
-  StoreRef(Store store, StoreManager &smgr);
-  StoreRef(const StoreRef &sr);
-  StoreRef &operator=(StoreRef const &newStore);
-  ~StoreRef();
+  CLANG_ABI StoreRef(Store store, StoreManager &smgr);
+  CLANG_ABI StoreRef(const StoreRef &sr);
+  CLANG_ABI StoreRef &operator=(StoreRef const &newStore);
+  CLANG_ABI ~StoreRef();
 
   bool operator==(const StoreRef &x) const {
     assert(&mgr == &x.mgr);

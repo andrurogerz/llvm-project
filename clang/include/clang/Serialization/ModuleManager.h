@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_SERIALIZATION_MODULEMANAGER_H
 #define LLVM_CLANG_SERIALIZATION_MODULEMANAGER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/SourceLocation.h"
 #include "clang/Serialization/ModuleFile.h"
@@ -133,7 +134,7 @@ public:
       SmallVectorImpl<std::unique_ptr<ModuleFile>>::reverse_iterator>;
   using ModuleOffset = std::pair<uint32_t, StringRef>;
 
-  ModuleManager(FileManager &FileMgr, ModuleCache &ModCache,
+  CLANG_ABI ModuleManager(FileManager &FileMgr, ModuleCache &ModCache,
                 const PCHContainerReader &PCHContainerRdr,
                 const HeaderSearch &HeaderSearchInfo);
 
@@ -173,16 +174,16 @@ public:
   ModuleFile &operator[](unsigned Index) const { return *Chain[Index]; }
 
   /// Returns the module associated with the given file name.
-  ModuleFile *lookupByFileName(StringRef FileName) const;
+  CLANG_ABI ModuleFile *lookupByFileName(StringRef FileName) const;
 
   /// Returns the module associated with the given module name.
-  ModuleFile *lookupByModuleName(StringRef ModName) const;
+  CLANG_ABI ModuleFile *lookupByModuleName(StringRef ModName) const;
 
   /// Returns the module associated with the given module file.
-  ModuleFile *lookup(const FileEntry *File) const;
+  CLANG_ABI ModuleFile *lookup(const FileEntry *File) const;
 
   /// Returns the in-memory (virtual file) buffer with the given name
-  std::unique_ptr<llvm::MemoryBuffer> lookupBuffer(StringRef Name);
+  CLANG_ABI std::unique_ptr<llvm::MemoryBuffer> lookupBuffer(StringRef Name);
 
   /// Number of modules loaded
   unsigned size() const { return Chain.size(); }
@@ -238,7 +239,7 @@ public:
   ///
   /// \return A pointer to the module that corresponds to this file name,
   /// and a value indicating whether the module was loaded.
-  AddModuleResult addModule(StringRef FileName, ModuleKind Type,
+  CLANG_ABI AddModuleResult addModule(StringRef FileName, ModuleKind Type,
                             SourceLocation ImportLoc,
                             ModuleFile *ImportedBy, unsigned Generation,
                             off_t ExpectedSize, time_t ExpectedModTime,
@@ -248,18 +249,18 @@ public:
                             std::string &ErrorStr);
 
   /// Remove the modules starting from First (to the end).
-  void removeModules(ModuleIterator First);
+  CLANG_ABI void removeModules(ModuleIterator First);
 
   /// Add an in-memory buffer the list of known buffers
-  void addInMemoryBuffer(StringRef FileName,
+  CLANG_ABI void addInMemoryBuffer(StringRef FileName,
                          std::unique_ptr<llvm::MemoryBuffer> Buffer);
 
   /// Set the global module index.
-  void setGlobalIndex(GlobalModuleIndex *Index);
+  CLANG_ABI void setGlobalIndex(GlobalModuleIndex *Index);
 
   /// Notification from the AST reader that the given module file
   /// has been "accepted", and will not (can not) be unloaded.
-  void moduleFileAccepted(ModuleFile *MF);
+  CLANG_ABI void moduleFileAccepted(ModuleFile *MF);
 
   /// Visit each of the modules.
   ///
@@ -280,7 +281,7 @@ public:
   /// that we know we need to visit because the global module index told us to.
   /// Any module that is known to both the global module index and the module
   /// manager that is *not* in this set can be skipped.
-  void visit(llvm::function_ref<bool(ModuleFile &M)> Visitor,
+  CLANG_ABI void visit(llvm::function_ref<bool(ModuleFile &M)> Visitor,
              llvm::SmallPtrSetImpl<ModuleFile *> *ModuleFilesHit = nullptr);
 
   /// Attempt to resolve the given module file name to a file entry.
@@ -300,11 +301,11 @@ public:
   /// \returns True if a file exists but does not meet the size/
   /// modification time criteria, false if the file is either available and
   /// suitable, or is missing.
-  bool lookupModuleFile(StringRef FileName, off_t ExpectedSize,
+  CLANG_ABI bool lookupModuleFile(StringRef FileName, off_t ExpectedSize,
                         time_t ExpectedModTime, OptionalFileEntryRef &File);
 
   /// View the graphviz representation of the module graph.
-  void viewGraph();
+  CLANG_ABI void viewGraph();
 
   ModuleCache &getModuleCache() const { return *ModCache; }
 };

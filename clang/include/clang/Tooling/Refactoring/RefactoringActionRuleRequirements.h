@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_TOOLING_REFACTORING_REFACTORINGACTIONRULEREQUIREMENTS_H
 #define LLVM_CLANG_TOOLING_REFACTORING_REFACTORINGACTIONRULEREQUIREMENTS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Tooling/Refactoring/ASTSelection.h"
 #include "clang/Tooling/Refactoring/RefactoringDiagnostic.h"
@@ -59,7 +60,7 @@ public:
 /// search of matching refactoring action rules.
 class ASTSelectionRequirement : public SourceRangeSelectionRequirement {
 public:
-  Expected<SelectedASTNode> evaluate(RefactoringRuleContext &Context) const;
+  CLANG_ABI Expected<SelectedASTNode> evaluate(RefactoringRuleContext &Context) const;
 };
 
 /// A selection requirement that is satisfied when the selection range overlaps
@@ -73,7 +74,7 @@ public:
 /// \see CodeRangeASTSelection
 class CodeRangeASTSelectionRequirement : public ASTSelectionRequirement {
 public:
-  Expected<CodeRangeASTSelection>
+  CLANG_ABI Expected<CodeRangeASTSelection>
   evaluate(RefactoringRuleContext &Context) const;
 };
 

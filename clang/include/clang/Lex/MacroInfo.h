@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_LEX_MACROINFO_H
 #define LLVM_CLANG_LEX_MACROINFO_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Lex/Token.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Basic/SourceLocation.h"
@@ -144,7 +145,7 @@ public:
   /// if they use different identifiers for the function macro parameters.
   /// Otherwise the comparison is lexical and this implements the rules in
   /// C99 6.10.3.
-  bool isIdenticalTo(const MacroInfo &Other, Preprocessor &PP,
+  CLANG_ABI bool isIdenticalTo(const MacroInfo &Other, Preprocessor &PP,
                      bool Syntactically) const;
 
   /// Set or clear the isBuiltinMacro flag.
@@ -295,12 +296,12 @@ public:
 
   void setUsedForHeaderGuard(bool Val) { UsedForHeaderGuard = Val; }
 
-  void dump() const;
+  CLANG_ABI void dump() const;
 
 private:
   friend class Preprocessor;
 
-  unsigned getDefinitionLengthSlow(const SourceManager &SM) const;
+  CLANG_ABI unsigned getDefinitionLengthSlow(const SourceManager &SM) const;
 };
 
 /// Encapsulates changes to the "macros namespace" (the location where
@@ -402,7 +403,7 @@ public:
   /// Traverses the macro directives history and returns the next
   /// macro definition directive along with info about its undefined location
   /// (if there is one) and if it is public or private.
-  DefInfo getDefinition();
+  CLANG_ABI DefInfo getDefinition();
   const DefInfo getDefinition() const {
     return const_cast<MacroDirective *>(this)->getDefinition();
   }
@@ -420,10 +421,10 @@ public:
 
   /// Find macro definition active in the specified source location. If
   /// this macro was not defined there, return NULL.
-  const DefInfo findDirectiveAtLoc(SourceLocation L,
+  CLANG_ABI const DefInfo findDirectiveAtLoc(SourceLocation L,
                                    const SourceManager &SM) const;
 
-  void dump() const;
+  CLANG_ABI void dump() const;
 
   static bool classof(const MacroDirective *) { return true; }
 };
@@ -538,7 +539,7 @@ class ModuleMacro : public llvm::FoldingSetNode {
   }
 
 public:
-  static ModuleMacro *create(Preprocessor &PP, Module *OwningModule,
+  CLANG_ABI static ModuleMacro *create(Preprocessor &PP, Module *OwningModule,
                              const IdentifierInfo *II, MacroInfo *Macro,
                              ArrayRef<ModuleMacro *> Overrides);
 

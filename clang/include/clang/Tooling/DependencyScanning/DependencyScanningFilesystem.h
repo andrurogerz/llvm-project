@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_TOOLING_DEPENDENCYSCANNING_DEPENDENCYSCANNINGFILESYSTEM_H
 #define LLVM_CLANG_TOOLING_DEPENDENCYSCANNING_DEPENDENCYSCANNINGFILESYSTEM_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Lex/DependencyDirectivesScanner.h"
 #include "llvm/ADT/DenseMap.h"
@@ -177,49 +178,49 @@ public:
     llvm::SpecificBumpPtrAllocator<CachedRealPath> RealPathStorage;
 
     /// Returns entry associated with the filename or nullptr if none is found.
-    const CachedFileSystemEntry *findEntryByFilename(StringRef Filename) const;
+    CLANG_ABI const CachedFileSystemEntry *findEntryByFilename(StringRef Filename) const;
 
     /// Returns entry associated with the unique ID or nullptr if none is found.
-    const CachedFileSystemEntry *
+    CLANG_ABI const CachedFileSystemEntry *
     findEntryByUID(llvm::sys::fs::UniqueID UID) const;
 
     /// Returns entry associated with the filename if there is some. Otherwise,
     /// constructs new one with the given status, associates it with the
     /// filename and returns the result.
-    const CachedFileSystemEntry &
+    CLANG_ABI const CachedFileSystemEntry &
     getOrEmplaceEntryForFilename(StringRef Filename,
                                  llvm::ErrorOr<llvm::vfs::Status> Stat);
 
     /// Returns entry associated with the unique ID if there is some. Otherwise,
     /// constructs new one with the given status and contents, associates it
     /// with the unique ID and returns the result.
-    const CachedFileSystemEntry &
+    CLANG_ABI const CachedFileSystemEntry &
     getOrEmplaceEntryForUID(llvm::sys::fs::UniqueID UID, llvm::vfs::Status Stat,
                             std::unique_ptr<llvm::MemoryBuffer> Contents);
 
     /// Returns entry associated with the filename if there is some. Otherwise,
     /// associates the given entry with the filename and returns it.
-    const CachedFileSystemEntry &
+    CLANG_ABI const CachedFileSystemEntry &
     getOrInsertEntryForFilename(StringRef Filename,
                                 const CachedFileSystemEntry &Entry);
 
     /// Returns the real path associated with the filename or nullptr if none is
     /// found.
-    const CachedRealPath *findRealPathByFilename(StringRef Filename) const;
+    CLANG_ABI const CachedRealPath *findRealPathByFilename(StringRef Filename) const;
 
     /// Returns the real path associated with the filename if there is some.
     /// Otherwise, constructs new one with the given one, associates it with the
     /// filename and returns the result.
-    const CachedRealPath &
+    CLANG_ABI const CachedRealPath &
     getOrEmplaceRealPathForFilename(StringRef Filename,
                                     llvm::ErrorOr<StringRef> RealPath);
   };
 
-  DependencyScanningFilesystemSharedCache();
+  CLANG_ABI DependencyScanningFilesystemSharedCache();
 
   /// Returns shard for the given key.
-  CacheShard &getShardForFilename(StringRef Filename) const;
-  CacheShard &getShardForUID(llvm::sys::fs::UniqueID UID) const;
+  CLANG_ABI CacheShard &getShardForFilename(StringRef Filename) const;
+  CLANG_ABI CacheShard &getShardForUID(llvm::sys::fs::UniqueID UID) const;
 
   struct OutOfDateEntry {
     // A null terminated string that contains a path.
@@ -247,7 +248,7 @@ public:
   ///     in the cache, but the file exists on the UnderlyingFS.
   ///  2. The entry is associated with a file whose size is different from the
   ///     size of the file on the same path on the UnderlyingFS.
-  std::vector<OutOfDateEntry>
+  CLANG_ABI std::vector<OutOfDateEntry>
   getOutOfDateEntries(llvm::vfs::FileSystem &UnderlyingFS) const;
 
 private:
@@ -364,7 +365,7 @@ public:
 /// This is not a thread safe VFS. A single instance is meant to be used only in
 /// one thread. Multiple instances are allowed to service multiple threads
 /// running in parallel.
-class DependencyScanningWorkerFilesystem
+class CLANG_ABI DependencyScanningWorkerFilesystem
     : public llvm::RTTIExtends<DependencyScanningWorkerFilesystem,
                                llvm::vfs::ProxyFileSystem> {
 public:

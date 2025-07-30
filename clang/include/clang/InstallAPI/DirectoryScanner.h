@@ -12,6 +12,7 @@
 #ifndef LLVM_CLANG_INSTALLAPI_DIRECTORYSCANNER_H
 #define LLVM_CLANG_INSTALLAPI_DIRECTORYSCANNER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/FileManager.h"
 #include "clang/InstallAPI/Library.h"
 
@@ -32,7 +33,7 @@ public:
   /// Scan for all input files throughout directory.
   ///
   /// \param Directory Path of input directory.
-  llvm::Error scan(StringRef Directory);
+  CLANG_ABI llvm::Error scan(StringRef Directory);
 
   /// Take over ownership of stored libraries.
   std::vector<Library> takeLibraries() { return std::move(Libraries); };
@@ -40,7 +41,7 @@ public:
   /// Get all the header files in libraries.
   ///
   /// \param Libraries Reference of collection of libraries.
-  static HeaderSeq getHeaders(ArrayRef<Library> Libraries);
+  CLANG_ABI static HeaderSeq getHeaders(ArrayRef<Library> Libraries);
 
 private:
   /// Collect files for dylibs in usr/(local)/lib within directory.

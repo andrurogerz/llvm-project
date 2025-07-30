@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_FRONTEND_SERIALIZEDDIAGNOSTICREADER_H
 #define LLVM_CLANG_FRONTEND_SERIALIZEDDIAGNOSTICREADER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/Bitstream/BitstreamReader.h"
 #include "llvm/ADT/StringRef.h"
@@ -36,7 +37,7 @@ enum class SDError {
   HandlerFailed
 };
 
-const std::error_category &SDErrorCategory();
+CLANG_ABI const std::error_category &SDErrorCategory();
 
 inline std::error_code make_error_code(SDError E) {
   return std::error_code(static_cast<int>(E), SDErrorCategory());
@@ -63,7 +64,7 @@ public:
   virtual ~SerializedDiagnosticReader() = default;
 
   /// Read the diagnostics in \c File
-  std::error_code readDiagnostics(StringRef File);
+  CLANG_ABI std::error_code readDiagnostics(StringRef File);
 
 private:
   enum class Cursor;

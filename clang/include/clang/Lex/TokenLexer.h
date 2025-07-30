@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_LEX_TOKENLEXER_H
 #define LLVM_CLANG_LEX_TOKENLEXER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/SourceLocation.h"
 #include "llvm/ADT/ArrayRef.h"
 
@@ -128,7 +129,7 @@ public:
   /// with the specified argument information.  Note that this ctor takes
   /// ownership of the ActualArgs pointer.  ILEnd specifies the location of the
   /// ')' for a function-like macro or the identifier for an object-like macro.
-  void Init(Token &Tok, SourceLocation ELEnd, MacroInfo *MI,
+  CLANG_ABI void Init(Token &Tok, SourceLocation ELEnd, MacroInfo *MI,
             MacroArgs *Actuals);
 
   /// Initialize this TokenLexer with the specified token stream.
@@ -136,23 +137,23 @@ public:
   ///
   /// DisableExpansion is true when macro expansion of tokens lexed from this
   /// stream should be disabled.
-  void Init(const Token *TokArray, unsigned NumToks, bool DisableMacroExpansion,
+  CLANG_ABI void Init(const Token *TokArray, unsigned NumToks, bool DisableMacroExpansion,
             bool OwnsTokens, bool IsReinject);
 
   /// If TokenLexer::isAtEnd returns true(the next token lexed will pop this
   /// macro off the expansion stack), return std::nullopt, otherwise return the
   /// next unexpanded token.
-  std::optional<Token> peekNextPPToken() const;
+  CLANG_ABI std::optional<Token> peekNextPPToken() const;
 
   /// Lex and return a token from this macro stream.
-  bool Lex(Token &Tok);
+  CLANG_ABI bool Lex(Token &Tok);
 
   /// isParsingPreprocessorDirective - Return true if we are in the middle of a
   /// preprocessor directive.
-  bool isParsingPreprocessorDirective() const;
+  CLANG_ABI bool isParsingPreprocessorDirective() const;
 
 private:
-  void destroy();
+  CLANG_ABI void destroy();
 
   /// Return true if the next lex call will pop this macro off the include
   /// stack.

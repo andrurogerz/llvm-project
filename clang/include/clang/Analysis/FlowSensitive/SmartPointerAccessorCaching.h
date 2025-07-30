@@ -24,6 +24,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_SMARTPOINTERACCESSORCACHING_H
 #define LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_SMARTPOINTERACCESSORCACHING_H
 
+#include "clang/Support/Compiler.h"
 #include <cassert>
 
 #include "clang/AST/Decl.h"
@@ -58,13 +59,13 @@ namespace clang::dataflow {
 /// for `std::optional`, we assume the (Matcher, TransferFunction) case
 /// with custom handling is ordered early so that these generic cases
 /// do not trigger.
-ast_matchers::StatementMatcher isPointerLikeOperatorStar();
-ast_matchers::StatementMatcher isSmartPointerLikeOperatorStar();
-ast_matchers::StatementMatcher isPointerLikeOperatorArrow();
-ast_matchers::StatementMatcher isSmartPointerLikeOperatorArrow();
-ast_matchers::StatementMatcher
+CLANG_ABI ast_matchers::StatementMatcher isPointerLikeOperatorStar();
+CLANG_ABI ast_matchers::StatementMatcher isSmartPointerLikeOperatorStar();
+CLANG_ABI ast_matchers::StatementMatcher isPointerLikeOperatorArrow();
+CLANG_ABI ast_matchers::StatementMatcher isSmartPointerLikeOperatorArrow();
+CLANG_ABI ast_matchers::StatementMatcher
 isSmartPointerLikeValueMethodCall(clang::StringRef MethodName = "value");
-ast_matchers::StatementMatcher
+CLANG_ABI ast_matchers::StatementMatcher
 isSmartPointerLikeGetMethodCall(clang::StringRef MethodName = "get");
 
 // Common transfer functions.
@@ -77,7 +78,7 @@ isSmartPointerLikeGetMethodCall(clang::StringRef MethodName = "get");
 ///
 /// Note: there may be multiple `operator*` (one const, one non-const).
 /// We pick the const one, which the above provided matchers require to exist.
-const FunctionDecl *
+CLANG_ABI const FunctionDecl *
 getCanonicalSmartPointerLikeOperatorCallee(const CallExpr *CE);
 
 /// A transfer function for `operator*` (and `value`) calls that can be

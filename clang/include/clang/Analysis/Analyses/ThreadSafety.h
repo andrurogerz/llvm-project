@@ -18,6 +18,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_ANALYSES_THREADSAFETY_H
 #define LLVM_CLANG_ANALYSIS_ANALYSES_THREADSAFETY_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/SourceLocation.h"
 #include "llvm/ADT/StringRef.h"
 
@@ -106,7 +107,7 @@ enum LockErrorKind {
 };
 
 /// Handler class for thread safety warnings.
-class ThreadSafetyHandler {
+class CLANG_ABI ThreadSafetyHandler {
 public:
   using Name = StringRef;
 
@@ -297,15 +298,15 @@ private:
 /// We traverse the blocks in the CFG, compute the set of mutexes that are held
 /// at the end of each block, and issue warnings for thread safety violations.
 /// Each block in the CFG is traversed exactly once.
-void runThreadSafetyAnalysis(AnalysisDeclContext &AC,
+CLANG_ABI void runThreadSafetyAnalysis(AnalysisDeclContext &AC,
                              ThreadSafetyHandler &Handler,
                              BeforeSet **Bset);
 
-void threadSafetyCleanup(BeforeSet *Cache);
+CLANG_ABI void threadSafetyCleanup(BeforeSet *Cache);
 
 /// Helper function that returns a LockKind required for the given level
 /// of access.
-LockKind getLockKindFromAccessKind(AccessKind AK);
+CLANG_ABI LockKind getLockKindFromAccessKind(AccessKind AK);
 
 } // namespace threadSafety
 } // namespace clang

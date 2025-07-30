@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_INSTALLAPI_LIBRARY_H
 #define LLVM_CLANG_INSTALLAPI_LIBRARY_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/InstallAPI/HeaderFile.h"
 #include "clang/InstallAPI/MachO.h"
 
@@ -26,10 +27,10 @@ public:
   ///
   /// \param InstallName The install name of the library encoded in a dynamic
   /// library.
-  static StringRef getFrameworkNameFromInstallName(StringRef InstallName);
+  CLANG_ABI static StringRef getFrameworkNameFromInstallName(StringRef InstallName);
 
   /// Get name of library by the discovered file path.
-  StringRef getName() const;
+  CLANG_ABI StringRef getName() const;
 
   /// Get discovered path of library.
   StringRef getPath() const { return BaseDirectory; }

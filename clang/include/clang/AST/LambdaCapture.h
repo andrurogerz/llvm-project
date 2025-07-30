@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_LAMBDACAPTURE_H
 #define LLVM_CLANG_AST_LAMBDACAPTURE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "clang/Basic/Lambda.h"
 #include "llvm/ADT/PointerIntPair.h"
@@ -70,12 +71,12 @@ public:
   /// \param EllipsisLoc The location of the ellipsis (...) for a
   /// capture that is a pack expansion, or an invalid source
   /// location to indicate that this is not a pack expansion.
-  LambdaCapture(SourceLocation Loc, bool Implicit, LambdaCaptureKind Kind,
+  CLANG_ABI LambdaCapture(SourceLocation Loc, bool Implicit, LambdaCaptureKind Kind,
                 ValueDecl *Var = nullptr,
                 SourceLocation EllipsisLoc = SourceLocation());
 
   /// Determine the kind of capture.
-  LambdaCaptureKind getCaptureKind() const;
+  CLANG_ABI LambdaCaptureKind getCaptureKind() const;
 
   /// Determine whether this capture handles the C++ \c this
   /// pointer.

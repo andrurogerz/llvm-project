@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_ASTIMPORTER_H
 #define LLVM_CLANG_AST_ASTIMPORTER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTImportError.h"
 #include "clang/AST/DeclBase.h"
 #include "clang/AST/DeclarationName.h"
@@ -55,11 +56,11 @@ class TypeSourceInfo;
   // previous decl and the next item is actually the previous item in the order
   // of source locations.  Thus, `Decl::redecls()` gives different lists for
   // the different entries in a given redecl chain.
-  llvm::SmallVector<Decl*, 2> getCanonicalForwardRedeclChain(Decl* D);
+  CLANG_ABI llvm::SmallVector<Decl*, 2> getCanonicalForwardRedeclChain(Decl* D);
 
   /// Imports selected nodes from one AST context into another context,
   /// merging AST nodes where appropriate.
-  class ASTImporter {
+  class CLANG_ABI ASTImporter {
     friend class ASTNodeImporter;
   public:
     using NonEquivalentDeclSet =

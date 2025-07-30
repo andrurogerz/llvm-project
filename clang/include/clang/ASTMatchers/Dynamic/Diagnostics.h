@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_ASTMATCHERS_DYNAMIC_DIAGNOSTICS_H
 #define LLVM_CLANG_ASTMATCHERS_DYNAMIC_DIAGNOSTICS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/ASTMatchers/Dynamic/VariantValue.h"
 #include "clang/Basic/LLVM.h"
 #include "llvm/ADT/ArrayRef.h"
@@ -91,7 +92,7 @@ public:
     template <class T> ArgStream &operator<<(const T &Arg) {
       return operator<<(Twine(Arg));
     }
-    ArgStream &operator<<(const Twine &Arg);
+    CLANG_ABI ArgStream &operator<<(const Twine &Arg);
 
   private:
     std::vector<std::string> *Out;
@@ -107,13 +108,13 @@ public:
   public:
     /// About to call the constructor for a matcher.
     enum ConstructMatcherEnum { ConstructMatcher };
-    Context(ConstructMatcherEnum, Diagnostics *Error, StringRef MatcherName,
+    CLANG_ABI Context(ConstructMatcherEnum, Diagnostics *Error, StringRef MatcherName,
             SourceRange MatcherRange);
     /// About to recurse into parsing one argument for a matcher.
     enum MatcherArgEnum { MatcherArg };
-    Context(MatcherArgEnum, Diagnostics *Error, StringRef MatcherName,
+    CLANG_ABI Context(MatcherArgEnum, Diagnostics *Error, StringRef MatcherName,
             SourceRange MatcherRange, unsigned ArgNumber);
-    ~Context();
+    CLANG_ABI ~Context();
 
   private:
     Diagnostics *const Error;
@@ -125,11 +126,11 @@ public:
   /// as "candidate" overloads for the same matcher.
   struct OverloadContext {
   public:
-   OverloadContext(Diagnostics* Error);
-   ~OverloadContext();
+   CLANG_ABI OverloadContext(Diagnostics* Error);
+   CLANG_ABI ~OverloadContext();
 
    /// Revert all errors that happened within this context.
-   void revertErrors();
+   CLANG_ABI void revertErrors();
 
   private:
     Diagnostics *const Error;
@@ -141,7 +142,7 @@ public:
   /// All the context information will be kept on the error message.
   /// \return a helper class to allow the caller to pass the arguments for the
   /// error message, using the << operator.
-  ArgStream addError(SourceRange Range, ErrorType Error);
+  CLANG_ABI ArgStream addError(SourceRange Range, ErrorType Error);
 
   /// Information stored for one frame of the context.
   struct ContextFrame {
@@ -165,14 +166,14 @@ public:
   /// Returns a simple string representation of each error.
   ///
   /// Each error only shows the error message without any context.
-  void printToStream(llvm::raw_ostream &OS) const;
-  std::string toString() const;
+  CLANG_ABI void printToStream(llvm::raw_ostream &OS) const;
+  CLANG_ABI std::string toString() const;
 
   /// Returns the full string representation of each error.
   ///
   /// Each error message contains the full context.
-  void printToStreamFull(llvm::raw_ostream &OS) const;
-  std::string toStringFull() const;
+  CLANG_ABI void printToStreamFull(llvm::raw_ostream &OS) const;
+  CLANG_ABI std::string toStringFull() const;
 
 private:
   /// Helper function used by the constructors of ContextFrame.

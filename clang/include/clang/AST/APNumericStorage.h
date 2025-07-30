@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_AST_APNUMERICSTORAGE_H
 #define LLVM_CLANG_AST_APNUMERICSTORAGE_H
 
+#include "clang/Support/Compiler.h"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/APInt.h"
 
@@ -45,7 +46,7 @@ protected:
     else
       return llvm::APInt(BitWidth, VAL);
   }
-  void setIntValue(const ASTContext &C, const llvm::APInt &Val);
+  CLANG_ABI void setIntValue(const ASTContext &C, const llvm::APInt &Val);
 };
 
 class APIntStorage : private APNumericStorage {

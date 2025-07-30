@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_AST_NSAPI_H
 #define LLVM_CLANG_AST_NSAPI_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/IdentifierTable.h"
 #include "llvm/ADT/ArrayRef.h"
 #include <optional>
@@ -22,7 +23,7 @@ namespace clang {
 // Provides info and caches identifiers/selectors for NSFoundation API.
 class NSAPI {
 public:
-  explicit NSAPI(ASTContext &Ctx);
+  CLANG_ABI explicit NSAPI(ASTContext &Ctx);
 
   ASTContext &getASTContext() const { return Ctx; }
 
@@ -50,10 +51,10 @@ public:
   };
   static const unsigned NumNSStringMethods = 6;
 
-  IdentifierInfo *getNSClassId(NSClassIdKindKind K) const;
+  CLANG_ABI IdentifierInfo *getNSClassId(NSClassIdKindKind K) const;
 
   /// The Objective-C NSString selectors.
-  Selector getNSStringSelector(NSStringMethodKind MK) const;
+  CLANG_ABI Selector getNSStringSelector(NSStringMethodKind MK) const;
 
   /// Returns true if the expression \param E is a reference of
   /// "NSUTF8StringEncoding" enum constant.
@@ -86,10 +87,10 @@ public:
   static const unsigned NumNSArrayMethods = 12;
 
   /// The Objective-C NSArray selectors.
-  Selector getNSArraySelector(NSArrayMethodKind MK) const;
+  CLANG_ABI Selector getNSArraySelector(NSArrayMethodKind MK) const;
 
   /// Return NSArrayMethodKind if \p Sel is such a selector.
-  std::optional<NSArrayMethodKind> getNSArrayMethodKind(Selector Sel);
+  CLANG_ABI std::optional<NSArrayMethodKind> getNSArrayMethodKind(Selector Sel);
 
   /// Enumerates the NSDictionary/NSMutableDictionary methods used
   /// to generate literals and to apply some checks.
@@ -111,10 +112,10 @@ public:
   static const unsigned NumNSDictionaryMethods = 13;
 
   /// The Objective-C NSDictionary selectors.
-  Selector getNSDictionarySelector(NSDictionaryMethodKind MK) const;
+  CLANG_ABI Selector getNSDictionarySelector(NSDictionaryMethodKind MK) const;
 
   /// Return NSDictionaryMethodKind if \p Sel is such a selector.
-  std::optional<NSDictionaryMethodKind> getNSDictionaryMethodKind(Selector Sel);
+  CLANG_ABI std::optional<NSDictionaryMethodKind> getNSDictionaryMethodKind(Selector Sel);
 
   /// Enumerates the NSMutableSet/NSOrderedSet methods used
   /// to apply some checks.
@@ -128,10 +129,10 @@ public:
   static const unsigned NumNSSetMethods = 5;
 
   /// The Objective-C NSSet selectors.
-  Selector getNSSetSelector(NSSetMethodKind MK) const;
+  CLANG_ABI Selector getNSSetSelector(NSSetMethodKind MK) const;
 
   /// Return NSSetMethodKind if \p Sel is such a selector.
-  std::optional<NSSetMethodKind> getNSSetMethodKind(Selector Sel);
+  CLANG_ABI std::optional<NSSetMethodKind> getNSSetMethodKind(Selector Sel);
 
   /// Returns selector for "objectForKeyedSubscript:".
   Selector getObjectForKeyedSubscriptSelector() const {
@@ -193,7 +194,7 @@ public:
   /// The Objective-C NSNumber selectors used to create NSNumber literals.
   /// \param Instance if true it will return the selector for the init* method
   /// otherwise it will return the selector for the number* method.
-  Selector getNSNumberLiteralSelector(NSNumberLiteralMethodKind MK,
+  CLANG_ABI Selector getNSNumberLiteralSelector(NSNumberLiteralMethodKind MK,
                                       bool Instance) const;
 
   bool isNSNumberLiteralSelector(NSNumberLiteralMethodKind MK,
@@ -203,37 +204,37 @@ public:
   }
 
   /// Return NSNumberLiteralMethodKind if \p Sel is such a selector.
-  std::optional<NSNumberLiteralMethodKind>
+  CLANG_ABI std::optional<NSNumberLiteralMethodKind>
   getNSNumberLiteralMethodKind(Selector Sel) const;
 
   /// Determine the appropriate NSNumber factory method kind for a
   /// literal of the given type.
-  std::optional<NSNumberLiteralMethodKind>
+  CLANG_ABI std::optional<NSNumberLiteralMethodKind>
   getNSNumberFactoryMethodKind(QualType T) const;
 
   /// Returns true if \param T is a typedef of "BOOL" in objective-c.
-  bool isObjCBOOLType(QualType T) const;
+  CLANG_ABI bool isObjCBOOLType(QualType T) const;
   /// Returns true if \param T is a typedef of "NSInteger" in objective-c.
-  bool isObjCNSIntegerType(QualType T) const;
+  CLANG_ABI bool isObjCNSIntegerType(QualType T) const;
   /// Returns true if \param T is a typedef of "NSUInteger" in objective-c.
-  bool isObjCNSUIntegerType(QualType T) const;
+  CLANG_ABI bool isObjCNSUIntegerType(QualType T) const;
   /// Returns one of NSIntegral typedef names if \param T is a typedef
   /// of that name in objective-c.
-  StringRef GetNSIntegralKind(QualType T) const;
+  CLANG_ABI StringRef GetNSIntegralKind(QualType T) const;
 
   /// Returns \c true if \p Id is currently defined as a macro.
-  bool isMacroDefined(StringRef Id) const;
+  CLANG_ABI bool isMacroDefined(StringRef Id) const;
 
   /// Returns \c true if \p InterfaceDecl is subclass of \p NSClassKind
-  bool isSubclassOfNSClass(ObjCInterfaceDecl *InterfaceDecl,
+  CLANG_ABI bool isSubclassOfNSClass(ObjCInterfaceDecl *InterfaceDecl,
                            NSClassIdKindKind NSClassKind) const;
 
 private:
   bool isObjCTypedef(QualType T, StringRef name, IdentifierInfo *&II) const;
-  bool isObjCEnumerator(const Expr *E,
+  CLANG_ABI bool isObjCEnumerator(const Expr *E,
                         StringRef name, IdentifierInfo *&II) const;
-  Selector getOrInitSelector(ArrayRef<StringRef> Ids, Selector &Sel) const;
-  Selector getOrInitNullarySelector(StringRef Id, Selector &Sel) const;
+  CLANG_ABI Selector getOrInitSelector(ArrayRef<StringRef> Ids, Selector &Sel) const;
+  CLANG_ABI Selector getOrInitNullarySelector(StringRef Id, Selector &Sel) const;
 
   ASTContext &Ctx;
 

@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_FRONTEND_COMPILERINVOCATION_H
 #define LLVM_CLANG_FRONTEND_COMPILERINVOCATION_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/APINotes/APINotesOptions.h"
 #include "clang/Basic/CodeGenOptions.h"
 #include "clang/Basic/DiagnosticOptions.h"
@@ -53,7 +54,7 @@ class TargetOptions;
 
 // This lets us create the DiagnosticsEngine with a properly-filled-out
 // DiagnosticOptions instance.
-std::unique_ptr<DiagnosticOptions>
+CLANG_ABI std::unique_ptr<DiagnosticOptions>
 CreateAndPopulateDiagOpts(ArrayRef<const char *> Argv);
 
 /// Fill out Opts based on the options given in Args.
@@ -63,7 +64,7 @@ CreateAndPopulateDiagOpts(ArrayRef<const char *> Argv);
 ///
 /// When errors are encountered, return false and, if Diags is non-null,
 /// report the error(s).
-bool ParseDiagnosticArgs(DiagnosticOptions &Opts, llvm::opt::ArgList &Args,
+CLANG_ABI bool ParseDiagnosticArgs(DiagnosticOptions &Opts, llvm::opt::ArgList &Args,
                          DiagnosticsEngine *Diags = nullptr,
                          bool DefaultDiagColor = true);
 
@@ -115,13 +116,13 @@ protected:
   /// prevent creation of the reference-counted option objects.
   struct EmptyConstructor {};
 
-  CompilerInvocationBase();
+  CLANG_ABI CompilerInvocationBase();
   CompilerInvocationBase(EmptyConstructor) {}
   CompilerInvocationBase(const CompilerInvocationBase &X) = delete;
   CompilerInvocationBase(CompilerInvocationBase &&X) = default;
   CompilerInvocationBase &operator=(const CompilerInvocationBase &X) = delete;
-  CompilerInvocationBase &deep_copy_assign(const CompilerInvocationBase &X);
-  CompilerInvocationBase &shallow_copy_assign(const CompilerInvocationBase &X);
+  CLANG_ABI CompilerInvocationBase &deep_copy_assign(const CompilerInvocationBase &X);
+  CLANG_ABI CompilerInvocationBase &shallow_copy_assign(const CompilerInvocationBase &X);
   CompilerInvocationBase &operator=(CompilerInvocationBase &&X) = default;
   ~CompilerInvocationBase() = default;
 
@@ -173,13 +174,13 @@ public:
   ///
   /// \param Consumer - Callback that gets invoked for every single generated
   /// command line argument.
-  void generateCC1CommandLine(ArgumentConsumer Consumer) const;
+  CLANG_ABI void generateCC1CommandLine(ArgumentConsumer Consumer) const;
 
   /// Generate cc1-compatible command line arguments from this instance,
   /// wrapping the result as a std::vector<std::string>.
   ///
   /// This is a (less-efficient) wrapper over generateCC1CommandLine().
-  std::vector<std::string> getCC1CommandLine() const;
+  CLANG_ABI std::vector<std::string> getCC1CommandLine() const;
 
 private:
   /// Generate command line options from DiagnosticOptions.
@@ -222,8 +223,8 @@ public:
   }
   ~CompilerInvocation() = default;
 
-  explicit CompilerInvocation(const CowCompilerInvocation &X);
-  CompilerInvocation &operator=(const CowCompilerInvocation &X);
+  CLANG_ABI explicit CompilerInvocation(const CowCompilerInvocation &X);
+  CLANG_ABI CompilerInvocation &operator=(const CowCompilerInvocation &X);
 
   /// Const getters.
   /// @{
@@ -276,7 +277,7 @@ public:
   /// \param [out] Res - The resulting invocation.
   /// \param [in] CommandLineArgs - Array of argument strings, this must not
   /// contain "-cc1".
-  static bool CreateFromArgs(CompilerInvocation &Res,
+  CLANG_ABI static bool CreateFromArgs(CompilerInvocation &Res,
                              ArrayRef<const char *> CommandLineArgs,
                              DiagnosticsEngine &Diags,
                              const char *Argv0 = nullptr);
@@ -289,20 +290,20 @@ public:
   /// compiler path.
   /// \param MainAddr - The address of main (or some other function in the main
   /// executable), for finding the builtin compiler path.
-  static std::string GetResourcesPath(const char *Argv0, void *MainAddr);
+  CLANG_ABI static std::string GetResourcesPath(const char *Argv0, void *MainAddr);
 
   /// Populate \p Opts with the default set of pointer authentication-related
   /// options given \p LangOpts and \p Triple.
   ///
   /// Note: This is intended to be used by tools which must be aware of
   /// pointer authentication-related code generation, e.g. lldb.
-  static void setDefaultPointerAuthOptions(PointerAuthOptions &Opts,
+  CLANG_ABI static void setDefaultPointerAuthOptions(PointerAuthOptions &Opts,
                                            const LangOptions &LangOpts,
                                            const llvm::Triple &Triple);
 
   /// Retrieve a module hash string that is suitable for uniquely
   /// identifying the conditions under which the module was built.
-  std::string getModuleHash() const;
+  CLANG_ABI std::string getModuleHash() const;
 
   /// Check that \p Args can be parsed and re-serialized without change,
   /// emiting diagnostics for any differences.
@@ -311,17 +312,17 @@ public:
   /// be canonical.
   ///
   /// \return false if there are any errors.
-  static bool checkCC1RoundTrip(ArrayRef<const char *> Args,
+  CLANG_ABI static bool checkCC1RoundTrip(ArrayRef<const char *> Args,
                                 DiagnosticsEngine &Diags,
                                 const char *Argv0 = nullptr);
 
   /// Reset all of the options that are not considered when building a
   /// module.
-  void resetNonModularOptions();
+  CLANG_ABI void resetNonModularOptions();
 
   /// Disable implicit modules and canonicalize options that are only used by
   /// implicit modules.
-  void clearImplicitModuleBuildOptions();
+  CLANG_ABI void clearImplicitModuleBuildOptions();
 
 private:
   static bool CreateFromArgsImpl(CompilerInvocation &Res,
@@ -369,31 +370,31 @@ public:
 
   /// Mutable getters.
   /// @{
-  LangOptions &getMutLangOpts();
-  TargetOptions &getMutTargetOpts();
-  DiagnosticOptions &getMutDiagnosticOpts();
-  HeaderSearchOptions &getMutHeaderSearchOpts();
-  PreprocessorOptions &getMutPreprocessorOpts();
-  AnalyzerOptions &getMutAnalyzerOpts();
-  MigratorOptions &getMutMigratorOpts();
-  APINotesOptions &getMutAPINotesOpts();
-  CodeGenOptions &getMutCodeGenOpts();
-  FileSystemOptions &getMutFileSystemOpts();
-  FrontendOptions &getMutFrontendOpts();
-  DependencyOutputOptions &getMutDependencyOutputOpts();
-  PreprocessorOutputOptions &getMutPreprocessorOutputOpts();
+  CLANG_ABI LangOptions &getMutLangOpts();
+  CLANG_ABI TargetOptions &getMutTargetOpts();
+  CLANG_ABI DiagnosticOptions &getMutDiagnosticOpts();
+  CLANG_ABI HeaderSearchOptions &getMutHeaderSearchOpts();
+  CLANG_ABI PreprocessorOptions &getMutPreprocessorOpts();
+  CLANG_ABI AnalyzerOptions &getMutAnalyzerOpts();
+  CLANG_ABI MigratorOptions &getMutMigratorOpts();
+  CLANG_ABI APINotesOptions &getMutAPINotesOpts();
+  CLANG_ABI CodeGenOptions &getMutCodeGenOpts();
+  CLANG_ABI FileSystemOptions &getMutFileSystemOpts();
+  CLANG_ABI FrontendOptions &getMutFrontendOpts();
+  CLANG_ABI DependencyOutputOptions &getMutDependencyOutputOpts();
+  CLANG_ABI PreprocessorOutputOptions &getMutPreprocessorOutputOpts();
   /// @}
 };
 
-IntrusiveRefCntPtr<llvm::vfs::FileSystem>
+CLANG_ABI IntrusiveRefCntPtr<llvm::vfs::FileSystem>
 createVFSFromCompilerInvocation(const CompilerInvocation &CI,
                                 DiagnosticsEngine &Diags);
 
-IntrusiveRefCntPtr<llvm::vfs::FileSystem> createVFSFromCompilerInvocation(
+CLANG_ABI IntrusiveRefCntPtr<llvm::vfs::FileSystem> createVFSFromCompilerInvocation(
     const CompilerInvocation &CI, DiagnosticsEngine &Diags,
     IntrusiveRefCntPtr<llvm::vfs::FileSystem> BaseFS);
 
-IntrusiveRefCntPtr<llvm::vfs::FileSystem>
+CLANG_ABI IntrusiveRefCntPtr<llvm::vfs::FileSystem>
 createVFSFromOverlayFiles(ArrayRef<std::string> VFSOverlayFiles,
                           DiagnosticsEngine &Diags,
                           IntrusiveRefCntPtr<llvm::vfs::FileSystem> BaseFS);

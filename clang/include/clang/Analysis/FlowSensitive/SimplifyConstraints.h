@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_SIMPLIFYCONSTRAINTS_H
 #define LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_SIMPLIFYCONSTRAINTS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Analysis/FlowSensitive/Arena.h"
 #include "clang/Analysis/FlowSensitive/Formula.h"
 #include "llvm/ADT/SetVector.h"
@@ -40,7 +41,7 @@ struct SimplifyConstraintsInfo {
 /// that the set of solutions is the same before and after simplification.
 /// `Info`, if non-null, will be populated with information about the
 /// simplifications that were made to the formula (e.g. to display to the user).
-void simplifyConstraints(llvm::SetVector<const Formula *> &Constraints,
+CLANG_ABI void simplifyConstraints(llvm::SetVector<const Formula *> &Constraints,
                          Arena &arena, SimplifyConstraintsInfo *Info = nullptr);
 
 } // namespace dataflow

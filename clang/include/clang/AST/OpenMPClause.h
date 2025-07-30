@@ -16,6 +16,7 @@
 #ifndef LLVM_CLANG_AST_OPENMPCLAUSE_H
 #define LLVM_CLANG_AST_OPENMPCLAUSE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTFwd.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/DeclarationName.h"
@@ -89,7 +90,7 @@ public:
   using child_range = llvm::iterator_range<child_iterator>;
   using const_child_range = llvm::iterator_range<const_child_iterator>;
 
-  child_range children();
+  CLANG_ABI child_range children();
   const_child_range children() const {
     auto Children = const_cast<OMPClause *>(this)->children();
     return const_child_range(Children.begin(), Children.end());
@@ -98,7 +99,7 @@ public:
   /// Get the iterator range for the expressions used in the clauses. Used
   /// expressions include only the children that must be evaluated at the
   /// runtime before entering the construct.
-  child_range used_children();
+  CLANG_ABI child_range used_children();
   const_child_range used_children() const {
     auto Children = const_cast<OMPClause *>(this)->children();
     return const_child_range(Children.begin(), Children.end());
@@ -224,8 +225,8 @@ public:
   /// Get capture region for the stmt in the clause.
   OpenMPDirectiveKind getCaptureRegion() const { return CaptureRegion; }
 
-  static OMPClauseWithPreInit *get(OMPClause *C);
-  static const OMPClauseWithPreInit *get(const OMPClause *C);
+  CLANG_ABI static OMPClauseWithPreInit *get(OMPClause *C);
+  CLANG_ABI static const OMPClauseWithPreInit *get(const OMPClause *C);
 };
 
 /// Class that handles post-update expression for some clauses, like
@@ -251,8 +252,8 @@ public:
   /// Get post-update expression for the clause.
   Expr *getPostUpdateExpr() { return PostUpdate; }
 
-  static OMPClauseWithPostUpdate *get(OMPClause *C);
-  static const OMPClauseWithPostUpdate *get(const OMPClause *C);
+  CLANG_ABI static OMPClauseWithPostUpdate *get(OMPClause *C);
+  CLANG_ABI static const OMPClauseWithPostUpdate *get(const OMPClause *C);
 };
 
 /// This structure contains most locations needed for by an OMPVarListClause.
@@ -465,7 +466,7 @@ public:
   /// \param StartLoc Starting location of the clause.
   /// \param LParenLoc Location of '('.
   /// \param EndLoc Ending location of the clause.
-  static OMPAlignClause *Create(const ASTContext &C, Expr *A,
+  CLANG_ABI static OMPAlignClause *Create(const ASTContext &C, Expr *A,
                                 SourceLocation StartLoc,
                                 SourceLocation LParenLoc,
                                 SourceLocation EndLoc);
@@ -593,7 +594,7 @@ public:
   /// \param SourceLocation Allocator modifier location.
   /// \param EndLoc Ending location of the clause.
   /// \param VL List of references to the variables.
-  static OMPAllocateClause *
+  CLANG_ABI static OMPAllocateClause *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation LParenLoc,
          Expr *Allocator, Expr *Alignment, SourceLocation ColonLoc,
          OpenMPAllocateClauseModifier Modifier1, SourceLocation Modifier1Loc,
@@ -642,7 +643,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of variables.
-  static OMPAllocateClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPAllocateClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   child_range children() {
     return child_range(reinterpret_cast<Stmt **>(varlist_begin()),
@@ -756,7 +757,7 @@ public:
     return const_child_range(&Condition, &Condition + 1);
   }
 
-  child_range used_children();
+  CLANG_ABI child_range used_children();
   const_child_range used_children() const {
     auto Children = const_cast<OMPIfClause *>(this)->used_children();
     return const_child_range(Children.begin(), Children.end());
@@ -806,7 +807,7 @@ public:
   /// Returns condition.
   Expr *getCondition() const { return getStmtAs<Expr>(); }
 
-  child_range used_children();
+  CLANG_ABI child_range used_children();
   const_child_range used_children() const {
     auto Children = const_cast<OMPFinalClause *>(this)->used_children();
     return const_child_range(Children.begin(), Children.end());
@@ -978,7 +979,7 @@ public:
   /// \param LParenLoc Location of '('.
   /// \param EndLoc    Location of ')'.
   /// \param Sizes     Content of the clause.
-  static OMPSizesClause *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPSizesClause *Create(const ASTContext &C, SourceLocation StartLoc,
                                 SourceLocation LParenLoc, SourceLocation EndLoc,
                                 ArrayRef<Expr *> Sizes);
 
@@ -986,7 +987,7 @@ public:
   ///
   /// \param C     Context of the AST.
   /// \param NumSizes Number of items in the clause.
-  static OMPSizesClause *CreateEmpty(const ASTContext &C, unsigned NumSizes);
+  CLANG_ABI static OMPSizesClause *CreateEmpty(const ASTContext &C, unsigned NumSizes);
 
   /// Sets the location of '('.
   void setLParenLoc(SourceLocation Loc) { LParenLoc = Loc; }
@@ -1073,7 +1074,7 @@ public:
   /// \param LParenLoc Location of '('.
   /// \param EndLoc    Location of ')'.
   /// \param Args      Content of the clause.
-  static OMPPermutationClause *
+  CLANG_ABI static OMPPermutationClause *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation LParenLoc,
          SourceLocation EndLoc, ArrayRef<Expr *> Args);
 
@@ -1081,7 +1082,7 @@ public:
   ///
   /// \param C        Context of the AST.
   /// \param NumLoops Number of arguments in the clause.
-  static OMPPermutationClause *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPPermutationClause *CreateEmpty(const ASTContext &C,
                                            unsigned NumLoops);
 
   /// Sets the location of '('.
@@ -1140,13 +1141,13 @@ public:
   /// \param C        Context of the AST.
   /// \param StartLoc Starting location of the clause.
   /// \param EndLoc   Ending location of the clause.
-  static OMPFullClause *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPFullClause *Create(const ASTContext &C, SourceLocation StartLoc,
                                SourceLocation EndLoc);
 
   /// Build an empty 'full' AST node for deserialization.
   ///
   /// \param C Context of the AST.
-  static OMPFullClause *CreateEmpty(const ASTContext &C);
+  CLANG_ABI static OMPFullClause *CreateEmpty(const ASTContext &C);
 };
 
 /// Representation of the 'partial' clause of the '#pragma omp unroll'
@@ -1182,14 +1183,14 @@ public:
   /// \param LParenLoc Location of '('.
   /// \param EndLoc    Location of ')'.
   /// \param Factor    Clause argument.
-  static OMPPartialClause *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPPartialClause *Create(const ASTContext &C, SourceLocation StartLoc,
                                   SourceLocation LParenLoc,
                                   SourceLocation EndLoc, Expr *Factor);
 
   /// Build an empty 'partial' AST node for deserialization.
   ///
   /// \param C     Context of the AST.
-  static OMPPartialClause *CreateEmpty(const ASTContext &C);
+  CLANG_ABI static OMPPartialClause *CreateEmpty(const ASTContext &C);
 
   /// Returns the location of '('.
   SourceLocation getLParenLoc() const { return LParenLoc; }
@@ -2167,13 +2168,13 @@ public:
   /// \param StartLoc Starting location of the clause.
   /// \param LParenLoc Location of '('.
   /// \param EndLoc Ending location of the clause.
-  static OMPOrderedClause *Create(const ASTContext &C, Expr *Num,
+  CLANG_ABI static OMPOrderedClause *Create(const ASTContext &C, Expr *Num,
                                   unsigned NumLoops, SourceLocation StartLoc,
                                   SourceLocation LParenLoc,
                                   SourceLocation EndLoc);
 
   /// Build an empty clause.
-  static OMPOrderedClause* CreateEmpty(const ASTContext &C, unsigned NumLoops);
+  CLANG_ABI static OMPOrderedClause* CreateEmpty(const ASTContext &C, unsigned NumLoops);
 
   /// Sets the location of '('.
   void setLParenLoc(SourceLocation Loc) { LParenLoc = Loc; }
@@ -2185,15 +2186,15 @@ public:
   Expr *getNumForLoops() const { return cast_or_null<Expr>(NumForLoops); }
 
   /// Set number of iterations for the specified loop.
-  void setLoopNumIterations(unsigned NumLoop, Expr *NumIterations);
+  CLANG_ABI void setLoopNumIterations(unsigned NumLoop, Expr *NumIterations);
   /// Get number of iterations for all the loops.
-  ArrayRef<Expr *> getLoopNumIterations() const;
+  CLANG_ABI ArrayRef<Expr *> getLoopNumIterations() const;
 
   /// Set loop counter for the specified loop.
-  void setLoopCounter(unsigned NumLoop, Expr *Counter);
+  CLANG_ABI void setLoopCounter(unsigned NumLoop, Expr *Counter);
   /// Get loops counter for the specified loop.
-  Expr *getLoopCounter(unsigned NumLoop);
-  const Expr *getLoopCounter(unsigned NumLoop) const;
+  CLANG_ABI Expr *getLoopCounter(unsigned NumLoop);
+  CLANG_ABI const Expr *getLoopCounter(unsigned NumLoop) const;
 
   child_range children() { return child_range(&NumForLoops, &NumForLoops + 1); }
 
@@ -2341,12 +2342,12 @@ class OMPAbsentClause final
             SourceLocation(), NumKinds) {}
 
 public:
-  static OMPAbsentClause *Create(const ASTContext &C,
+  CLANG_ABI static OMPAbsentClause *Create(const ASTContext &C,
                                  ArrayRef<OpenMPDirectiveKind> DKVec,
                                  SourceLocation Loc, SourceLocation LLoc,
                                  SourceLocation RLoc);
 
-  static OMPAbsentClause *CreateEmpty(const ASTContext &C, unsigned NumKinds);
+  CLANG_ABI static OMPAbsentClause *CreateEmpty(const ASTContext &C, unsigned NumKinds);
 
   static bool classof(const OMPClause *C) {
     return C->getClauseKind() == llvm::omp::OMPC_absent;
@@ -2384,12 +2385,12 @@ class OMPContainsClause final
             SourceLocation(), NumKinds) {}
 
 public:
-  static OMPContainsClause *Create(const ASTContext &C,
+  CLANG_ABI static OMPContainsClause *Create(const ASTContext &C,
                                    ArrayRef<OpenMPDirectiveKind> DKVec,
                                    SourceLocation Loc, SourceLocation LLoc,
                                    SourceLocation RLoc);
 
-  static OMPContainsClause *CreateEmpty(const ASTContext &C, unsigned NumKinds);
+  CLANG_ABI static OMPContainsClause *CreateEmpty(const ASTContext &C, unsigned NumKinds);
 
   static bool classof(const OMPClause *C) {
     return C->getClauseKind() == llvm::omp::OMPC_contains;
@@ -2658,7 +2659,7 @@ public:
   /// \param C AST context.
   /// \param StartLoc Starting location of the clause.
   /// \param EndLoc Ending location of the clause.
-  static OMPUpdateClause *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPUpdateClause *Create(const ASTContext &C, SourceLocation StartLoc,
                                  SourceLocation EndLoc);
 
   /// Creates clause for 'depobj' directive.
@@ -2669,7 +2670,7 @@ public:
   /// \param ArgumentLoc Location of the argument.
   /// \param DK Dependence kind.
   /// \param EndLoc Ending location of the clause.
-  static OMPUpdateClause *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPUpdateClause *Create(const ASTContext &C, SourceLocation StartLoc,
                                  SourceLocation LParenLoc,
                                  SourceLocation ArgumentLoc,
                                  OpenMPDependClauseKind DK,
@@ -2680,7 +2681,7 @@ public:
   /// \param C AST context.
   /// \param IsExtended true if extended clause for 'depobj' directive must be
   /// created.
-  static OMPUpdateClause *CreateEmpty(const ASTContext &C, bool IsExtended);
+  CLANG_ABI static OMPUpdateClause *CreateEmpty(const ASTContext &C, bool IsExtended);
 
   /// Checks if the clause is the extended clauses for 'depobj' directive.
   bool isExtended() const { return IsExtended; }
@@ -3189,7 +3190,7 @@ public:
   /// \param EndLoc Ending location of the clause.
   /// \param VL List of references to the variables.
   /// \param PrivateVL List of references to private copies with initializers.
-  static OMPPrivateClause *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPPrivateClause *Create(const ASTContext &C, SourceLocation StartLoc,
                                   SourceLocation LParenLoc,
                                   SourceLocation EndLoc, ArrayRef<Expr *> VL,
                                   ArrayRef<Expr *> PrivateVL);
@@ -3198,7 +3199,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of variables.
-  static OMPPrivateClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPPrivateClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   using private_copies_iterator = MutableArrayRef<Expr *>::iterator;
   using private_copies_const_iterator = ArrayRef<const Expr *>::iterator;
@@ -3317,7 +3318,7 @@ public:
   /// of array type.
   /// \param PreInit Statement that must be executed before entering the OpenMP
   /// region with this clause.
-  static OMPFirstprivateClause *
+  CLANG_ABI static OMPFirstprivateClause *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation LParenLoc,
          SourceLocation EndLoc, ArrayRef<Expr *> VL, ArrayRef<Expr *> PrivateVL,
          ArrayRef<Expr *> InitVL, Stmt *PreInit);
@@ -3326,7 +3327,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of variables.
-  static OMPFirstprivateClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPFirstprivateClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   using private_copies_iterator = MutableArrayRef<Expr *>::iterator;
   using private_copies_const_iterator = ArrayRef<const Expr *>::iterator;
@@ -3527,7 +3528,7 @@ public:
   /// region with this clause.
   /// \param PostUpdate Expression that must be executed after exit from the
   /// OpenMP region with this clause.
-  static OMPLastprivateClause *
+  CLANG_ABI static OMPLastprivateClause *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation LParenLoc,
          SourceLocation EndLoc, ArrayRef<Expr *> VL, ArrayRef<Expr *> SrcExprs,
          ArrayRef<Expr *> DstExprs, ArrayRef<Expr *> AssignmentOps,
@@ -3538,7 +3539,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of variables.
-  static OMPLastprivateClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPLastprivateClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   /// Lastprivate kind.
   OpenMPLastprivateModifier getKind() const { return LPKind; }
@@ -3555,7 +3556,7 @@ public:
 
   /// Set list of helper expressions, required for generation of private
   /// copies of original lastprivate variables.
-  void setPrivateCopies(ArrayRef<Expr *> PrivateCopies);
+  CLANG_ABI void setPrivateCopies(ArrayRef<Expr *> PrivateCopies);
 
   helper_expr_const_range private_copies() const {
     return helper_expr_const_range(getPrivateCopies().begin(),
@@ -3658,7 +3659,7 @@ public:
   /// \param LParenLoc Location of '('.
   /// \param EndLoc Ending location of the clause.
   /// \param VL List of references to the variables.
-  static OMPSharedClause *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPSharedClause *Create(const ASTContext &C, SourceLocation StartLoc,
                                  SourceLocation LParenLoc,
                                  SourceLocation EndLoc, ArrayRef<Expr *> VL);
 
@@ -3666,7 +3667,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of variables.
-  static OMPSharedClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPSharedClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   child_range children() {
     return child_range(reinterpret_cast<Stmt **>(varlist_begin()),
@@ -3933,7 +3934,7 @@ public:
   /// \param PostUpdate Expression that must be executed after exit from the
   /// OpenMP region with this clause.
   /// \param IsPrivateVarReduction array for private variable reduction flags
-  static OMPReductionClause *
+  CLANG_ABI static OMPReductionClause *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation LParenLoc,
          SourceLocation ModifierLoc, SourceLocation ColonLoc,
          SourceLocation EndLoc, OpenMPReductionClauseModifier Modifier,
@@ -3950,7 +3951,7 @@ public:
   /// \param C AST context.
   /// \param N The number of variables.
   /// \param Modifier Reduction modifier.
-  static OMPReductionClause *
+  CLANG_ABI static OMPReductionClause *
   CreateEmpty(const ASTContext &C, unsigned N,
               OpenMPReductionClauseModifier Modifier);
 
@@ -4230,7 +4231,7 @@ public:
   /// region with this clause.
   /// \param PostUpdate Expression that must be executed after exit from the
   /// OpenMP region with this clause.
-  static OMPTaskReductionClause *
+  CLANG_ABI static OMPTaskReductionClause *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation LParenLoc,
          SourceLocation ColonLoc, SourceLocation EndLoc, ArrayRef<Expr *> VL,
          NestedNameSpecifierLoc QualifierLoc,
@@ -4242,7 +4243,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of variables.
-  static OMPTaskReductionClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPTaskReductionClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   /// Gets location of ':' symbol in clause.
   SourceLocation getColonLoc() const { return ColonLoc; }
@@ -4474,7 +4475,7 @@ public:
   /// region with this clause.
   /// \param PostUpdate Expression that must be executed after exit from the
   /// OpenMP region with this clause.
-  static OMPInReductionClause *
+  CLANG_ABI static OMPInReductionClause *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation LParenLoc,
          SourceLocation ColonLoc, SourceLocation EndLoc, ArrayRef<Expr *> VL,
          NestedNameSpecifierLoc QualifierLoc,
@@ -4487,7 +4488,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of variables.
-  static OMPInReductionClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPInReductionClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   /// Gets location of ':' symbol in clause.
   SourceLocation getColonLoc() const { return ColonLoc; }
@@ -4710,7 +4711,7 @@ public:
   /// region with this clause.
   /// \param PostUpdate Expression that must be executed after exit from the
   /// OpenMP region with this clause.
-  static OMPLinearClause *
+  CLANG_ABI static OMPLinearClause *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation LParenLoc,
          OpenMPLinearClauseKind Modifier, SourceLocation ModifierLoc,
          SourceLocation ColonLoc, SourceLocation StepModifierLoc,
@@ -4722,7 +4723,7 @@ public:
   ///
   /// \param C AST context.
   /// \param NumVars Number of variables.
-  static OMPLinearClause *CreateEmpty(const ASTContext &C, unsigned NumVars);
+  CLANG_ABI static OMPLinearClause *CreateEmpty(const ASTContext &C, unsigned NumVars);
 
   /// Set modifier.
   void setModifier(OpenMPLinearClauseKind Kind) { Modifier = Kind; }
@@ -4762,14 +4763,14 @@ public:
 
   /// Sets the list of update expressions for linear variables.
   /// \param UL List of expressions.
-  void setUpdates(ArrayRef<Expr *> UL);
+  CLANG_ABI void setUpdates(ArrayRef<Expr *> UL);
 
   /// Sets the list of final update expressions for linear variables.
   /// \param FL List of expressions.
-  void setFinals(ArrayRef<Expr *> FL);
+  CLANG_ABI void setFinals(ArrayRef<Expr *> FL);
 
   /// Sets the list of used expressions for the linear clause.
-  void setUsedExprs(ArrayRef<Expr *> UE);
+  CLANG_ABI void setUsedExprs(ArrayRef<Expr *> UE);
 
   using privates_iterator = MutableArrayRef<Expr *>::iterator;
   using privates_const_iterator = ArrayRef<const Expr *>::iterator;
@@ -4848,7 +4849,7 @@ public:
     return const_child_range(Children.begin(), Children.end());
   }
 
-  child_range used_children();
+  CLANG_ABI child_range used_children();
 
   const_child_range used_children() const {
     auto Children = const_cast<OMPLinearClause *>(this)->used_children();
@@ -4913,7 +4914,7 @@ public:
   /// \param EndLoc Ending location of the clause.
   /// \param VL List of references to the variables.
   /// \param A Alignment.
-  static OMPAlignedClause *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPAlignedClause *Create(const ASTContext &C, SourceLocation StartLoc,
                                   SourceLocation LParenLoc,
                                   SourceLocation ColonLoc,
                                   SourceLocation EndLoc, ArrayRef<Expr *> VL,
@@ -4923,7 +4924,7 @@ public:
   ///
   /// \param C AST context.
   /// \param NumVars Number of variables.
-  static OMPAlignedClause *CreateEmpty(const ASTContext &C, unsigned NumVars);
+  CLANG_ABI static OMPAlignedClause *CreateEmpty(const ASTContext &C, unsigned NumVars);
 
   /// Sets the location of ':'.
   void setColonLoc(SourceLocation Loc) { ColonLoc = Loc; }
@@ -5067,7 +5068,7 @@ public:
   /// Required for proper codegen of propagation of master's thread values of
   /// threadprivate variables to local instances of that variables in other
   /// implicit threads.
-  static OMPCopyinClause *
+  CLANG_ABI static OMPCopyinClause *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation LParenLoc,
          SourceLocation EndLoc, ArrayRef<Expr *> VL, ArrayRef<Expr *> SrcExprs,
          ArrayRef<Expr *> DstExprs, ArrayRef<Expr *> AssignmentOps);
@@ -5076,7 +5077,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of variables.
-  static OMPCopyinClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPCopyinClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   using helper_expr_iterator = MutableArrayRef<Expr *>::iterator;
   using helper_expr_const_iterator = ArrayRef<const Expr *>::iterator;
@@ -5231,7 +5232,7 @@ public:
   /// \endcode
   /// Required for proper codegen of final assignment performed by the
   /// copyprivate clause.
-  static OMPCopyprivateClause *
+  CLANG_ABI static OMPCopyprivateClause *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation LParenLoc,
          SourceLocation EndLoc, ArrayRef<Expr *> VL, ArrayRef<Expr *> SrcExprs,
          ArrayRef<Expr *> DstExprs, ArrayRef<Expr *> AssignmentOps);
@@ -5240,7 +5241,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of variables.
-  static OMPCopyprivateClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPCopyprivateClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   using helper_expr_iterator = MutableArrayRef<Expr *>::iterator;
   using helper_expr_const_iterator = ArrayRef<const Expr *>::iterator;
@@ -5344,7 +5345,7 @@ public:
   /// \param LParenLoc Location of '('.
   /// \param EndLoc Ending location of the clause.
   /// \param VL List of references to the variables.
-  static OMPFlushClause *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPFlushClause *Create(const ASTContext &C, SourceLocation StartLoc,
                                 SourceLocation LParenLoc, SourceLocation EndLoc,
                                 ArrayRef<Expr *> VL);
 
@@ -5352,7 +5353,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of variables.
-  static OMPFlushClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPFlushClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   child_range children() {
     return child_range(reinterpret_cast<Stmt **>(varlist_begin()),
@@ -5425,14 +5426,14 @@ public:
   /// \param LParenLoc Location of '('.
   /// \param EndLoc Ending location of the clause.
   /// \param Depobj depobj expression associated with the 'depobj' directive.
-  static OMPDepobjClause *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPDepobjClause *Create(const ASTContext &C, SourceLocation StartLoc,
                                  SourceLocation LParenLoc,
                                  SourceLocation EndLoc, Expr *Depobj);
 
   /// Creates an empty clause.
   ///
   /// \param C AST context.
-  static OMPDepobjClause *CreateEmpty(const ASTContext &C);
+  CLANG_ABI static OMPDepobjClause *CreateEmpty(const ASTContext &C);
 
   /// Returns depobj expression associated with the clause.
   Expr *getDepobj() { return Depobj; }
@@ -5551,7 +5552,7 @@ public:
   /// \param VL List of references to the variables.
   /// \param NumLoops Number of loops that is associated with this depend
   /// clause.
-  static OMPDependClause *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPDependClause *Create(const ASTContext &C, SourceLocation StartLoc,
                                  SourceLocation LParenLoc,
                                  SourceLocation EndLoc, DependDataTy Data,
                                  Expr *DepModifier, ArrayRef<Expr *> VL,
@@ -5563,7 +5564,7 @@ public:
   /// \param N The number of variables.
   /// \param NumLoops Number of loops that is associated with this depend
   /// clause.
-  static OMPDependClause *CreateEmpty(const ASTContext &C, unsigned N,
+  CLANG_ABI static OMPDependClause *CreateEmpty(const ASTContext &C, unsigned N,
                                       unsigned NumLoops);
 
   /// Get dependency type.
@@ -5579,7 +5580,7 @@ public:
   SourceLocation getOmpAllMemoryLoc() const { return Data.OmpAllMemoryLoc; }
 
   /// Return optional depend modifier.
-  Expr *getModifier();
+  CLANG_ABI Expr *getModifier();
   const Expr *getModifier() const {
     return const_cast<OMPDependClause *>(this)->getModifier();
   }
@@ -5589,11 +5590,11 @@ public:
 
   /// Set the loop data for the depend clauses with 'sink|source' kind of
   /// dependency.
-  void setLoopData(unsigned NumLoop, Expr *Cnt);
+  CLANG_ABI void setLoopData(unsigned NumLoop, Expr *Cnt);
 
   /// Get the loop data.
-  Expr *getLoopData(unsigned NumLoop);
-  const Expr *getLoopData(unsigned NumLoop) const;
+  CLANG_ABI Expr *getLoopData(unsigned NumLoop);
+  CLANG_ABI const Expr *getLoopData(unsigned NumLoop) const;
 
   child_range children() {
     return child_range(reinterpret_cast<Stmt **>(varlist_begin()),
@@ -5830,12 +5831,12 @@ public:
 
 protected:
   // Return the total number of elements in a list of component lists.
-  static unsigned
+  CLANG_ABI static unsigned
   getComponentsTotalNumber(MappableExprComponentListsRef ComponentLists);
 
   // Return the total number of elements in a list of declarations. All
   // declarations are expected to be canonical.
-  static unsigned
+  CLANG_ABI static unsigned
   getUniqueDeclarationsTotalNumber(ArrayRef<const ValueDecl *> Declarations);
 };
 
@@ -6574,7 +6575,7 @@ public:
   /// \param Type Map type.
   /// \param TypeIsImplicit Map type is inferred implicitly.
   /// \param TypeLoc Location of the map type.
-  static OMPMapClause *
+  CLANG_ABI static OMPMapClause *
   Create(const ASTContext &C, const OMPVarListLocTy &Locs,
          ArrayRef<Expr *> Vars, ArrayRef<ValueDecl *> Declarations,
          MappableExprComponentListsRef ComponentLists,
@@ -6594,7 +6595,7 @@ public:
   /// NumUniqueDeclarations: number of unique base declarations in this clause;
   /// 3) NumComponentLists: number of component lists in this clause; and 4)
   /// NumComponents: total number of expression components in the clause.
-  static OMPMapClause *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPMapClause *CreateEmpty(const ASTContext &C,
                                    const OMPMappableExprListSizeTy &Sizes);
 
   /// Fetches Expr * of iterator modifier.
@@ -6721,7 +6722,7 @@ public:
   /// \param EndLoc Ending location of the clause.
   /// \param VL List of references to the variables.
   /// \param PreInit
-  static OMPNumTeamsClause *
+  CLANG_ABI static OMPNumTeamsClause *
   Create(const ASTContext &C, OpenMPDirectiveKind CaptureRegion,
          SourceLocation StartLoc, SourceLocation LParenLoc,
          SourceLocation EndLoc, ArrayRef<Expr *> VL, Stmt *PreInit);
@@ -6730,7 +6731,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of variables.
-  static OMPNumTeamsClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPNumTeamsClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   /// Sets the location of '('.
   void setLParenLoc(SourceLocation Loc) { LParenLoc = Loc; }
@@ -6815,7 +6816,7 @@ public:
   /// \param EndLoc Ending location of the clause.
   /// \param VL List of references to the variables.
   /// \param PreInit
-  static OMPThreadLimitClause *
+  CLANG_ABI static OMPThreadLimitClause *
   Create(const ASTContext &C, OpenMPDirectiveKind CaptureRegion,
          SourceLocation StartLoc, SourceLocation LParenLoc,
          SourceLocation EndLoc, ArrayRef<Expr *> VL, Stmt *PreInit);
@@ -6824,7 +6825,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of variables.
-  static OMPThreadLimitClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPThreadLimitClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   /// Sets the location of '('.
   void setLParenLoc(SourceLocation Loc) { LParenLoc = Loc; }
@@ -6925,7 +6926,7 @@ public:
     return const_child_range(&Priority, &Priority + 1);
   }
 
-  child_range used_children();
+  CLANG_ABI child_range used_children();
   const_child_range used_children() const {
     auto Children = const_cast<OMPPriorityClause *>(this)->used_children();
     return const_child_range(Children.begin(), Children.end());
@@ -7017,7 +7018,7 @@ public:
     return const_child_range(&Grainsize, &Grainsize + 1);
   }
 
-  child_range used_children();
+  CLANG_ABI child_range used_children();
   const_child_range used_children() const {
     auto Children = const_cast<OMPGrainsizeClause *>(this)->used_children();
     return const_child_range(Children.begin(), Children.end());
@@ -7149,7 +7150,7 @@ public:
     return const_child_range(&NumTasks, &NumTasks + 1);
   }
 
-  child_range used_children();
+  CLANG_ABI child_range used_children();
   const_child_range used_children() const {
     auto Children = const_cast<OMPNumTasksClause *>(this)->used_children();
     return const_child_range(Children.begin(), Children.end());
@@ -7581,7 +7582,7 @@ public:
   /// \param UDMQualifierLoc C++ nested name specifier for the associated
   /// user-defined mapper.
   /// \param MapperId The identifier of associated user-defined mapper.
-  static OMPToClause *Create(const ASTContext &C, const OMPVarListLocTy &Locs,
+  CLANG_ABI static OMPToClause *Create(const ASTContext &C, const OMPVarListLocTy &Locs,
                              ArrayRef<Expr *> Vars,
                              ArrayRef<ValueDecl *> Declarations,
                              MappableExprComponentListsRef ComponentLists,
@@ -7599,7 +7600,7 @@ public:
   /// NumUniqueDeclarations: number of unique base declarations in this clause;
   /// 3) NumComponentLists: number of component lists in this clause; and 4)
   /// NumComponents: total number of expression components in the clause.
-  static OMPToClause *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPToClause *CreateEmpty(const ASTContext &C,
                                   const OMPMappableExprListSizeTy &Sizes);
 
   /// Fetches the motion-modifier at 'Cnt' index of array of modifiers.
@@ -7782,7 +7783,7 @@ public:
   /// \param UDMQualifierLoc C++ nested name specifier for the associated
   /// user-defined mapper.
   /// \param MapperId The identifier of associated user-defined mapper.
-  static OMPFromClause *
+  CLANG_ABI static OMPFromClause *
   Create(const ASTContext &C, const OMPVarListLocTy &Locs,
          ArrayRef<Expr *> Vars, ArrayRef<ValueDecl *> Declarations,
          MappableExprComponentListsRef ComponentLists,
@@ -7799,7 +7800,7 @@ public:
   /// NumUniqueDeclarations: number of unique base declarations in this clause;
   /// 3) NumComponentLists: number of component lists in this clause; and 4)
   /// NumComponents: total number of expression components in the clause.
-  static OMPFromClause *CreateEmpty(const ASTContext &C,
+  CLANG_ABI static OMPFromClause *CreateEmpty(const ASTContext &C,
                                     const OMPMappableExprListSizeTy &Sizes);
 
   /// Fetches the motion-modifier at 'Cnt' index of array of modifiers.
@@ -7952,7 +7953,7 @@ public:
   /// \param Inits Expressions referring to private copy initializers.
   /// \param Declarations Declarations used in the clause.
   /// \param ComponentLists Component lists used in the clause.
-  static OMPUseDevicePtrClause *
+  CLANG_ABI static OMPUseDevicePtrClause *
   Create(const ASTContext &C, const OMPVarListLocTy &Locs,
          ArrayRef<Expr *> Vars, ArrayRef<Expr *> PrivateVars,
          ArrayRef<Expr *> Inits, ArrayRef<ValueDecl *> Declarations,
@@ -7966,7 +7967,7 @@ public:
   /// NumUniqueDeclarations: number of unique base declarations in this clause;
   /// 3) NumComponentLists: number of component lists in this clause; and 4)
   /// NumComponents: total number of expression components in the clause.
-  static OMPUseDevicePtrClause *
+  CLANG_ABI static OMPUseDevicePtrClause *
   CreateEmpty(const ASTContext &C, const OMPMappableExprListSizeTy &Sizes);
 
   using private_copies_iterator = MutableArrayRef<Expr *>::iterator;
@@ -8086,7 +8087,7 @@ public:
   /// \param Vars The original expression used in the clause.
   /// \param Declarations Declarations used in the clause.
   /// \param ComponentLists Component lists used in the clause.
-  static OMPUseDeviceAddrClause *
+  CLANG_ABI static OMPUseDeviceAddrClause *
   Create(const ASTContext &C, const OMPVarListLocTy &Locs,
          ArrayRef<Expr *> Vars, ArrayRef<ValueDecl *> Declarations,
          MappableExprComponentListsRef ComponentLists);
@@ -8099,7 +8100,7 @@ public:
   /// NumUniqueDeclarations: number of unique base declarations in this clause;
   /// 3) NumComponentLists: number of component lists in this clause; and 4)
   /// NumComponents: total number of expression components in the clause.
-  static OMPUseDeviceAddrClause *
+  CLANG_ABI static OMPUseDeviceAddrClause *
   CreateEmpty(const ASTContext &C, const OMPMappableExprListSizeTy &Sizes);
 
   child_range children() {
@@ -8189,7 +8190,7 @@ public:
   /// \param Vars The original expression used in the clause.
   /// \param Declarations Declarations used in the clause.
   /// \param ComponentLists Component lists used in the clause.
-  static OMPIsDevicePtrClause *
+  CLANG_ABI static OMPIsDevicePtrClause *
   Create(const ASTContext &C, const OMPVarListLocTy &Locs,
          ArrayRef<Expr *> Vars, ArrayRef<ValueDecl *> Declarations,
          MappableExprComponentListsRef ComponentLists);
@@ -8202,7 +8203,7 @@ public:
   /// NumUniqueDeclarations: number of unique base declarations in this clause;
   /// 3) NumComponentLists: number of component lists in this clause; and 4)
   /// NumComponents: total number of expression components in the clause.
-  static OMPIsDevicePtrClause *
+  CLANG_ABI static OMPIsDevicePtrClause *
   CreateEmpty(const ASTContext &C, const OMPMappableExprListSizeTy &Sizes);
 
   child_range children() {
@@ -8293,7 +8294,7 @@ public:
   /// \param Vars The original expression used in the clause.
   /// \param Declarations Declarations used in the clause.
   /// \param ComponentLists Component lists used in the clause.
-  static OMPHasDeviceAddrClause *
+  CLANG_ABI static OMPHasDeviceAddrClause *
   Create(const ASTContext &C, const OMPVarListLocTy &Locs,
          ArrayRef<Expr *> Vars, ArrayRef<ValueDecl *> Declarations,
          MappableExprComponentListsRef ComponentLists);
@@ -8306,7 +8307,7 @@ public:
   /// NumUniqueDeclarations: number of unique base declarations in this clause;
   /// 3) NumComponentLists: number of component lists in this clause; and 4)
   /// NumComponents: total number of expression components in the clause.
-  static OMPHasDeviceAddrClause *
+  CLANG_ABI static OMPHasDeviceAddrClause *
   CreateEmpty(const ASTContext &C, const OMPMappableExprListSizeTy &Sizes);
 
   child_range children() {
@@ -8382,7 +8383,7 @@ public:
   /// \param LParenLoc Location of '('.
   /// \param EndLoc Ending location of the clause.
   /// \param VL List of references to the variables.
-  static OMPNontemporalClause *
+  CLANG_ABI static OMPNontemporalClause *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation LParenLoc,
          SourceLocation EndLoc, ArrayRef<Expr *> VL);
 
@@ -8390,11 +8391,11 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of variables.
-  static OMPNontemporalClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPNontemporalClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   /// Sets the list of references to private copies created in private clauses.
   /// \param VL List of references.
-  void setPrivateRefs(ArrayRef<Expr *> VL);
+  CLANG_ABI void setPrivateRefs(ArrayRef<Expr *> VL);
 
   child_range children() {
     return child_range(reinterpret_cast<Stmt **>(varlist_begin()),
@@ -8592,7 +8593,7 @@ public:
   /// \param LParenLoc Location of '('.
   /// \param VarLoc Location of the interop variable.
   /// \param EndLoc Ending location of the clause.
-  static OMPInitClause *Create(const ASTContext &C, Expr *InteropVar,
+  CLANG_ABI static OMPInitClause *Create(const ASTContext &C, Expr *InteropVar,
                                OMPInteropInfo &InteropInfo,
                                SourceLocation StartLoc,
                                SourceLocation LParenLoc, SourceLocation VarLoc,
@@ -8602,7 +8603,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N Number of expression items.
-  static OMPInitClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPInitClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   /// Returns the location of the interop variable.
   SourceLocation getVarLoc() const { return VarLoc; }
@@ -8854,7 +8855,7 @@ public:
   /// Returns condition.
   Expr *getCondition() const { return getStmtAs<Expr>(); }
 
-  child_range used_children();
+  CLANG_ABI child_range used_children();
   const_child_range used_children() const {
     auto Children = const_cast<OMPNovariantsClause *>(this)->used_children();
     return const_child_range(Children.begin(), Children.end());
@@ -8900,7 +8901,7 @@ public:
   /// Returns condition.
   Expr *getCondition() const { return getStmtAs<Expr>(); }
 
-  child_range used_children();
+  CLANG_ABI child_range used_children();
   const_child_range used_children() const {
     auto Children = const_cast<OMPNocontextClause *>(this)->used_children();
     return const_child_range(Children.begin(), Children.end());
@@ -8980,7 +8981,7 @@ public:
   /// \param LParenLoc Location of '('.
   /// \param EndLoc Ending location of the clause.
   /// \param VL List of references to the original variables.
-  static OMPInclusiveClause *Create(const ASTContext &C,
+  CLANG_ABI static OMPInclusiveClause *Create(const ASTContext &C,
                                     SourceLocation StartLoc,
                                     SourceLocation LParenLoc,
                                     SourceLocation EndLoc, ArrayRef<Expr *> VL);
@@ -8989,7 +8990,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of variables.
-  static OMPInclusiveClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPInclusiveClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   child_range children() {
     return child_range(reinterpret_cast<Stmt **>(varlist_begin()),
@@ -9054,7 +9055,7 @@ public:
   /// \param LParenLoc Location of '('.
   /// \param EndLoc Ending location of the clause.
   /// \param VL List of references to the original variables.
-  static OMPExclusiveClause *Create(const ASTContext &C,
+  CLANG_ABI static OMPExclusiveClause *Create(const ASTContext &C,
                                     SourceLocation StartLoc,
                                     SourceLocation LParenLoc,
                                     SourceLocation EndLoc, ArrayRef<Expr *> VL);
@@ -9063,7 +9064,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of variables.
-  static OMPExclusiveClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPExclusiveClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   child_range children() {
     return child_range(reinterpret_cast<Stmt **>(varlist_begin()),
@@ -9168,7 +9169,7 @@ public:
   /// \param LParenLoc Location of '('.
   /// \param EndLoc Ending location of the clause.
   /// \param Data List of allocators.
-  static OMPUsesAllocatorsClause *
+  CLANG_ABI static OMPUsesAllocatorsClause *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation LParenLoc,
          SourceLocation EndLoc, ArrayRef<OMPUsesAllocatorsClause::Data> Data);
 
@@ -9176,7 +9177,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of allocators.
-  static OMPUsesAllocatorsClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPUsesAllocatorsClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   /// Returns the location of '('.
   SourceLocation getLParenLoc() const { return LParenLoc; }
@@ -9185,7 +9186,7 @@ public:
   unsigned getNumberOfAllocators() const { return NumOfAllocators; }
 
   /// Returns data for the specified allocator.
-  OMPUsesAllocatorsClause::Data getAllocatorData(unsigned I) const;
+  CLANG_ABI OMPUsesAllocatorsClause::Data getAllocatorData(unsigned I) const;
 
   // Iterators
   child_range children() {
@@ -9266,7 +9267,7 @@ public:
   /// \param ColonLoc Location of ':'.
   /// \param EndLoc Ending location of the clause.
   /// \param Locators List of locator items.
-  static OMPAffinityClause *Create(const ASTContext &C, SourceLocation StartLoc,
+  CLANG_ABI static OMPAffinityClause *Create(const ASTContext &C, SourceLocation StartLoc,
                                    SourceLocation LParenLoc,
                                    SourceLocation ColonLoc,
                                    SourceLocation EndLoc, Expr *Modifier,
@@ -9276,7 +9277,7 @@ public:
   ///
   /// \param C AST context.
   /// \param N The number of locator items.
-  static OMPAffinityClause *CreateEmpty(const ASTContext &C, unsigned N);
+  CLANG_ABI static OMPAffinityClause *CreateEmpty(const ASTContext &C, unsigned N);
 
   /// Gets affinity modifier.
   Expr *getModifier() { return getTrailingObjects()[varlist_size()]; }
@@ -9403,14 +9404,14 @@ public:
   /// \param StartLoc Starting location of the clause.
   /// \param LParenLoc Location of '('.
   /// \param EndLoc Ending location of the clause.
-  static OMPBindClause *Create(const ASTContext &C, OpenMPBindClauseKind K,
+  CLANG_ABI static OMPBindClause *Create(const ASTContext &C, OpenMPBindClauseKind K,
                                SourceLocation KLoc, SourceLocation StartLoc,
                                SourceLocation LParenLoc, SourceLocation EndLoc);
 
   /// Build an empty 'bind' clause.
   ///
   /// \param C AST context
-  static OMPBindClause *CreateEmpty(const ASTContext &C);
+  CLANG_ABI static OMPBindClause *CreateEmpty(const ASTContext &C);
 
   /// Returns the location of '('.
   SourceLocation getLParenLoc() const { return LParenLoc; }
@@ -9515,7 +9516,7 @@ class OMPTraitInfo {
 
 public:
   /// Reconstruct a (partial) OMPTraitInfo object from a mangled name.
-  OMPTraitInfo(StringRef MangledName);
+  CLANG_ABI OMPTraitInfo(StringRef MangledName);
 
   /// The outermost level of selector sets.
   llvm::SmallVector<OMPTraitSet, 2> Sets;
@@ -9537,11 +9538,11 @@ public:
   /// latter uses clang::Expr to store the score/condition while the former is
   /// independent of clang. Thus, expressions and conditions are evaluated in
   /// this method.
-  void getAsVariantMatchInfo(ASTContext &ASTCtx,
+  CLANG_ABI void getAsVariantMatchInfo(ASTContext &ASTCtx,
                              llvm::omp::VariantMatchInfo &VMI) const;
 
   /// Return a string representation identifying this context selector.
-  std::string getMangledName() const;
+  CLANG_ABI std::string getMangledName() const;
 
   /// Check the extension trait \p TP is active.
   bool isExtensionActive(llvm::omp::TraitProperty TP) {
@@ -9561,13 +9562,13 @@ public:
   }
 
   /// Print a human readable representation into \p OS.
-  void print(llvm::raw_ostream &OS, const PrintingPolicy &Policy) const;
+  CLANG_ABI void print(llvm::raw_ostream &OS, const PrintingPolicy &Policy) const;
 };
-llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const OMPTraitInfo &TI);
-llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const OMPTraitInfo *TI);
+CLANG_ABI llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const OMPTraitInfo &TI);
+CLANG_ABI llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const OMPTraitInfo *TI);
 
 /// Clang specific specialization of the OMPContext to lookup target features.
-struct TargetOMPContext final : public llvm::omp::OMPContext {
+struct CLANG_ABI TargetOMPContext final : public llvm::omp::OMPContext {
   TargetOMPContext(ASTContext &ASTCtx,
                    std::function<void(StringRef)> &&DiagUnknownTrait,
                    const FunctionDecl *CurrentFunctionDecl,
@@ -9614,13 +9615,13 @@ class OMPChildren final
       : NumClauses(NumClauses), NumChildren(NumChildren),
         HasAssociatedStmt(HasAssociatedStmt) {}
 
-  static size_t size(unsigned NumClauses, bool HasAssociatedStmt,
+  CLANG_ABI static size_t size(unsigned NumClauses, bool HasAssociatedStmt,
                      unsigned NumChildren);
 
   static OMPChildren *Create(void *Mem, ArrayRef<OMPClause *> Clauses);
   static OMPChildren *Create(void *Mem, ArrayRef<OMPClause *> Clauses, Stmt *S,
                              unsigned NumChildren = 0);
-  static OMPChildren *CreateEmpty(void *Mem, unsigned NumClauses,
+  CLANG_ABI static OMPChildren *CreateEmpty(void *Mem, unsigned NumClauses,
                                   bool HasAssociatedStmt = false,
                                   unsigned NumChildren = 0);
 
@@ -9634,13 +9635,13 @@ public:
     getTrailingObjects<Stmt *>()[NumChildren] = S;
   }
 
-  void setChildren(ArrayRef<Stmt *> Children);
+  CLANG_ABI void setChildren(ArrayRef<Stmt *> Children);
 
   /// Sets the list of variables for this clause.
   ///
   /// \param Clauses The list of clauses for the directive.
   ///
-  void setClauses(ArrayRef<OMPClause *> Clauses);
+  CLANG_ABI void setClauses(ArrayRef<OMPClause *> Clauses);
 
   /// Returns statement associated with the directive.
   const Stmt *getAssociatedStmt() const {
@@ -9696,7 +9697,7 @@ public:
         CaptureRegions);
   }
 
-  MutableArrayRef<Stmt *> getChildren();
+  CLANG_ABI MutableArrayRef<Stmt *> getChildren();
   ArrayRef<Stmt *> getChildren() const {
     return const_cast<OMPChildren *>(this)->getChildren();
   }
@@ -9839,7 +9840,7 @@ public:
   /// \param ColonLoc Location of ':'.
   /// \param VL List of references to the expressions.
   /// \param NumLoops Number of loops that associated with the clause.
-  static OMPDoacrossClause *
+  CLANG_ABI static OMPDoacrossClause *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation LParenLoc,
          SourceLocation EndLoc, OpenMPDoacrossClauseModifier DepType,
          SourceLocation DepLoc, SourceLocation ColonLoc, ArrayRef<Expr *> VL,
@@ -9850,7 +9851,7 @@ public:
   /// \param C AST context.
   /// \param N The number of expressions.
   /// \param NumLoops Number of loops that is associated with this clause.
-  static OMPDoacrossClause *CreateEmpty(const ASTContext &C, unsigned N,
+  CLANG_ABI static OMPDoacrossClause *CreateEmpty(const ASTContext &C, unsigned N,
                                         unsigned NumLoops);
 
   /// Get dependence type.
@@ -9866,11 +9867,11 @@ public:
   unsigned getNumLoops() const { return NumLoops; }
 
   /// Set the loop data.
-  void setLoopData(unsigned NumLoop, Expr *Cnt);
+  CLANG_ABI void setLoopData(unsigned NumLoop, Expr *Cnt);
 
   /// Get the loop data.
-  Expr *getLoopData(unsigned NumLoop);
-  const Expr *getLoopData(unsigned NumLoop) const;
+  CLANG_ABI Expr *getLoopData(unsigned NumLoop);
+  CLANG_ABI const Expr *getLoopData(unsigned NumLoop) const;
 
   child_range children() {
     return child_range(reinterpret_cast<Stmt **>(varlist_begin()),

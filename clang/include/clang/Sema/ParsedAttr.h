@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_SEMA_PARSEDATTR_H
 #define LLVM_CLANG_SEMA_PARSEDATTR_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/AttrSubjectMatchRules.h"
 #include "clang/Basic/AttributeCommonInfo.h"
 #include "clang/Basic/Diagnostic.h"
@@ -496,43 +497,43 @@ public:
 
   /// Check if the attribute has exactly as many args as Num. May output an
   /// error. Returns false if a diagnostic is produced.
-  bool checkExactlyNumArgs(class Sema &S, unsigned Num) const;
+  CLANG_ABI bool checkExactlyNumArgs(class Sema &S, unsigned Num) const;
   /// Check if the attribute has at least as many args as Num. May output an
   /// error. Returns false if a diagnostic is produced.
-  bool checkAtLeastNumArgs(class Sema &S, unsigned Num) const;
+  CLANG_ABI bool checkAtLeastNumArgs(class Sema &S, unsigned Num) const;
   /// Check if the attribute has at most as many args as Num. May output an
   /// error. Returns false if a diagnostic is produced.
-  bool checkAtMostNumArgs(class Sema &S, unsigned Num) const;
+  CLANG_ABI bool checkAtMostNumArgs(class Sema &S, unsigned Num) const;
 
-  bool isTargetSpecificAttr() const;
-  bool isTypeAttr() const;
-  bool isStmtAttr() const;
+  CLANG_ABI bool isTargetSpecificAttr() const;
+  CLANG_ABI bool isTypeAttr() const;
+  CLANG_ABI bool isStmtAttr() const;
 
-  bool hasCustomParsing() const;
-  bool acceptsExprPack() const;
-  bool isParamExpr(size_t N) const;
-  unsigned getMinArgs() const;
-  unsigned getMaxArgs() const;
-  unsigned getNumArgMembers() const;
-  bool hasVariadicArg() const;
-  void handleAttrWithDelayedArgs(Sema &S, Decl *D) const;
-  bool diagnoseAppertainsTo(class Sema &S, const Decl *D) const;
-  bool diagnoseAppertainsTo(class Sema &S, const Stmt *St) const;
-  bool diagnoseMutualExclusion(class Sema &S, const Decl *D) const;
+  CLANG_ABI bool hasCustomParsing() const;
+  CLANG_ABI bool acceptsExprPack() const;
+  CLANG_ABI bool isParamExpr(size_t N) const;
+  CLANG_ABI unsigned getMinArgs() const;
+  CLANG_ABI unsigned getMaxArgs() const;
+  CLANG_ABI unsigned getNumArgMembers() const;
+  CLANG_ABI bool hasVariadicArg() const;
+  CLANG_ABI void handleAttrWithDelayedArgs(Sema &S, Decl *D) const;
+  CLANG_ABI bool diagnoseAppertainsTo(class Sema &S, const Decl *D) const;
+  CLANG_ABI bool diagnoseAppertainsTo(class Sema &S, const Stmt *St) const;
+  CLANG_ABI bool diagnoseMutualExclusion(class Sema &S, const Decl *D) const;
   // This function stub exists for parity with the declaration checking code so
   // that checkCommonAttributeFeatures() can work generically on declarations
   // or statements.
   bool diagnoseMutualExclusion(class Sema &S, const Stmt *St) const {
     return true;
   }
-  bool appliesToDecl(const Decl *D, attr::SubjectMatchRule MatchRule) const;
-  void getMatchRules(const LangOptions &LangOpts,
+  CLANG_ABI bool appliesToDecl(const Decl *D, attr::SubjectMatchRule MatchRule) const;
+  CLANG_ABI void getMatchRules(const LangOptions &LangOpts,
                      SmallVectorImpl<std::pair<attr::SubjectMatchRule, bool>>
                          &MatchRules) const;
-  bool diagnoseLangOpts(class Sema &S) const;
-  bool existsInTarget(const TargetInfo &Target) const;
-  bool isKnownToGCC() const;
-  bool isSupportedByPragmaAttribute() const;
+  CLANG_ABI bool diagnoseLangOpts(class Sema &S) const;
+  CLANG_ABI bool existsInTarget(const TargetInfo &Target) const;
+  CLANG_ABI bool isKnownToGCC() const;
+  CLANG_ABI bool isSupportedByPragmaAttribute() const;
 
   /// Returns whether a [[]] attribute, if specified ahead of a declaration,
   /// should be applied to the decl-specifier-seq instead (i.e. whether it
@@ -544,14 +545,14 @@ public:
   /// supporting this behavior.
   ///
   /// This may only be called if isStandardAttributeSyntax() returns true.
-  bool slidesFromDeclToDeclSpecLegacyBehavior() const;
+  CLANG_ABI bool slidesFromDeclToDeclSpecLegacyBehavior() const;
 
   /// If the parsed attribute has a semantic equivalent, and it would
   /// have a semantic Spelling enumeration (due to having semantically-distinct
   /// spelling variations), return the value of that semantic spelling. If the
   /// parsed attribute does not have a semantic equivalent, or would not have
   /// a Spelling enumeration, the value UINT_MAX is returned.
-  unsigned getSemanticSpelling() const;
+  CLANG_ABI unsigned getSemanticSpelling() const;
 
   /// If this is an OpenCL address space attribute, returns its representation
   /// in LangAS, otherwise returns default address space.
@@ -657,7 +658,7 @@ private:
   friend class AttributePool;
 
   /// Allocate an attribute of the given size.
-  void *allocate(size_t size);
+  CLANG_ABI void *allocate(size_t size);
 
   void deallocate(ParsedAttr *AL);
 
@@ -666,11 +667,11 @@ private:
   /// against reclaiming things which were not actually allocated
   /// with the allocator, although of course it's important to make
   /// sure that their allocator lives at least as long as this one.
-  void reclaimPool(AttributePool &head);
+  CLANG_ABI void reclaimPool(AttributePool &head);
 
 public:
-  AttributeFactory();
-  ~AttributeFactory();
+  CLANG_ABI AttributeFactory();
+  CLANG_ABI ~AttributeFactory();
 };
 
 class ParsedAttributesView;
@@ -695,7 +696,7 @@ class AttributePool {
     Attrs.erase(llvm::find(Attrs, attr));
   }
 
-  void takePool(AttributePool &pool);
+  CLANG_ABI void takePool(AttributePool &pool);
 
 public:
   /// Create a new pool for a factory.
@@ -730,7 +731,7 @@ public:
 
   /// Removes the attributes from \c List, which are owned by \c Pool, and adds
   /// them at the end of this \c AttributePool.
-  void takeFrom(ParsedAttributesView &List, AttributePool &Pool);
+  CLANG_ABI void takeFrom(ParsedAttributesView &List, AttributePool &Pool);
 
   ParsedAttr *create(IdentifierInfo *attrName, SourceRange attrRange,
                      AttributeScopeInfo scope, ArgsUnion *args,
@@ -1055,7 +1056,7 @@ private:
 /// Consumes the attributes from `Second` and concatenates them
 /// at the end of `First`. Sets `First.Range`
 /// to the combined range of `First` and `Second`.
-void takeAndConcatenateAttrs(ParsedAttributes &First,
+CLANG_ABI void takeAndConcatenateAttrs(ParsedAttributes &First,
                              ParsedAttributes &&Second);
 
 /// These constants match the enumerated choices of

@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_SEMA_TYPOCORRECTION_H
 #define LLVM_CLANG_SEMA_TYPOCORRECTION_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/DeclarationName.h"
 #include "clang/Basic/LLVM.h"
@@ -176,9 +177,9 @@ public:
 
   /// Add the given NamedDecl to the list of NamedDecls that are the
   /// declarations associated with the DeclarationName of this TypoCorrection
-  void addCorrectionDecl(NamedDecl *CDecl);
+  CLANG_ABI void addCorrectionDecl(NamedDecl *CDecl);
 
-  std::string getAsString(const LangOptions &LO) const;
+  CLANG_ABI std::string getAsString(const LangOptions &LO) const;
 
   std::string getQuoted(const LangOptions &LO) const {
     return "'" + getAsString(LO) + "'";
@@ -278,7 +279,7 @@ private:
 
 /// Base class for callback objects used by Sema::CorrectTypo to check
 /// the validity of a potential typo correction.
-class CorrectionCandidateCallback {
+class CLANG_ABI CorrectionCandidateCallback {
 public:
   static const unsigned InvalidDistance = TypoCorrection::InvalidDistance;
 
@@ -380,7 +381,7 @@ public:
 // Callback class to limit the allowed keywords and to only accept typo
 // corrections that are keywords or whose decls refer to functions (or template
 // functions) that accept the given number of arguments.
-class FunctionCallFilterCCC : public CorrectionCandidateCallback {
+class CLANG_ABI FunctionCallFilterCCC : public CorrectionCandidateCallback {
 public:
   FunctionCallFilterCCC(Sema &SemaRef, unsigned NumArgs,
                         bool HasExplicitTemplateArgs,

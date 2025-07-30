@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_DRIVER_DISTRO_H
 #define LLVM_CLANG_DRIVER_DISTRO_H
 
+#include "clang/Support/Compiler.h"
 #include "llvm/Support/VirtualFileSystem.h"
 #include "llvm/TargetParser/Triple.h"
 
@@ -102,7 +103,7 @@ public:
   Distro(DistroType D) : DistroVal(D) {}
 
   /// Detects the distribution using specified VFS.
-  explicit Distro(llvm::vfs::FileSystem &VFS, const llvm::Triple &TargetOrHost);
+  CLANG_ABI explicit Distro(llvm::vfs::FileSystem &VFS, const llvm::Triple &TargetOrHost);
 
   bool operator==(const Distro &Other) const {
     return DistroVal == Other.DistroVal;

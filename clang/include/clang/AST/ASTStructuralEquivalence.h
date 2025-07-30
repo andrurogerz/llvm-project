@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_AST_ASTSTRUCTURALEQUIVALENCE_H
 #define LLVM_CLANG_AST_ASTSTRUCTURALEQUIVALENCE_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/DeclBase.h"
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/DenseSet.h"
@@ -93,8 +94,8 @@ struct StructuralEquivalenceContext {
         ErrorOnTagTypeMismatch(ErrorOnTagTypeMismatch), Complain(Complain),
         IgnoreTemplateParmDepth(IgnoreTemplateParmDepth) {}
 
-  DiagnosticBuilder Diag1(SourceLocation Loc, unsigned DiagID);
-  DiagnosticBuilder Diag2(SourceLocation Loc, unsigned DiagID);
+  CLANG_ABI DiagnosticBuilder Diag1(SourceLocation Loc, unsigned DiagID);
+  CLANG_ABI DiagnosticBuilder Diag2(SourceLocation Loc, unsigned DiagID);
 
   /// Determine whether the two declarations are structurally
   /// equivalent.
@@ -102,21 +103,21 @@ struct StructuralEquivalenceContext {
   /// ASTStructuralEquivalence.cpp) must never call this function because that
   /// will wreak havoc the internal state (\c DeclsToCheck and
   /// \c VisitedDecls members) and can cause faulty equivalent results.
-  bool IsEquivalent(Decl *D1, Decl *D2);
+  CLANG_ABI bool IsEquivalent(Decl *D1, Decl *D2);
 
   /// Determine whether the two types are structurally equivalent.
   /// Implementation functions (all static functions in
   /// ASTStructuralEquivalence.cpp) must never call this function because that
   /// will wreak havoc the internal state (\c DeclsToCheck and
   /// \c VisitedDecls members) and can cause faulty equivalent results.
-  bool IsEquivalent(QualType T1, QualType T2);
+  CLANG_ABI bool IsEquivalent(QualType T1, QualType T2);
 
   /// Determine whether the two statements are structurally equivalent.
   /// Implementation functions (all static functions in
   /// ASTStructuralEquivalence.cpp) must never call this function because that
   /// will wreak havoc the internal state (\c DeclsToCheck and
   /// \c VisitedDecls members) and can cause faulty equivalent results.
-  bool IsEquivalent(Stmt *S1, Stmt *S2);
+  CLANG_ABI bool IsEquivalent(Stmt *S1, Stmt *S2);
 
   /// Find the index of the given anonymous struct/union within its
   /// context.
@@ -128,11 +129,11 @@ struct StructuralEquivalenceContext {
   ///
   /// FIXME: This is needed by ASTImporter and ASTStructureEquivalence. It
   /// probably makes more sense in some other common place then here.
-  static UnsignedOrNone findUntaggedStructOrUnionIndex(RecordDecl *Anon);
+  CLANG_ABI static UnsignedOrNone findUntaggedStructOrUnionIndex(RecordDecl *Anon);
 
   // If ErrorOnTagTypeMismatch is set, return the error, otherwise get the
   // relevant warning for the input error diagnostic.
-  unsigned getApplicableDiagnostic(unsigned ErrorDiagnostic);
+  CLANG_ABI unsigned getApplicableDiagnostic(unsigned ErrorDiagnostic);
 
 private:
   /// Finish checking all of the structural equivalences.

@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_TOOLING_TRANSFORMER_TRANSFORMER_H_
 #define LLVM_CLANG_TOOLING_TRANSFORMER_TRANSFORMER_H_
 
+#include "clang/Support/Compiler.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/Tooling/Refactoring/AtomicChange.h"
 #include "clang/Tooling/Transformer/RewriteRule.h"
@@ -26,7 +27,7 @@ class TransformerImpl {
 public:
   virtual ~TransformerImpl() = default;
 
-  void onMatch(const ast_matchers::MatchFinder::MatchResult &Result);
+  CLANG_ABI void onMatch(const ast_matchers::MatchFinder::MatchResult &Result);
 
   virtual std::vector<ast_matchers::internal::DynTypedMatcher>
   buildMatchers() const = 0;
@@ -34,7 +35,7 @@ public:
 protected:
   /// Converts a set of \c Edit into a \c AtomicChange per file modified.
   /// Returns an error if the edits fail to compose, e.g. overlapping edits.
-  static llvm::Expected<llvm::SmallVector<AtomicChange, 1>>
+  CLANG_ABI static llvm::Expected<llvm::SmallVector<AtomicChange, 1>>
   convertToAtomicChanges(const llvm::SmallVectorImpl<transformer::Edit> &Edits,
                          const ast_matchers::MatchFinder::MatchResult &Result);
 
@@ -55,7 +56,7 @@ template <> struct TransformerResult<void> {
 
 /// Handles the matcher and callback registration for a single `RewriteRule`, as
 /// defined by the arguments of the constructor.
-class Transformer : public ast_matchers::MatchFinder::MatchCallback {
+class CLANG_ABI Transformer : public ast_matchers::MatchFinder::MatchCallback {
 public:
   /// Provides the set of changes to the consumer.  The callback is free to move
   /// or destructively consume the changes as needed.

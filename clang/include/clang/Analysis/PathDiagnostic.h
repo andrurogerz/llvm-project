@@ -13,6 +13,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_PATHDIAGNOSTIC_H
 #define LLVM_CLANG_ANALYSIS_PATHDIAGNOSTIC_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Stmt.h"
 #include "clang/Analysis/AnalysisDeclContext.h"
 #include "clang/Basic/LLVM.h"
@@ -89,7 +90,7 @@ struct PathDiagnosticConsumerOptions {
   bool ShouldDisplayDiagnosticName = false;
 };
 
-class PathDiagnosticConsumer {
+class CLANG_ABI PathDiagnosticConsumer {
 public:
   class PDFileEntry : public llvm::FoldingSetNode {
   public:
@@ -112,15 +113,15 @@ public:
     llvm::FoldingSet<PDFileEntry> Set;
 
   public:
-    ~FilesMade();
+    CLANG_ABI ~FilesMade();
 
     bool empty() const { return Set.empty(); }
 
-    void addDiagnostic(const PathDiagnostic &PD,
+    CLANG_ABI void addDiagnostic(const PathDiagnostic &PD,
                        StringRef ConsumerName,
                        StringRef fileName);
 
-    PDFileEntry::ConsumerFiles *getFiles(const PathDiagnostic &PD);
+    CLANG_ABI PDFileEntry::ConsumerFiles *getFiles(const PathDiagnostic &PD);
   };
 
 private:
@@ -205,11 +206,11 @@ private:
   PathDiagnosticLocation(SourceLocation L, const SourceManager &sm, Kind kind)
       : K(kind), SM(&sm), Loc(genLocation(L)), Range(genRange()) {}
 
-  FullSourceLoc genLocation(
+  CLANG_ABI FullSourceLoc genLocation(
       SourceLocation L = SourceLocation(),
       LocationOrAnalysisDeclContext LAC = (AnalysisDeclContext *)nullptr) const;
 
-  PathDiagnosticRange genRange(
+  CLANG_ABI PathDiagnosticRange genRange(
       LocationOrAnalysisDeclContext LAC = (AnalysisDeclContext *)nullptr) const;
 
 public:
@@ -251,7 +252,7 @@ public:
   }
 
   /// Create a location for the beginning of the declaration.
-  static PathDiagnosticLocation createBegin(const Decl *D,
+  CLANG_ABI static PathDiagnosticLocation createBegin(const Decl *D,
                                             const SourceManager &SM);
 
   /// Create a location for the beginning of the declaration.
@@ -264,7 +265,7 @@ public:
   }
 
   /// Create a location for the beginning of the statement.
-  static PathDiagnosticLocation createBegin(const Stmt *S,
+  CLANG_ABI static PathDiagnosticLocation createBegin(const Stmt *S,
                                             const SourceManager &SM,
                                             const LocationOrAnalysisDeclContext LAC);
 
@@ -272,55 +273,55 @@ public:
   ///
   /// If the statement is a CompoundStatement, the location will point to the
   /// closing brace instead of following it.
-  static PathDiagnosticLocation createEnd(const Stmt *S,
+  CLANG_ABI static PathDiagnosticLocation createEnd(const Stmt *S,
                                           const SourceManager &SM,
                                        const LocationOrAnalysisDeclContext LAC);
 
   /// Create the location for the operator of the binary expression.
   /// Assumes the statement has a valid location.
-  static PathDiagnosticLocation createOperatorLoc(const BinaryOperator *BO,
+  CLANG_ABI static PathDiagnosticLocation createOperatorLoc(const BinaryOperator *BO,
                                                   const SourceManager &SM);
-  static PathDiagnosticLocation createConditionalColonLoc(
+  CLANG_ABI static PathDiagnosticLocation createConditionalColonLoc(
                                                   const ConditionalOperator *CO,
                                                   const SourceManager &SM);
 
   /// For member expressions, return the location of the '.' or '->'.
   /// Assumes the statement has a valid location.
-  static PathDiagnosticLocation createMemberLoc(const MemberExpr *ME,
+  CLANG_ABI static PathDiagnosticLocation createMemberLoc(const MemberExpr *ME,
                                                 const SourceManager &SM);
 
   /// Create a location for the beginning of the compound statement.
   /// Assumes the statement has a valid location.
-  static PathDiagnosticLocation createBeginBrace(const CompoundStmt *CS,
+  CLANG_ABI static PathDiagnosticLocation createBeginBrace(const CompoundStmt *CS,
                                                  const SourceManager &SM);
 
   /// Create a location for the end of the compound statement.
   /// Assumes the statement has a valid location.
-  static PathDiagnosticLocation createEndBrace(const CompoundStmt *CS,
+  CLANG_ABI static PathDiagnosticLocation createEndBrace(const CompoundStmt *CS,
                                                const SourceManager &SM);
 
   /// Create a location for the beginning of the enclosing declaration body.
   /// Defaults to the beginning of the first statement in the declaration body.
-  static PathDiagnosticLocation createDeclBegin(const LocationContext *LC,
+  CLANG_ABI static PathDiagnosticLocation createDeclBegin(const LocationContext *LC,
                                                 const SourceManager &SM);
 
   /// Constructs a location for the end of the enclosing declaration body.
   /// Defaults to the end of brace.
-  static PathDiagnosticLocation createDeclEnd(const LocationContext *LC,
+  CLANG_ABI static PathDiagnosticLocation createDeclEnd(const LocationContext *LC,
                                                    const SourceManager &SM);
 
   /// Create a location corresponding to the given valid ProgramPoint.
-  static PathDiagnosticLocation create(const ProgramPoint &P,
+  CLANG_ABI static PathDiagnosticLocation create(const ProgramPoint &P,
                                        const SourceManager &SMng);
 
   /// Convert the given location into a single kind location.
-  static PathDiagnosticLocation createSingleLocation(
+  CLANG_ABI static PathDiagnosticLocation createSingleLocation(
                                              const PathDiagnosticLocation &PDL);
 
   /// Construct a source location that corresponds to either the beginning
   /// or the end of the given statement, or a nearby valid source location
   /// if the statement does not have a valid source location of its own.
-  static SourceLocation
+  CLANG_ABI static SourceLocation
   getValidSourceLocation(const Stmt *S, LocationOrAnalysisDeclContext LAC,
                          bool UseEndOfStatement = false);
 
@@ -361,13 +362,13 @@ public:
     *this = PathDiagnosticLocation();
   }
 
-  void flatten();
+  CLANG_ABI void flatten();
 
   const SourceManager& getManager() const { assert(isValid()); return *SM; }
 
-  void Profile(llvm::FoldingSetNodeID &ID) const;
+  CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID) const;
 
-  void dump() const;
+  CLANG_ABI void dump() const;
 };
 
 class PathDiagnosticLocationPair {
@@ -400,7 +401,7 @@ public:
 // Path "pieces" for path-sensitive diagnostics.
 //===----------------------------------------------------------------------===//
 
-class PathDiagnosticPiece: public llvm::FoldingSetNode {
+class CLANG_ABI PathDiagnosticPiece: public llvm::FoldingSetNode {
 public:
   enum Kind { ControlFlow, Event, Macro, Call, Note, PopUp };
   enum DisplayHint { Above, Below };
@@ -492,7 +493,7 @@ public:
 using PathDiagnosticPieceRef = std::shared_ptr<PathDiagnosticPiece>;
 
 class PathPieces : public std::list<PathDiagnosticPieceRef> {
-  void flattenTo(PathPieces &Primary, PathPieces &Current,
+  CLANG_ABI void flattenTo(PathPieces &Primary, PathPieces &Current,
                  bool ShouldFlattenMacros) const;
 
 public:
@@ -502,10 +503,10 @@ public:
     return Result;
   }
 
-  void dump() const;
+  CLANG_ABI void dump() const;
 };
 
-class PathDiagnosticSpotPiece : public PathDiagnosticPiece {
+class CLANG_ABI PathDiagnosticSpotPiece : public PathDiagnosticPiece {
 private:
   PathDiagnosticLocation Pos;
 
@@ -531,7 +532,7 @@ public:
   }
 };
 
-class PathDiagnosticEventPiece : public PathDiagnosticSpotPiece {
+class CLANG_ABI PathDiagnosticEventPiece : public PathDiagnosticSpotPiece {
   std::optional<bool> IsPrunable;
 
 public:
@@ -559,7 +560,7 @@ public:
   }
 };
 
-class PathDiagnosticCallPiece : public PathDiagnosticPiece {
+class CLANG_ABI PathDiagnosticCallPiece : public PathDiagnosticPiece {
   const Decl *Caller;
   const Decl *Callee = nullptr;
 
@@ -629,7 +630,7 @@ public:
   }
 };
 
-class PathDiagnosticControlFlowPiece : public PathDiagnosticPiece {
+class CLANG_ABI PathDiagnosticControlFlowPiece : public PathDiagnosticPiece {
   std::vector<PathDiagnosticLocationPair> LPairs;
 
 public:
@@ -699,7 +700,7 @@ public:
   void Profile(llvm::FoldingSetNodeID &ID) const override;
 };
 
-class PathDiagnosticMacroPiece : public PathDiagnosticSpotPiece {
+class CLANG_ABI PathDiagnosticMacroPiece : public PathDiagnosticSpotPiece {
 public:
   PathDiagnosticMacroPiece(const PathDiagnosticLocation &pos)
       : PathDiagnosticSpotPiece(pos, "", Macro) {}
@@ -722,7 +723,7 @@ public:
   void Profile(llvm::FoldingSetNodeID &ID) const override;
 };
 
-class PathDiagnosticNotePiece: public PathDiagnosticSpotPiece {
+class CLANG_ABI PathDiagnosticNotePiece: public PathDiagnosticSpotPiece {
 public:
   PathDiagnosticNotePiece(const PathDiagnosticLocation &Pos, StringRef S,
                           bool AddPosRange = true)
@@ -738,7 +739,7 @@ public:
   void Profile(llvm::FoldingSetNodeID &ID) const override;
 };
 
-class PathDiagnosticPopUpPiece: public PathDiagnosticSpotPiece {
+class CLANG_ABI PathDiagnosticPopUpPiece: public PathDiagnosticSpotPiece {
 public:
   PathDiagnosticPopUpPiece(const PathDiagnosticLocation &Pos, StringRef S,
                            bool AddPosRange = true)
@@ -788,12 +789,12 @@ class PathDiagnostic : public llvm::FoldingSetNode {
 
 public:
   PathDiagnostic() = delete;
-  PathDiagnostic(StringRef CheckerName, const Decl *DeclWithIssue,
+  CLANG_ABI PathDiagnostic(StringRef CheckerName, const Decl *DeclWithIssue,
                  StringRef bugtype, StringRef verboseDesc, StringRef shortDesc,
                  StringRef category, PathDiagnosticLocation LocationToUnique,
                  const Decl *DeclToUnique, const Decl *AnalysisEntryPoint,
                  std::unique_ptr<FilesToLineNumsMap> ExecutedLines);
-  ~PathDiagnostic();
+  CLANG_ABI ~PathDiagnostic();
 
   const PathPieces &path;
 
@@ -811,7 +812,7 @@ public:
   }
 
   /// Return the unrolled size of the path.
-  unsigned full_size();
+  CLANG_ABI unsigned full_size();
 
   void pushActivePath(PathPieces *p) { pathStack.push_back(p); }
   void popActivePath() { if (!pathStack.empty()) pathStack.pop_back(); }
@@ -895,13 +896,13 @@ public:
   ///
   /// This can be used to merge diagnostics that refer to the same issue
   /// along different paths.
-  void Profile(llvm::FoldingSetNodeID &ID) const;
+  CLANG_ABI void Profile(llvm::FoldingSetNodeID &ID) const;
 
   /// Profiles the diagnostic, including its path.
   ///
   /// Two diagnostics with the same issue along different paths will generate
   /// different profiles.
-  void FullProfile(llvm::FoldingSetNodeID &ID) const;
+  CLANG_ABI void FullProfile(llvm::FoldingSetNodeID &ID) const;
 };
 
 } // namespace ento

@@ -31,6 +31,7 @@
 #ifndef LLVM_CLANG_BASIC_SARIF_H
 #define LLVM_CLANG_BASIC_SARIF_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/SourceLocation.h"
 #include "clang/Basic/Version.h"
 #include "llvm/ADT/ArrayRef.h"
@@ -433,7 +434,7 @@ public:
 
   /// Create a new run with which any upcoming analysis will be associated.
   /// Each run requires specifying the tool that is generating reporting items.
-  void createRun(const llvm::StringRef ShortToolName,
+  CLANG_ABI void createRun(const llvm::StringRef ShortToolName,
                  const llvm::StringRef LongToolName,
                  const llvm::StringRef ToolVersion = CLANG_VERSION_STRING);
 
@@ -445,7 +446,7 @@ public:
   ///
   /// Calling \ref endRun before associating a run through \ref createRun leads
   /// to undefined behaviour.
-  void endRun();
+  CLANG_ABI void endRun();
 
   /// Associate the given rule with the current run.
   ///
@@ -457,7 +458,7 @@ public:
   /// \pre
   /// There must be a run associated with the document, failing to do so will
   /// cause undefined behaviour.
-  size_t createRule(const SarifRule &Rule);
+  CLANG_ABI size_t createRule(const SarifRule &Rule);
 
   /// Append a new result to the currently in-flight run.
   ///
@@ -468,12 +469,12 @@ public:
   /// \c RuleIdx used to create the result must correspond to a rule known by
   /// the SARIF document. It must be the value returned by a previous call
   /// to \ref createRule.
-  void appendResult(const SarifResult &SarifResult);
+  CLANG_ABI void appendResult(const SarifResult &SarifResult);
 
   /// Return the SARIF document in its current state.
   /// Calling this will trigger a copy of the internal state including all
   /// reported diagnostics, resulting in an expensive call.
-  llvm::json::Object createDocument();
+  CLANG_ABI llvm::json::Object createDocument();
 
 private:
   /// Source Manager to use for the current SARIF document.

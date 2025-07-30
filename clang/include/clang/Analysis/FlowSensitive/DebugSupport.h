@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_DEBUGSUPPORT_H_
 #define LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_DEBUGSUPPORT_H_
 
+#include "clang/Support/Compiler.h"
 #include <string>
 #include <vector>
 
@@ -25,10 +26,10 @@ namespace clang {
 namespace dataflow {
 
 /// Returns a string representation of a value kind.
-llvm::StringRef debugString(Value::Kind Kind);
+CLANG_ABI llvm::StringRef debugString(Value::Kind Kind);
 
 /// Returns a string representation of the result status of a SAT check.
-llvm::StringRef debugString(Solver::Result::Status Status);
+CLANG_ABI llvm::StringRef debugString(Solver::Result::Status Status);
 
 } // namespace dataflow
 } // namespace clang

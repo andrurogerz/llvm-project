@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_AST_ASTTYPETRAITS_H
 #define LLVM_CLANG_AST_ASTTYPETRAITS_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTFwd.h"
 #include "clang/AST/DeclCXX.h"
 #include "clang/AST/LambdaCapture.h"
@@ -60,13 +61,13 @@ public:
 
   /// \{
   /// Construct an identifier for the dynamic type of the node
-  static ASTNodeKind getFromNode(const Decl &D);
-  static ASTNodeKind getFromNode(const Stmt &S);
-  static ASTNodeKind getFromNode(const Type &T);
-  static ASTNodeKind getFromNode(const TypeLoc &T);
-  static ASTNodeKind getFromNode(const LambdaCapture &L);
-  static ASTNodeKind getFromNode(const OMPClause &C);
-  static ASTNodeKind getFromNode(const Attr &A);
+  CLANG_ABI static ASTNodeKind getFromNode(const Decl &D);
+  CLANG_ABI static ASTNodeKind getFromNode(const Stmt &S);
+  CLANG_ABI static ASTNodeKind getFromNode(const Type &T);
+  CLANG_ABI static ASTNodeKind getFromNode(const TypeLoc &T);
+  CLANG_ABI static ASTNodeKind getFromNode(const LambdaCapture &L);
+  CLANG_ABI static ASTNodeKind getFromNode(const OMPClause &C);
+  CLANG_ABI static ASTNodeKind getFromNode(const Attr &A);
   /// \}
 
   /// Returns \c true if \c this and \c Other represent the same kind.
@@ -78,15 +79,15 @@ public:
   constexpr bool isNone() const { return KindId == NKI_None; }
 
   /// Returns \c true if \c this is a base kind of (or same as) \c Other.
-  bool isBaseOf(ASTNodeKind Other) const;
+  CLANG_ABI bool isBaseOf(ASTNodeKind Other) const;
 
   /// Returns \c true if \c this is a base kind of (or same as) \c Other.
   /// \param Distance If non-null, used to return the distance between \c this
   /// and \c Other in the class hierarchy.
-  bool isBaseOf(ASTNodeKind Other, unsigned *Distance) const;
+  CLANG_ABI bool isBaseOf(ASTNodeKind Other, unsigned *Distance) const;
 
   /// String representation of the kind.
-  StringRef asStringRef() const;
+  CLANG_ABI StringRef asStringRef() const;
 
   /// Strict weak ordering for ASTNodeKind.
   constexpr bool operator<(const ASTNodeKind &Other) const {
@@ -96,15 +97,15 @@ public:
   /// Return the most derived type between \p Kind1 and \p Kind2.
   ///
   /// Return ASTNodeKind() if they are not related.
-  static ASTNodeKind getMostDerivedType(ASTNodeKind Kind1, ASTNodeKind Kind2);
+  CLANG_ABI static ASTNodeKind getMostDerivedType(ASTNodeKind Kind1, ASTNodeKind Kind2);
 
   /// Return the most derived common ancestor between Kind1 and Kind2.
   ///
   /// Return ASTNodeKind() if they are not related.
-  static ASTNodeKind getMostDerivedCommonAncestor(ASTNodeKind Kind1,
+  CLANG_ABI static ASTNodeKind getMostDerivedCommonAncestor(ASTNodeKind Kind1,
                                                   ASTNodeKind Kind2);
 
-  ASTNodeKind getCladeKind() const;
+  CLANG_ABI ASTNodeKind getCladeKind() const;
 
   /// Hooks for using ASTNodeKind as a key in a DenseMap.
   struct DenseMapInfo {
@@ -300,14 +301,14 @@ public:
   }
 
   /// Prints the node to the given output stream.
-  void print(llvm::raw_ostream &OS, const PrintingPolicy &PP) const;
+  CLANG_ABI void print(llvm::raw_ostream &OS, const PrintingPolicy &PP) const;
 
   /// Dumps the node to the given output stream.
-  void dump(llvm::raw_ostream &OS, const ASTContext &Context) const;
+  CLANG_ABI void dump(llvm::raw_ostream &OS, const ASTContext &Context) const;
 
   /// For nodes which represent textual entities in the source code,
   /// return their SourceRange.  For all other nodes, return SourceRange().
-  SourceRange getSourceRange() const;
+  CLANG_ABI SourceRange getSourceRange() const;
 
   /// @{
   /// Imposes an order on \c DynTypedNode.

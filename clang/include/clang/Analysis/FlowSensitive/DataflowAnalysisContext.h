@@ -15,6 +15,7 @@
 #ifndef LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_DATAFLOWANALYSISCONTEXT_H
 #define LLVM_CLANG_ANALYSIS_FLOWSENSITIVE_DATAFLOWANALYSISCONTEXT_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/Decl.h"
 #include "clang/AST/Expr.h"
 #include "clang/AST/TypeOrdering.h"
@@ -80,7 +81,7 @@ public:
                                          /*Logger=*/nullptr})
       : DataflowAnalysisContext(S, nullptr, Opts) {}
 
-  ~DataflowAnalysisContext();
+  CLANG_ABI ~DataflowAnalysisContext();
 
   /// Sets a callback that returns the names and types of the synthetic fields
   /// to add to a `RecordStorageLocation` of a given type.
@@ -102,7 +103,7 @@ public:
   /// Returns a new storage location appropriate for `Type`.
   ///
   /// A null `Type` is interpreted as the pointee type of `std::nullptr_t`.
-  StorageLocation &createStorageLocation(QualType Type);
+  CLANG_ABI StorageLocation &createStorageLocation(QualType Type);
 
   /// Creates a `RecordStorageLocation` for the given type and with the given
   /// fields.
@@ -113,20 +114,20 @@ public:
   ///  `getModeledFields(Type)`.
   ///  `SyntheticFields` must contain exactly the fields returned by
   ///  `getSyntheticFields(Type)`.
-  RecordStorageLocation &createRecordStorageLocation(
+  CLANG_ABI RecordStorageLocation &createRecordStorageLocation(
       QualType Type, RecordStorageLocation::FieldToLoc FieldLocs,
       RecordStorageLocation::SyntheticFieldMap SyntheticFields);
 
   /// Returns a stable storage location for `D`.
-  StorageLocation &getStableStorageLocation(const ValueDecl &D);
+  CLANG_ABI StorageLocation &getStableStorageLocation(const ValueDecl &D);
 
   /// Returns a stable storage location for `E`.
-  StorageLocation &getStableStorageLocation(const Expr &E);
+  CLANG_ABI StorageLocation &getStableStorageLocation(const Expr &E);
 
   /// Returns a pointer value that represents a null pointer. Calls with
   /// `PointeeType` that are canonically equivalent will return the same result.
   /// A null `PointeeType` can be used for the pointee of `std::nullptr_t`.
-  PointerValue &getOrCreateNullPointerValue(QualType PointeeType);
+  CLANG_ABI PointerValue &getOrCreateNullPointerValue(QualType PointeeType);
 
   /// Adds `Constraint` to current and future flow conditions in this context.
   ///
@@ -135,43 +136,43 @@ public:
   /// Information can be added eagerly (when analysis begins), or lazily (e.g.
   /// when values are first used). The analysis must be careful that the same
   /// information is added regardless of which order blocks are analyzed in.
-  void addInvariant(const Formula &Constraint);
+  CLANG_ABI void addInvariant(const Formula &Constraint);
 
   /// Adds `Constraint` to the flow condition identified by `Token`.
-  void addFlowConditionConstraint(Atom Token, const Formula &Constraint);
+  CLANG_ABI void addFlowConditionConstraint(Atom Token, const Formula &Constraint);
 
   /// Creates a new flow condition with the same constraints as the flow
   /// condition identified by `Token` and returns its token.
-  Atom forkFlowCondition(Atom Token);
+  CLANG_ABI Atom forkFlowCondition(Atom Token);
 
   /// Creates a new flow condition that represents the disjunction of the flow
   /// conditions identified by `FirstToken` and `SecondToken`, and returns its
   /// token.
-  Atom joinFlowConditions(Atom FirstToken, Atom SecondToken);
+  CLANG_ABI Atom joinFlowConditions(Atom FirstToken, Atom SecondToken);
 
   /// Returns true if the constraints of the flow condition identified by
   /// `Token` imply that `F` is true.
   /// Returns false if the flow condition does not imply `F` or if the solver
   /// times out.
-  bool flowConditionImplies(Atom Token, const Formula &F);
+  CLANG_ABI bool flowConditionImplies(Atom Token, const Formula &F);
 
   /// Returns true if the constraints of the flow condition identified by
   /// `Token` still allow `F` to be true.
   /// Returns false if the flow condition implies that `F` is false or if the
   /// solver times out.
-  bool flowConditionAllows(Atom Token, const Formula &F);
+  CLANG_ABI bool flowConditionAllows(Atom Token, const Formula &F);
 
   /// Returns true if `Val1` is equivalent to `Val2`.
   /// Note: This function doesn't take into account constraints on `Val1` and
   /// `Val2` imposed by the flow condition.
-  bool equivalentFormulas(const Formula &Val1, const Formula &Val2);
+  CLANG_ABI bool equivalentFormulas(const Formula &Val1, const Formula &Val2);
 
-  LLVM_DUMP_METHOD void dumpFlowCondition(Atom Token,
+  LLVM_DUMP_METHOD CLANG_ABI void dumpFlowCondition(Atom Token,
                                           llvm::raw_ostream &OS = llvm::dbgs());
 
   /// Returns the `AdornedCFG` registered for `F`, if any. Otherwise,
   /// returns null.
-  const AdornedCFG *getAdornedCFG(const FunctionDecl *F);
+  CLANG_ABI const AdornedCFG *getAdornedCFG(const FunctionDecl *F);
 
   const Options &getOptions() { return Opts; }
 
@@ -183,11 +184,11 @@ public:
   /// included in `Constraints` to provide contextually-accurate results, e.g.
   /// if any definitions or relationships of the values in `Constraints` have
   /// been stored in flow conditions.
-  Solver::Result querySolver(llvm::SetVector<const Formula *> Constraints);
+  CLANG_ABI Solver::Result querySolver(llvm::SetVector<const Formula *> Constraints);
 
   /// Returns the fields of `Type`, limited to the set of fields modeled by this
   /// context.
-  FieldSet getModeledFields(QualType Type);
+  CLANG_ABI FieldSet getModeledFields(QualType Type);
 
   /// Returns the names and types of the synthetic fields for the given record
   /// type.
@@ -225,7 +226,7 @@ private:
   /// *  Null (in which case `S` is non-onwed and must outlive this object), or
   /// *  Non-null (in which case it must refer to `S`, and the
   ///    `DataflowAnalysisContext will take ownership of `OwnedSolver`).
-  DataflowAnalysisContext(Solver &S, std::unique_ptr<Solver> &&OwnedSolver,
+  CLANG_ABI DataflowAnalysisContext(Solver &S, std::unique_ptr<Solver> &&OwnedSolver,
                           Options Opts);
 
   // Extends the set of modeled field declarations.

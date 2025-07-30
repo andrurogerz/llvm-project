@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_INTERPRETER_INTERPRETER_H
 #define LLVM_CLANG_INTERPRETER_INTERPRETER_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/GlobalDecl.h"
 #include "clang/Interpreter/PartialTranslationUnit.h"
 #include "clang/Interpreter/Value.h"
@@ -56,7 +57,7 @@ public:
   void SetTargetTriple(std::string TT) { TargetTriple = TT; }
 
   // General C++
-  llvm::Expected<std::unique_ptr<CompilerInstance>> CreateCpp();
+  CLANG_ABI llvm::Expected<std::unique_ptr<CompilerInstance>> CreateCpp();
 
   // Offload options
   void SetOffloadArch(llvm::StringRef Arch) { OffloadArch = Arch; };
@@ -64,8 +65,8 @@ public:
   // CUDA specific
   void SetCudaSDK(llvm::StringRef path) { CudaSDKPath = path; };
 
-  llvm::Expected<std::unique_ptr<CompilerInstance>> CreateCudaHost();
-  llvm::Expected<std::unique_ptr<CompilerInstance>> CreateCudaDevice();
+  CLANG_ABI llvm::Expected<std::unique_ptr<CompilerInstance>> CreateCudaHost();
+  CLANG_ABI llvm::Expected<std::unique_ptr<CompilerInstance>> CreateCudaDevice();
 
 private:
   static llvm::Expected<std::unique_ptr<CompilerInstance>>
@@ -84,7 +85,7 @@ class IncrementalAction;
 class InProcessPrintingASTConsumer;
 
 /// Provides top-level interfaces for incremental compilation and execution.
-class Interpreter {
+class CLANG_ABI Interpreter {
   friend class Value;
   friend InProcessPrintingASTConsumer;
 

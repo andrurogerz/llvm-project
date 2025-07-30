@@ -9,6 +9,7 @@
 #ifndef LLVM_CLANG_BASIC_DIAGNOSTICERROR_H
 #define LLVM_CLANG_BASIC_DIAGNOSTICERROR_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/Basic/PartialDiagnostic.h"
 #include "llvm/Support/Error.h"
 #include <optional>
@@ -45,7 +46,7 @@ public:
     return Result;
   }
 
-  static char ID;
+  CLANG_ABI static char ID;
 
 private:
   // Users are not expected to use error_code.

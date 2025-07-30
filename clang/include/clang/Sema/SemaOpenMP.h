@@ -14,6 +14,7 @@
 #ifndef LLVM_CLANG_SEMA_SEMAOPENMP_H
 #define LLVM_CLANG_SEMA_SEMAOPENMP_H
 
+#include "clang/Support/Compiler.h"
 #include "clang/AST/ASTFwd.h"
 #include "clang/AST/Attr.h"
 #include "clang/AST/DeclarationName.h"
@@ -47,7 +48,7 @@ class Scope;
 
 class SemaOpenMP : public SemaBase {
 public:
-  SemaOpenMP(Sema &S);
+  CLANG_ABI SemaOpenMP(Sema &S);
 
   friend class Parser;
   friend class Sema;
@@ -70,7 +71,7 @@ public:
   ///  if (diagIfOpenMPDeviceCode(Loc, diag::err_vla_unsupported))
   ///    return ExprError();
   ///  // Otherwise, continue parsing as normal.
-  SemaDiagnosticBuilder diagIfOpenMPDeviceCode(SourceLocation Loc,
+  CLANG_ABI SemaDiagnosticBuilder diagIfOpenMPDeviceCode(SourceLocation Loc,
                                                unsigned DiagID,
                                                const FunctionDecl *FD);
 
@@ -87,7 +88,7 @@ public:
   ///  if (diagIfOpenMPHostode(Loc, diag::err_vla_unsupported))
   ///    return ExprError();
   ///  // Otherwise, continue parsing as normal.
-  SemaDiagnosticBuilder diagIfOpenMPHostCode(SourceLocation Loc,
+  CLANG_ABI SemaDiagnosticBuilder diagIfOpenMPHostCode(SourceLocation Loc,
                                              unsigned DiagID,
                                              const FunctionDecl *FD);
 
@@ -95,24 +96,24 @@ public:
   /// in an `omp begin/end declare variant` scope. In this method we create a
   /// declaration for \p D and rename \p D according to the OpenMP context
   /// selector of the surrounding scope. Return all base functions in \p Bases.
-  void ActOnStartOfFunctionDefinitionInOpenMPDeclareVariantScope(
+  CLANG_ABI void ActOnStartOfFunctionDefinitionInOpenMPDeclareVariantScope(
       Scope *S, Declarator &D, MultiTemplateParamsArg TemplateParameterLists,
       SmallVectorImpl<FunctionDecl *> &Bases);
 
   /// Register \p D as specialization of all base functions in \p Bases in the
   /// current `omp begin/end declare variant` scope.
-  void ActOnFinishedFunctionDefinitionInOpenMPDeclareVariantScope(
+  CLANG_ABI void ActOnFinishedFunctionDefinitionInOpenMPDeclareVariantScope(
       Decl *D, SmallVectorImpl<FunctionDecl *> &Bases);
 
   /// Act on \p D, a function definition inside of an `omp [begin/end] assumes`.
-  void ActOnFinishedFunctionDefinitionInOpenMPAssumeScope(Decl *D);
+  CLANG_ABI void ActOnFinishedFunctionDefinitionInOpenMPAssumeScope(Decl *D);
 
   /// Can we exit an OpenMP declare variant scope at the moment.
   bool isInOpenMPDeclareVariantScope() const {
     return !OMPDeclareVariantScopes.empty();
   }
 
-  ExprResult
+  CLANG_ABI ExprResult
   VerifyPositiveIntegerConstantInClause(Expr *Op, OpenMPClauseKind CKind,
                                         bool StrictlyPositive = true,
                                         bool SuppressExprDiags = false);
@@ -121,120 +122,120 @@ public:
   /// specialization via the OpenMP declare variant mechanism available. If
   /// there is, return the specialized call expression, otherwise return the
   /// original \p Call.
-  ExprResult ActOnOpenMPCall(ExprResult Call, Scope *Scope,
+  CLANG_ABI ExprResult ActOnOpenMPCall(ExprResult Call, Scope *Scope,
                              SourceLocation LParenLoc, MultiExprArg ArgExprs,
                              SourceLocation RParenLoc, Expr *ExecConfig);
 
   /// Handle a `omp begin declare variant`.
-  void ActOnOpenMPBeginDeclareVariant(SourceLocation Loc, OMPTraitInfo &TI);
+  CLANG_ABI void ActOnOpenMPBeginDeclareVariant(SourceLocation Loc, OMPTraitInfo &TI);
 
   /// Handle a `omp end declare variant`.
-  void ActOnOpenMPEndDeclareVariant();
+  CLANG_ABI void ActOnOpenMPEndDeclareVariant();
 
   /// Function tries to capture lambda's captured variables in the OpenMP region
   /// before the original lambda is captured.
-  void tryCaptureOpenMPLambdas(ValueDecl *V);
+  CLANG_ABI void tryCaptureOpenMPLambdas(ValueDecl *V);
 
   /// Return true if the provided declaration \a VD should be captured by
   /// reference.
   /// \param Level Relative level of nested OpenMP construct for that the check
   /// is performed.
   /// \param OpenMPCaptureLevel Capture level within an OpenMP construct.
-  bool isOpenMPCapturedByRef(const ValueDecl *D, unsigned Level,
+  CLANG_ABI bool isOpenMPCapturedByRef(const ValueDecl *D, unsigned Level,
                              unsigned OpenMPCaptureLevel) const;
 
   /// Check if the specified variable is used in one of the private
   /// clauses (private, firstprivate, lastprivate, reduction etc.) in OpenMP
   /// constructs.
-  VarDecl *isOpenMPCapturedDecl(ValueDecl *D, bool CheckScopeInfo = false,
+  CLANG_ABI VarDecl *isOpenMPCapturedDecl(ValueDecl *D, bool CheckScopeInfo = false,
                                 unsigned StopAt = 0);
 
   /// The member expression(this->fd) needs to be rebuilt in the template
   /// instantiation to generate private copy for OpenMP when default
   /// clause is used. The function will return true if default
   /// cluse is used.
-  bool isOpenMPRebuildMemberExpr(ValueDecl *D);
+  CLANG_ABI bool isOpenMPRebuildMemberExpr(ValueDecl *D);
 
-  ExprResult getOpenMPCapturedExpr(VarDecl *Capture, ExprValueKind VK,
+  CLANG_ABI ExprResult getOpenMPCapturedExpr(VarDecl *Capture, ExprValueKind VK,
                                    ExprObjectKind OK, SourceLocation Loc);
 
   /// If the current region is a loop-based region, mark the start of the loop
   /// construct.
-  void startOpenMPLoop();
+  CLANG_ABI void startOpenMPLoop();
 
   /// If the current region is a range loop-based region, mark the start of the
   /// loop construct.
-  void startOpenMPCXXRangeFor();
+  CLANG_ABI void startOpenMPCXXRangeFor();
 
   /// Check if the specified variable is used in 'private' clause.
   /// \param Level Relative level of nested OpenMP construct for that the check
   /// is performed.
-  OpenMPClauseKind isOpenMPPrivateDecl(ValueDecl *D, unsigned Level,
+  CLANG_ABI OpenMPClauseKind isOpenMPPrivateDecl(ValueDecl *D, unsigned Level,
                                        unsigned CapLevel) const;
 
   /// Sets OpenMP capture kind (OMPC_private, OMPC_firstprivate, OMPC_map etc.)
   /// for \p FD based on DSA for the provided corresponding captured declaration
   /// \p D.
-  void setOpenMPCaptureKind(FieldDecl *FD, const ValueDecl *D, unsigned Level);
+  CLANG_ABI void setOpenMPCaptureKind(FieldDecl *FD, const ValueDecl *D, unsigned Level);
 
   /// Check if the specified variable is captured  by 'target' directive.
   /// \param Level Relative level of nested OpenMP construct for that the check
   /// is performed.
-  bool isOpenMPTargetCapturedDecl(const ValueDecl *D, unsigned Level,
+  CLANG_ABI bool isOpenMPTargetCapturedDecl(const ValueDecl *D, unsigned Level,
                                   unsigned CaptureLevel) const;
 
   /// Check if the specified global variable must be captured  by outer capture
   /// regions.
   /// \param Level Relative level of nested OpenMP construct for that
   /// the check is performed.
-  bool isOpenMPGlobalCapturedDecl(ValueDecl *D, unsigned Level,
+  CLANG_ABI bool isOpenMPGlobalCapturedDecl(ValueDecl *D, unsigned Level,
                                   unsigned CaptureLevel) const;
 
-  ExprResult PerformOpenMPImplicitIntegerConversion(SourceLocation OpLoc,
+  CLANG_ABI ExprResult PerformOpenMPImplicitIntegerConversion(SourceLocation OpLoc,
                                                     Expr *Op);
   /// Called on start of new data sharing attribute block.
-  void StartOpenMPDSABlock(OpenMPDirectiveKind K,
+  CLANG_ABI void StartOpenMPDSABlock(OpenMPDirectiveKind K,
                            const DeclarationNameInfo &DirName, Scope *CurScope,
                            SourceLocation Loc);
   /// Start analysis of clauses.
-  void StartOpenMPClause(OpenMPClauseKind K);
+  CLANG_ABI void StartOpenMPClause(OpenMPClauseKind K);
   /// End analysis of clauses.
-  void EndOpenMPClause();
+  CLANG_ABI void EndOpenMPClause();
   /// Called on end of data sharing attribute block.
-  void EndOpenMPDSABlock(Stmt *CurDirective);
+  CLANG_ABI void EndOpenMPDSABlock(Stmt *CurDirective);
 
   /// Check if the current region is an OpenMP loop region and if it is,
   /// mark loop control variable, used in \p Init for loop initialization, as
   /// private by default.
   /// \param Init First part of the for loop.
-  void ActOnOpenMPLoopInitialization(SourceLocation ForLoc, Stmt *Init);
+  CLANG_ABI void ActOnOpenMPLoopInitialization(SourceLocation ForLoc, Stmt *Init);
 
   /// Called on well-formed '\#pragma omp metadirective' after parsing
   /// of the  associated statement.
-  StmtResult ActOnOpenMPMetaDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPMetaDirective(ArrayRef<OMPClause *> Clauses,
                                       Stmt *AStmt, SourceLocation StartLoc,
                                       SourceLocation EndLoc);
 
   // OpenMP directives and clauses.
   /// Called on correct id-expression from the '#pragma omp
   /// threadprivate'.
-  ExprResult ActOnOpenMPIdExpression(Scope *CurScope, CXXScopeSpec &ScopeSpec,
+  CLANG_ABI ExprResult ActOnOpenMPIdExpression(Scope *CurScope, CXXScopeSpec &ScopeSpec,
                                      const DeclarationNameInfo &Id,
                                      OpenMPDirectiveKind Kind);
   /// Called on well-formed '#pragma omp threadprivate'.
-  DeclGroupPtrTy ActOnOpenMPThreadprivateDirective(SourceLocation Loc,
+  CLANG_ABI DeclGroupPtrTy ActOnOpenMPThreadprivateDirective(SourceLocation Loc,
                                                    ArrayRef<Expr *> VarList);
   /// Builds a new OpenMPThreadPrivateDecl and checks its correctness.
-  OMPThreadPrivateDecl *CheckOMPThreadPrivateDecl(SourceLocation Loc,
+  CLANG_ABI OMPThreadPrivateDecl *CheckOMPThreadPrivateDecl(SourceLocation Loc,
                                                   ArrayRef<Expr *> VarList);
   /// Called on well-formed '#pragma omp allocate'.
-  DeclGroupPtrTy ActOnOpenMPAllocateDirective(SourceLocation Loc,
+  CLANG_ABI DeclGroupPtrTy ActOnOpenMPAllocateDirective(SourceLocation Loc,
                                               ArrayRef<Expr *> VarList,
                                               ArrayRef<OMPClause *> Clauses,
                                               DeclContext *Owner = nullptr);
 
   /// Called on well-formed '#pragma omp [begin] assume[s]'.
-  void ActOnOpenMPAssumesDirective(SourceLocation Loc,
+  CLANG_ABI void ActOnOpenMPAssumesDirective(SourceLocation Loc,
                                    OpenMPDirectiveKind DKind,
                                    ArrayRef<std::string> Assumptions,
                                    bool SkippedClauses);
@@ -246,57 +247,57 @@ public:
   bool hasGlobalOpenMPAssumes() const { return !OMPAssumeGlobal.empty(); }
 
   /// Called on well-formed '#pragma omp end assumes'.
-  void ActOnOpenMPEndAssumesDirective();
+  CLANG_ABI void ActOnOpenMPEndAssumesDirective();
 
   /// Called on well-formed '#pragma omp requires'.
-  DeclGroupPtrTy ActOnOpenMPRequiresDirective(SourceLocation Loc,
+  CLANG_ABI DeclGroupPtrTy ActOnOpenMPRequiresDirective(SourceLocation Loc,
                                               ArrayRef<OMPClause *> ClauseList);
   /// Check restrictions on Requires directive
-  OMPRequiresDecl *CheckOMPRequiresDecl(SourceLocation Loc,
+  CLANG_ABI OMPRequiresDecl *CheckOMPRequiresDecl(SourceLocation Loc,
                                         ArrayRef<OMPClause *> Clauses);
   /// Check if the specified type is allowed to be used in 'omp declare
   /// reduction' construct.
-  QualType ActOnOpenMPDeclareReductionType(SourceLocation TyLoc,
+  CLANG_ABI QualType ActOnOpenMPDeclareReductionType(SourceLocation TyLoc,
                                            TypeResult ParsedType);
   /// Called on start of '#pragma omp declare reduction'.
-  DeclGroupPtrTy ActOnOpenMPDeclareReductionDirectiveStart(
+  CLANG_ABI DeclGroupPtrTy ActOnOpenMPDeclareReductionDirectiveStart(
       Scope *S, DeclContext *DC, DeclarationName Name,
       ArrayRef<std::pair<QualType, SourceLocation>> ReductionTypes,
       AccessSpecifier AS, Decl *PrevDeclInScope = nullptr);
   /// Initialize declare reduction construct initializer.
-  void ActOnOpenMPDeclareReductionCombinerStart(Scope *S, Decl *D);
+  CLANG_ABI void ActOnOpenMPDeclareReductionCombinerStart(Scope *S, Decl *D);
   /// Finish current declare reduction construct initializer.
-  void ActOnOpenMPDeclareReductionCombinerEnd(Decl *D, Expr *Combiner);
+  CLANG_ABI void ActOnOpenMPDeclareReductionCombinerEnd(Decl *D, Expr *Combiner);
   /// Initialize declare reduction construct initializer.
   /// \return omp_priv variable.
-  VarDecl *ActOnOpenMPDeclareReductionInitializerStart(Scope *S, Decl *D);
+  CLANG_ABI VarDecl *ActOnOpenMPDeclareReductionInitializerStart(Scope *S, Decl *D);
   /// Finish current declare reduction construct initializer.
-  void ActOnOpenMPDeclareReductionInitializerEnd(Decl *D, Expr *Initializer,
+  CLANG_ABI void ActOnOpenMPDeclareReductionInitializerEnd(Decl *D, Expr *Initializer,
                                                  VarDecl *OmpPrivParm);
   /// Called at the end of '#pragma omp declare reduction'.
-  DeclGroupPtrTy ActOnOpenMPDeclareReductionDirectiveEnd(
+  CLANG_ABI DeclGroupPtrTy ActOnOpenMPDeclareReductionDirectiveEnd(
       Scope *S, DeclGroupPtrTy DeclReductions, bool IsValid);
 
   /// Check variable declaration in 'omp declare mapper' construct.
-  TypeResult ActOnOpenMPDeclareMapperVarDecl(Scope *S, Declarator &D);
+  CLANG_ABI TypeResult ActOnOpenMPDeclareMapperVarDecl(Scope *S, Declarator &D);
   /// Check if the specified type is allowed to be used in 'omp declare
   /// mapper' construct.
-  QualType ActOnOpenMPDeclareMapperType(SourceLocation TyLoc,
+  CLANG_ABI QualType ActOnOpenMPDeclareMapperType(SourceLocation TyLoc,
                                         TypeResult ParsedType);
   /// Called for '#pragma omp declare mapper'.
-  DeclGroupPtrTy ActOnOpenMPDeclareMapperDirective(
+  CLANG_ABI DeclGroupPtrTy ActOnOpenMPDeclareMapperDirective(
       Scope *S, DeclContext *DC, DeclarationName Name, QualType MapperType,
       SourceLocation StartLoc, DeclarationName VN, AccessSpecifier AS,
       Expr *MapperVarRef, ArrayRef<OMPClause *> Clauses,
       Decl *PrevDeclInScope = nullptr);
   /// Build the mapper variable of '#pragma omp declare mapper'.
-  ExprResult ActOnOpenMPDeclareMapperDirectiveVarDecl(Scope *S,
+  CLANG_ABI ExprResult ActOnOpenMPDeclareMapperDirectiveVarDecl(Scope *S,
                                                       QualType MapperType,
                                                       SourceLocation StartLoc,
                                                       DeclarationName VN);
-  void ActOnOpenMPIteratorVarDecl(VarDecl *VD);
-  bool isOpenMPDeclareMapperVarDeclAllowed(const VarDecl *VD) const;
-  const ValueDecl *getOpenMPDeclareMapperVarName() const;
+  CLANG_ABI void ActOnOpenMPIteratorVarDecl(VarDecl *VD);
+  CLANG_ABI bool isOpenMPDeclareMapperVarDeclAllowed(const VarDecl *VD) const;
+  CLANG_ABI const ValueDecl *getOpenMPDeclareMapperVarName() const;
 
   struct DeclareTargetContextInfo {
     struct MapInfo {
@@ -323,71 +324,71 @@ public:
   };
 
   /// Called on the start of target region i.e. '#pragma omp declare target'.
-  bool ActOnStartOpenMPDeclareTargetContext(DeclareTargetContextInfo &DTCI);
+  CLANG_ABI bool ActOnStartOpenMPDeclareTargetContext(DeclareTargetContextInfo &DTCI);
 
   /// Called at the end of target region i.e. '#pragma omp end declare target'.
-  const DeclareTargetContextInfo ActOnOpenMPEndDeclareTargetDirective();
+  CLANG_ABI const DeclareTargetContextInfo ActOnOpenMPEndDeclareTargetDirective();
 
   /// Called once a target context is completed, that can be when a
   /// '#pragma omp end declare target' was encountered or when a
   /// '#pragma omp declare target' without declaration-definition-seq was
   /// encountered.
-  void ActOnFinishedOpenMPDeclareTargetContext(DeclareTargetContextInfo &DTCI);
+  CLANG_ABI void ActOnFinishedOpenMPDeclareTargetContext(DeclareTargetContextInfo &DTCI);
 
   /// Report unterminated 'omp declare target' or 'omp begin declare target' at
   /// the end of a compilation unit.
-  void DiagnoseUnterminatedOpenMPDeclareTarget();
+  CLANG_ABI void DiagnoseUnterminatedOpenMPDeclareTarget();
 
   /// Searches for the provided declaration name for OpenMP declare target
   /// directive.
-  NamedDecl *lookupOpenMPDeclareTargetName(Scope *CurScope,
+  CLANG_ABI NamedDecl *lookupOpenMPDeclareTargetName(Scope *CurScope,
                                            CXXScopeSpec &ScopeSpec,
                                            const DeclarationNameInfo &Id);
 
   /// Called on correct id-expression from the '#pragma omp declare target'.
-  void ActOnOpenMPDeclareTargetName(NamedDecl *ND, SourceLocation Loc,
+  CLANG_ABI void ActOnOpenMPDeclareTargetName(NamedDecl *ND, SourceLocation Loc,
                                     OMPDeclareTargetDeclAttr::MapTypeTy MT,
                                     DeclareTargetContextInfo &DTCI);
 
   /// Check declaration inside target region.
-  void
+  CLANG_ABI void
   checkDeclIsAllowedInOpenMPTarget(Expr *E, Decl *D,
                                    SourceLocation IdLoc = SourceLocation());
 
   /// Adds OMPDeclareTargetDeclAttr to referenced variables in declare target
   /// directive.
-  void ActOnOpenMPDeclareTargetInitializer(Decl *D);
+  CLANG_ABI void ActOnOpenMPDeclareTargetInitializer(Decl *D);
 
   /// Finishes analysis of the deferred functions calls that may be declared as
   /// host/nohost during device/host compilation.
-  void finalizeOpenMPDelayedAnalysis(const FunctionDecl *Caller,
+  CLANG_ABI void finalizeOpenMPDelayedAnalysis(const FunctionDecl *Caller,
                                      const FunctionDecl *Callee,
                                      SourceLocation Loc);
 
   /// Return true if currently in OpenMP task with untied clause context.
-  bool isInOpenMPTaskUntiedContext() const;
+  CLANG_ABI bool isInOpenMPTaskUntiedContext() const;
 
   /// Return true inside OpenMP declare target region.
   bool isInOpenMPDeclareTargetContext() const {
     return !DeclareTargetNesting.empty();
   }
   /// Return true inside OpenMP target region.
-  bool isInOpenMPTargetExecutionDirective() const;
+  CLANG_ABI bool isInOpenMPTargetExecutionDirective() const;
 
   /// Return the number of captured regions created for an OpenMP directive.
-  static int getOpenMPCaptureLevels(OpenMPDirectiveKind Kind);
+  CLANG_ABI static int getOpenMPCaptureLevels(OpenMPDirectiveKind Kind);
 
   /// Initialization of captured region for OpenMP region.
-  void ActOnOpenMPRegionStart(OpenMPDirectiveKind DKind, Scope *CurScope);
+  CLANG_ABI void ActOnOpenMPRegionStart(OpenMPDirectiveKind DKind, Scope *CurScope);
 
   /// Called for syntactical loops (ForStmt or CXXForRangeStmt) associated to
   /// an OpenMP loop directive.
-  StmtResult ActOnOpenMPCanonicalLoop(Stmt *AStmt);
+  CLANG_ABI StmtResult ActOnOpenMPCanonicalLoop(Stmt *AStmt);
 
   /// Process a canonical OpenMP loop nest that can either be a canonical
   /// literal loop (ForStmt or CXXForRangeStmt), or the generated loop of an
   /// OpenMP loop transformation construct.
-  StmtResult ActOnOpenMPLoopnest(Stmt *AStmt);
+  CLANG_ABI StmtResult ActOnOpenMPLoopnest(Stmt *AStmt);
 
   /// End of OpenMP region.
   ///
@@ -395,8 +396,8 @@ public:
   /// \param Clauses List of clauses for the current OpenMP region.
   ///
   /// \returns Statement for finished OpenMP region.
-  StmtResult ActOnOpenMPRegionEnd(StmtResult S, ArrayRef<OMPClause *> Clauses);
-  StmtResult ActOnOpenMPExecutableDirective(
+  CLANG_ABI StmtResult ActOnOpenMPRegionEnd(StmtResult S, ArrayRef<OMPClause *> Clauses);
+  CLANG_ABI StmtResult ActOnOpenMPExecutableDirective(
       OpenMPDirectiveKind Kind, const DeclarationNameInfo &DirName,
       OpenMPDirectiveKind CancelRegion, ArrayRef<OMPClause *> Clauses,
       Stmt *AStmt, SourceLocation StartLoc, SourceLocation EndLoc);
@@ -408,7 +409,7 @@ public:
   /// \param AStmt The associated statement.
   /// \param StartLoc The start location.
   /// \param EndLoc The end location.
-  StmtResult ActOnOpenMPInformationalDirective(
+  CLANG_ABI StmtResult ActOnOpenMPInformationalDirective(
       OpenMPDirectiveKind Kind, const DeclarationNameInfo &DirName,
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc);
@@ -418,398 +419,398 @@ public:
   /// \param AStmt The associated statement.
   /// \param StartLoc The start location.
   /// \param EndLoc The end location.
-  StmtResult ActOnOpenMPAssumeDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPAssumeDirective(ArrayRef<OMPClause *> Clauses,
                                         Stmt *AStmt, SourceLocation StartLoc,
                                         SourceLocation EndLoc);
 
   /// Called on well-formed '\#pragma omp parallel' after parsing
   /// of the  associated statement.
-  StmtResult ActOnOpenMPParallelDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPParallelDirective(ArrayRef<OMPClause *> Clauses,
                                           Stmt *AStmt, SourceLocation StartLoc,
                                           SourceLocation EndLoc);
   using VarsWithInheritedDSAType =
       llvm::SmallDenseMap<const ValueDecl *, const Expr *, 4>;
   /// Called on well-formed '\#pragma omp simd' after parsing
   /// of the associated statement.
-  StmtResult
+  CLANG_ABI StmtResult
   ActOnOpenMPSimdDirective(ArrayRef<OMPClause *> Clauses, Stmt *AStmt,
                            SourceLocation StartLoc, SourceLocation EndLoc,
                            VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '#pragma omp tile' after parsing of its clauses and
   /// the associated statement.
-  StmtResult ActOnOpenMPTileDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPTileDirective(ArrayRef<OMPClause *> Clauses,
                                       Stmt *AStmt, SourceLocation StartLoc,
                                       SourceLocation EndLoc);
-  StmtResult ActOnOpenMPStripeDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPStripeDirective(ArrayRef<OMPClause *> Clauses,
                                         Stmt *AStmt, SourceLocation StartLoc,
                                         SourceLocation EndLoc);
   /// Called on well-formed '#pragma omp unroll' after parsing of its clauses
   /// and the associated statement.
-  StmtResult ActOnOpenMPUnrollDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPUnrollDirective(ArrayRef<OMPClause *> Clauses,
                                         Stmt *AStmt, SourceLocation StartLoc,
                                         SourceLocation EndLoc);
   /// Called on well-formed '#pragma omp reverse'.
-  StmtResult ActOnOpenMPReverseDirective(Stmt *AStmt, SourceLocation StartLoc,
+  CLANG_ABI StmtResult ActOnOpenMPReverseDirective(Stmt *AStmt, SourceLocation StartLoc,
                                          SourceLocation EndLoc);
   /// Called on well-formed '#pragma omp interchange' after parsing of its
   /// clauses and the associated statement.
-  StmtResult ActOnOpenMPInterchangeDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPInterchangeDirective(ArrayRef<OMPClause *> Clauses,
                                              Stmt *AStmt,
                                              SourceLocation StartLoc,
                                              SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp for' after parsing
   /// of the associated statement.
-  StmtResult
+  CLANG_ABI StmtResult
   ActOnOpenMPForDirective(ArrayRef<OMPClause *> Clauses, Stmt *AStmt,
                           SourceLocation StartLoc, SourceLocation EndLoc,
                           VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp for simd' after parsing
   /// of the associated statement.
-  StmtResult
+  CLANG_ABI StmtResult
   ActOnOpenMPForSimdDirective(ArrayRef<OMPClause *> Clauses, Stmt *AStmt,
                               SourceLocation StartLoc, SourceLocation EndLoc,
                               VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp sections' after parsing
   /// of the associated statement.
-  StmtResult ActOnOpenMPSectionsDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPSectionsDirective(ArrayRef<OMPClause *> Clauses,
                                           Stmt *AStmt, SourceLocation StartLoc,
                                           SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp section' after parsing of the
   /// associated statement.
-  StmtResult ActOnOpenMPSectionDirective(Stmt *AStmt, SourceLocation StartLoc,
+  CLANG_ABI StmtResult ActOnOpenMPSectionDirective(Stmt *AStmt, SourceLocation StartLoc,
                                          SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp scope' after parsing of the
   /// associated statement.
-  StmtResult ActOnOpenMPScopeDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPScopeDirective(ArrayRef<OMPClause *> Clauses,
                                        Stmt *AStmt, SourceLocation StartLoc,
                                        SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp single' after parsing of the
   /// associated statement.
-  StmtResult ActOnOpenMPSingleDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPSingleDirective(ArrayRef<OMPClause *> Clauses,
                                         Stmt *AStmt, SourceLocation StartLoc,
                                         SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp master' after parsing of the
   /// associated statement.
-  StmtResult ActOnOpenMPMasterDirective(Stmt *AStmt, SourceLocation StartLoc,
+  CLANG_ABI StmtResult ActOnOpenMPMasterDirective(Stmt *AStmt, SourceLocation StartLoc,
                                         SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp critical' after parsing of the
   /// associated statement.
-  StmtResult ActOnOpenMPCriticalDirective(const DeclarationNameInfo &DirName,
+  CLANG_ABI StmtResult ActOnOpenMPCriticalDirective(const DeclarationNameInfo &DirName,
                                           ArrayRef<OMPClause *> Clauses,
                                           Stmt *AStmt, SourceLocation StartLoc,
                                           SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp parallel for' after parsing
   /// of the  associated statement.
-  StmtResult ActOnOpenMPParallelForDirective(
+  CLANG_ABI StmtResult ActOnOpenMPParallelForDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp parallel for simd' after
   /// parsing of the  associated statement.
-  StmtResult ActOnOpenMPParallelForSimdDirective(
+  CLANG_ABI StmtResult ActOnOpenMPParallelForSimdDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp parallel master' after
   /// parsing of the  associated statement.
-  StmtResult ActOnOpenMPParallelMasterDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPParallelMasterDirective(ArrayRef<OMPClause *> Clauses,
                                                 Stmt *AStmt,
                                                 SourceLocation StartLoc,
                                                 SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp parallel masked' after
   /// parsing of the associated statement.
-  StmtResult ActOnOpenMPParallelMaskedDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPParallelMaskedDirective(ArrayRef<OMPClause *> Clauses,
                                                 Stmt *AStmt,
                                                 SourceLocation StartLoc,
                                                 SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp parallel sections' after
   /// parsing of the  associated statement.
-  StmtResult ActOnOpenMPParallelSectionsDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPParallelSectionsDirective(ArrayRef<OMPClause *> Clauses,
                                                   Stmt *AStmt,
                                                   SourceLocation StartLoc,
                                                   SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp task' after parsing of the
   /// associated statement.
-  StmtResult ActOnOpenMPTaskDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPTaskDirective(ArrayRef<OMPClause *> Clauses,
                                       Stmt *AStmt, SourceLocation StartLoc,
                                       SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp taskyield'.
-  StmtResult ActOnOpenMPTaskyieldDirective(SourceLocation StartLoc,
+  CLANG_ABI StmtResult ActOnOpenMPTaskyieldDirective(SourceLocation StartLoc,
                                            SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp error'.
   /// Error direcitive is allowed in both declared and excutable contexts.
   /// Adding InExContext to identify which context is called from.
-  StmtResult ActOnOpenMPErrorDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPErrorDirective(ArrayRef<OMPClause *> Clauses,
                                        SourceLocation StartLoc,
                                        SourceLocation EndLoc,
                                        bool InExContext = true);
   /// Called on well-formed '\#pragma omp barrier'.
-  StmtResult ActOnOpenMPBarrierDirective(SourceLocation StartLoc,
+  CLANG_ABI StmtResult ActOnOpenMPBarrierDirective(SourceLocation StartLoc,
                                          SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp taskwait'.
-  StmtResult ActOnOpenMPTaskwaitDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPTaskwaitDirective(ArrayRef<OMPClause *> Clauses,
                                           SourceLocation StartLoc,
                                           SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp taskgroup'.
-  StmtResult ActOnOpenMPTaskgroupDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPTaskgroupDirective(ArrayRef<OMPClause *> Clauses,
                                            Stmt *AStmt, SourceLocation StartLoc,
                                            SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp flush'.
-  StmtResult ActOnOpenMPFlushDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPFlushDirective(ArrayRef<OMPClause *> Clauses,
                                        SourceLocation StartLoc,
                                        SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp depobj'.
-  StmtResult ActOnOpenMPDepobjDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPDepobjDirective(ArrayRef<OMPClause *> Clauses,
                                         SourceLocation StartLoc,
                                         SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp scan'.
-  StmtResult ActOnOpenMPScanDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPScanDirective(ArrayRef<OMPClause *> Clauses,
                                       SourceLocation StartLoc,
                                       SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp ordered' after parsing of the
   /// associated statement.
-  StmtResult ActOnOpenMPOrderedDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPOrderedDirective(ArrayRef<OMPClause *> Clauses,
                                          Stmt *AStmt, SourceLocation StartLoc,
                                          SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp atomic' after parsing of the
   /// associated statement.
-  StmtResult ActOnOpenMPAtomicDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPAtomicDirective(ArrayRef<OMPClause *> Clauses,
                                         Stmt *AStmt, SourceLocation StartLoc,
                                         SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp target' after parsing of the
   /// associated statement.
-  StmtResult ActOnOpenMPTargetDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPTargetDirective(ArrayRef<OMPClause *> Clauses,
                                         Stmt *AStmt, SourceLocation StartLoc,
                                         SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp target data' after parsing of
   /// the associated statement.
-  StmtResult ActOnOpenMPTargetDataDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPTargetDataDirective(ArrayRef<OMPClause *> Clauses,
                                             Stmt *AStmt,
                                             SourceLocation StartLoc,
                                             SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp target enter data' after
   /// parsing of the associated statement.
-  StmtResult ActOnOpenMPTargetEnterDataDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPTargetEnterDataDirective(ArrayRef<OMPClause *> Clauses,
                                                  SourceLocation StartLoc,
                                                  SourceLocation EndLoc,
                                                  Stmt *AStmt);
   /// Called on well-formed '\#pragma omp target exit data' after
   /// parsing of the associated statement.
-  StmtResult ActOnOpenMPTargetExitDataDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPTargetExitDataDirective(ArrayRef<OMPClause *> Clauses,
                                                 SourceLocation StartLoc,
                                                 SourceLocation EndLoc,
                                                 Stmt *AStmt);
   /// Called on well-formed '\#pragma omp target parallel' after
   /// parsing of the associated statement.
-  StmtResult ActOnOpenMPTargetParallelDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPTargetParallelDirective(ArrayRef<OMPClause *> Clauses,
                                                 Stmt *AStmt,
                                                 SourceLocation StartLoc,
                                                 SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp target parallel for' after
   /// parsing of the  associated statement.
-  StmtResult ActOnOpenMPTargetParallelForDirective(
+  CLANG_ABI StmtResult ActOnOpenMPTargetParallelForDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp teams' after parsing of the
   /// associated statement.
-  StmtResult ActOnOpenMPTeamsDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPTeamsDirective(ArrayRef<OMPClause *> Clauses,
                                        Stmt *AStmt, SourceLocation StartLoc,
                                        SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp teams loop' after parsing of the
   /// associated statement.
-  StmtResult ActOnOpenMPTeamsGenericLoopDirective(
+  CLANG_ABI StmtResult ActOnOpenMPTeamsGenericLoopDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp target teams loop' after parsing of
   /// the associated statement.
-  StmtResult ActOnOpenMPTargetTeamsGenericLoopDirective(
+  CLANG_ABI StmtResult ActOnOpenMPTargetTeamsGenericLoopDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp parallel loop' after parsing of the
   /// associated statement.
-  StmtResult ActOnOpenMPParallelGenericLoopDirective(
+  CLANG_ABI StmtResult ActOnOpenMPParallelGenericLoopDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp target parallel loop' after parsing
   /// of the associated statement.
-  StmtResult ActOnOpenMPTargetParallelGenericLoopDirective(
+  CLANG_ABI StmtResult ActOnOpenMPTargetParallelGenericLoopDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp cancellation point'.
-  StmtResult
+  CLANG_ABI StmtResult
   ActOnOpenMPCancellationPointDirective(SourceLocation StartLoc,
                                         SourceLocation EndLoc,
                                         OpenMPDirectiveKind CancelRegion);
   /// Called on well-formed '\#pragma omp cancel'.
-  StmtResult ActOnOpenMPCancelDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPCancelDirective(ArrayRef<OMPClause *> Clauses,
                                         SourceLocation StartLoc,
                                         SourceLocation EndLoc,
                                         OpenMPDirectiveKind CancelRegion);
   /// Called on well-formed '\#pragma omp taskloop' after parsing of the
   /// associated statement.
-  StmtResult
+  CLANG_ABI StmtResult
   ActOnOpenMPTaskLoopDirective(ArrayRef<OMPClause *> Clauses, Stmt *AStmt,
                                SourceLocation StartLoc, SourceLocation EndLoc,
                                VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp taskloop simd' after parsing of
   /// the associated statement.
-  StmtResult ActOnOpenMPTaskLoopSimdDirective(
+  CLANG_ABI StmtResult ActOnOpenMPTaskLoopSimdDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp master taskloop' after parsing of the
   /// associated statement.
-  StmtResult ActOnOpenMPMasterTaskLoopDirective(
+  CLANG_ABI StmtResult ActOnOpenMPMasterTaskLoopDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp master taskloop simd' after parsing of
   /// the associated statement.
-  StmtResult ActOnOpenMPMasterTaskLoopSimdDirective(
+  CLANG_ABI StmtResult ActOnOpenMPMasterTaskLoopSimdDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp parallel master taskloop' after
   /// parsing of the associated statement.
-  StmtResult ActOnOpenMPParallelMasterTaskLoopDirective(
+  CLANG_ABI StmtResult ActOnOpenMPParallelMasterTaskLoopDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp parallel master taskloop simd' after
   /// parsing of the associated statement.
-  StmtResult ActOnOpenMPParallelMasterTaskLoopSimdDirective(
+  CLANG_ABI StmtResult ActOnOpenMPParallelMasterTaskLoopSimdDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp masked taskloop' after parsing of the
   /// associated statement.
-  StmtResult ActOnOpenMPMaskedTaskLoopDirective(
+  CLANG_ABI StmtResult ActOnOpenMPMaskedTaskLoopDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp masked taskloop simd' after parsing of
   /// the associated statement.
-  StmtResult ActOnOpenMPMaskedTaskLoopSimdDirective(
+  CLANG_ABI StmtResult ActOnOpenMPMaskedTaskLoopSimdDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp parallel masked taskloop' after
   /// parsing of the associated statement.
-  StmtResult ActOnOpenMPParallelMaskedTaskLoopDirective(
+  CLANG_ABI StmtResult ActOnOpenMPParallelMaskedTaskLoopDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp parallel masked taskloop simd' after
   /// parsing of the associated statement.
-  StmtResult ActOnOpenMPParallelMaskedTaskLoopSimdDirective(
+  CLANG_ABI StmtResult ActOnOpenMPParallelMaskedTaskLoopSimdDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp distribute' after parsing
   /// of the associated statement.
-  StmtResult
+  CLANG_ABI StmtResult
   ActOnOpenMPDistributeDirective(ArrayRef<OMPClause *> Clauses, Stmt *AStmt,
                                  SourceLocation StartLoc, SourceLocation EndLoc,
                                  VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp target update'.
-  StmtResult ActOnOpenMPTargetUpdateDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPTargetUpdateDirective(ArrayRef<OMPClause *> Clauses,
                                               SourceLocation StartLoc,
                                               SourceLocation EndLoc,
                                               Stmt *AStmt);
   /// Called on well-formed '\#pragma omp distribute parallel for' after
   /// parsing of the associated statement.
-  StmtResult ActOnOpenMPDistributeParallelForDirective(
+  CLANG_ABI StmtResult ActOnOpenMPDistributeParallelForDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp distribute parallel for simd'
   /// after parsing of the associated statement.
-  StmtResult ActOnOpenMPDistributeParallelForSimdDirective(
+  CLANG_ABI StmtResult ActOnOpenMPDistributeParallelForSimdDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp distribute simd' after
   /// parsing of the associated statement.
-  StmtResult ActOnOpenMPDistributeSimdDirective(
+  CLANG_ABI StmtResult ActOnOpenMPDistributeSimdDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp target parallel for simd' after
   /// parsing of the associated statement.
-  StmtResult ActOnOpenMPTargetParallelForSimdDirective(
+  CLANG_ABI StmtResult ActOnOpenMPTargetParallelForSimdDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp target simd' after parsing of
   /// the associated statement.
-  StmtResult
+  CLANG_ABI StmtResult
   ActOnOpenMPTargetSimdDirective(ArrayRef<OMPClause *> Clauses, Stmt *AStmt,
                                  SourceLocation StartLoc, SourceLocation EndLoc,
                                  VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp teams distribute' after parsing of
   /// the associated statement.
-  StmtResult ActOnOpenMPTeamsDistributeDirective(
+  CLANG_ABI StmtResult ActOnOpenMPTeamsDistributeDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp teams distribute simd' after parsing
   /// of the associated statement.
-  StmtResult ActOnOpenMPTeamsDistributeSimdDirective(
+  CLANG_ABI StmtResult ActOnOpenMPTeamsDistributeSimdDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp teams distribute parallel for simd'
   /// after parsing of the associated statement.
-  StmtResult ActOnOpenMPTeamsDistributeParallelForSimdDirective(
+  CLANG_ABI StmtResult ActOnOpenMPTeamsDistributeParallelForSimdDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp teams distribute parallel for'
   /// after parsing of the associated statement.
-  StmtResult ActOnOpenMPTeamsDistributeParallelForDirective(
+  CLANG_ABI StmtResult ActOnOpenMPTeamsDistributeParallelForDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp target teams' after parsing of the
   /// associated statement.
-  StmtResult ActOnOpenMPTargetTeamsDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPTargetTeamsDirective(ArrayRef<OMPClause *> Clauses,
                                              Stmt *AStmt,
                                              SourceLocation StartLoc,
                                              SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp target teams distribute' after parsing
   /// of the associated statement.
-  StmtResult ActOnOpenMPTargetTeamsDistributeDirective(
+  CLANG_ABI StmtResult ActOnOpenMPTargetTeamsDistributeDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp target teams distribute parallel for'
   /// after parsing of the associated statement.
-  StmtResult ActOnOpenMPTargetTeamsDistributeParallelForDirective(
+  CLANG_ABI StmtResult ActOnOpenMPTargetTeamsDistributeParallelForDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp target teams distribute parallel for
   /// simd' after parsing of the associated statement.
-  StmtResult ActOnOpenMPTargetTeamsDistributeParallelForSimdDirective(
+  CLANG_ABI StmtResult ActOnOpenMPTargetTeamsDistributeParallelForSimdDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp target teams distribute simd' after
   /// parsing of the associated statement.
-  StmtResult ActOnOpenMPTargetTeamsDistributeSimdDirective(
+  CLANG_ABI StmtResult ActOnOpenMPTargetTeamsDistributeSimdDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
   /// Called on well-formed '\#pragma omp interop'.
-  StmtResult ActOnOpenMPInteropDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPInteropDirective(ArrayRef<OMPClause *> Clauses,
                                          SourceLocation StartLoc,
                                          SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp dispatch' after parsing of the
   // /associated statement.
-  StmtResult ActOnOpenMPDispatchDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPDispatchDirective(ArrayRef<OMPClause *> Clauses,
                                           Stmt *AStmt, SourceLocation StartLoc,
                                           SourceLocation EndLoc);
   /// Called on well-formed '\#pragma omp masked' after parsing of the
   // /associated statement.
-  StmtResult ActOnOpenMPMaskedDirective(ArrayRef<OMPClause *> Clauses,
+  CLANG_ABI StmtResult ActOnOpenMPMaskedDirective(ArrayRef<OMPClause *> Clauses,
                                         Stmt *AStmt, SourceLocation StartLoc,
                                         SourceLocation EndLoc);
 
   /// Called on well-formed '\#pragma omp loop' after parsing of the
   /// associated statement.
-  StmtResult ActOnOpenMPGenericLoopDirective(
+  CLANG_ABI StmtResult ActOnOpenMPGenericLoopDirective(
       ArrayRef<OMPClause *> Clauses, Stmt *AStmt, SourceLocation StartLoc,
       SourceLocation EndLoc, VarsWithInheritedDSAType &VarsWithImplicitDSA);
 
   /// Checks correctness of linear modifiers.
-  bool CheckOpenMPLinearModifier(OpenMPLinearClauseKind LinKind,
+  CLANG_ABI bool CheckOpenMPLinearModifier(OpenMPLinearClauseKind LinKind,
                                  SourceLocation LinLoc);
   /// Checks that the specified declaration matches requirements for the linear
   /// decls.
-  bool CheckOpenMPLinearDecl(const ValueDecl *D, SourceLocation ELoc,
+  CLANG_ABI bool CheckOpenMPLinearDecl(const ValueDecl *D, SourceLocation ELoc,
                              OpenMPLinearClauseKind LinKind, QualType Type,
                              bool IsDeclareSimd = false);
 
   /// Called on well-formed '\#pragma omp declare simd' after parsing of
   /// the associated method/function.
-  DeclGroupPtrTy ActOnOpenMPDeclareSimdDirective(
+  CLANG_ABI DeclGroupPtrTy ActOnOpenMPDeclareSimdDirective(
       DeclGroupPtrTy DG, OMPDeclareSimdDeclAttr::BranchStateTy BS,
       Expr *Simdlen, ArrayRef<Expr *> Uniforms, ArrayRef<Expr *> Aligneds,
       ArrayRef<Expr *> Alignments, ArrayRef<Expr *> Linears,
@@ -827,7 +828,7 @@ public:
   /// \returns std::nullopt, if the function/variant function are not compatible
   /// with the pragma, pair of original function/variant ref expression
   /// otherwise.
-  std::optional<std::pair<FunctionDecl *, Expr *>>
+  CLANG_ABI std::optional<std::pair<FunctionDecl *, Expr *>>
   checkOpenMPDeclareVariantFunction(DeclGroupPtrTy DG, Expr *VariantRef,
                                     OMPTraitInfo &TI, unsigned NumAppendArgs,
                                     SourceRange SR);
@@ -845,7 +846,7 @@ public:
   /// \param AdjustArgsLoc The Location of an 'adjust_args' clause.
   /// \param AppendArgsLoc The Location of an 'append_args' clause.
   /// \param SR The SourceRange of the 'declare variant' directive.
-  void ActOnOpenMPDeclareVariantDirective(
+  CLANG_ABI void ActOnOpenMPDeclareVariantDirective(
       FunctionDecl *FD, Expr *VariantRef, OMPTraitInfo &TI,
       ArrayRef<Expr *> AdjustArgsNothing,
       ArrayRef<Expr *> AdjustArgsNeedDevicePtr,
@@ -854,278 +855,278 @@ public:
       SourceLocation AppendArgsLoc, SourceRange SR);
 
   /// Called on device_num selector in context selectors.
-  void ActOnOpenMPDeviceNum(Expr *DeviceNumExpr);
+  CLANG_ABI void ActOnOpenMPDeviceNum(Expr *DeviceNumExpr);
 
-  OMPClause *ActOnOpenMPSingleExprClause(OpenMPClauseKind Kind, Expr *Expr,
+  CLANG_ABI OMPClause *ActOnOpenMPSingleExprClause(OpenMPClauseKind Kind, Expr *Expr,
                                          SourceLocation StartLoc,
                                          SourceLocation LParenLoc,
                                          SourceLocation EndLoc);
   /// Called on well-formed 'allocator' clause.
-  OMPClause *ActOnOpenMPAllocatorClause(Expr *Allocator,
+  CLANG_ABI OMPClause *ActOnOpenMPAllocatorClause(Expr *Allocator,
                                         SourceLocation StartLoc,
                                         SourceLocation LParenLoc,
                                         SourceLocation EndLoc);
   /// Called on well-formed 'if' clause.
-  OMPClause *ActOnOpenMPIfClause(OpenMPDirectiveKind NameModifier,
+  CLANG_ABI OMPClause *ActOnOpenMPIfClause(OpenMPDirectiveKind NameModifier,
                                  Expr *Condition, SourceLocation StartLoc,
                                  SourceLocation LParenLoc,
                                  SourceLocation NameModifierLoc,
                                  SourceLocation ColonLoc,
                                  SourceLocation EndLoc);
   /// Called on well-formed 'final' clause.
-  OMPClause *ActOnOpenMPFinalClause(Expr *Condition, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPFinalClause(Expr *Condition, SourceLocation StartLoc,
                                     SourceLocation LParenLoc,
                                     SourceLocation EndLoc);
   /// Called on well-formed 'num_threads' clause.
-  OMPClause *ActOnOpenMPNumThreadsClause(
+  CLANG_ABI OMPClause *ActOnOpenMPNumThreadsClause(
       OpenMPNumThreadsClauseModifier Modifier, Expr *NumThreads,
       SourceLocation StartLoc, SourceLocation LParenLoc,
       SourceLocation ModifierLoc, SourceLocation EndLoc);
   /// Called on well-formed 'align' clause.
-  OMPClause *ActOnOpenMPAlignClause(Expr *Alignment, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPAlignClause(Expr *Alignment, SourceLocation StartLoc,
                                     SourceLocation LParenLoc,
                                     SourceLocation EndLoc);
   /// Called on well-formed 'safelen' clause.
-  OMPClause *ActOnOpenMPSafelenClause(Expr *Length, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPSafelenClause(Expr *Length, SourceLocation StartLoc,
                                       SourceLocation LParenLoc,
                                       SourceLocation EndLoc);
   /// Called on well-formed 'simdlen' clause.
-  OMPClause *ActOnOpenMPSimdlenClause(Expr *Length, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPSimdlenClause(Expr *Length, SourceLocation StartLoc,
                                       SourceLocation LParenLoc,
                                       SourceLocation EndLoc);
   /// Called on well-form 'sizes' clause.
-  OMPClause *ActOnOpenMPSizesClause(ArrayRef<Expr *> SizeExprs,
+  CLANG_ABI OMPClause *ActOnOpenMPSizesClause(ArrayRef<Expr *> SizeExprs,
                                     SourceLocation StartLoc,
                                     SourceLocation LParenLoc,
                                     SourceLocation EndLoc);
   /// Called on well-form 'permutation' clause after parsing its arguments.
-  OMPClause *ActOnOpenMPPermutationClause(ArrayRef<Expr *> PermExprs,
+  CLANG_ABI OMPClause *ActOnOpenMPPermutationClause(ArrayRef<Expr *> PermExprs,
                                           SourceLocation StartLoc,
                                           SourceLocation LParenLoc,
                                           SourceLocation EndLoc);
   /// Called on well-form 'full' clauses.
-  OMPClause *ActOnOpenMPFullClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPFullClause(SourceLocation StartLoc,
                                    SourceLocation EndLoc);
   /// Called on well-form 'partial' clauses.
-  OMPClause *ActOnOpenMPPartialClause(Expr *FactorExpr, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPPartialClause(Expr *FactorExpr, SourceLocation StartLoc,
                                       SourceLocation LParenLoc,
                                       SourceLocation EndLoc);
   /// Called on well-formed 'collapse' clause.
-  OMPClause *ActOnOpenMPCollapseClause(Expr *NumForLoops,
+  CLANG_ABI OMPClause *ActOnOpenMPCollapseClause(Expr *NumForLoops,
                                        SourceLocation StartLoc,
                                        SourceLocation LParenLoc,
                                        SourceLocation EndLoc);
   /// Called on well-formed 'ordered' clause.
-  OMPClause *
+  CLANG_ABI OMPClause *
   ActOnOpenMPOrderedClause(SourceLocation StartLoc, SourceLocation EndLoc,
                            SourceLocation LParenLoc = SourceLocation(),
                            Expr *NumForLoops = nullptr);
   /// Called on well-formed 'grainsize' clause.
-  OMPClause *ActOnOpenMPGrainsizeClause(OpenMPGrainsizeClauseModifier Modifier,
+  CLANG_ABI OMPClause *ActOnOpenMPGrainsizeClause(OpenMPGrainsizeClauseModifier Modifier,
                                         Expr *Size, SourceLocation StartLoc,
                                         SourceLocation LParenLoc,
                                         SourceLocation ModifierLoc,
                                         SourceLocation EndLoc);
   /// Called on well-formed 'num_tasks' clause.
-  OMPClause *ActOnOpenMPNumTasksClause(OpenMPNumTasksClauseModifier Modifier,
+  CLANG_ABI OMPClause *ActOnOpenMPNumTasksClause(OpenMPNumTasksClauseModifier Modifier,
                                        Expr *NumTasks, SourceLocation StartLoc,
                                        SourceLocation LParenLoc,
                                        SourceLocation ModifierLoc,
                                        SourceLocation EndLoc);
   /// Called on well-formed 'hint' clause.
-  OMPClause *ActOnOpenMPHintClause(Expr *Hint, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPHintClause(Expr *Hint, SourceLocation StartLoc,
                                    SourceLocation LParenLoc,
                                    SourceLocation EndLoc);
   /// Called on well-formed 'detach' clause.
-  OMPClause *ActOnOpenMPDetachClause(Expr *Evt, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPDetachClause(Expr *Evt, SourceLocation StartLoc,
                                      SourceLocation LParenLoc,
                                      SourceLocation EndLoc);
 
-  OMPClause *ActOnOpenMPSimpleClause(OpenMPClauseKind Kind, unsigned Argument,
+  CLANG_ABI OMPClause *ActOnOpenMPSimpleClause(OpenMPClauseKind Kind, unsigned Argument,
                                      SourceLocation ArgumentLoc,
                                      SourceLocation StartLoc,
                                      SourceLocation LParenLoc,
                                      SourceLocation EndLoc);
   /// Called on well-formed 'when' clause.
-  OMPClause *ActOnOpenMPWhenClause(OMPTraitInfo &TI, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPWhenClause(OMPTraitInfo &TI, SourceLocation StartLoc,
                                    SourceLocation LParenLoc,
                                    SourceLocation EndLoc);
   /// Called on well-formed 'default' clause.
-  OMPClause *ActOnOpenMPDefaultClause(llvm::omp::DefaultKind Kind,
+  CLANG_ABI OMPClause *ActOnOpenMPDefaultClause(llvm::omp::DefaultKind Kind,
                                       SourceLocation KindLoc,
                                       SourceLocation StartLoc,
                                       SourceLocation LParenLoc,
                                       SourceLocation EndLoc);
   /// Called on well-formed 'proc_bind' clause.
-  OMPClause *ActOnOpenMPProcBindClause(llvm::omp::ProcBindKind Kind,
+  CLANG_ABI OMPClause *ActOnOpenMPProcBindClause(llvm::omp::ProcBindKind Kind,
                                        SourceLocation KindLoc,
                                        SourceLocation StartLoc,
                                        SourceLocation LParenLoc,
                                        SourceLocation EndLoc);
   /// Called on well-formed 'order' clause.
-  OMPClause *ActOnOpenMPOrderClause(OpenMPOrderClauseModifier Modifier,
+  CLANG_ABI OMPClause *ActOnOpenMPOrderClause(OpenMPOrderClauseModifier Modifier,
                                     OpenMPOrderClauseKind Kind,
                                     SourceLocation StartLoc,
                                     SourceLocation LParenLoc,
                                     SourceLocation MLoc, SourceLocation KindLoc,
                                     SourceLocation EndLoc);
   /// Called on well-formed 'update' clause.
-  OMPClause *ActOnOpenMPUpdateClause(OpenMPDependClauseKind Kind,
+  CLANG_ABI OMPClause *ActOnOpenMPUpdateClause(OpenMPDependClauseKind Kind,
                                      SourceLocation KindLoc,
                                      SourceLocation StartLoc,
                                      SourceLocation LParenLoc,
                                      SourceLocation EndLoc);
   /// Called on well-formed 'holds' clause.
-  OMPClause *ActOnOpenMPHoldsClause(Expr *E, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPHoldsClause(Expr *E, SourceLocation StartLoc,
                                     SourceLocation LParenLoc,
                                     SourceLocation EndLoc);
   /// Called on well-formed 'absent' or 'contains' clauses.
-  OMPClause *ActOnOpenMPDirectivePresenceClause(
+  CLANG_ABI OMPClause *ActOnOpenMPDirectivePresenceClause(
       OpenMPClauseKind CK, llvm::ArrayRef<OpenMPDirectiveKind> DKVec,
       SourceLocation Loc, SourceLocation LLoc, SourceLocation RLoc);
-  OMPClause *ActOnOpenMPNullaryAssumptionClause(OpenMPClauseKind CK,
+  CLANG_ABI OMPClause *ActOnOpenMPNullaryAssumptionClause(OpenMPClauseKind CK,
                                                 SourceLocation Loc,
                                                 SourceLocation RLoc);
 
-  OMPClause *ActOnOpenMPSingleExprWithArgClause(
+  CLANG_ABI OMPClause *ActOnOpenMPSingleExprWithArgClause(
       OpenMPClauseKind Kind, ArrayRef<unsigned> Arguments, Expr *Expr,
       SourceLocation StartLoc, SourceLocation LParenLoc,
       ArrayRef<SourceLocation> ArgumentsLoc, SourceLocation DelimLoc,
       SourceLocation EndLoc);
   /// Called on well-formed 'schedule' clause.
-  OMPClause *ActOnOpenMPScheduleClause(
+  CLANG_ABI OMPClause *ActOnOpenMPScheduleClause(
       OpenMPScheduleClauseModifier M1, OpenMPScheduleClauseModifier M2,
       OpenMPScheduleClauseKind Kind, Expr *ChunkSize, SourceLocation StartLoc,
       SourceLocation LParenLoc, SourceLocation M1Loc, SourceLocation M2Loc,
       SourceLocation KindLoc, SourceLocation CommaLoc, SourceLocation EndLoc);
 
-  OMPClause *ActOnOpenMPClause(OpenMPClauseKind Kind, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPClause(OpenMPClauseKind Kind, SourceLocation StartLoc,
                                SourceLocation EndLoc);
   /// Called on well-formed 'nowait' clause.
-  OMPClause *ActOnOpenMPNowaitClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPNowaitClause(SourceLocation StartLoc,
                                      SourceLocation EndLoc);
   /// Called on well-formed 'untied' clause.
-  OMPClause *ActOnOpenMPUntiedClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPUntiedClause(SourceLocation StartLoc,
                                      SourceLocation EndLoc);
   /// Called on well-formed 'mergeable' clause.
-  OMPClause *ActOnOpenMPMergeableClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPMergeableClause(SourceLocation StartLoc,
                                         SourceLocation EndLoc);
   /// Called on well-formed 'read' clause.
-  OMPClause *ActOnOpenMPReadClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPReadClause(SourceLocation StartLoc,
                                    SourceLocation EndLoc);
   /// Called on well-formed 'write' clause.
-  OMPClause *ActOnOpenMPWriteClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPWriteClause(SourceLocation StartLoc,
                                     SourceLocation EndLoc);
   /// Called on well-formed 'update' clause.
-  OMPClause *ActOnOpenMPUpdateClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPUpdateClause(SourceLocation StartLoc,
                                      SourceLocation EndLoc);
   /// Called on well-formed 'capture' clause.
-  OMPClause *ActOnOpenMPCaptureClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPCaptureClause(SourceLocation StartLoc,
                                       SourceLocation EndLoc);
   /// Called on well-formed 'compare' clause.
-  OMPClause *ActOnOpenMPCompareClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPCompareClause(SourceLocation StartLoc,
                                       SourceLocation EndLoc);
   /// Called on well-formed 'fail' clause.
-  OMPClause *ActOnOpenMPFailClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPFailClause(SourceLocation StartLoc,
                                    SourceLocation EndLoc);
-  OMPClause *ActOnOpenMPFailClause(OpenMPClauseKind Kind,
+  CLANG_ABI OMPClause *ActOnOpenMPFailClause(OpenMPClauseKind Kind,
                                    SourceLocation KindLoc,
                                    SourceLocation StartLoc,
                                    SourceLocation LParenLoc,
                                    SourceLocation EndLoc);
 
   /// Called on well-formed 'seq_cst' clause.
-  OMPClause *ActOnOpenMPSeqCstClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPSeqCstClause(SourceLocation StartLoc,
                                      SourceLocation EndLoc);
   /// Called on well-formed 'acq_rel' clause.
-  OMPClause *ActOnOpenMPAcqRelClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPAcqRelClause(SourceLocation StartLoc,
                                      SourceLocation EndLoc);
   /// Called on well-formed 'acquire' clause.
-  OMPClause *ActOnOpenMPAcquireClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPAcquireClause(SourceLocation StartLoc,
                                       SourceLocation EndLoc);
   /// Called on well-formed 'release' clause.
-  OMPClause *ActOnOpenMPReleaseClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPReleaseClause(SourceLocation StartLoc,
                                       SourceLocation EndLoc);
   /// Called on well-formed 'relaxed' clause.
-  OMPClause *ActOnOpenMPRelaxedClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPRelaxedClause(SourceLocation StartLoc,
                                       SourceLocation EndLoc);
   /// Called on well-formed 'weak' clause.
-  OMPClause *ActOnOpenMPWeakClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPWeakClause(SourceLocation StartLoc,
                                    SourceLocation EndLoc);
 
   /// Called on well-formed 'init' clause.
-  OMPClause *
+  CLANG_ABI OMPClause *
   ActOnOpenMPInitClause(Expr *InteropVar, OMPInteropInfo &InteropInfo,
                         SourceLocation StartLoc, SourceLocation LParenLoc,
                         SourceLocation VarLoc, SourceLocation EndLoc);
 
   /// Called on well-formed 'use' clause.
-  OMPClause *ActOnOpenMPUseClause(Expr *InteropVar, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPUseClause(Expr *InteropVar, SourceLocation StartLoc,
                                   SourceLocation LParenLoc,
                                   SourceLocation VarLoc, SourceLocation EndLoc);
 
   /// Called on well-formed 'destroy' clause.
-  OMPClause *ActOnOpenMPDestroyClause(Expr *InteropVar, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPDestroyClause(Expr *InteropVar, SourceLocation StartLoc,
                                       SourceLocation LParenLoc,
                                       SourceLocation VarLoc,
                                       SourceLocation EndLoc);
   /// Called on well-formed 'novariants' clause.
-  OMPClause *ActOnOpenMPNovariantsClause(Expr *Condition,
+  CLANG_ABI OMPClause *ActOnOpenMPNovariantsClause(Expr *Condition,
                                          SourceLocation StartLoc,
                                          SourceLocation LParenLoc,
                                          SourceLocation EndLoc);
   /// Called on well-formed 'nocontext' clause.
-  OMPClause *ActOnOpenMPNocontextClause(Expr *Condition,
+  CLANG_ABI OMPClause *ActOnOpenMPNocontextClause(Expr *Condition,
                                         SourceLocation StartLoc,
                                         SourceLocation LParenLoc,
                                         SourceLocation EndLoc);
   /// Called on well-formed 'filter' clause.
-  OMPClause *ActOnOpenMPFilterClause(Expr *ThreadID, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPFilterClause(Expr *ThreadID, SourceLocation StartLoc,
                                      SourceLocation LParenLoc,
                                      SourceLocation EndLoc);
   /// Called on well-formed 'threads' clause.
-  OMPClause *ActOnOpenMPThreadsClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPThreadsClause(SourceLocation StartLoc,
                                       SourceLocation EndLoc);
   /// Called on well-formed 'simd' clause.
-  OMPClause *ActOnOpenMPSIMDClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPSIMDClause(SourceLocation StartLoc,
                                    SourceLocation EndLoc);
   /// Called on well-formed 'nogroup' clause.
-  OMPClause *ActOnOpenMPNogroupClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPNogroupClause(SourceLocation StartLoc,
                                       SourceLocation EndLoc);
   /// Called on well-formed 'unified_address' clause.
-  OMPClause *ActOnOpenMPUnifiedAddressClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPUnifiedAddressClause(SourceLocation StartLoc,
                                              SourceLocation EndLoc);
 
   /// Called on well-formed 'unified_address' clause.
-  OMPClause *ActOnOpenMPUnifiedSharedMemoryClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPUnifiedSharedMemoryClause(SourceLocation StartLoc,
                                                   SourceLocation EndLoc);
 
   /// Called on well-formed 'reverse_offload' clause.
-  OMPClause *ActOnOpenMPReverseOffloadClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPReverseOffloadClause(SourceLocation StartLoc,
                                              SourceLocation EndLoc);
 
   /// Called on well-formed 'dynamic_allocators' clause.
-  OMPClause *ActOnOpenMPDynamicAllocatorsClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPDynamicAllocatorsClause(SourceLocation StartLoc,
                                                 SourceLocation EndLoc);
 
   /// Called on well-formed 'atomic_default_mem_order' clause.
-  OMPClause *ActOnOpenMPAtomicDefaultMemOrderClause(
+  CLANG_ABI OMPClause *ActOnOpenMPAtomicDefaultMemOrderClause(
       OpenMPAtomicDefaultMemOrderClauseKind Kind, SourceLocation KindLoc,
       SourceLocation StartLoc, SourceLocation LParenLoc, SourceLocation EndLoc);
 
   /// Called on well-formed 'self_maps' clause.
-  OMPClause *ActOnOpenMPSelfMapsClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPSelfMapsClause(SourceLocation StartLoc,
                                        SourceLocation EndLoc);
 
   /// Called on well-formed 'at' clause.
-  OMPClause *ActOnOpenMPAtClause(OpenMPAtClauseKind Kind,
+  CLANG_ABI OMPClause *ActOnOpenMPAtClause(OpenMPAtClauseKind Kind,
                                  SourceLocation KindLoc,
                                  SourceLocation StartLoc,
                                  SourceLocation LParenLoc,
                                  SourceLocation EndLoc);
 
   /// Called on well-formed 'severity' clause.
-  OMPClause *ActOnOpenMPSeverityClause(OpenMPSeverityClauseKind Kind,
+  CLANG_ABI OMPClause *ActOnOpenMPSeverityClause(OpenMPSeverityClauseKind Kind,
                                        SourceLocation KindLoc,
                                        SourceLocation StartLoc,
                                        SourceLocation LParenLoc,
@@ -1133,7 +1134,7 @@ public:
 
   /// Called on well-formed 'message' clause.
   /// passing string for message.
-  OMPClause *ActOnOpenMPMessageClause(Expr *MS, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPMessageClause(Expr *MS, SourceLocation StartLoc,
                                       SourceLocation LParenLoc,
                                       SourceLocation EndLoc);
 
@@ -1175,22 +1176,22 @@ public:
     };
   };
 
-  OMPClause *ActOnOpenMPVarListClause(OpenMPClauseKind Kind,
+  CLANG_ABI OMPClause *ActOnOpenMPVarListClause(OpenMPClauseKind Kind,
                                       ArrayRef<Expr *> Vars,
                                       const OMPVarListLocTy &Locs,
                                       OpenMPVarListDataTy &Data);
   /// Called on well-formed 'inclusive' clause.
-  OMPClause *ActOnOpenMPInclusiveClause(ArrayRef<Expr *> VarList,
+  CLANG_ABI OMPClause *ActOnOpenMPInclusiveClause(ArrayRef<Expr *> VarList,
                                         SourceLocation StartLoc,
                                         SourceLocation LParenLoc,
                                         SourceLocation EndLoc);
   /// Called on well-formed 'exclusive' clause.
-  OMPClause *ActOnOpenMPExclusiveClause(ArrayRef<Expr *> VarList,
+  CLANG_ABI OMPClause *ActOnOpenMPExclusiveClause(ArrayRef<Expr *> VarList,
                                         SourceLocation StartLoc,
                                         SourceLocation LParenLoc,
                                         SourceLocation EndLoc);
   /// Called on well-formed 'allocate' clause.
-  OMPClause *
+  CLANG_ABI OMPClause *
   ActOnOpenMPAllocateClause(Expr *Allocator, Expr *Alignment,
                             OpenMPAllocateClauseModifier FirstModifier,
                             SourceLocation FirstModifierLoc,
@@ -1200,27 +1201,27 @@ public:
                             SourceLocation ColonLoc, SourceLocation LParenLoc,
                             SourceLocation EndLoc);
   /// Called on well-formed 'private' clause.
-  OMPClause *ActOnOpenMPPrivateClause(ArrayRef<Expr *> VarList,
+  CLANG_ABI OMPClause *ActOnOpenMPPrivateClause(ArrayRef<Expr *> VarList,
                                       SourceLocation StartLoc,
                                       SourceLocation LParenLoc,
                                       SourceLocation EndLoc);
   /// Called on well-formed 'firstprivate' clause.
-  OMPClause *ActOnOpenMPFirstprivateClause(ArrayRef<Expr *> VarList,
+  CLANG_ABI OMPClause *ActOnOpenMPFirstprivateClause(ArrayRef<Expr *> VarList,
                                            SourceLocation StartLoc,
                                            SourceLocation LParenLoc,
                                            SourceLocation EndLoc);
   /// Called on well-formed 'lastprivate' clause.
-  OMPClause *ActOnOpenMPLastprivateClause(
+  CLANG_ABI OMPClause *ActOnOpenMPLastprivateClause(
       ArrayRef<Expr *> VarList, OpenMPLastprivateModifier LPKind,
       SourceLocation LPKindLoc, SourceLocation ColonLoc,
       SourceLocation StartLoc, SourceLocation LParenLoc, SourceLocation EndLoc);
   /// Called on well-formed 'shared' clause.
-  OMPClause *ActOnOpenMPSharedClause(ArrayRef<Expr *> VarList,
+  CLANG_ABI OMPClause *ActOnOpenMPSharedClause(ArrayRef<Expr *> VarList,
                                      SourceLocation StartLoc,
                                      SourceLocation LParenLoc,
                                      SourceLocation EndLoc);
   /// Called on well-formed 'reduction' clause.
-  OMPClause *ActOnOpenMPReductionClause(
+  CLANG_ABI OMPClause *ActOnOpenMPReductionClause(
       ArrayRef<Expr *> VarList,
       OpenMPVarListDataTy::OpenMPReductionClauseModifiers Modifiers,
       SourceLocation StartLoc, SourceLocation LParenLoc,
@@ -1229,65 +1230,65 @@ public:
       const DeclarationNameInfo &ReductionId,
       ArrayRef<Expr *> UnresolvedReductions = {});
   /// Called on well-formed 'task_reduction' clause.
-  OMPClause *ActOnOpenMPTaskReductionClause(
+  CLANG_ABI OMPClause *ActOnOpenMPTaskReductionClause(
       ArrayRef<Expr *> VarList, SourceLocation StartLoc,
       SourceLocation LParenLoc, SourceLocation ColonLoc, SourceLocation EndLoc,
       CXXScopeSpec &ReductionIdScopeSpec,
       const DeclarationNameInfo &ReductionId,
       ArrayRef<Expr *> UnresolvedReductions = {});
   /// Called on well-formed 'in_reduction' clause.
-  OMPClause *ActOnOpenMPInReductionClause(
+  CLANG_ABI OMPClause *ActOnOpenMPInReductionClause(
       ArrayRef<Expr *> VarList, SourceLocation StartLoc,
       SourceLocation LParenLoc, SourceLocation ColonLoc, SourceLocation EndLoc,
       CXXScopeSpec &ReductionIdScopeSpec,
       const DeclarationNameInfo &ReductionId,
       ArrayRef<Expr *> UnresolvedReductions = {});
   /// Called on well-formed 'linear' clause.
-  OMPClause *ActOnOpenMPLinearClause(
+  CLANG_ABI OMPClause *ActOnOpenMPLinearClause(
       ArrayRef<Expr *> VarList, Expr *Step, SourceLocation StartLoc,
       SourceLocation LParenLoc, OpenMPLinearClauseKind LinKind,
       SourceLocation LinLoc, SourceLocation ColonLoc,
       SourceLocation StepModifierLoc, SourceLocation EndLoc);
   /// Called on well-formed 'aligned' clause.
-  OMPClause *ActOnOpenMPAlignedClause(ArrayRef<Expr *> VarList, Expr *Alignment,
+  CLANG_ABI OMPClause *ActOnOpenMPAlignedClause(ArrayRef<Expr *> VarList, Expr *Alignment,
                                       SourceLocation StartLoc,
                                       SourceLocation LParenLoc,
                                       SourceLocation ColonLoc,
                                       SourceLocation EndLoc);
   /// Called on well-formed 'copyin' clause.
-  OMPClause *ActOnOpenMPCopyinClause(ArrayRef<Expr *> VarList,
+  CLANG_ABI OMPClause *ActOnOpenMPCopyinClause(ArrayRef<Expr *> VarList,
                                      SourceLocation StartLoc,
                                      SourceLocation LParenLoc,
                                      SourceLocation EndLoc);
   /// Called on well-formed 'copyprivate' clause.
-  OMPClause *ActOnOpenMPCopyprivateClause(ArrayRef<Expr *> VarList,
+  CLANG_ABI OMPClause *ActOnOpenMPCopyprivateClause(ArrayRef<Expr *> VarList,
                                           SourceLocation StartLoc,
                                           SourceLocation LParenLoc,
                                           SourceLocation EndLoc);
   /// Called on well-formed 'flush' pseudo clause.
-  OMPClause *ActOnOpenMPFlushClause(ArrayRef<Expr *> VarList,
+  CLANG_ABI OMPClause *ActOnOpenMPFlushClause(ArrayRef<Expr *> VarList,
                                     SourceLocation StartLoc,
                                     SourceLocation LParenLoc,
                                     SourceLocation EndLoc);
   /// Called on well-formed 'depobj' pseudo clause.
-  OMPClause *ActOnOpenMPDepobjClause(Expr *Depobj, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPDepobjClause(Expr *Depobj, SourceLocation StartLoc,
                                      SourceLocation LParenLoc,
                                      SourceLocation EndLoc);
   /// Called on well-formed 'depend' clause.
-  OMPClause *ActOnOpenMPDependClause(const OMPDependClause::DependDataTy &Data,
+  CLANG_ABI OMPClause *ActOnOpenMPDependClause(const OMPDependClause::DependDataTy &Data,
                                      Expr *DepModifier,
                                      ArrayRef<Expr *> VarList,
                                      SourceLocation StartLoc,
                                      SourceLocation LParenLoc,
                                      SourceLocation EndLoc);
   /// Called on well-formed 'device' clause.
-  OMPClause *ActOnOpenMPDeviceClause(OpenMPDeviceClauseModifier Modifier,
+  CLANG_ABI OMPClause *ActOnOpenMPDeviceClause(OpenMPDeviceClauseModifier Modifier,
                                      Expr *Device, SourceLocation StartLoc,
                                      SourceLocation LParenLoc,
                                      SourceLocation ModifierLoc,
                                      SourceLocation EndLoc);
   /// Called on well-formed 'map' clause.
-  OMPClause *ActOnOpenMPMapClause(
+  CLANG_ABI OMPClause *ActOnOpenMPMapClause(
       Expr *IteratorModifier, ArrayRef<OpenMPMapModifierKind> MapTypeModifiers,
       ArrayRef<SourceLocation> MapTypeModifiersLoc,
       CXXScopeSpec &MapperIdScopeSpec, DeclarationNameInfo &MapperId,
@@ -1296,31 +1297,31 @@ public:
       const OMPVarListLocTy &Locs, bool NoDiagnose = false,
       ArrayRef<Expr *> UnresolvedMappers = {});
   /// Called on well-formed 'num_teams' clause.
-  OMPClause *ActOnOpenMPNumTeamsClause(ArrayRef<Expr *> VarList,
+  CLANG_ABI OMPClause *ActOnOpenMPNumTeamsClause(ArrayRef<Expr *> VarList,
                                        SourceLocation StartLoc,
                                        SourceLocation LParenLoc,
                                        SourceLocation EndLoc);
   /// Called on well-formed 'thread_limit' clause.
-  OMPClause *ActOnOpenMPThreadLimitClause(ArrayRef<Expr *> VarList,
+  CLANG_ABI OMPClause *ActOnOpenMPThreadLimitClause(ArrayRef<Expr *> VarList,
                                           SourceLocation StartLoc,
                                           SourceLocation LParenLoc,
                                           SourceLocation EndLoc);
   /// Called on well-formed 'priority' clause.
-  OMPClause *ActOnOpenMPPriorityClause(Expr *Priority, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPPriorityClause(Expr *Priority, SourceLocation StartLoc,
                                        SourceLocation LParenLoc,
                                        SourceLocation EndLoc);
   /// Called on well-formed 'dist_schedule' clause.
-  OMPClause *ActOnOpenMPDistScheduleClause(
+  CLANG_ABI OMPClause *ActOnOpenMPDistScheduleClause(
       OpenMPDistScheduleClauseKind Kind, Expr *ChunkSize,
       SourceLocation StartLoc, SourceLocation LParenLoc, SourceLocation KindLoc,
       SourceLocation CommaLoc, SourceLocation EndLoc);
   /// Called on well-formed 'defaultmap' clause.
-  OMPClause *ActOnOpenMPDefaultmapClause(
+  CLANG_ABI OMPClause *ActOnOpenMPDefaultmapClause(
       OpenMPDefaultmapClauseModifier M, OpenMPDefaultmapClauseKind Kind,
       SourceLocation StartLoc, SourceLocation LParenLoc, SourceLocation MLoc,
       SourceLocation KindLoc, SourceLocation EndLoc);
   /// Called on well-formed 'to' clause.
-  OMPClause *
+  CLANG_ABI OMPClause *
   ActOnOpenMPToClause(ArrayRef<OpenMPMotionModifierKind> MotionModifiers,
                       ArrayRef<SourceLocation> MotionModifiersLoc,
                       CXXScopeSpec &MapperIdScopeSpec,
@@ -1328,7 +1329,7 @@ public:
                       ArrayRef<Expr *> VarList, const OMPVarListLocTy &Locs,
                       ArrayRef<Expr *> UnresolvedMappers = {});
   /// Called on well-formed 'from' clause.
-  OMPClause *
+  CLANG_ABI OMPClause *
   ActOnOpenMPFromClause(ArrayRef<OpenMPMotionModifierKind> MotionModifiers,
                         ArrayRef<SourceLocation> MotionModifiersLoc,
                         CXXScopeSpec &MapperIdScopeSpec,
@@ -1336,19 +1337,19 @@ public:
                         ArrayRef<Expr *> VarList, const OMPVarListLocTy &Locs,
                         ArrayRef<Expr *> UnresolvedMappers = {});
   /// Called on well-formed 'use_device_ptr' clause.
-  OMPClause *ActOnOpenMPUseDevicePtrClause(ArrayRef<Expr *> VarList,
+  CLANG_ABI OMPClause *ActOnOpenMPUseDevicePtrClause(ArrayRef<Expr *> VarList,
                                            const OMPVarListLocTy &Locs);
   /// Called on well-formed 'use_device_addr' clause.
-  OMPClause *ActOnOpenMPUseDeviceAddrClause(ArrayRef<Expr *> VarList,
+  CLANG_ABI OMPClause *ActOnOpenMPUseDeviceAddrClause(ArrayRef<Expr *> VarList,
                                             const OMPVarListLocTy &Locs);
   /// Called on well-formed 'is_device_ptr' clause.
-  OMPClause *ActOnOpenMPIsDevicePtrClause(ArrayRef<Expr *> VarList,
+  CLANG_ABI OMPClause *ActOnOpenMPIsDevicePtrClause(ArrayRef<Expr *> VarList,
                                           const OMPVarListLocTy &Locs);
   /// Called on well-formed 'has_device_addr' clause.
-  OMPClause *ActOnOpenMPHasDeviceAddrClause(ArrayRef<Expr *> VarList,
+  CLANG_ABI OMPClause *ActOnOpenMPHasDeviceAddrClause(ArrayRef<Expr *> VarList,
                                             const OMPVarListLocTy &Locs);
   /// Called on well-formed 'nontemporal' clause.
-  OMPClause *ActOnOpenMPNontemporalClause(ArrayRef<Expr *> VarList,
+  CLANG_ABI OMPClause *ActOnOpenMPNontemporalClause(ArrayRef<Expr *> VarList,
                                           SourceLocation StartLoc,
                                           SourceLocation LParenLoc,
                                           SourceLocation EndLoc);
@@ -1363,52 +1364,52 @@ public:
     SourceLocation LParenLoc, RParenLoc;
   };
   /// Called on well-formed 'uses_allocators' clause.
-  OMPClause *ActOnOpenMPUsesAllocatorClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPUsesAllocatorClause(SourceLocation StartLoc,
                                             SourceLocation LParenLoc,
                                             SourceLocation EndLoc,
                                             ArrayRef<UsesAllocatorsData> Data);
   /// Called on well-formed 'affinity' clause.
-  OMPClause *ActOnOpenMPAffinityClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPAffinityClause(SourceLocation StartLoc,
                                        SourceLocation LParenLoc,
                                        SourceLocation ColonLoc,
                                        SourceLocation EndLoc, Expr *Modifier,
                                        ArrayRef<Expr *> Locators);
   /// Called on a well-formed 'bind' clause.
-  OMPClause *ActOnOpenMPBindClause(OpenMPBindClauseKind Kind,
+  CLANG_ABI OMPClause *ActOnOpenMPBindClause(OpenMPBindClauseKind Kind,
                                    SourceLocation KindLoc,
                                    SourceLocation StartLoc,
                                    SourceLocation LParenLoc,
                                    SourceLocation EndLoc);
 
   /// Called on a well-formed 'ompx_dyn_cgroup_mem' clause.
-  OMPClause *ActOnOpenMPXDynCGroupMemClause(Expr *Size, SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPXDynCGroupMemClause(Expr *Size, SourceLocation StartLoc,
                                             SourceLocation LParenLoc,
                                             SourceLocation EndLoc);
 
   /// Called on well-formed 'doacross' clause.
-  OMPClause *
+  CLANG_ABI OMPClause *
   ActOnOpenMPDoacrossClause(OpenMPDoacrossClauseModifier DepType,
                             SourceLocation DepLoc, SourceLocation ColonLoc,
                             ArrayRef<Expr *> VarList, SourceLocation StartLoc,
                             SourceLocation LParenLoc, SourceLocation EndLoc);
 
   /// Called on a well-formed 'ompx_attribute' clause.
-  OMPClause *ActOnOpenMPXAttributeClause(ArrayRef<const Attr *> Attrs,
+  CLANG_ABI OMPClause *ActOnOpenMPXAttributeClause(ArrayRef<const Attr *> Attrs,
                                          SourceLocation StartLoc,
                                          SourceLocation LParenLoc,
                                          SourceLocation EndLoc);
 
   /// Called on a well-formed 'ompx_bare' clause.
-  OMPClause *ActOnOpenMPXBareClause(SourceLocation StartLoc,
+  CLANG_ABI OMPClause *ActOnOpenMPXBareClause(SourceLocation StartLoc,
                                     SourceLocation EndLoc);
 
-  ExprResult ActOnOMPArraySectionExpr(Expr *Base, SourceLocation LBLoc,
+  CLANG_ABI ExprResult ActOnOMPArraySectionExpr(Expr *Base, SourceLocation LBLoc,
                                       Expr *LowerBound,
                                       SourceLocation ColonLocFirst,
                                       SourceLocation ColonLocSecond,
                                       Expr *Length, Expr *Stride,
                                       SourceLocation RBLoc);
-  ExprResult ActOnOMPArrayShapingExpr(Expr *Base, SourceLocation LParenLoc,
+  CLANG_ABI ExprResult ActOnOMPArrayShapingExpr(Expr *Base, SourceLocation LParenLoc,
                                       SourceLocation RParenLoc,
                                       ArrayRef<Expr *> Dims,
                                       ArrayRef<SourceRange> Brackets);
@@ -1424,18 +1425,18 @@ public:
     SourceLocation SecColonLoc;
   };
 
-  ExprResult ActOnOMPIteratorExpr(Scope *S, SourceLocation IteratorKwLoc,
+  CLANG_ABI ExprResult ActOnOMPIteratorExpr(Scope *S, SourceLocation IteratorKwLoc,
                                   SourceLocation LLoc, SourceLocation RLoc,
                                   ArrayRef<OMPIteratorData> Data);
 
-  void handleOMPAssumeAttr(Decl *D, const ParsedAttr &AL);
+  CLANG_ABI void handleOMPAssumeAttr(Decl *D, const ParsedAttr &AL);
 
   /// Setter and getter functions for device_num.
-  void setOpenMPDeviceNum(int Num);
+  CLANG_ABI void setOpenMPDeviceNum(int Num);
 
-  int getOpenMPDeviceNum() const;
+  CLANG_ABI int getOpenMPDeviceNum() const;
 
-  void setOpenMPDeviceNumID(StringRef ID);
+  CLANG_ABI void setOpenMPDeviceNumID(StringRef ID);
 
 private:
   void *VarDataSharingAttributesStack;
@@ -1490,7 +1491,7 @@ private:
     /// The associated OpenMP context selector mangling.
     std::string NameSuffix;
 
-    OMPDeclareVariantScope(OMPTraitInfo &TI);
+    CLANG_ABI OMPDeclareVariantScope(OMPTraitInfo &TI);
   };
 
   /// Return the OMPTraitInfo for the surrounding scope, if any.
