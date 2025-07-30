@@ -1101,7 +1101,12 @@ public:
 
   /// isTemplateParameter - Determines whether this declaration is a
   /// template parameter.
-  bool isTemplateParameter() const;
+  //bool isTemplateParameter() const;
+  inline bool isTemplateParameter() const {
+    return getKind() == TemplateTypeParm || getKind() == NonTypeTemplateParm ||
+           getKind() == TemplateTemplateParm;
+  }
+
 
   /// isTemplateParameter - Determines whether this declaration is a
   /// template parameter pack.
@@ -2794,11 +2799,6 @@ private:
                                          bool Rediscoverable);
   void makeDeclVisibleInContextImpl(NamedDecl *D, bool Internal);
 };
-
-inline bool Decl::isTemplateParameter() const {
-  return getKind() == TemplateTypeParm || getKind() == NonTypeTemplateParm ||
-         getKind() == TemplateTemplateParm;
-}
 
 // Specialization selected when ToTy is not a known subclass of DeclContext.
 template <class ToTy,
