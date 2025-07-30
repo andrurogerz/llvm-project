@@ -176,7 +176,7 @@ public:
       return *this;
     }
 
-    friend const SemaDiagnosticBuilder &
+    CLANG_ABI friend const SemaDiagnosticBuilder &
     operator<<(const SemaDiagnosticBuilder &Diag, const PartialDiagnostic &PD);
 
     CLANG_ABI void AddFixItHint(const FixItHint &Hint) const;
