@@ -2598,6 +2598,11 @@ class CLANG_ABI CXXConstructorDecl final
     : public CXXMethodDecl,
       private llvm::TrailingObjects<CXXConstructorDecl, InheritedConstructor,
                                     ExplicitSpecifier> {
+
+  // Explicitly delete the copy constructor and assignment operator.
+  CXXConstructorDecl(CXXConstructorDecl const&) = delete;
+  CXXConstructorDecl& operator=(CXXConstructorDecl const&) = delete;
+
   // This class stores some data in DeclContext::CXXConstructorDeclBits
   // to save some space. Use the provided accessors to access it.
 

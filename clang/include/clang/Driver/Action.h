@@ -617,6 +617,10 @@ public:
   // Offloading unbundling doesn't change the type of output.
   OffloadUnbundlingJobAction(Action *Input);
 
+  // Explicitly delete the copy constructor and assignment operator.
+  OffloadUnbundlingJobAction(OffloadUnbundlingJobAction const&) = delete;
+  OffloadUnbundlingJobAction& operator=(OffloadUnbundlingJobAction const&) = delete;
+
   /// Register information about a dependent action.
   void registerDependentActionInfo(const ToolChain *TC, StringRef BoundArch,
                                    OffloadKind Kind) {

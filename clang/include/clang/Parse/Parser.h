@@ -1252,6 +1252,10 @@ private:
     explicit LateParsedMethodDeclaration(Parser *P, Decl *M)
         : Self(P), Method(M), ExceptionSpecTokens(nullptr) {}
 
+    // Explicitly delete the copy constructor and assignment operator.
+    LateParsedMethodDeclaration(LateParsedMethodDeclaration const&) = delete;
+    LateParsedMethodDeclaration& operator=(LateParsedMethodDeclaration const&) = delete;
+
     void ParseLexedMethodDeclarations() override;
 
     Parser *Self;

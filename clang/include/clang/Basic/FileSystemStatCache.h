@@ -69,6 +69,11 @@ protected:
 /// execution of the front end.
 class CLANG_ABI MemorizeStatCalls : public FileSystemStatCache {
 public:
+
+  // Explicitly delete the copy constructor and assignment operator.
+  MemorizeStatCalls(MemorizeStatCalls const&) = delete;
+  MemorizeStatCalls& operator=(MemorizeStatCalls const&) = delete;
+
   /// The set of stat() calls that have been seen.
   llvm::StringMap<llvm::vfs::Status, llvm::BumpPtrAllocator> StatCalls;
 

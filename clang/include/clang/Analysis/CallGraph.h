@@ -57,6 +57,10 @@ public:
   CallGraph();
   ~CallGraph();
 
+  // Explicitly delete the copy constructor and assignment operator.
+  CallGraph(CallGraph const&) = delete;
+  CallGraph& operator=(CallGraph const&) = delete;
+
   /// Populate the call graph with the functions in the given
   /// declaration.
   ///

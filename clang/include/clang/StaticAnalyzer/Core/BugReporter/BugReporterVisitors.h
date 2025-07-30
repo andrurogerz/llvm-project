@@ -184,6 +184,10 @@ protected:
   /// \param Report The bug report to which visitors should be attached.
   Tracker(PathSensitiveBugReport &Report);
 
+  // Explicitly delete the copy constructor and assignment operator.
+  Tracker(Tracker const&) = delete;
+  Tracker& operator=(Tracker const&) = delete;
+
 public:
   virtual ~Tracker() = default;
 

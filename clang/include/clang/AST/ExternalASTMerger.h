@@ -116,6 +116,10 @@ public:
   ExternalASTMerger(const ImporterTarget &Target,
                     ArrayRef<ImporterSource> Sources);
 
+  // Explicitly delete the copy constructor and assignment operator.
+  ExternalASTMerger(ExternalASTMerger const&) = delete;
+  ExternalASTMerger& operator=(ExternalASTMerger const&) = delete;
+
   /// Asks all connected ASTImporters if any of them imported the given
   /// declaration. If any ASTImporter did import the given declaration,
   /// then this function returns the declaration that D was imported from.

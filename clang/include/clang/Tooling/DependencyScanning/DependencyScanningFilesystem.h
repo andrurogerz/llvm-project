@@ -375,6 +375,10 @@ public:
       DependencyScanningFilesystemSharedCache &SharedCache,
       IntrusiveRefCntPtr<llvm::vfs::FileSystem> FS);
 
+  // Explicitly delete the copy constructor and assignment operator.
+  DependencyScanningWorkerFilesystem(DependencyScanningWorkerFilesystem const&) = delete;
+  DependencyScanningWorkerFilesystem& operator=(DependencyScanningWorkerFilesystem const&) = delete;
+
   llvm::ErrorOr<llvm::vfs::Status> status(const Twine &Path) override;
   llvm::ErrorOr<std::unique_ptr<llvm::vfs::File>>
   openFileForRead(const Twine &Path) override;

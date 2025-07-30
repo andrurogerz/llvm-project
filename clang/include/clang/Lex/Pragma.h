@@ -100,6 +100,11 @@ class CLANG_ABI PragmaNamespace : public PragmaHandler {
   llvm::StringMap<std::unique_ptr<PragmaHandler>> Handlers;
 
 public:
+
+  // Explicitly delete the copy constructor and assignment operator.
+  PragmaNamespace(PragmaNamespace const&) = delete;
+  PragmaNamespace& operator=(PragmaNamespace const&) = delete;
+
   explicit PragmaNamespace(StringRef Name) : PragmaHandler(Name) {}
 
   /// FindHandler - Check to see if there is already a handler for the
