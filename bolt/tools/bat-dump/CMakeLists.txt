@@ -1,5 +1,7 @@
 set(LLVM_LINK_COMPONENTS
+  Instrumentation
   Object
+  SelectionDAG
   Support
   )
 
