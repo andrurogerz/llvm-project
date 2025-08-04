@@ -2,6 +2,7 @@ set(LLVM_LINK_COMPONENTS
   DebugInfoDWARF
   Object
   MC
+  OrcJIT
   ${BOLT_TARGETS_TO_BUILD}
   )
 
@@ -20,7 +21,7 @@ target_link_libraries(CoreTests
   LLVMBOLTRewrite
   LLVMBOLTProfile
   LLVMBOLTUtils
-  LLVMTestingSupport
+  LLVMTestingSupport_static
   )
 
 foreach (tgt ${BOLT_TARGETS_TO_BUILD})

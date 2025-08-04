@@ -1,5 +1,4 @@
 set(LLVM_LINK_COMPONENTS
-  DebugInfoDWARF
   Object
   ${LLVM_TARGETS_TO_BUILD}
   )
@@ -15,8 +14,6 @@ target_link_libraries(ProfileTests
   PRIVATE
   LLVMBOLTCore
   LLVMBOLTProfile
-  LLVMTargetParser
-  LLVMTestingSupport
   )
 
 foreach (tgt ${BOLT_TARGETS_TO_BUILD})
