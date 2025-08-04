@@ -11,6 +11,7 @@
 #ifndef LLVM_TRANSFORM_UTILS_SPLIT_MODULE_BY_CATEGORY_H
 #define LLVM_TRANSFORM_UTILS_SPLIT_MODULE_BY_CATEGORY_H
 
+#include "llvm/Support/Compiler.h"
 #include "llvm/ADT/STLFunctionalExtras.h"
 #include "llvm/Support/Compiler.h"
 

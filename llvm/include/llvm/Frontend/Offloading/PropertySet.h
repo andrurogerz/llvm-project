@@ -9,6 +9,7 @@
 /// provides helper functions to translate PropertySetRegistry from/to JSON.
 //===----------------------------------------------------------------------===//
 
+#include "llvm/Support/Compiler.h"
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/Support/Compiler.h"
 #include "llvm/Support/Error.h"
