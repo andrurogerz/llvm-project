@@ -193,7 +193,7 @@ protected:
   // This is a dummy method, only here so the "using" doesn't fail --
   // it will never be called, because this function recurses backwards
   // up the inheritance chain to subclasses.
-  static void getTrailingObjectsImpl();
+  static void getTrailingObjectsImpl() {}
 
   static constexpr size_t additionalSizeToAllocImpl(size_t SizeSoFar) {
     return SizeSoFar;
